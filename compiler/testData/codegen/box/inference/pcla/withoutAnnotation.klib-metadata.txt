@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* K */, T#1 /* V */> buildMap(builderAction: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/collections/MutableMap<T#0, T#1>, kotlin/Unit>): kotlin/collections/Map<T#0, T#1>
+    }
+  }
+}

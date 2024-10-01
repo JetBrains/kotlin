@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testForInUIntArrayWithUpcactToAny(): kotlin/Unit
+
+      public final fun testForInUIntArrayWithUpcactToComparable(): kotlin/Unit
+
+      public final fun useUIntAsAny(a: kotlin/Any): kotlin/Unit
+
+      public final fun useUIntAsComparable(a: kotlin/Comparable<*>): kotlin/Unit
+    }
+  }
+}

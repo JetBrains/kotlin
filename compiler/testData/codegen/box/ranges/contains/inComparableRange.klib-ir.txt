@@ -1,0 +1,257 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inComparableRange.kt
+    CLASS CLASS name:ComparablePair signature:/ComparablePair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.ComparablePair<T of <root>.ComparablePair>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ComparablePair<T of <root>.ComparablePair>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ComparablePair|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.ComparablePair>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of <root>.ComparablePair>] reified:false
+      CONSTRUCTOR signature:/ComparablePair.<init>|<init>(1:0;1:0){}[0] visibility:public <> (first:T of <root>.ComparablePair, second:T of <root>.ComparablePair) returnType:<root>.ComparablePair<T of <root>.ComparablePair> [primary]
+        VALUE_PARAMETER name:first index:0 type:T of <root>.ComparablePair
+        VALUE_PARAMETER name:second index:1 type:T of <root>.ComparablePair
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ComparablePair signature:/ComparablePair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.ComparablePair<T of <root>.ComparablePair>>]'
+      PROPERTY name:first signature:/ComparablePair.first|{}first[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:first signature:[ /ComparablePair.first|{}first[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.ComparablePair visibility:private [final]] ] type:T of <root>.ComparablePair visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'first: T of <root>.ComparablePair declared in <root>.ComparablePair.<init>' type=T of <root>.ComparablePair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-first> signature:/ComparablePair.first.<get-first>|<get-first>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ComparablePair<T of <root>.ComparablePair>) returnType:T of <root>.ComparablePair
+          correspondingProperty: PROPERTY name:first signature:/ComparablePair.first|{}first[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ComparablePair<T of <root>.ComparablePair>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-first> (): T of <root>.ComparablePair declared in <root>.ComparablePair'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first signature:[ /ComparablePair.first|{}first[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.ComparablePair visibility:private [final]] ] type:T of <root>.ComparablePair visibility:private [final]' type=T of <root>.ComparablePair origin=null
+                receiver: GET_VAR '<this>: <root>.ComparablePair<T of <root>.ComparablePair> declared in <root>.ComparablePair.<get-first>' type=<root>.ComparablePair<T of <root>.ComparablePair> origin=null
+      PROPERTY name:second signature:/ComparablePair.second|{}second[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:second signature:[ /ComparablePair.second|{}second[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.ComparablePair visibility:private [final]] ] type:T of <root>.ComparablePair visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'second: T of <root>.ComparablePair declared in <root>.ComparablePair.<init>' type=T of <root>.ComparablePair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-second> signature:/ComparablePair.second.<get-second>|<get-second>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ComparablePair<T of <root>.ComparablePair>) returnType:T of <root>.ComparablePair
+          correspondingProperty: PROPERTY name:second signature:/ComparablePair.second|{}second[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ComparablePair<T of <root>.ComparablePair>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-second> (): T of <root>.ComparablePair declared in <root>.ComparablePair'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second signature:[ /ComparablePair.second|{}second[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.ComparablePair visibility:private [final]] ] type:T of <root>.ComparablePair visibility:private [final]' type=T of <root>.ComparablePair origin=null
+                receiver: GET_VAR '<this>: <root>.ComparablePair<T of <root>.ComparablePair> declared in <root>.ComparablePair.<get-second>' type=<root>.ComparablePair<T of <root>.ComparablePair> origin=null
+      FUN name:compareTo signature:/ComparablePair.compareTo|compareTo(ComparablePair<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.ComparablePair<T of <root>.ComparablePair>, other:<root>.ComparablePair<T of <root>.ComparablePair>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ComparablePair<T of <root>.ComparablePair>
+        VALUE_PARAMETER name:other index:0 type:<root>.ComparablePair<T of <root>.ComparablePair>
+        BLOCK_BODY
+          VAR name:result type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-first> (): T of <root>.ComparablePair declared in <root>.ComparablePair' type=T of <root>.ComparablePair origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ComparablePair<T of <root>.ComparablePair> declared in <root>.ComparablePair.compareTo' type=<root>.ComparablePair<T of <root>.ComparablePair> origin=null
+              1: CALL 'public final fun <get-first> (): T of <root>.ComparablePair declared in <root>.ComparablePair' type=T of <root>.ComparablePair origin=GET_PROPERTY
+                $this: GET_VAR 'other: <root>.ComparablePair<T of <root>.ComparablePair> declared in <root>.ComparablePair.compareTo' type=<root>.ComparablePair<T of <root>.ComparablePair> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareTo (other: <root>.ComparablePair<T of <root>.ComparablePair>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ComparablePair'
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.ComparablePair.compareTo' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.ComparablePair.compareTo' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-second> (): T of <root>.ComparablePair declared in <root>.ComparablePair' type=T of <root>.ComparablePair origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ComparablePair<T of <root>.ComparablePair> declared in <root>.ComparablePair.compareTo' type=<root>.ComparablePair<T of <root>.ComparablePair> origin=null
+                  1: CALL 'public final fun <get-second> (): T of <root>.ComparablePair declared in <root>.ComparablePair' type=T of <root>.ComparablePair origin=GET_PROPERTY
+                    $this: GET_VAR 'other: <root>.ComparablePair<T of <root>.ComparablePair> declared in <root>.ComparablePair.compareTo' type=<root>.ComparablePair<T of <root>.ComparablePair> origin=null
+    FUN name:genericRangeTo signature:/genericRangeTo|genericRangeTo(0:0;0:0){0§<kotlin.Comparable<0:0>>}[0] visibility:public modality:FINAL <T> (start:T of <root>.genericRangeTo, endInclusive:T of <root>.genericRangeTo) returnType:<unbound IrClassSymbolImpl><T of <root>.genericRangeTo>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /genericRangeTo|genericRangeTo(0:0;0:0){0§<kotlin.Comparable<0:0>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.ComparablePair>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of <root>.genericRangeTo>] reified:false
+      VALUE_PARAMETER name:start index:0 type:T of <root>.genericRangeTo
+      VALUE_PARAMETER name:endInclusive index:1 type:T of <root>.genericRangeTo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun genericRangeTo <T> (start: T of <root>.genericRangeTo, endInclusive: T of <root>.genericRangeTo): <unbound IrClassSymbolImpl><T of <root>.genericRangeTo> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.genericRangeTo> origin=RANGE
+            <1>: T of <root>.genericRangeTo
+            $receiver: GET_VAR 'start: T of <root>.genericRangeTo declared in <root>.genericRangeTo' type=T of <root>.genericRangeTo origin=null
+            1: GET_VAR 'endInclusive: T of <root>.genericRangeTo declared in <root>.genericRangeTo' type=T of <root>.genericRangeTo origin=null
+    FUN name:rangeTo signature:/rangeTo|rangeTo@kotlin.Double(kotlin.Double){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun rangeTo (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>'
+          CALL 'public final fun genericRangeTo <T> (start: T of <root>.genericRangeTo, endInclusive: T of <root>.genericRangeTo): <unbound IrClassSymbolImpl><T of <root>.genericRangeTo> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            start: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.rangeTo' type=<unbound IrClassSymbolImpl> origin=null
+            endInclusive: GET_VAR 'other: <unbound IrClassSymbolImpl> declared in <root>.rangeTo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:rangeTo signature:/rangeTo|rangeTo@kotlin.Float(kotlin.Float){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun rangeTo (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>'
+          BLOCK type=<root>.rangeTo.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.rangeTo.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.rangeTo.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+              PROPERTY name:endInclusive visibility:public modality:OPEN [val]
+                FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<unbound IrClassSymbolImpl> visibility:private [final]
+                  EXPRESSION_BODY
+                    GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.rangeTo' type=<unbound IrClassSymbolImpl> origin=null
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<get-endInclusive> visibility:public modality:OPEN <> ($this:<root>.rangeTo.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  correspondingProperty: PROPERTY name:endInclusive visibility:public modality:OPEN [val]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.rangeTo.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-endInclusive> (): <unbound IrClassSymbolImpl> declared in <root>.rangeTo.<no name provided>'
+                      GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                        receiver: GET_VAR '<this>: <root>.rangeTo.<no name provided> declared in <root>.rangeTo.<no name provided>.<get-endInclusive>' type=<root>.rangeTo.<no name provided> origin=null
+              PROPERTY name:start visibility:public modality:OPEN [val]
+                FIELD PROPERTY_BACKING_FIELD name:start type:<unbound IrClassSymbolImpl> visibility:private [final]
+                  EXPRESSION_BODY
+                    GET_VAR 'other: <unbound IrClassSymbolImpl> declared in <root>.rangeTo' type=<unbound IrClassSymbolImpl> origin=null
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<get-start> visibility:public modality:OPEN <> ($this:<root>.rangeTo.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  correspondingProperty: PROPERTY name:start visibility:public modality:OPEN [val]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.rangeTo.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-start> (): <unbound IrClassSymbolImpl> declared in <root>.rangeTo.<no name provided>'
+                      GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:start type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                        receiver: GET_VAR '<this>: <root>.rangeTo.<no name provided> declared in <root>.rangeTo.<no name provided>.<get-start>' type=<root>.rangeTo.<no name provided> origin=null
+              FUN name:lessThanOrEquals visibility:public modality:OPEN <> ($this:<root>.rangeTo.<no name provided>, a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.rangeTo.<no name provided>
+                VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun lessThanOrEquals (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.rangeTo.<no name provided>'
+                    CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+                      arg0: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.rangeTo.<no name provided>.lessThanOrEquals' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.rangeTo.<no name provided>.lessThanOrEquals' type=<unbound IrClassSymbolImpl> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.rangeTo.<no name provided>' type=<root>.rangeTo.<no name provided> origin=OBJECT_LITERAL
+    FUN name:check signature:/check|check(kotlin.Double;kotlin.Double;kotlin.Double){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, left:<unbound IrClassSymbolImpl>, right:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:left index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:right index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'public final fun rangeTo (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+              $receiver: GET_VAR 'left: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+              other: GET_VAR 'right: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:range type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun rangeTo (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+            $receiver: GET_VAR 'left: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            other: GET_VAR 'right: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: GET_VAR 'val range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Failed: unoptimized === unoptimized for custom double "
+            GET_VAR 'val range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun check (x: <unbound IrClassSymbolImpl>, left: <unbound IrClassSymbolImpl>, right: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:check signature:/check|check(kotlin.Float;kotlin.Float;kotlin.Float){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, left:<unbound IrClassSymbolImpl>, right:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:left index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:right index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'public final fun rangeTo (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+              $receiver: GET_VAR 'left: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+              other: GET_VAR 'right: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:range type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun rangeTo (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+            $receiver: GET_VAR 'left: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            other: GET_VAR 'right: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: GET_VAR 'val range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Failed: unoptimized === unoptimized for standard float "
+            GET_VAR 'val range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun check (x: <unbound IrClassSymbolImpl>, left: <unbound IrClassSymbolImpl>, right: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+                <1>: <unbound IrClassSymbolImpl>
+                $receiver: CONST String type=<unbound IrClassSymbolImpl> value="b"
+                1: CONST String type=<unbound IrClassSymbolImpl> value="c"
+              1: CONST String type=<unbound IrClassSymbolImpl> value="a"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="a"
+              1: CONST String type=<unbound IrClassSymbolImpl> value="d"
+            1: CONST String type=<unbound IrClassSymbolImpl> value="b"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.ComparablePair<<unbound IrClassSymbolImpl>>> origin=RANGE
+                <1>: <root>.ComparablePair<<unbound IrClassSymbolImpl>>
+                $receiver: CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.ComparablePair, second: T of <root>.ComparablePair) [primary] declared in <root>.ComparablePair' type=<root>.ComparablePair<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  first: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  second: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                1: CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.ComparablePair, second: T of <root>.ComparablePair) [primary] declared in <root>.ComparablePair' type=<root>.ComparablePair<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  first: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  second: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              1: CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.ComparablePair, second: T of <root>.ComparablePair) [primary] declared in <root>.ComparablePair' type=<root>.ComparablePair<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                first: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                second: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.ComparablePair<<unbound IrClassSymbolImpl>>> origin=RANGE
+              <1>: <root>.ComparablePair<<unbound IrClassSymbolImpl>>
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.ComparablePair, second: T of <root>.ComparablePair) [primary] declared in <root>.ComparablePair' type=<root>.ComparablePair<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                first: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                second: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              1: CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.ComparablePair, second: T of <root>.ComparablePair) [primary] declared in <root>.ComparablePair' type=<root>.ComparablePair<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                first: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                second: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            1: CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.ComparablePair, second: T of <root>.ComparablePair) [primary] declared in <root>.ComparablePair' type=<root>.ComparablePair<<unbound IrClassSymbolImpl>> origin=null
+              <class: T>: <unbound IrClassSymbolImpl>
+              first: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              second: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>, left: <unbound IrClassSymbolImpl>, right: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              left: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              right: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>, left: <unbound IrClassSymbolImpl>, right: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST Double type=<unbound IrClassSymbolImpl> value=NaN
+            left: CONST Double type=<unbound IrClassSymbolImpl> value=NaN
+            right: CONST Double type=<unbound IrClassSymbolImpl> value=NaN
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>, left: <unbound IrClassSymbolImpl>, right: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+            left: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+            right: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>, left: <unbound IrClassSymbolImpl>, right: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              x: CONST Float type=<unbound IrClassSymbolImpl> value=NaN
+              left: CONST Float type=<unbound IrClassSymbolImpl> value=NaN
+              right: CONST Float type=<unbound IrClassSymbolImpl> value=NaN
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,33 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceCallInLambda.kt
+    CLASS INTERFACE name:Action signature:/Action|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Action
+      FUN name:run signature:/Action.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Action) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Action
+    FUN name:runAction signature:/runAction|runAction(Action){}[0] visibility:public modality:FINAL <> (a:<root>.Action) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<root>.Action
+      BLOCK_BODY
+        CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in <root>.Action' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'a: <root>.Action declared in <root>.runAction' type=<root>.Action origin=null
+    FUN name:builder signature:/builder|builder(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'public final fun runAction (a: <root>.Action): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: TYPE_OP type=<root>.Action origin=SAM_CONVERSION typeOperand=<root>.Action
+                    FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

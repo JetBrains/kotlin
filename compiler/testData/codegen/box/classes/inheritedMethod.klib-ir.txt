@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inheritedMethod.kt
+    CLASS CLASS name:Foo signature:/Foo|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:/Foo|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:xyzzy signature:/Foo.xyzzy|xyzzy(){}[0] visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun xyzzy (): <unbound IrClassSymbolImpl> declared in <root>.Foo'
+            CONST String type=<unbound IrClassSymbolImpl> value="xyzzy"
+    CLASS CLASS name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<root>.Foo]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar
+      CONSTRUCTOR signature:/Bar.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Bar [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Foo'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<root>.Foo]'
+      FUN name:test signature:/Bar.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.Bar) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Bar
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.Bar'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.Bar declared in <root>.Bar.test' type=<root>.Bar origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:bar type:<root>.Bar [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Bar' type=<root>.Bar origin=null
+        VAR name:f type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.Bar' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val bar: <root>.Bar [val] declared in <root>.box' type=<root>.Bar origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val f: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="xyzzy"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

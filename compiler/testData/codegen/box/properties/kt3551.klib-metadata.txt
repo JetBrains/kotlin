@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Identifier
+    // class name: Identifier.Companion
+
+    public final class Identifier : kotlin/Any {
+
+      public constructor()
+
+      public final fun getValue(): kotlin/Boolean
+
+      private final var myNullable: kotlin/Boolean
+        private final get
+        private final /* non-default */ set(l: kotlin/Boolean)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Identifier.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun init(isNullable: kotlin/Boolean): Identifier
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

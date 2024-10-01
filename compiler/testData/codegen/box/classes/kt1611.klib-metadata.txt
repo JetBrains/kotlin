@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final fun doBar(str: kotlin/String): kotlin/String
+
+      public final val bar: kotlin/Function1<@kotlin/ParameterName(name = "str") kotlin/String, kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

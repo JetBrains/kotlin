@@ -1,0 +1,396 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:com.example fileName:/toString.kt
+    CLASS OBJECT name:DataObject signature:com.example/DataObject|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.DataObject
+      CONSTRUCTOR signature:com.example/DataObject.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.DataObject [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:DataObject signature:com.example/DataObject|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Nested signature:com.example/DataObject.Nested|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.DataObject.Nested
+        CONSTRUCTOR signature:com.example/DataObject.Nested.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.DataObject.Nested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Nested signature:com.example/DataObject.Nested|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:com.example/DataObject.Nested.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.DataObject.Nested) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:com.example.DataObject.Nested
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.DataObject.Nested'
+              CONST String type=<unbound IrClassSymbolImpl> value="Nested"
+        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/DataObject.Nested.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.DataObject.Nested) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:com.example.DataObject.Nested
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.DataObject.Nested'
+              CONST Int type=<unbound IrClassSymbolImpl> value=-1192145589
+        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/DataObject.Nested.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.DataObject.Nested, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:com.example.DataObject.Nested
+          VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                  arg0: GET_VAR '<this>: com.example.DataObject.Nested declared in com.example.DataObject.Nested.equals' type=com.example.DataObject.Nested origin=null
+                  arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.DataObject.Nested.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.DataObject.Nested'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.DataObject.Nested
+                  GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.DataObject.Nested.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.DataObject.Nested'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.DataObject.Nested [val]
+              TYPE_OP type=com.example.DataObject.Nested origin=CAST typeOperand=com.example.DataObject.Nested
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.DataObject.Nested.equals' type=<unbound IrClassSymbolImpl>? origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.DataObject.Nested'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:com.example/DataObject.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.DataObject) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.DataObject
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.DataObject'
+            CONST String type=<unbound IrClassSymbolImpl> value="DataObject"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/DataObject.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.DataObject) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.DataObject
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.DataObject'
+            CONST Int type=<unbound IrClassSymbolImpl> value=503763002
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/DataObject.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.DataObject, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.DataObject
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: com.example.DataObject declared in com.example.DataObject.equals' type=com.example.DataObject origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.DataObject.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.DataObject'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.DataObject
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.DataObject.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.DataObject'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.DataObject [val]
+            TYPE_OP type=com.example.DataObject origin=CAST typeOperand=com.example.DataObject
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.DataObject.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.DataObject'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:Foo signature:com.example/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.Foo
+      CONSTRUCTOR signature:com.example/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:com.example.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:com.example/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Inner signature:com.example/Foo.Inner|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.Foo.Inner
+        CONSTRUCTOR signature:com.example/Foo.Inner.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.Foo.Inner [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Inner signature:com.example/Foo.Inner|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:com.example/Foo.Inner.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.Foo.Inner) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:com.example.Foo.Inner
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.Foo.Inner'
+              CONST String type=<unbound IrClassSymbolImpl> value="Inner"
+        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/Foo.Inner.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.Foo.Inner) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:com.example.Foo.Inner
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.Foo.Inner'
+              CONST Int type=<unbound IrClassSymbolImpl> value=211884093
+        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/Foo.Inner.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.Foo.Inner, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:com.example.Foo.Inner
+          VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                  arg0: GET_VAR '<this>: com.example.Foo.Inner declared in com.example.Foo.Inner.equals' type=com.example.Foo.Inner origin=null
+                  arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.Foo.Inner.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.Foo.Inner'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.Foo.Inner
+                  GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.Foo.Inner.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.Foo.Inner'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.Foo.Inner [val]
+              TYPE_OP type=com.example.Foo.Inner origin=CAST typeOperand=com.example.Foo.Inner
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.Foo.Inner.equals' type=<unbound IrClassSymbolImpl>? origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.Foo.Inner'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS OBJECT name:Declared signature:com.example/Declared|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.Declared
+      CONSTRUCTOR signature:com.example/Declared.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.Declared [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Declared signature:com.example/Declared|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:com.example/Declared.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.Declared) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.Declared
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.Declared'
+            CONST String type=<unbound IrClassSymbolImpl> value="Overriden"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/Declared.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.Declared) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.Declared
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.Declared'
+            CONST Int type=<unbound IrClassSymbolImpl> value=-1971250901
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/Declared.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.Declared, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.Declared
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: com.example.Declared declared in com.example.Declared.equals' type=com.example.Declared origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.Declared.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.Declared'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.Declared
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.Declared.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.Declared'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.Declared [val]
+            TYPE_OP type=com.example.Declared origin=CAST typeOperand=com.example.Declared
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.Declared.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.Declared'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:WithFinalToString signature:com.example/WithFinalToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.WithFinalToString
+      CONSTRUCTOR signature:com.example/WithFinalToString.<init>|<init>(){}[0] visibility:public <> () returnType:com.example.WithFinalToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithFinalToString signature:com.example/WithFinalToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:com.example/WithFinalToString.toString|toString(){}[0] visibility:public modality:FINAL <> ($this:com.example.WithFinalToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.WithFinalToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun toString (): <unbound IrClassSymbolImpl> declared in com.example.WithFinalToString'
+            CONST String type=<unbound IrClassSymbolImpl> value="FinalToString"
+    CLASS OBJECT name:InheritedFromClassWithFinalToString signature:com.example/InheritedFromClassWithFinalToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithFinalToString]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.InheritedFromClassWithFinalToString
+      CONSTRUCTOR signature:com.example/InheritedFromClassWithFinalToString.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.InheritedFromClassWithFinalToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.WithFinalToString'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:InheritedFromClassWithFinalToString signature:com.example/InheritedFromClassWithFinalToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithFinalToString]'
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/InheritedFromClassWithFinalToString.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithFinalToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithFinalToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithFinalToString'
+            CONST Int type=<unbound IrClassSymbolImpl> value=2043870071
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/InheritedFromClassWithFinalToString.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithFinalToString, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithFinalToString
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: com.example.InheritedFromClassWithFinalToString declared in com.example.InheritedFromClassWithFinalToString.equals' type=com.example.InheritedFromClassWithFinalToString origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithFinalToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithFinalToString'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.InheritedFromClassWithFinalToString
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithFinalToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithFinalToString'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.InheritedFromClassWithFinalToString [val]
+            TYPE_OP type=com.example.InheritedFromClassWithFinalToString origin=CAST typeOperand=com.example.InheritedFromClassWithFinalToString
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithFinalToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithFinalToString'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:WithOpenToString signature:com.example/WithOpenToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.WithOpenToString
+      CONSTRUCTOR signature:com.example/WithOpenToString.<init>|<init>(){}[0] visibility:public <> () returnType:com.example.WithOpenToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithOpenToString signature:com.example/WithOpenToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:com.example/WithOpenToString.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.WithOpenToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.WithOpenToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.WithOpenToString'
+            CONST String type=<unbound IrClassSymbolImpl> value="OpenToString"
+    CLASS OBJECT name:InheritedFromClassWithOpenToString signature:com.example/InheritedFromClassWithOpenToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithOpenToString]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.InheritedFromClassWithOpenToString
+      CONSTRUCTOR signature:com.example/InheritedFromClassWithOpenToString.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.InheritedFromClassWithOpenToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.WithOpenToString'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:InheritedFromClassWithOpenToString signature:com.example/InheritedFromClassWithOpenToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithOpenToString]'
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:com.example/InheritedFromClassWithOpenToString.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithOpenToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.WithOpenToString
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithOpenToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithOpenToString'
+            CONST String type=<unbound IrClassSymbolImpl> value="InheritedFromClassWithOpenToString"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/InheritedFromClassWithOpenToString.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithOpenToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithOpenToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithOpenToString'
+            CONST Int type=<unbound IrClassSymbolImpl> value=-1561192767
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/InheritedFromClassWithOpenToString.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithOpenToString, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithOpenToString
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: com.example.InheritedFromClassWithOpenToString declared in com.example.InheritedFromClassWithOpenToString.equals' type=com.example.InheritedFromClassWithOpenToString origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithOpenToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithOpenToString'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.InheritedFromClassWithOpenToString
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithOpenToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithOpenToString'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.InheritedFromClassWithOpenToString [val]
+            TYPE_OP type=com.example.InheritedFromClassWithOpenToString origin=CAST typeOperand=com.example.InheritedFromClassWithOpenToString
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithOpenToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithOpenToString'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:WithAbstractToString signature:com.example/WithAbstractToString|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.WithAbstractToString
+      CONSTRUCTOR signature:com.example/WithAbstractToString.<init>|<init>(){}[0] visibility:public <> () returnType:com.example.WithAbstractToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithAbstractToString signature:com.example/WithAbstractToString|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:com.example/WithAbstractToString.toString|toString(){}[0] visibility:public modality:ABSTRACT <> ($this:com.example.WithAbstractToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.WithAbstractToString
+    CLASS OBJECT name:InheritedFromClassWithAbstractToString signature:com.example/InheritedFromClassWithAbstractToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithAbstractToString]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.InheritedFromClassWithAbstractToString
+      CONSTRUCTOR signature:com.example/InheritedFromClassWithAbstractToString.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.InheritedFromClassWithAbstractToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.WithAbstractToString'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:InheritedFromClassWithAbstractToString signature:com.example/InheritedFromClassWithAbstractToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithAbstractToString]'
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:com.example/InheritedFromClassWithAbstractToString.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithAbstractToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun toString (): <unbound IrClassSymbolImpl> declared in com.example.WithAbstractToString
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithAbstractToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithAbstractToString'
+            CONST String type=<unbound IrClassSymbolImpl> value="InheritedFromClassWithAbstractToString"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:com.example/InheritedFromClassWithAbstractToString.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithAbstractToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithAbstractToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithAbstractToString'
+            CONST Int type=<unbound IrClassSymbolImpl> value=-1231906023
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:com.example/InheritedFromClassWithAbstractToString.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:com.example.InheritedFromClassWithAbstractToString, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:com.example.InheritedFromClassWithAbstractToString
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: com.example.InheritedFromClassWithAbstractToString declared in com.example.InheritedFromClassWithAbstractToString.equals' type=com.example.InheritedFromClassWithAbstractToString origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithAbstractToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithAbstractToString'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=com.example.InheritedFromClassWithAbstractToString
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithAbstractToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithAbstractToString'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:com.example.InheritedFromClassWithAbstractToString [val]
+            TYPE_OP type=com.example.InheritedFromClassWithAbstractToString origin=CAST typeOperand=com.example.InheritedFromClassWithAbstractToString
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in com.example.InheritedFromClassWithAbstractToString.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in com.example.InheritedFromClassWithAbstractToString'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:C signature:com.example/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.C
+      CONSTRUCTOR signature:com.example/C.<init>|<init>(){}[0] visibility:public <> () returnType:com.example.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:com.example/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:CC signature:com.example/C.CC|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.C.CC
+        CONSTRUCTOR signature:com.example/C.CC.<init>|<init>(){}[0] visibility:private <> () returnType:com.example.C.CC [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:CC signature:com.example/C.CC|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:com.example/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="DataObject"
+          2: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.DataObject' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:DataObject signature:com.example/DataObject|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]' type=com.example.DataObject
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Nested"
+          2: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.DataObject.Nested' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Nested signature:com.example/DataObject.Nested|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]' type=com.example.DataObject.Nested
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Inner"
+          2: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.Foo.Inner' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Inner signature:com.example/Foo.Inner|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]' type=com.example.Foo.Inner
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Overriden"
+          2: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.Declared' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Declared signature:com.example/Declared|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]' type=com.example.Declared
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="FinalToString"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:InheritedFromClassWithFinalToString signature:com.example/InheritedFromClassWithFinalToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithFinalToString]' type=com.example.InheritedFromClassWithFinalToString
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="InheritedFromClassWithOpenToString"
+          2: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithOpenToString' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:InheritedFromClassWithOpenToString signature:com.example/InheritedFromClassWithOpenToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithOpenToString]' type=com.example.InheritedFromClassWithOpenToString
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="InheritedFromClassWithAbstractToString"
+          2: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in com.example.InheritedFromClassWithAbstractToString' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:InheritedFromClassWithAbstractToString signature:com.example/InheritedFromClassWithAbstractToString|null[0] modality:FINAL visibility:public [data] superTypes:[com.example.WithAbstractToString]' type=com.example.InheritedFromClassWithAbstractToString
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in com.example'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

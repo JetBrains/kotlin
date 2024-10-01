@@ -1,0 +1,101 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final var xb: kotlin/Byte
+        public final get
+        public final set
+
+      public final var xbn: kotlin/Byte?
+        public final get
+        public final set
+
+      public final var xbnn: kotlin/Byte?
+        public final get
+        public final set
+
+      public final var xd: kotlin/Double
+        public final get
+        public final set
+
+      public final var xdn: kotlin/Double?
+        public final get
+        public final set
+
+      public final var xdnn: kotlin/Double?
+        public final get
+        public final set
+
+      public final var xf: kotlin/Float
+        public final get
+        public final set
+
+      public final var xfn: kotlin/Float?
+        public final get
+        public final set
+
+      public final var xfnn: kotlin/Float?
+        public final get
+        public final set
+
+      public final var xi: kotlin/Int
+        public final get
+        public final set
+
+      public final var xin: kotlin/Int?
+        public final get
+        public final set
+
+      public final var xinn: kotlin/Int?
+        public final get
+        public final set
+
+      public final var xl: kotlin/Long
+        public final get
+        public final set
+
+      public final var xln: kotlin/Long?
+        public final get
+        public final set
+
+      public final var xlnn: kotlin/Long?
+        public final get
+        public final set
+
+      public final var xs: kotlin/Short
+        public final get
+        public final set
+
+      public final var xsn: kotlin/Short?
+        public final get
+        public final set
+
+      public final var xsnn: kotlin/Short?
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

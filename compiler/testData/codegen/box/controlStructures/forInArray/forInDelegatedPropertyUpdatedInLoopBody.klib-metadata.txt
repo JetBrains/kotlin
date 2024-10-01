@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Del
+
+    public final class Del<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public final operator fun getValue(thisRef: kotlin/Any?, kProp: kotlin/Any): T#0
+
+      public final operator fun setValue(thisRef: kotlin/Any?, kProp: kotlin/Any, value: T#0): kotlin/Unit
+
+      public final var x: T#0
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

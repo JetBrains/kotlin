@@ -1,0 +1,48 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EmptyLazyGridLayoutInfo
+    // class name: LazyGridLayoutInfo
+    // class name: LazyGridState
+
+    private final object EmptyLazyGridLayoutInfo : LazyGridLayoutInfo {
+
+      private constructor()
+
+      public open fun ok(): kotlin/String
+    }
+
+    public sealed interface LazyGridLayoutInfo : kotlin/Any {
+
+      public abstract fun ok(): kotlin/String
+
+      // sealed subclass: EmptyLazyGridLayoutInfo
+    }
+
+    public final class LazyGridState : kotlin/Any {
+
+      public constructor()
+
+      public final val layoutInfo: LazyGridLayoutInfo
+        public final /* non-default */ get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

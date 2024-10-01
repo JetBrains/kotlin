@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyCharSequence
+
+    public final class MyCharSequence : kotlin/CharSequence {
+
+      public constructor(s: kotlin/String)
+
+      public open operator fun get(index: kotlin/Int): kotlin/Char
+
+      public final fun get(foo: kotlin/String): kotlin/Char
+
+      public open fun subSequence(startIndex: kotlin/Int, endIndex: kotlin/Int): kotlin/CharSequence
+
+      public open val length: kotlin/Int
+        public open get
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

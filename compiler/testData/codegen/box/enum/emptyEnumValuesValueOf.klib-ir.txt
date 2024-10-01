@@ -1,0 +1,45 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/emptyEnumValuesValueOf.kt
+    CLASS ENUM_CLASS name:Empty signature:/Empty|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Empty>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Empty
+      CONSTRUCTOR signature:/Empty.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Empty [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Empty
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Empty signature:/Empty|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Empty>]'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Empty.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Empty>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Empty.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Empty
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Empty.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Empty.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Empty>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Empty.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun values (): <unbound IrClassSymbolImpl><<root>.Empty> declared in <root>.Empty' type=<unbound IrClassSymbolImpl><<root>.Empty> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                CALL 'public final fun values (): <unbound IrClassSymbolImpl><<root>.Empty> declared in <root>.Empty' type=<unbound IrClassSymbolImpl><<root>.Empty> origin=null
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR name:found type:<root>.Empty [val]
+              CALL 'public final fun valueOf (value: <unbound IrClassSymbolImpl>): <root>.Empty declared in <root>.Empty' type=<root>.Empty origin=null
+                value: CONST String type=<unbound IrClassSymbolImpl> value="nonExistentEntry"
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val found: <root>.Empty [val] declared in <root>.box' type=<root>.Empty origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"

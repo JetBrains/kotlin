@@ -1,0 +1,192 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:foo fileName:/ordinalsWithEnumEntitiesOverrides.kt
+    CLASS ENUM_CLASS name:TestA signature:foo/TestA|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><foo.TestA>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.TestA
+      CONSTRUCTOR signature:foo/TestA.<init>|<init>(){}[0] visibility:private <> () returnType:foo.TestA [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: foo.TestA
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestA signature:foo/TestA|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><foo.TestA>]'
+      ENUM_ENTRY name:FIRST signature:foo/TestA.FIRST|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.TestA.FIRST'
+        class: CLASS ENUM_ENTRY name:FIRST signature:foo/TestA.FIRST.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.TestA]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.TestA.FIRST
+          CONSTRUCTOR signature:foo/TestA.FIRST.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:foo.TestA.FIRST [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.TestA'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST signature:foo/TestA.FIRST.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.TestA]'
+          PROPERTY name:label signature:foo/TestA.FIRST.<EEC>.label|{}label[0] visibility:public modality:OPEN [val]
+            FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestA.FIRST.<EEC>.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="first A"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-label> signature:foo/TestA.FIRST.<EEC>.label.<get-label>|<get-label>(){}[0] visibility:public modality:OPEN <> ($this:foo.TestA.FIRST) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:label signature:foo/TestA.FIRST.<EEC>.label|{}label[0] visibility:public modality:OPEN [val]
+              overridden:
+                public abstract fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA
+              $this: VALUE_PARAMETER name:<this> type:foo.TestA.FIRST
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA.FIRST'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestA.FIRST.<EEC>.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: foo.TestA.FIRST declared in foo.TestA.FIRST.<get-label>' type=foo.TestA.FIRST origin=null
+      ENUM_ENTRY name:SECOND signature:foo/TestA.SECOND|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.TestA.SECOND'
+        class: CLASS ENUM_ENTRY name:SECOND signature:foo/TestA.SECOND.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.TestA]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.TestA.SECOND
+          CONSTRUCTOR signature:foo/TestA.SECOND.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:foo.TestA.SECOND [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.TestA'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:SECOND signature:foo/TestA.SECOND.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.TestA]'
+          PROPERTY name:label signature:foo/TestA.SECOND.<EEC>.label|{}label[0] visibility:public modality:OPEN [val]
+            FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestA.SECOND.<EEC>.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="second A"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-label> signature:foo/TestA.SECOND.<EEC>.label.<get-label>|<get-label>(){}[0] visibility:public modality:OPEN <> ($this:foo.TestA.SECOND) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:label signature:foo/TestA.SECOND.<EEC>.label|{}label[0] visibility:public modality:OPEN [val]
+              overridden:
+                public abstract fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA
+              $this: VALUE_PARAMETER name:<this> type:foo.TestA.SECOND
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA.SECOND'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestA.SECOND.<EEC>.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: foo.TestA.SECOND declared in foo.TestA.SECOND.<get-label>' type=foo.TestA.SECOND origin=null
+      ENUM_ENTRY name:THIRD signature:foo/TestA.THIRD|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.TestA.THIRD'
+        class: CLASS ENUM_ENTRY name:THIRD signature:foo/TestA.THIRD.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.TestA]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.TestA.THIRD
+          CONSTRUCTOR signature:foo/TestA.THIRD.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:foo.TestA.THIRD [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.TestA'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:THIRD signature:foo/TestA.THIRD.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.TestA]'
+          PROPERTY name:label signature:foo/TestA.THIRD.<EEC>.label|{}label[0] visibility:public modality:OPEN [val]
+            FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestA.THIRD.<EEC>.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="third A"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-label> signature:foo/TestA.THIRD.<EEC>.label.<get-label>|<get-label>(){}[0] visibility:public modality:OPEN <> ($this:foo.TestA.THIRD) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:label signature:foo/TestA.THIRD.<EEC>.label|{}label[0] visibility:public modality:OPEN [val]
+              overridden:
+                public abstract fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA
+              $this: VALUE_PARAMETER name:<this> type:foo.TestA.THIRD
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA.THIRD'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestA.THIRD.<EEC>.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: foo.TestA.THIRD declared in foo.TestA.THIRD.<get-label>' type=foo.TestA.THIRD origin=null
+      PROPERTY name:label signature:foo/TestA.label|{}label[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-label> signature:foo/TestA.label.<get-label>|<get-label>(){}[0] visibility:public modality:ABSTRACT <> ($this:foo.TestA) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:label signature:foo/TestA.label|{}label[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.TestA
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:foo/TestA.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><foo.TestA>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:foo/TestA.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:foo.TestA
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:foo/TestA.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:foo/TestA.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><foo.TestA>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:foo/TestA.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:TestB signature:foo/TestB|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><foo.TestB>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.TestB
+      CONSTRUCTOR signature:foo/TestB.<init>|<init>(kotlin.String){}[0] visibility:private <> (label:<unbound IrClassSymbolImpl>) returnType:foo.TestB [primary]
+        VALUE_PARAMETER name:label index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: foo.TestB
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestB signature:foo/TestB|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><foo.TestB>]'
+      PROPERTY name:label signature:foo/TestB.label|{}label[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestB.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'label: <unbound IrClassSymbolImpl> declared in foo.TestB.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-label> signature:foo/TestB.label.<get-label>|<get-label>(){}[0] visibility:public modality:FINAL <> ($this:foo.TestB) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:label signature:foo/TestB.label|{}label[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.TestB
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestB'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:label signature:[ foo/TestB.label|{}label[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:label type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: foo.TestB declared in foo.TestB.<get-label>' type=foo.TestB origin=null
+      ENUM_ENTRY name:FIRST signature:foo/TestB.FIRST|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (label: <unbound IrClassSymbolImpl>) [primary] declared in foo.TestB'
+            label: CONST String type=<unbound IrClassSymbolImpl> value="first B"
+      ENUM_ENTRY name:SECOND signature:foo/TestB.SECOND|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (label: <unbound IrClassSymbolImpl>) [primary] declared in foo.TestB'
+            label: CONST String type=<unbound IrClassSymbolImpl> value="second B"
+      ENUM_ENTRY name:THIRD signature:foo/TestB.THIRD|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (label: <unbound IrClassSymbolImpl>) [primary] declared in foo.TestB'
+            label: CONST String type=<unbound IrClassSymbolImpl> value="third B"
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:foo/TestB.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><foo.TestB>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:foo/TestB.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:foo.TestB
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:foo/TestB.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:foo/TestB.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><foo.TestB>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:foo/TestB.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public abstract fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:FIRST signature:foo/TestA.FIRST|null[0]' type=foo.TestA
+          2: CONST String type=<unbound IrClassSymbolImpl> value="first A"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public abstract fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:SECOND signature:foo/TestA.SECOND|null[0]' type=foo.TestA
+          2: CONST String type=<unbound IrClassSymbolImpl> value="second A"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public abstract fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestA' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:THIRD signature:foo/TestA.THIRD|null[0]' type=foo.TestA
+          2: CONST String type=<unbound IrClassSymbolImpl> value="third A"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:FIRST signature:foo/TestA.FIRST|null[0]' type=foo.TestA
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:SECOND signature:foo/TestA.SECOND|null[0]' type=foo.TestA
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:THIRD signature:foo/TestA.THIRD|null[0]' type=foo.TestA
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestB' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:FIRST signature:foo/TestB.FIRST|null[0]' type=foo.TestB
+          2: CONST String type=<unbound IrClassSymbolImpl> value="first B"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestB' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:SECOND signature:foo/TestB.SECOND|null[0]' type=foo.TestB
+          2: CONST String type=<unbound IrClassSymbolImpl> value="second B"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-label> (): <unbound IrClassSymbolImpl> declared in foo.TestB' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:THIRD signature:foo/TestB.THIRD|null[0]' type=foo.TestB
+          2: CONST String type=<unbound IrClassSymbolImpl> value="third B"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:FIRST signature:foo/TestB.FIRST|null[0]' type=foo.TestB
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:SECOND signature:foo/TestB.SECOND|null[0]' type=foo.TestB
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:THIRD signature:foo/TestB.THIRD|null[0]' type=foo.TestB
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

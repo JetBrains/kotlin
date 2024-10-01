@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f1(a: kotlin/Any?): kotlin/Unit
+
+      public final fun f2(a: kotlin/Boolean?): kotlin/Unit
+
+      public final fun f3(a: kotlin/Any): kotlin/Unit
+
+      public final fun f4(a: kotlin/Boolean): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: I
+
+    public abstract interface I<T#0 /* TT */> : kotlin/Any {
+
+      public open fun id(x: T#0): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> forClass(x: T#0): T#0
+
+      public final fun <T#0 /* T */> forTypeParameter(x: T#0): T#0
+    }
+  }
+}

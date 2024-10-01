@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun capture1(fn: kotlin/Function3<kotlin/String, kotlin/IntArray, kotlin/String, kotlin/Unit>): kotlin/Any
+
+      public final fun capture2(fn: kotlin/Function3<kotlin/String, kotlin/Int, kotlin/Int, kotlin/Unit>): kotlin/Any
+
+      public final fun captureFromOtherFile(): kotlin/Any
+
+      public final fun checkNotEqual(x: kotlin/Any, y: kotlin/Any): kotlin/Unit
+
+      public final fun target(s1: kotlin/String, vararg xs: kotlin/Int /* kotlin/IntArray */, s2: kotlin/String /* = ... */): kotlin/Unit
+    }
+  }
+}

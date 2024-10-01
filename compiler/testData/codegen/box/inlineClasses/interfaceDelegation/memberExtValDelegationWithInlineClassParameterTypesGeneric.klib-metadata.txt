@@ -1,0 +1,82 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FooImpl
+    // class name: GFoo
+    // class name: GFooImpl
+    // class name: IFoo
+    // class name: S
+    // class name: TestFoo
+    // class name: TestGFoo
+
+    public final object FooImpl : IFoo {
+
+      private constructor()
+
+      public open val S<kotlin/String>.extVal: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface GFoo<T#0 /* T */> : kotlin/Any {
+
+      public abstract val T#0.extVal: kotlin/String
+        public abstract get
+    }
+
+    public final object GFooImpl : GFoo<S<kotlin/String>> {
+
+      private constructor()
+
+      public open val S<kotlin/String>.extVal: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface IFoo : kotlin/Any {
+
+      public abstract val S<kotlin/String>.extVal: kotlin/String
+        public abstract get
+    }
+
+    public final value class S<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final class TestFoo : IFoo {
+
+      public constructor()
+
+      public open /* delegation */ val S<kotlin/String>.extVal: kotlin/String
+        public open get
+    }
+
+    public final class TestGFoo : GFoo<S<kotlin/String>> {
+
+      public constructor()
+
+      public open /* delegation */ val S<kotlin/String>.extVal: kotlin/String
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

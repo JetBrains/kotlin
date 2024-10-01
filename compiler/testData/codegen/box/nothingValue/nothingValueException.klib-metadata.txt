@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Context
+
+    public final class Context<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> kotlin/Any.decodeIn(typeFrom: Context<in T#0>): T#0
+
+      public final fun <T#0 /* T */> kotlin/Any?.decodeOut(typeFrom: Context<out T#0>): T#0
+
+      public final fun <T#0 /* T */> something(): T#0
+    }
+  }
+}

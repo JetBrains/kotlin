@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TowerDataElementsForName
+
+    public final class TowerDataElementsForName : kotlin/Any {
+
+      public constructor()
+
+      public final val reversedFilteredLocalScopes: kotlin/collections/List<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

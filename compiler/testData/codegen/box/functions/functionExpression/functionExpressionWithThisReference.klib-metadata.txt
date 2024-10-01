@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.genericThisRef1(): kotlin/Function0<T#0>
+
+      public final fun <T#0 /* T */> T#0.genericThisRef2(): kotlin/Function0<T#0>
+
+      public final fun kotlin/Int.thisRef1(): kotlin/Function0<kotlin/Int>
+
+      public final fun kotlin/Int.thisRef2(): kotlin/Function0<kotlin/Int>
+
+      public final val <T#0 /* T */> T#0.valGenericThisRef1: kotlin/Function0<T#0>
+        public final /* non-default */ get
+
+      public final val <T#0 /* T */> T#0.valGenericThisRef2: kotlin/Function0<T#0>
+        public final /* non-default */ get
+
+      public final val kotlin/Int.valThisRef1: kotlin/Function0<kotlin/Int>
+        public final /* non-default */ get
+
+      public final val kotlin/Int.valThisRef2: kotlin/Function0<kotlin/Int>
+        public final /* non-default */ get
+
+      public final val <T#0 /* T */> T#0.withLabel1: kotlin/Function0<T#0>
+        public final /* non-default */ get
+
+      public final val <T#0 /* T */> T#0.withLabel2: kotlin/Function0<T#0>
+        public final /* non-default */ get
+    }
+  }
+}

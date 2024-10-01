@@ -1,0 +1,98 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Anno
+    // class name: test/E
+    // class name: test/Empty
+
+    public final annotation class test/A : kotlin/Annotation {
+
+      public constructor(b: kotlin/Byte, s: kotlin/Short, i: kotlin/Int, f: kotlin/Float, d: kotlin/Double, l: kotlin/Long, c: kotlin/Char, bool: kotlin/Boolean)
+
+      public final val b: kotlin/Byte
+        public final get
+
+      public final val bool: kotlin/Boolean
+        public final get
+
+      public final val c: kotlin/Char
+        public final get
+
+      public final val d: kotlin/Double
+        public final get
+
+      public final val f: kotlin/Float
+        public final get
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final val l: kotlin/Long
+        public final get
+
+      public final val s: kotlin/Short
+        public final get
+    }
+
+    public final annotation class test/Anno : kotlin/Annotation {
+
+      public constructor(s: kotlin/String, i: kotlin/Int, f: kotlin/Double, u: kotlin/UInt, e: test/E, a: test/A, k: kotlin/reflect/KClass<*>, arr: kotlin/Array<kotlin/String>, intArr: kotlin/IntArray, arrOfE: kotlin/Array<test/E>, arrOfA: kotlin/Array<test/Empty>)
+
+      public final val a: test/A
+        public final get
+
+      public final val arr: kotlin/Array<kotlin/String>
+        public final get
+
+      public final val arrOfA: kotlin/Array<test/Empty>
+        public final get
+
+      public final val arrOfE: kotlin/Array<test/E>
+        public final get
+
+      public final val e: test/E
+        public final get
+
+      public final val f: kotlin/Double
+        public final get
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final val intArr: kotlin/IntArray
+        public final get
+
+      public final val k: kotlin/reflect/KClass<*>
+        public final get
+
+      public final val s: kotlin/String
+        public final get
+
+      public final val u: kotlin/UInt
+        public final get
+    }
+
+    public final enum class test/E : kotlin/Enum<test/E> {
+
+      private constructor()
+
+      E0,
+
+      // has Enum.entries
+    }
+
+    public final annotation class test/Empty : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

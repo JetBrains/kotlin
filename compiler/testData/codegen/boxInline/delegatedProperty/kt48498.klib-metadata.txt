@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: x
+
+    package {
+
+      public final inline fun foo(): kotlin/String
+
+      public final operator fun kotlin/String.getValue(thisRef: kotlin/Any?, prop: kotlin/Any?): kotlin/String
+
+      public final operator fun kotlin/String.provideDelegate(thisRef: kotlin/Any?, prop: kotlin/Any?): kotlin/String
+    }
+  }
+}

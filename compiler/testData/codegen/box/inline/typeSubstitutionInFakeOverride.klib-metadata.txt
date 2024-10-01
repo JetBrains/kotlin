@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: OK
+
+    public abstract class A : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Any> baz(): kotlin/String
+    }
+
+    public final class B : A {
+
+      public constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    public final class OK : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

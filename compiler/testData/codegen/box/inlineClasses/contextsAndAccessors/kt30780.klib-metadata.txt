@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+    // class name: Test.Companion
+
+    public final value class Test : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public final fun crash(): kotlin/String
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      private final inline fun getInlineConstant(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    private final companion object Test.Companion : kotlin/Any {
+
+      private constructor()
+
+      private final const val CONSTANT: kotlin/String /* = "OK" */
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: MyRunnable
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun doNoninlineWork(job: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final inline fun doWork(noinline job: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+
+    public abstract fun interface MyRunnable : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

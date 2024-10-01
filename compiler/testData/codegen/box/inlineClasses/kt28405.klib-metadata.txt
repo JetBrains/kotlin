@@ -1,0 +1,70 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: InlineCharArray
+    // class name: TestInlineCharArrayW
+    // class name: TestUIntArrayW
+
+    public final value class InlineCharArray : kotlin/Any {
+
+      public constructor(x: kotlin/CharArray)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun toString(): kotlin/String
+
+      public final val x: kotlin/CharArray
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/CharArray
+    }
+
+    public final value class TestInlineCharArrayW : kotlin/Any {
+
+      public constructor(x: InlineCharArray)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: InlineCharArray
+        public final get
+
+      // underlying property: x
+
+      // underlying type: InlineCharArray
+    }
+
+    public final value class TestUIntArrayW : kotlin/Any {
+
+      public constructor(x: kotlin/UIntArray)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/UIntArray
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/UIntArray
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

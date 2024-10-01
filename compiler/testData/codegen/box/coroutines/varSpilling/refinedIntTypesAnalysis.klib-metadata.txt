@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public final class Test : kotlin/Any {
+
+      public constructor()
+
+      public final suspend fun discardSuspend(discarded0: kotlin/Long, max: kotlin/Long): kotlin/Unit
+
+      private final suspend fun readSuspend(size: kotlin/Int): kotlin/Boolean
+
+      private final inline fun reading(block: kotlin/Function0<kotlin/Boolean>): kotlin/Boolean
+
+      private final fun setupStateForRead(): kotlin/Any?
+
+      public final val isClosedForRead: kotlin/Boolean /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

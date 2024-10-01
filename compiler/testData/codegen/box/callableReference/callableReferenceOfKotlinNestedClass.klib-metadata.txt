@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Checker
+    // class name: Sample
+    // class name: Sample.SS
+
+    public abstract class Checker : kotlin/Any {
+
+      public constructor()
+
+      public final fun check(): kotlin/String
+
+      public abstract fun <T#0 /* T1 */, T#1 /* T2 */> run(method: kotlin/reflect/KFunction1<T#0, T#1>, fn: kotlin/Function2<T#0, T#1, kotlin/Boolean>): kotlin/String
+    }
+
+    public final class Sample : kotlin/Any {
+
+      public constructor()
+
+      // nested class: SS
+    }
+
+    public final inner class Sample.SS : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

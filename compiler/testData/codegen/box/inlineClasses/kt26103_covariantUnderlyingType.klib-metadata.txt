@@ -1,0 +1,200 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: GIIList
+    // class name: GIList
+    // class name: GList
+    // class name: GList2
+    // class name: GSList
+    // class name: II
+    // class name: IIList
+    // class name: IList
+    // class name: SList
+
+    public final value class GIIList<T#0 /* T */> : kotlin/Any {
+
+      public constructor(iis: kotlin/collections/List<II>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val iis: kotlin/collections/List<II>
+        public final get
+
+      // underlying property: iis
+
+      // underlying type: kotlin/collections/List<II>
+    }
+
+    public final value class GIList<T#0 /* T */> : kotlin/Any {
+
+      public constructor(ints: kotlin/collections/List<kotlin/Int>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ints: kotlin/collections/List<kotlin/Int>
+        public final get
+
+      // underlying property: ints
+
+      // underlying type: kotlin/collections/List<kotlin/Int>
+    }
+
+    public final value class GList<T#0 /* T */> : kotlin/Any {
+
+      public constructor(xs: kotlin/collections/List<T#0>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val xs: kotlin/collections/List<T#0>
+        public final get
+
+      // underlying property: xs
+
+      // underlying type: kotlin/collections/List<T#0>
+    }
+
+    public final value class GList2<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(xs: kotlin/collections/List<T#0?>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val xs: kotlin/collections/List<T#0?>
+        public final get
+
+      // underlying property: xs
+
+      // underlying type: kotlin/collections/List<T#0?>
+    }
+
+    public final value class GSList<T#0 /* T */> : kotlin/Any {
+
+      public constructor(ss: kotlin/collections/List<kotlin/String>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ss: kotlin/collections/List<kotlin/String>
+        public final get
+
+      // underlying property: ss
+
+      // underlying type: kotlin/collections/List<kotlin/String>
+    }
+
+    public final value class II : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val i: kotlin/Int
+        public final get
+
+      // underlying property: i
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class IIList : kotlin/Any {
+
+      public constructor(iis: kotlin/collections/List<II>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val iis: kotlin/collections/List<II>
+        public final get
+
+      // underlying property: iis
+
+      // underlying type: kotlin/collections/List<II>
+    }
+
+    public final value class IList : kotlin/Any {
+
+      public constructor(ints: kotlin/collections/List<kotlin/Int>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ints: kotlin/collections/List<kotlin/Int>
+        public final get
+
+      // underlying property: ints
+
+      // underlying type: kotlin/collections/List<kotlin/Int>
+    }
+
+    public final value class SList : kotlin/Any {
+
+      public constructor(ss: kotlin/collections/List<kotlin/String>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ss: kotlin/collections/List<kotlin/String>
+        public final get
+
+      // underlying property: ss
+
+      // underlying type: kotlin/collections/List<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testGIIList(giil: GIIList<kotlin/Any>): kotlin/Unit
+
+      public final fun testGIList(gil: GIList<kotlin/Any>): kotlin/Unit
+
+      public final fun testGList(gl: GList<kotlin/String>): kotlin/Unit
+
+      public final fun testGList2(gl: GList2<kotlin/String>): kotlin/Unit
+
+      public final fun testGSList(sl: GSList<kotlin/String>): kotlin/Unit
+
+      public final fun testIIList(iil: IIList): kotlin/Unit
+
+      public final fun testIList(il: IList): kotlin/Unit
+
+      public final fun testSList(sl: SList): kotlin/Unit
+    }
+  }
+}

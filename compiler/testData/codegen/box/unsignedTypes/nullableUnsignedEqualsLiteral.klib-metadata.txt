@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isZeroUInt(n: kotlin/UInt?): kotlin/Boolean
+
+      public final fun isZeroUInt2(n: kotlin/UInt?): kotlin/Boolean
+
+      public final fun isZeroULong(n: kotlin/ULong?): kotlin/Boolean
+    }
+  }
+}

@@ -1,0 +1,93 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/duplicatingItems.kt
+    CLASS ENUM_CLASS name:Season signature:/Season|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Season>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Season
+      CONSTRUCTOR signature:/Season.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Season [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Season
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Season signature:/Season|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Season>]'
+      ENUM_ENTRY name:WINTER signature:/Season.WINTER|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Season'
+      ENUM_ENTRY name:SPRING signature:/Season.SPRING|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Season'
+      ENUM_ENTRY name:SUMMER signature:/Season.SUMMER|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Season'
+      ENUM_ENTRY name:AUTUMN signature:/Season.AUTUMN|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Season'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Season.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Season>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Season.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Season
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Season.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Season.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Season>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Season.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:bar signature:/bar|bar(Season){}[0] visibility:public modality:FINAL <> (x:<root>.Season) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.Season
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.Season [val]
+            GET_VAR 'x: <root>.Season declared in <root>.bar' type=<root>.Season origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.Season [val] declared in <root>.bar' type=<root>.Season origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:WINTER signature:/Season.WINTER|null[0]' type=<root>.Season
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.Season [val] declared in <root>.bar' type=<root>.Season origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:SPRING signature:/Season.SPRING|null[0]' type=<root>.Season
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="winter_spring"
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.Season [val] declared in <root>.bar' type=<root>.Season origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:SUMMER signature:/Season.SUMMER|null[0]' type=<root>.Season
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.Season [val] declared in <root>.bar' type=<root>.Season origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:SPRING signature:/Season.SPRING|null[0]' type=<root>.Season
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="summer"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="autumn"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="winter_spring"
+          2: CALL 'public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:WINTER signature:/Season.WINTER|null[0]' type=<root>.Season
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="winter_spring"
+          2: CALL 'public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:SPRING signature:/Season.SPRING|null[0]' type=<root>.Season
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="summer"
+          2: CALL 'public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:SUMMER signature:/Season.SUMMER|null[0]' type=<root>.Season
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="autumn"
+          2: CALL 'public final fun bar (x: <root>.Season): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:AUTUMN signature:/Season.AUTUMN|null[0]' type=<root>.Season
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

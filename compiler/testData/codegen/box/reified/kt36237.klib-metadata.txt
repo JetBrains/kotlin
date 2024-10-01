@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* P */> cast(value: kotlin/Any): T#0
+
+      public final inline fun <reified T#0 /* P */, reified T#1 /* Z */> cast0(value: kotlin/Any, func: kotlin/Function1<kotlin/Any, T#1> /* = ... */): T#1
+    }
+  }
+}

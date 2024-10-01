@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:foo fileName:/localVal.kt
+    CLASS CLASS name:Delegate signature:foo/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.Delegate
+      CONSTRUCTOR signature:foo/Delegate.<init>|<init>(){}[0] visibility:public <> () returnType:foo.Delegate [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate signature:foo/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getValue signature:foo/Delegate.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($this:foo.Delegate, t:<unbound IrClassSymbolImpl>?, p:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:foo.Delegate
+        VALUE_PARAMETER name:t index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (t: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [operator] declared in foo.Delegate'
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        LOCAL_DELEGATED_PROPERTY name:prop type:<unbound IrClassSymbolImpl> flags:val
+          VAR PROPERTY_DELEGATE name:prop$delegate type:foo.Delegate [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.Delegate' type=foo.Delegate origin=null
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-prop> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.box'
+                CALL 'public final fun getValue (t: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [operator] declared in foo.Delegate' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val prop$delegate: foo.Delegate [val] declared in foo.box' type=foo.Delegate origin=null
+                  t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val prop: <unbound IrClassSymbolImpl> by (...)' delegate='val prop$delegate: foo.Delegate [val] declared in foo.box' getter='local final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.box' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'local final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.box' type=<unbound IrClassSymbolImpl> origin=GET_LOCAL_PROPERTY
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

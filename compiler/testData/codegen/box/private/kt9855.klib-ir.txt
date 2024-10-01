@@ -1,0 +1,64 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt9855.kt
+    CLASS CLASS name:MyString signature:/MyString|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyString
+      CONSTRUCTOR signature:/MyString.<init>|<init>(kotlin.String){}[0] visibility:public <> (content:<unbound IrClassSymbolImpl>) returnType:<root>.MyString [primary]
+        VALUE_PARAMETER name:content index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyString signature:/MyString|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:content signature:/MyString.content|{}content[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:content signature:[ /MyString.content|{}content[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:content type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'content: <unbound IrClassSymbolImpl> declared in <root>.MyString.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-content> signature:/MyString.content.<get-content>|<get-content>(){}[0] visibility:public modality:FINAL <> ($this:<root>.MyString) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:content signature:/MyString.content|{}content[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyString
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-content> (): <unbound IrClassSymbolImpl> declared in <root>.MyString'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:content signature:[ /MyString.content|{}content[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:content type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyString declared in <root>.MyString.<get-content>' type=<root>.MyString origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-content> signature:/MyString.content.<set-content>|<set-content>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.MyString, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:content signature:/MyString.content|{}content[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyString
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:content signature:[ /MyString.content|{}content[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:content type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.MyString declared in <root>.MyString.<set-content>' type=<root>.MyString origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.MyString.<set-content>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS OBJECT name:Greeter signature:/Greeter|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Greeter
+      CONSTRUCTOR signature:/Greeter.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Greeter [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Greeter signature:/Greeter|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:sayHello signature:/Greeter.sayHello|sayHello(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Greeter, name:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Greeter
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          VAR name:result type:<root>.MyString [var]
+            CONSTRUCTOR_CALL 'public constructor <init> (content: <unbound IrClassSymbolImpl>) [primary] declared in <root>.MyString' type=<root>.MyString origin=null
+              content: GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.Greeter.sayHello' type=<unbound IrClassSymbolImpl> origin=null
+          SET_VAR 'var result: <root>.MyString [var] declared in <root>.Greeter.sayHello' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            CALL 'private final fun plus (suffix: <unbound IrClassSymbolImpl>): <root>.MyString [operator] declared in <root>' type=<root>.MyString origin=PLUSEQ
+              $receiver: GET_VAR 'var result: <root>.MyString [var] declared in <root>.Greeter.sayHello' type=<root>.MyString origin=PLUSEQ
+              suffix: CONST String type=<unbound IrClassSymbolImpl> value="K"
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun sayHello (name: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Greeter'
+            CALL 'public final fun <get-content> (): <unbound IrClassSymbolImpl> declared in <root>.MyString' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'var result: <root>.MyString [var] declared in <root>.Greeter.sayHello' type=<root>.MyString origin=null
+    FUN name:plus signature:[ File '/kt9855.kt' <- /plus|plus@MyString(kotlin.String){}[0] ] visibility:private modality:FINAL <> ($receiver:<root>.MyString, suffix:<unbound IrClassSymbolImpl>) returnType:<root>.MyString [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.MyString
+      VALUE_PARAMETER name:suffix index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun plus (suffix: <unbound IrClassSymbolImpl>): <root>.MyString [operator] declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (content: <unbound IrClassSymbolImpl>) [primary] declared in <root>.MyString' type=<root>.MyString origin=null
+            content: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CALL 'public final fun <get-content> (): <unbound IrClassSymbolImpl> declared in <root>.MyString' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MyString declared in <root>.plus' type=<root>.MyString origin=null
+              GET_VAR 'suffix: <unbound IrClassSymbolImpl> declared in <root>.plus' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun sayHello (name: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Greeter' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Greeter signature:/Greeter|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Greeter
+            name: CONST String type=<unbound IrClassSymbolImpl> value="O"

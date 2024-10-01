@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Station
+
+    public final data class Station : kotlin/Any {
+
+      public constructor(id: kotlin/String?, name: kotlin/String, distance: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/String?
+
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      public final /* synthesized */ operator fun component3(): kotlin/Int
+
+      public final /* synthesized */ fun copy(id: kotlin/String? /* = ... */, name: kotlin/String /* = ... */, distance: kotlin/Int /* = ... */): Station
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val distance: kotlin/Int
+        public final get
+
+      public final val id: kotlin/String?
+        public final get
+
+      public final val name: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

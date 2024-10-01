@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AbstractTreeNode
+
+    public final class test/AbstractTreeNode<T#0 /* T */> : kotlin/Any {
+
+      public constructor(value: T#0, parent: test/AbstractTreeNode<T#0>?)
+
+      public final val parent: test/AbstractTreeNode<T#0>?
+        public final get
+
+      public final val value: T#0
+        public final get
+    }
+
+    package {
+
+      internal final inline fun <reified T#0 /* T */ : kotlin/Any> test/AbstractTreeNode<*>.findNotNullValueOfType(strict: kotlin/Boolean /* = ... */): T#0
+
+      internal final inline fun <reified T#0 /* T */ : kotlin/Any> test/AbstractTreeNode<*>.findValueOfType(strict: kotlin/Boolean /* = ... */): T#0?
+    }
+  }
+}

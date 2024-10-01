@@ -1,0 +1,47 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final value class A : kotlin/Any {
+
+      public /* secondary */ constructor(c: kotlin/Char)
+
+      private constructor(value: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val publicValue: kotlin/String
+        public final /* non-default */ get
+
+      private final val value: kotlin/String
+        private final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

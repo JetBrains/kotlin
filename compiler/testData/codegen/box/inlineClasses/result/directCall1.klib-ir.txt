@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/directCall1.kt
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<T of <root>.I>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /I|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:foo signature:/I.foo|foo(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I<T of <root>.I>, x:T of <root>.I) returnType:T of <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.I<T of <root>.I>
+        VALUE_PARAMETER name:x index:0 type:T of <root>.I
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.I<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.I<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>>]'
+      FUN name:foo signature:/C.foo|foo(kotlin.Result<kotlin.Any?>){}[0] visibility:public modality:OPEN <> ($this:<root>.C, x:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        overridden:
+          public abstract fun foo (x: T of <root>.I): T of <root>.I declared in <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.C'
+            GET_VAR 'x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.C.foo' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            $this: CALL 'public open fun foo (x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+              x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value="OK"

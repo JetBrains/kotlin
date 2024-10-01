@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final inline fun <reified T#0 /* T */> bar(f: kotlin/Function1<T#0, kotlin/Unit>, tType: kotlin/String): T#0?
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(z: kotlin/Boolean): kotlin/Unit
+
+      public final fun foo(x: kotlin/Int?): kotlin/Unit
+
+      public final fun foo(y: kotlin/String?): kotlin/Unit
+    }
+  }
+}

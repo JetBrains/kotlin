@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: LightVariable
+    // class name: Variable
+
+    public final class LightVariable : Variable {
+
+      public constructor()
+    }
+
+    public open class Variable : kotlin/Any {
+
+      public constructor()
+
+      public final val lightVar: LightVariable
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

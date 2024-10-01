@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun A.divAssign(y: kotlin/Int): kotlin/Unit
+
+      public final operator fun A.minusAssign(y: kotlin/Int): kotlin/Unit
+
+      public final operator fun A.plusAssign(y: kotlin/Int): kotlin/Unit
+
+      public final operator fun A.remAssign(y: kotlin/Int): kotlin/Unit
+
+      public final operator fun A.timesAssign(y: kotlin/Int): kotlin/Unit
+    }
+  }
+}

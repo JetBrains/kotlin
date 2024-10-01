@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */, T#1 /* R */> T#0.map(transform: suspend kotlin/Function2<T#0, kotlin/coroutines/Continuation<T#1>, kotlin/Any?>): suspend kotlin/Function1<kotlin/coroutines/Continuation<T#1>, kotlin/Any?>
+
+      public final fun runs(f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String?>, kotlin/Any?>): kotlin/String
+    }
+  }
+}

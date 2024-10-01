@@ -1,0 +1,69 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/internalRemove.kt
+    CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><T of <root>.Test>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test<T of <root>.Test>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Test|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test<T of <root>.Test> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><T of <root>.Test>]'
+      PROPERTY name:size signature:/Test.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/Test.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/Test.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:contains signature:/Test.contains|contains(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>, element:T of <root>.Test) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+        VALUE_PARAMETER name:element index:0 type:T of <root>.Test
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: T of <root>.Test): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:containsAll signature:/Test.containsAll|containsAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>, elements:<unbound IrClassSymbolImpl><T of <root>.Test>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><T of <root>.Test>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><T of <root>.Test>): <unbound IrClassSymbolImpl> declared in <root>.Test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:isEmpty signature:/Test.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:/Test.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>) returnType:<unbound IrClassSymbolImpl><T of <root>.Test> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><T of <root>.Test> [operator] declared in <root>.Test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:remove signature:/Test.remove|remove(1:0){}[0] visibility:internal modality:FINAL <> ($this:<root>.Test<T of <root>.Test>, x:T of <root>.Test) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+        VALUE_PARAMETER name:x index:0 type:T of <root>.Test
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='internal final fun remove (x: T of <root>.Test): <unbound IrClassSymbolImpl> declared in <root>.Test'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'internal final fun remove (x: T of <root>.Test): <unbound IrClassSymbolImpl> declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test' type=<root>.Test<<unbound IrClassSymbolImpl>> origin=null
+                    <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST String type=<unbound IrClassSymbolImpl> value=""
+                arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"

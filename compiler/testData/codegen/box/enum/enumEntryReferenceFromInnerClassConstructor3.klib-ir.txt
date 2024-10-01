@@ -1,0 +1,87 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/enumEntryReferenceFromInnerClassConstructor3.kt
+    CLASS INTERFACE name:IFoo signature:/IFoo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
+      FUN name:foo signature:/IFoo.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IFoo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
+    CLASS INTERFACE name:IBar signature:/IBar|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBar
+      FUN name:bar signature:/IBar.bar|bar(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IBar) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBar
+    CLASS ENUM_CLASS name:Test signature:/Test|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.IFoo; <root>.IBar; <unbound IrClassSymbolImpl><<root>.Test>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Test
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test signature:/Test|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.IFoo; <root>.IBar; <unbound IrClassSymbolImpl><<root>.Test>]'
+      ENUM_ENTRY name:FOO signature:/Test.FOO|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Test.FOO'
+        class: CLASS ENUM_ENTRY name:FOO signature:/Test.FOO.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Test]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.FOO
+          CONSTRUCTOR signature:/Test.FOO.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test.FOO [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Test'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FOO signature:/Test.FOO.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Test]'
+          CLASS CLASS name:Inner modality:FINAL visibility:local [inner] superTypes:[<root>.IFoo]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.FOO.Inner
+            CONSTRUCTOR visibility:public <> ($this:<root>.Test.FOO) returnType:<root>.Test.FOO.Inner [primary]
+              $outer: VALUE_PARAMETER name:<this> type:<root>.Test.FOO
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:local [inner] superTypes:[<root>.IFoo]'
+            FIELD DELEGATE name:$$delegate_0 type:<root>.Test visibility:private [final]
+              EXPRESSION_BODY
+                GET_ENUM 'ENUM_ENTRY name:FOO signature:/Test.FOO|null[0]' type=<root>.Test
+            FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test.FOO.Inner) returnType:<unbound IrClassSymbolImpl>
+              overridden:
+                public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.IFoo
+              $this: VALUE_PARAMETER name:<this> type:<root>.Test.FOO.Inner
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Test.FOO.Inner'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Test visibility:private [final] declared in <root>.Test.FOO.Inner' type=<root>.Test origin=null
+                      receiver: GET_VAR '<this>: <root>.Test.FOO.Inner declared in <root>.Test.FOO.Inner.foo' type=<root>.Test.FOO.Inner origin=null
+          PROPERTY name:z signature:/Test.FOO.<EEC>.z|{}z[0] visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:z signature:[ /Test.FOO.<EEC>.z|{}z[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:z type:<root>.Test.FOO.Inner visibility:private [final]] ] type:<root>.Test.FOO.Inner visibility:private [final]
+              EXPRESSION_BODY
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test.FOO.Inner' type=<root>.Test.FOO.Inner origin=null
+                  $outer: GET_VAR '<this>: <root>.Test.FOO declared in <root>.Test.FOO' type=<root>.Test.FOO origin=null
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> signature:/Test.FOO.<EEC>.z.<get-z>|<get-z>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.FOO) returnType:<root>.Test.FOO.Inner
+              correspondingProperty: PROPERTY name:z signature:/Test.FOO.<EEC>.z|{}z[0] visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.Test.FOO
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-z> (): <root>.Test.FOO.Inner declared in <root>.Test.FOO'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z signature:[ /Test.FOO.<EEC>.z|{}z[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:z type:<root>.Test.FOO.Inner visibility:private [final]] ] type:<root>.Test.FOO.Inner visibility:private [final]' type=<root>.Test.FOO.Inner origin=null
+                    receiver: GET_VAR '<this>: <root>.Test.FOO declared in <root>.Test.FOO.<get-z>' type=<root>.Test.FOO origin=null
+          FUN name:foo signature:/Test.FOO.<EEC>.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test.FOO) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.FOO
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Test.FOO'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          FUN name:bar signature:/Test.FOO.<EEC>.bar|bar(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test.FOO) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.FOO
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun bar (): <unbound IrClassSymbolImpl> declared in <root>.Test.FOO'
+                CALL 'public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Test.FOO.Inner' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-z> (): <root>.Test.FOO.Inner declared in <root>.Test.FOO' type=<root>.Test.FOO.Inner origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Test.FOO declared in <root>.Test.FOO.bar' type=<root>.Test.FOO origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Test.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Test>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Test.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Test
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Test.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Test.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Test>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Test.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:FOO signature:/Test.FOO|null[0]' type=<root>.Test

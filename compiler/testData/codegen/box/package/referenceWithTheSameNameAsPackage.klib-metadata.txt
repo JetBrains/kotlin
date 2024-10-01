@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public final class Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/Boolean
+
+      public final val messages: kotlin/collections/ArrayList<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: messages
+
+    package {
+
+      public final fun foo(): kotlin/Unit
+    }
+  }
+}

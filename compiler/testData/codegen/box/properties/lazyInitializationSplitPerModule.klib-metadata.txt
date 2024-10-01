@@ -1,0 +1,49 @@
+// MODULE: lib1
+library {
+  // module name: <lib1>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final val k: kotlin/String /* = ... */
+        public final get
+
+      public final val o: kotlin/String /* = ... */
+        public final get
+
+      public final val okCandidate: kotlin/String
+        public final get
+    }
+  }
+}
+
+// MODULE: lib2
+library {
+  // module name: <lib2>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final val ok: kotlin/String
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val COMPARABLE_RANGE: kotlin/ranges/ClosedRange<kotlin/Comparable<kotlin/Any>>
+        public final get
+
+      public final val DOUBLE_RANGE: kotlin/ranges/ClosedFloatingPointRange<kotlin/Double>
+        public final get
+
+      public final val NZERO: kotlin/Comparable<kotlin/Any>
+        public final get
+
+      public final val PZERO: kotlin/Comparable<kotlin/Any>
+        public final get
+    }
+  }
+}

@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bug
+
+    public final object Bug : kotlin/Any {
+
+      private constructor()
+
+      private final fun <T#0 /* T */> T#0.header(id: kotlin/Int): kotlin/text/StringBuilder
+
+      public final fun run(): kotlin/text/StringBuilder
+
+      public final fun title(id: kotlin/Int): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

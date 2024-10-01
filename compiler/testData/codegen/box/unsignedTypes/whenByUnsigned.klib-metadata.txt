@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testUInt(x: kotlin/UInt): kotlin/String
+
+      public final fun testULong(x: kotlin/ULong): kotlin/String
+
+      public final const val M1: kotlin/UInt /* = 2147483648u */
+        public final get
+
+      public final const val M2: kotlin/ULong /* = 9223372036854775808uL */
+        public final get
+    }
+  }
+}

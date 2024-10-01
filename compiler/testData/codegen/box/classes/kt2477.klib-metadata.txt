@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/B
+    // class name: test/C
+    // class name: test/D
+
+    public abstract interface test/A : kotlin/Any {
+
+      public open val c: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface test/B : kotlin/Any {
+
+      private final val c: kotlin/String
+        private final /* non-default */ get
+    }
+
+    public open class test/C : kotlin/Any {
+
+      public constructor()
+
+      private final val c: kotlin/String /* = ... */
+        private final get
+    }
+
+    public open class test/D : test/C, test/A, test/B {
+
+      public constructor()
+
+      public final val b: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

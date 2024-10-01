@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: LongWrapper
+
+    public final class LongWrapper : kotlin/Any {
+
+      public constructor(x: kotlin/Long)
+
+      public final var x: kotlin/Long
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val global: LongWrapper
+        public final get
+    }
+  }
+}

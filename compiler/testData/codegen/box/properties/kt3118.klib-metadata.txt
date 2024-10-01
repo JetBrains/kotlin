@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: testing
+
+    // class name: testing/Test
+
+    public final class testing/Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun sayHello(): kotlin/String
+
+      private final val hello: kotlin/String
+        private final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

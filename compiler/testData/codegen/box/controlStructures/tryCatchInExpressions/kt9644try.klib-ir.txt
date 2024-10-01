@@ -1,0 +1,49 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt9644try.kt
+    FUN name:doCall signature:/doCall|doCall(kotlin.Function0<kotlin.Any>){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doCall (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.doCall' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:test1 signature:/test1|test1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:localResult type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun doCall (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    TRY type=<unbound IrClassSymbolImpl>
+                      try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value="1"
+                      CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.test1.<anonymous>
+                        VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+                        BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="2"
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (): <unbound IrClassSymbolImpl> declared in <root>'
+                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:test2 signature:/test2|test2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:localResult type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun doCall (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    TRY type=<unbound IrClassSymbolImpl>
+                      try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value="1"
+                      CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.test2.<anonymous>
+                        VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+                        BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="2"
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="Hmmm..."
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

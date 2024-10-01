@@ -1,0 +1,22 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/tryFinally1.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TRY type=<unbound IrClassSymbolImpl>
+              try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONTINUE label=null loop.label=null
+              finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    1: BREAK label=null loop.label=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

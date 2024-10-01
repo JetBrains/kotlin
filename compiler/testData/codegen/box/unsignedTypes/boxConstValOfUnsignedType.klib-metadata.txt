@@ -1,0 +1,17 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun custom(a: kotlin/Any): kotlin/String
+
+      public final const val maxUByte: kotlin/UByte /* = 255.toUByte() */
+        public final get
+    }
+  }
+}

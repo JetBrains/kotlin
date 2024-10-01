@@ -1,0 +1,58 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Entity
+    // class name: EntityBase
+    // class name: EntityId
+    // class name: EntityStub
+
+    public abstract interface Entity : EntityBase<EntityId> {
+    }
+
+    public abstract interface EntityBase<out T#0 /* ID */> : kotlin/Any {
+
+      public abstract suspend fun id(): T#0
+    }
+
+    public final value class EntityId : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/String
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/String
+    }
+
+    public final class EntityStub : Entity {
+
+      public constructor()
+
+      public open suspend fun id(): EntityId
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final suspend fun test(): EntityId
+
+      public final var res: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

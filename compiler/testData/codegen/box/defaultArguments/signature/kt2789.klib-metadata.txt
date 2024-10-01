@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FooClass
+    // class name: FooTrait
+
+    public final class FooClass : FooTrait<kotlin/String> {
+
+      public constructor()
+
+      public open fun make(size: kotlin/Int): kotlin/String
+    }
+
+    public abstract interface FooTrait<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun make(size: kotlin/Int /* = ... */): T#0
+
+      public open fun makeFromTraitImpl(): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

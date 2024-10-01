@@ -1,0 +1,51 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3087.kt
+    FUN name:putNumberCompareAsUnit signature:/putNumberCompareAsUnit|putNumberCompareAsUnit(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:putNumberCompareAsVoid signature:/putNumberCompareAsVoid|putNumberCompareAsVoid(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:putInvertAsUnit signature:/putInvertAsUnit|putInvertAsUnit(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.putInvertAsUnit' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun putNumberCompareAsUnit (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun putNumberCompareAsVoid (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun putInvertAsUnit (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          b: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

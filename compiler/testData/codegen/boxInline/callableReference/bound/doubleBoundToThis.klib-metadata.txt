@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: LLoggerTest
+
+    public final class LLoggerTest : kotlin/Any {
+
+      public constructor()
+
+      private final fun forRef(): kotlin/String
+
+      public final fun testDebugTag(): kotlin/String
+
+      private final var i: kotlin/Int
+        private final get
+        private final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun testLoggingPassThough(loggerMethod: kotlin/Function0<kotlin/String> /* = LoggingFunctionType^<kotlin/String> */): kotlin/String
+
+      public typealias LoggingFunctionType<T#0 /* T */> = kotlin/Function0<T#0> /* = kotlin/Function0<T#0> */
+    }
+  }
+}

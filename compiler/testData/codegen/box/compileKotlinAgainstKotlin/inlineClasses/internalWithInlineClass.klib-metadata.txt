@@ -1,0 +1,50 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/Box
+    // class name: a/Message
+
+    public final class a/Box : kotlin/Any {
+
+      public constructor()
+
+      internal final fun result(msg: a/Message): kotlin/String
+    }
+
+    public final value class a/Message : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/String
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

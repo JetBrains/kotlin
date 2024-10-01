@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Invariant
+
+    public abstract interface Invariant<T#0 /* A */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun <T#0 /* B */> Invariant<T#0>.privateFunc(): kotlin/Any
+
+      public final fun Invariant<in kotlin/Number>.publicFunc(): Invariant<in kotlin/Number>
+    }
+  }
+}

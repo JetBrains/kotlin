@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CommonCase
+    // class name: CommonCase.Fas
+
+    public final object CommonCase : kotlin/Any {
+
+      private constructor()
+
+      public final fun <T#0 /* D */, T#1 /* E */, T#2 /* R */> delegate(): CommonCase.Fas<T#0, T#1, T#2>
+
+      public final operator fun <T#0 /* D */, T#1 /* E */, T#2 /* R */> CommonCase.Fas<T#0, T#1, T#2>.getValue(receiver: T#1, p: kotlin/Any?): T#2
+
+      public final operator fun <T#0 /* D */, T#1 /* E */, T#2 /* R */> CommonCase.Fas<T#0, T#1, T#2>.provideDelegate(host: T#0, p: kotlin/Any?): CommonCase.Fas<T#0, T#1, T#2>
+
+      public final /* delegated */ val kotlin/Long.test1: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val kotlin/Long.test2: kotlin/String
+        public final /* non-default */ get
+
+      // nested class: Fas
+    }
+
+    public abstract interface CommonCase.Fas<T#0 /* D */, T#1 /* E */, T#2 /* R */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

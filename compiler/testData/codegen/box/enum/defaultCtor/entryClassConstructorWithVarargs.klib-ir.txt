@@ -1,0 +1,56 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/entryClassConstructorWithVarargs.kt
+    CLASS ENUM_CLASS name:Test signature:/Test|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Test>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(kotlin.IntArray...){}[0] visibility:private <> (xs:<unbound IrClassSymbolImpl>) returnType:<root>.Test [primary]
+        VALUE_PARAMETER name:xs index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Test
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test signature:/Test|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Test>]'
+      ENUM_ENTRY name:OK signature:/Test.OK|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Test.OK'
+        class: CLASS ENUM_ENTRY name:OK signature:/Test.OK.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Test]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.OK
+          CONSTRUCTOR signature:/Test.OK.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test.OK [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (vararg xs: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Test'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:OK signature:/Test.OK.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Test]'
+          FUN name:foo signature:/Test.OK.<EEC>.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.OK) returnType:<unbound IrClassSymbolImpl>
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.OK
+            BLOCK_BODY
+      PROPERTY name:xs signature:/Test.xs|{}xs[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /Test.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'xs: <unbound IrClassSymbolImpl> [vararg] declared in <root>.Test.<init>' type=<unbound IrClassSymbolImpl> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> signature:/Test.xs.<get-xs>|<get-xs>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xs signature:/Test.xs|{}xs[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xs> (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /Test.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-xs>' type=<root>.Test origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Test.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Test>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Test.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Test
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Test.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Test.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Test>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Test.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-xs> (): <unbound IrClassSymbolImpl> declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_ENUM 'ENUM_ENTRY name:OK signature:/Test.OK|null[0]' type=<root>.Test
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"

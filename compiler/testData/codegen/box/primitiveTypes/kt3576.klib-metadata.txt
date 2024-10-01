@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestObject
+
+    public final object TestObject : kotlin/Any {
+
+      private constructor()
+
+      public final val otherFloat: kotlin/Float /* = ... */
+        public final get
+
+      public final val testFloat: kotlin/Float /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

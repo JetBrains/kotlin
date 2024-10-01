@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public final class B : kotlin/Function0<kotlin/Boolean> {
+
+      public constructor()
+
+      public final fun foo(): kotlin/Boolean
+
+      public open operator fun invoke(): kotlin/Boolean
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

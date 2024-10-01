@@ -1,0 +1,165 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unboxValueOfAnyBeforeMethodInvocationGeneric.kt
+    PROPERTY name:prop signature:/prop|{}prop[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> origin=null
+            <1>: <root>.NullableInt<<unbound IrClassSymbolImpl>?>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <root>.NullableInt<<unbound IrClassSymbolImpl>?>> varargElementType=<root>.NullableInt<<unbound IrClassSymbolImpl>?>
+              CONSTRUCTOR_CALL 'public constructor <init> (holder: T of <root>.NullableInt) [primary] declared in <root>.NullableInt' type=<root>.NullableInt<<unbound IrClassSymbolImpl>?> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>?
+                holder: CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:/prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>>
+        correspondingProperty: PROPERTY name:prop signature:/prop|{}prop[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> origin=null
+    CLASS CLASS name:NullableInt signature:/NullableInt|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NullableInt<T of <root>.NullableInt>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /NullableInt|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/NullableInt.<init>|<init>(1:0){}[0] visibility:public <> (holder:T of <root>.NullableInt) returnType:<root>.NullableInt<T of <root>.NullableInt> [primary]
+        VALUE_PARAMETER name:holder index:0 type:T of <root>.NullableInt
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NullableInt signature:/NullableInt|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:holder signature:/NullableInt.holder|{}holder[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'holder: T of <root>.NullableInt declared in <root>.NullableInt.<init>' type=T of <root>.NullableInt origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-holder> signature:/NullableInt.holder.<get-holder>|<get-holder>(){}[0] visibility:private modality:FINAL <> ($this:<root>.NullableInt<T of <root>.NullableInt>) returnType:T of <root>.NullableInt
+          correspondingProperty: PROPERTY name:holder signature:/NullableInt.holder|{}holder[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.NullableInt<T of <root>.NullableInt>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-holder> (): T of <root>.NullableInt declared in <root>.NullableInt'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]' type=T of <root>.NullableInt origin=null
+                receiver: GET_VAR '<this>: <root>.NullableInt<T of <root>.NullableInt> declared in <root>.NullableInt.<get-holder>' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+      PROPERTY name:intValue signature:/NullableInt.intValue|{}intValue[0] visibility:public modality:FINAL [val]
+        FUN name:<get-intValue> signature:/NullableInt.intValue.<get-intValue>|<get-intValue>(){}[0] visibility:public modality:FINAL <> ($this:<root>.NullableInt<T of <root>.NullableInt>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:intValue signature:/NullableInt.intValue|{}intValue[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.NullableInt<T of <root>.NullableInt>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intValue> (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt'
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                CALL 'private final fun <get-holder> (): T of <root>.NullableInt declared in <root>.NullableInt' type=T of <root>.NullableInt origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.NullableInt<T of <root>.NullableInt> declared in <root>.NullableInt.<get-intValue>' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/NullableInt.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.NullableInt<T of <root>.NullableInt>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NullableInt<T of <root>.NullableInt>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="NullableInt("
+              CONST String type=<unbound IrClassSymbolImpl> value="holder="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]' type=T of <root>.NullableInt origin=null
+                receiver: GET_VAR '<this>: <root>.NullableInt<T of <root>.NullableInt> declared in <root>.NullableInt.toString' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/NullableInt.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.NullableInt<T of <root>.NullableInt>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NullableInt<T of <root>.NullableInt>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt'
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]' type=T of <root>.NullableInt origin=null
+                    receiver: GET_VAR '<this>: <root>.NullableInt<T of <root>.NullableInt> declared in <root>.NullableInt.hashCode' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]' type=T of <root>.NullableInt origin=null
+                    receiver: GET_VAR '<this>: <root>.NullableInt<T of <root>.NullableInt> declared in <root>.NullableInt.hashCode' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/NullableInt.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.NullableInt<T of <root>.NullableInt>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NullableInt<T of <root>.NullableInt>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.NullableInt<T of <root>.NullableInt>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.NullableInt.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.NullableInt'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.NullableInt<T of <root>.NullableInt> [val]
+            TYPE_OP type=<root>.NullableInt<T of <root>.NullableInt> origin=CAST typeOperand=<root>.NullableInt<T of <root>.NullableInt>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.NullableInt.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]' type=T of <root>.NullableInt origin=null
+                    receiver: GET_VAR '<this>: <root>.NullableInt<T of <root>.NullableInt> declared in <root>.NullableInt.equals' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /NullableInt.holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:T of <root>.NullableInt visibility:private [final]] ] type:T of <root>.NullableInt visibility:private [final]' type=T of <root>.NullableInt origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.NullableInt<T of <root>.NullableInt> [val] declared in <root>.NullableInt.equals' type=<root>.NullableInt<T of <root>.NullableInt> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.NullableInt'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.NullableInt'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun <get-intValue> (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.NullableInt<<unbound IrClassSymbolImpl>?> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Error 1: "
+                GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:local type:<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>>> origin=null
+            <1>: <root>.NullableInt<<unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <root>.NullableInt<<unbound IrClassSymbolImpl>>> varargElementType=<root>.NullableInt<<unbound IrClassSymbolImpl>>
+              CONSTRUCTOR_CALL 'public constructor <init> (holder: T of <root>.NullableInt) [primary] declared in <root>.NullableInt' type=<root>.NullableInt<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                holder: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:b type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun <get-intValue> (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.NullableInt<<unbound IrClassSymbolImpl>> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'val local: <unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>>> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val b: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Error 2: "
+                GET_VAR 'val b: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.NullableInt<<unbound IrClassSymbolImpl>?> origin=EQ
+            $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONSTRUCTOR_CALL 'public constructor <init> (holder: T of <root>.NullableInt) [primary] declared in <root>.NullableInt' type=<root>.NullableInt<<unbound IrClassSymbolImpl>?> origin=null
+              <class: T>: <unbound IrClassSymbolImpl>?
+              holder: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-intValue> (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.NullableInt<<unbound IrClassSymbolImpl>?> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Error 3: "
+                CALL 'public final fun <get-intValue> (): <unbound IrClassSymbolImpl> declared in <root>.NullableInt' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.NullableInt<<unbound IrClassSymbolImpl>?> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.NullableInt<<unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

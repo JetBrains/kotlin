@@ -1,0 +1,24 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    PROPERTY name:ok signature:test/ok|{}ok[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:ok signature:[ test/ok|{}ok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> signature:test/ok.<get-ok>|<get-ok>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:ok signature:test/ok|{}ok[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok signature:[ test/ok|{}ok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:inlineFun signature:test/inlineFun|inlineFun(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (lambda:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:lambda index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        EXPRESSION_BODY
+          PROPERTY_REFERENCE 'public final ok: <unbound IrClassSymbolImpl> [val] declared in test' field=null getter='public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in test' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun inlineFun (lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.inlineFun' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun inlineFun (lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null

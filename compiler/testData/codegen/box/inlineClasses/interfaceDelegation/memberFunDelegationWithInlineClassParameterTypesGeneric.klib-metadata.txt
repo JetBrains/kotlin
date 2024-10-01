@@ -1,0 +1,84 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FooImpl
+    // class name: IFoo
+    // class name: S
+    // class name: Test
+
+    public final object FooImpl : IFoo<S<kotlin/String>> {
+
+      private constructor()
+
+      public open fun <T#0 /* X */> S<kotlin/String>.genericMemberExtFun(x: T#0): kotlin/String
+
+      public open fun <T#0 /* X */> genericMemberFun(x1: S<kotlin/String>, x2: T#0): kotlin/String
+
+      public open fun S<kotlin/String>.memberExtFun(s: kotlin/String): kotlin/String
+
+      public open fun S<kotlin/String>.memberExtFunT(x: kotlin/String): kotlin/String
+
+      public open fun memberFun(s1: S<kotlin/String>, s2: kotlin/String): kotlin/String
+
+      public open fun memberFunT(x1: S<kotlin/String>, x2: kotlin/String): kotlin/String
+    }
+
+    public abstract interface IFoo<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun <T#1 /* X */> T#0.genericMemberExtFun(x: T#1): kotlin/String
+
+      public abstract fun <T#1 /* X */> genericMemberFun(x1: T#0, x2: T#1): kotlin/String
+
+      public abstract fun S<kotlin/String>.memberExtFun(s: kotlin/String): kotlin/String
+
+      public abstract fun T#0.memberExtFunT(x: kotlin/String): kotlin/String
+
+      public abstract fun memberFun(s1: S<kotlin/String>, s2: kotlin/String): kotlin/String
+
+      public abstract fun memberFunT(x1: T#0, x2: kotlin/String): kotlin/String
+    }
+
+    public final value class S<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final class Test : IFoo<S<kotlin/String>> {
+
+      public constructor()
+
+      public open /* delegation */ fun <T#0 /* X */ : kotlin/Any?> S<kotlin/String>.genericMemberExtFun(x: T#0): kotlin/String
+
+      public open /* delegation */ fun <T#0 /* X */ : kotlin/Any?> genericMemberFun(x1: S<kotlin/String>, x2: T#0): kotlin/String
+
+      public open /* delegation */ fun S<kotlin/String>.memberExtFun(s: kotlin/String): kotlin/String
+
+      public open /* delegation */ fun S<kotlin/String>.memberExtFunT(x: kotlin/String): kotlin/String
+
+      public open /* delegation */ fun memberFun(s1: S<kotlin/String>, s2: kotlin/String): kotlin/String
+
+      public open /* delegation */ fun memberFunT(x1: S<kotlin/String>, x2: kotlin/String): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

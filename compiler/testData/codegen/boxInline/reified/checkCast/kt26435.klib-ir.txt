@@ -1,0 +1,142 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS ENUM_CLASS name:Id signature:test/Id|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Id>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Id
+      CONSTRUCTOR signature:test/Id.<init>|<init>(){}[0] visibility:private <> () returnType:test.Id [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.Id
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Id signature:test/Id|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Id>]'
+      ENUM_ENTRY name:OK signature:test/Id.OK|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Id'
+      ENUM_ENTRY name:FAIL signature:test/Id.FAIL|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Id'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/Id.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.Id>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/Id.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.Id
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Id.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/Id.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.Id>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Id.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS CLASS name:Base signature:test/Base|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Base
+      CONSTRUCTOR signature:test/Base.<init>|<init>(test.Id){}[0] visibility:protected <> (id:test.Id) returnType:test.Base [primary]
+        VALUE_PARAMETER name:id index:0 type:test.Id
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:test/Base|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:id signature:test/Base.id|{}id[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:id signature:[ test/Base.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:test.Id visibility:private [final]] ] type:test.Id visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'id: test.Id declared in test.Base.<init>' type=test.Id origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> signature:test/Base.id.<get-id>|<get-id>(){}[0] visibility:public modality:FINAL <> ($this:test.Base) returnType:test.Id
+          correspondingProperty: PROPERTY name:id signature:test/Base.id|{}id[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Base
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-id> (): test.Id declared in test.Base'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ test/Base.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:test.Id visibility:private [final]] ] type:test.Id visibility:private [final]' type=test.Id origin=null
+                receiver: GET_VAR '<this>: test.Base declared in test.Base.<get-id>' type=test.Base origin=null
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[test.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(test.Id){}[0] visibility:public <> (id:test.Id) returnType:test.A [primary]
+        VALUE_PARAMETER name:id index:0 type:test.Id
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (id: test.Id) [primary] declared in test.Base'
+            id: GET_VAR 'id: test.Id declared in test.A.<init>' type=test.Id origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[test.Base]'
+    CLASS CLASS name:B signature:test/B|null[0] modality:FINAL visibility:public superTypes:[test.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.B
+      CONSTRUCTOR signature:test/B.<init>|<init>(test.Id){}[0] visibility:public <> (id:test.Id) returnType:test.B [primary]
+        VALUE_PARAMETER name:id index:0 type:test.Id
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (id: test.Id) [primary] declared in test.Base'
+            id: GET_VAR 'id: test.Id declared in test.B.<init>' type=test.Id origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:test/B|null[0] modality:FINAL visibility:public superTypes:[test.Base]'
+    FUN name:process signature:test/process|process(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<test.Base>}[0] visibility:public modality:FINAL <T> (t:T of test.process, f:<unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>>) returnType:test.Base? [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/process|process(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<test.Base>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[test.Base] reified:true] ] superTypes:[test.Base] reified:true
+      VALUE_PARAMETER name:t index:0 type:T of test.process
+      VALUE_PARAMETER name:f index:1 type:<unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>> declared in test.process' type=<unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR 't: T of test.process declared in test.process' type=T of test.process origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun process <T> (t: T of test.process, f: <unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>>): test.Base? [inline] declared in test'
+          BLOCK type={T of test.process & Any} origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:T of test.process? [val]
+              TYPE_OP type=T of test.process? origin=SAFE_CAST typeOperand=T of test.process
+                CALL 'public final fun getSomeBaseObject (id: test.Id): test.Base declared in test' type=test.Base origin=null
+                  id: CALL 'public final fun <get-id> (): test.Id declared in test.Base' type=test.Id origin=GET_PROPERTY
+                    $this: GET_VAR 't: T of test.process declared in test.process' type=T of test.process origin=null
+            WHEN type={T of test.process & Any} origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_elvis_lhs: T of test.process? [val] declared in test.process' type=T of test.process? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: THROW type=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp0_elvis_lhs: T of test.process? [val] declared in test.process' type=T of test.process? origin=null
+    FUN name:getSomeBaseObject signature:test/getSomeBaseObject|getSomeBaseObject(test.Id){}[0] visibility:public modality:FINAL <> (id:test.Id) returnType:test.Base
+      VALUE_PARAMETER name:id index:0 type:test.Id
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getSomeBaseObject (id: test.Id): test.Base declared in test'
+          WHEN type=test.Base origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'id: test.Id declared in test.getSomeBaseObject' type=test.Id origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:OK signature:test/Id.OK|null[0]' type=test.Id
+              then: CONSTRUCTOR_CALL 'public constructor <init> (id: test.Id) [primary] declared in test.A' type=test.A origin=null
+                id: GET_VAR 'id: test.Id declared in test.getSomeBaseObject' type=test.Id origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONSTRUCTOR_CALL 'public constructor <init> (id: test.Id) [primary] declared in test.B' type=test.B origin=null
+                id: GET_VAR 'id: test.Id declared in test.getSomeBaseObject' type=test.Id origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:doSth signature:/doSth|doSth(test.Base){}[0] visibility:public modality:FINAL <> (base:test.Base) returnType:test.Base?
+      VALUE_PARAMETER name:base index:0 type:test.Base
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doSth (base: test.Base): test.Base? declared in <root>'
+          WHEN type=test.Base? origin=IF
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=test.A
+                GET_VAR 'base: test.Base declared in <root>.doSth' type=test.Base origin=null
+              then: CALL 'public final fun process <T> (t: T of test.process, f: <unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>>): test.Base? [inline] declared in test' type=test.Base? origin=null
+                <T>: test.A
+                t: TYPE_OP type=test.A origin=IMPLICIT_CAST typeOperand=test.A
+                  GET_VAR 'base: test.Base declared in <root>.doSth' type=test.Base origin=null
+                f: FUNCTION_REFERENCE 'public final fun doSomethingInCaseOfA (a: test.A): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=test.B
+                GET_VAR 'base: test.Base declared in <root>.doSth' type=test.Base origin=null
+              then: CALL 'public final fun process <T> (t: T of test.process, f: <unbound IrClassSymbolImpl><T of test.process, <unbound IrClassSymbolImpl>>): test.Base? [inline] declared in test' type=test.Base? origin=null
+                <T>: test.B
+                t: TYPE_OP type=test.B origin=IMPLICIT_CAST typeOperand=test.B
+                  GET_VAR 'base: test.Base declared in <root>.doSth' type=test.Base origin=null
+                f: FUNCTION_REFERENCE 'public final fun doSomethingInCaseOfB (b: test.B): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><test.B, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="123"
+    FUN name:doSomethingInCaseOfA signature:/doSomethingInCaseOfA|doSomethingInCaseOfA(test.A){}[0] visibility:public modality:FINAL <> (a:test.A) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:test.A
+      BLOCK_BODY
+    FUN name:doSomethingInCaseOfB signature:/doSomethingInCaseOfB|doSomethingInCaseOfB(test.B){}[0] visibility:public modality:FINAL <> (b:test.B) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:test.B
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:test.Base [val]
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=test.Base origin=EXCLEXCL
+            <T0>: test.Base
+            arg0: CALL 'public final fun doSth (base: test.Base): test.Base? declared in <root>' type=test.Base? origin=null
+              base: CONSTRUCTOR_CALL 'public constructor <init> (id: test.Id) [primary] declared in test.A' type=test.A origin=null
+                id: GET_ENUM 'ENUM_ENTRY name:OK signature:test/Id.OK|null[0]' type=test.Id
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-id> (): test.Id declared in test.Base' type=test.Id origin=GET_PROPERTY
+              $this: GET_VAR 'val a: test.Base [val] declared in <root>.box' type=test.Base origin=null

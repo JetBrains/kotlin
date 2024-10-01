@@ -1,0 +1,63 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/memberExtOnLong.kt
+    CLASS OBJECT name:ExtProvider signature:/ExtProvider|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExtProvider
+      CONSTRUCTOR signature:/ExtProvider.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ExtProvider [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ExtProvider signature:/ExtProvider|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:get signature:/ExtProvider.get|get@kotlin.Long(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ExtProvider, $receiver:<unbound IrClassSymbolImpl>, i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ExtProvider
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun get (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ExtProvider'
+            GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.ExtProvider.get' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:/ExtProvider.set|set@kotlin.Long(kotlin.Int;kotlin.Long){}[0] visibility:public modality:FINAL <> ($this:<root>.ExtProvider, $receiver:<unbound IrClassSymbolImpl>, i:<unbound IrClassSymbolImpl>, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ExtProvider
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:newValue index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <root>.ExtProvider
+          <2>: <unbound IrClassSymbolImpl>
+          1: GET_OBJECT 'CLASS OBJECT name:ExtProvider signature:/ExtProvider|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ExtProvider
+          2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.ExtProvider, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExtProvider) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExtProvider
+              BLOCK_BODY
+                VAR name:x type:<unbound IrClassSymbolImpl> [var]
+                  CONST Long type=<unbound IrClassSymbolImpl> value=0
+                VAR name:y type:<unbound IrClassSymbolImpl> [val]
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<array> type:<unbound IrClassSymbolImpl> [val]
+                      GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+                      CONST Int type=<unbound IrClassSymbolImpl> value=0
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ExtProvider' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR '$this$with: <root>.ExtProvider declared in <root>.box.<anonymous>' type=<root>.ExtProvider origin=null
+                        $receiver: GET_VAR 'val <array>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ExtProvider' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      $this: GET_VAR '$this$with: <root>.ExtProvider declared in <root>.box.<anonymous>' type=<root>.ExtProvider origin=null
+                      $receiver: GET_VAR 'val <array>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val y: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                        CONST String type=<unbound IrClassSymbolImpl> value="Failed, y="
+                        GET_VAR 'val y: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null

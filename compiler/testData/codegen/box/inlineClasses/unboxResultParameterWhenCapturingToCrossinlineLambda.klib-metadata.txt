@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flow
+    // class name: FlowCollector
+
+    public abstract interface Flow<out T#0 /* T */> : kotlin/Any {
+
+      public abstract suspend fun collect(collector: FlowCollector<T#0>): kotlin/Unit
+    }
+
+    public abstract interface FlowCollector<in T#0 /* T */> : kotlin/Any {
+
+      public abstract suspend fun emit(value: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final inline suspend fun <T#0 /* T */> Flow<T#0>.collect(crossinline action: suspend kotlin/Function2<@kotlin/ParameterName(name = "value") T#0, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+    }
+  }
+}

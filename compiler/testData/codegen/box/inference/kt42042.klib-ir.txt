@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt42042.kt
+    CLASS CLASS name:Subtype signature:/Subtype|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Subtype<A1 of <root>.Subtype, B1 of <root>.Subtype>
+      TYPE_PARAMETER name:A1 index:0 variance: signature:[ /Subtype|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:B1 index:1 variance: signature:[ /Subtype|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:B1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Subtype.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.Subtype<A1 of <root>.Subtype, B1 of <root>.Subtype> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Subtype signature:/Subtype|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:cast signature:/Subtype.cast|cast(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Subtype<A1 of <root>.Subtype, B1 of <root>.Subtype>, value:A1 of <root>.Subtype) returnType:B1 of <root>.Subtype
+        $this: VALUE_PARAMETER name:<this> type:<root>.Subtype<A1 of <root>.Subtype, B1 of <root>.Subtype>
+        VALUE_PARAMETER name:value index:0 type:A1 of <root>.Subtype
+      CLASS CLASS name:Trivial signature:/Subtype.Trivial|null[0] modality:FINAL visibility:public superTypes:[<root>.Subtype<A2 of <root>.Subtype.Trivial, B2 of <root>.Subtype.Trivial>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Subtype.Trivial<A2 of <root>.Subtype.Trivial, B2 of <root>.Subtype.Trivial>
+        TYPE_PARAMETER name:A2 index:0 variance: signature:[ /Subtype.Trivial|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[B2 of <root>.Subtype.Trivial] reified:false
+        TYPE_PARAMETER name:B2 index:1 variance: signature:[ /Subtype.Trivial|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:B1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        CONSTRUCTOR signature:/Subtype.Trivial.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Subtype.Trivial<A2 of <root>.Subtype.Trivial, B2 of <root>.Subtype.Trivial> [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Subtype'
+              <A1>: A2 of <root>.Subtype.Trivial
+              <B1>: B2 of <root>.Subtype.Trivial
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Trivial signature:/Subtype.Trivial|null[0] modality:FINAL visibility:public superTypes:[<root>.Subtype<A2 of <root>.Subtype.Trivial, B2 of <root>.Subtype.Trivial>]'
+        FUN name:cast signature:/Subtype.Trivial.cast|cast(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Subtype.Trivial<A2 of <root>.Subtype.Trivial, B2 of <root>.Subtype.Trivial>, value:A2 of <root>.Subtype.Trivial) returnType:B2 of <root>.Subtype.Trivial
+          overridden:
+            public abstract fun cast (value: A1 of <root>.Subtype): B1 of <root>.Subtype declared in <root>.Subtype
+          $this: VALUE_PARAMETER name:<this> type:<root>.Subtype.Trivial<A2 of <root>.Subtype.Trivial, B2 of <root>.Subtype.Trivial>
+          VALUE_PARAMETER name:value index:0 type:A2 of <root>.Subtype.Trivial
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun cast (value: A2 of <root>.Subtype.Trivial): B2 of <root>.Subtype.Trivial declared in <root>.Subtype.Trivial'
+              GET_VAR 'value: A2 of <root>.Subtype.Trivial declared in <root>.Subtype.Trivial.cast' type=A2 of <root>.Subtype.Trivial origin=null
+    FUN name:unsafeCast signature:/unsafeCast|unsafeCast(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <A, B> (value:A of <root>.unsafeCast) returnType:B of <root>.unsafeCast
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /unsafeCast|unsafeCast(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ /unsafeCast|unsafeCast(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:value index:0 type:A of <root>.unsafeCast
+      BLOCK_BODY
+        VAR name:proof type:<root>.Subtype<A of <root>.unsafeCast, B of <root>.unsafeCast> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Subtype.Trivial' type=<root>.Subtype.Trivial<A of <root>.unsafeCast, B of <root>.unsafeCast> origin=null
+            <class: A2>: A of <root>.unsafeCast
+            <class: B2>: B of <root>.unsafeCast
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun unsafeCast <A, B> (value: A of <root>.unsafeCast): B of <root>.unsafeCast declared in <root>'
+          CALL 'public abstract fun cast (value: A1 of <root>.Subtype): B1 of <root>.Subtype declared in <root>.Subtype' type=B of <root>.unsafeCast origin=null
+            $this: GET_VAR 'val proof: <root>.Subtype<A of <root>.unsafeCast, B of <root>.unsafeCast> [val] declared in <root>.unsafeCast' type=<root>.Subtype<A of <root>.unsafeCast, B of <root>.unsafeCast> origin=null
+            value: GET_VAR 'value: A of <root>.unsafeCast declared in <root>.unsafeCast' type=A of <root>.unsafeCast origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

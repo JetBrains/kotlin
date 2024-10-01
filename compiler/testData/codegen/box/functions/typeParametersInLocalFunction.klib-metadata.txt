@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Holder
+
+    public final class Holder<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(v: T#0)
+
+      public final val v: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* C */ : kotlin/Any> outer(arg: T#0): T#0
+    }
+  }
+}

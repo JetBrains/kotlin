@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3132.kt
+    CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS INTERFACE name:Foo signature:/Test.Foo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.Foo
+      CLASS CLASS name:FooImplNested signature:/Test.FooImplNested|null[0] modality:FINAL visibility:public superTypes:[<root>.Test.Foo]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.FooImplNested
+        CONSTRUCTOR signature:/Test.FooImplNested.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test.FooImplNested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooImplNested signature:/Test.FooImplNested|null[0] modality:FINAL visibility:public superTypes:[<root>.Test.Foo]'
+      CLASS CLASS name:FooImplInner signature:/Test.FooImplInner|null[0] modality:FINAL visibility:public [inner] superTypes:[<root>.Test.Foo]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.FooImplInner
+        CONSTRUCTOR signature:/Test.FooImplInner.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Test) returnType:<root>.Test.FooImplInner [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Test
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooImplInner signature:/Test.FooImplInner|null[0] modality:FINAL visibility:public [inner] superTypes:[<root>.Test.Foo]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test.FooImplInner' type=<root>.Test.FooImplInner origin=null
+            $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test' type=<root>.Test origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test.FooImplNested' type=<root>.Test.FooImplNested origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

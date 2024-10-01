@@ -1,0 +1,59 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+
+      public final operator inline fun kotlin/Int.getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+    // class name: C
+
+    public open class B : A {
+
+      public constructor()
+
+      public final operator inline fun kotlin/String.getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): kotlin/String
+
+      public final operator inline fun kotlin/String.setValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>, value: kotlin/String): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class C : B {
+
+      public constructor()
+
+      public final /* delegated */ var K: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+
+      public final /* delegated */ val O: kotlin/String
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

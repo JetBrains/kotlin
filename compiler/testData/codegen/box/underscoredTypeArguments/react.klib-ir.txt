@@ -1,0 +1,82 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/react.kt
+    CLASS INTERFACE name:RProps signature:/RProps|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RProps
+    CLASS CLASS name:RComponent signature:/RComponent|null[0] modality:OPEN visibility:public superTypes:[<root>.Component<K of <root>.RComponent, T of <root>.RComponent>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RComponent<K of <root>.RComponent, T of <root>.RComponent>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /RComponent|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T index:1 variance: signature:[ /RComponent|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/RComponent.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.RComponent<K of <root>.RComponent, T of <root>.RComponent> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RComponent signature:/RComponent|null[0] modality:OPEN visibility:public superTypes:[<root>.Component<K of <root>.RComponent, T of <root>.RComponent>]'
+    CLASS INTERFACE name:RState signature:/RState|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RState
+    CLASS INTERFACE name:Component signature:/Component|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Component<K1 of <root>.Component, K2 of <root>.Component>
+      TYPE_PARAMETER name:K1 index:0 variance: signature:[ /Component|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:K2 index:1 variance: signature:[ /Component|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:RElementBuilder signature:/RElementBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RElementBuilder<A of <root>.RElementBuilder>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /RElementBuilder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/RElementBuilder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.RElementBuilder<A of <root>.RElementBuilder> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RElementBuilder signature:/RElementBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:ReactElement signature:/ReactElement|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReactElement
+    CLASS CLASS name:RBuilder signature:/RBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RBuilder
+      CONSTRUCTOR signature:/RBuilder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.RBuilder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RBuilder signature:/RBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:MyProps signature:/MyProps|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.RProps]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyProps<T of <root>.MyProps>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /MyProps|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:list signature:/MyProps.list|{}list[0] visibility:public modality:ABSTRACT [var]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-list> signature:/MyProps.list.<get-list>|<get-list>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyProps<T of <root>.MyProps>) returnType:<unbound IrClassSymbolImpl><T of <root>.MyProps>
+          correspondingProperty: PROPERTY name:list signature:/MyProps.list|{}list[0] visibility:public modality:ABSTRACT [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyProps<T of <root>.MyProps>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-list> signature:/MyProps.list.<set-list>|<set-list>(kotlin.collections.List<1:0>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyProps<T of <root>.MyProps>, <set-?>:<unbound IrClassSymbolImpl><T of <root>.MyProps>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:list signature:/MyProps.list|{}list[0] visibility:public modality:ABSTRACT [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyProps<T of <root>.MyProps>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><T of <root>.MyProps>
+    CLASS CLASS name:MyComponent signature:/MyComponent|null[0] modality:FINAL visibility:public superTypes:[<root>.RComponent<<root>.MyProps<T of <root>.MyComponent>, <root>.RState>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyComponent<T of <root>.MyComponent>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /MyComponent|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/MyComponent.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyComponent<T of <root>.MyComponent> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.RComponent'
+            <K>: <root>.MyProps<T of <root>.MyComponent>
+            <T>: <root>.RState
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyComponent signature:/MyComponent|null[0] modality:FINAL visibility:public superTypes:[<root>.RComponent<<root>.MyProps<T of <root>.MyComponent>, <root>.RState>]'
+    FUN name:child signature:/child|child(kotlin.Function1<RElementBuilder<0:0>,kotlin.Unit>){0§<RProps>;1§<Component<0:0,*>>}[0] visibility:public modality:FINAL <P, C> (handler:@[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<P of <root>.child>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /child|child(kotlin.Function1<RElementBuilder<0:0>,kotlin.Unit>){0§<RProps>;1§<Component<0:0,*>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.RProps] reified:false
+      TYPE_PARAMETER name:C index:1 variance: signature:[ /child|child(kotlin.Function1<RElementBuilder<0:0>,kotlin.Unit>){0§<RProps>;1§<Component<0:0,*>>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Component<P of <root>.child, *>] reified:true
+      VALUE_PARAMETER name:handler index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<P of <root>.child>, <unbound IrClassSymbolImpl>> [noinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun child <P, C> (handler: @[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<P of <root>.child>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun child <P, C> (handler: @[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<P of <root>.child>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <P>: <root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            <C>: <root>.Component<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, *>
+            handler: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.RElementBuilder<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$child type:<root>.RElementBuilder<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun child <P, C> (handler: @[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<P of <root>.child>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <P>: <root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            <C>: <root>.MyComponent<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            handler: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.RElementBuilder<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.RElementBuilder<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$child type:<root>.RElementBuilder<<root>.MyProps<@[<unbound>] <unbound IrClassSymbolImpl><<root>.RBuilder, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>

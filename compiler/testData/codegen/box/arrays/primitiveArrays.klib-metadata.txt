@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkExactArrayType(a: kotlin/Any?, booleanArray: kotlin/Boolean /* = ... */, byteArray: kotlin/Boolean /* = ... */, shortArray: kotlin/Boolean /* = ... */, charArray: kotlin/Boolean /* = ... */, intArray: kotlin/Boolean /* = ... */, longArray: kotlin/Boolean /* = ... */, floatArray: kotlin/Boolean /* = ... */, doubleArray: kotlin/Boolean /* = ... */, array: kotlin/Boolean /* = ... */): kotlin/Boolean
+
+      public final fun customBooleanArrayOf(vararg arr: kotlin/Boolean /* kotlin/BooleanArray */): kotlin/BooleanArray
+
+      public final fun customByteArrayOf(vararg arr: kotlin/Byte /* kotlin/ByteArray */): kotlin/ByteArray
+
+      public final fun customCharArrayOf(vararg arr: kotlin/Char /* kotlin/CharArray */): kotlin/CharArray
+
+      public final fun customDoubleArrayOf(vararg arr: kotlin/Double /* kotlin/DoubleArray */): kotlin/DoubleArray
+
+      public final fun customFloatArrayOf(vararg arr: kotlin/Float /* kotlin/FloatArray */): kotlin/FloatArray
+
+      public final fun customIntArrayOf(vararg arr: kotlin/Int /* kotlin/IntArray */): kotlin/IntArray
+
+      public final fun customLongArrayOf(vararg arr: kotlin/Long /* kotlin/LongArray */): kotlin/LongArray
+
+      public final fun customShortArrayOf(vararg arr: kotlin/Short /* kotlin/ShortArray */): kotlin/ShortArray
+
+      public final fun eqBoolean(expected: kotlin/BooleanArray, actual: kotlin/BooleanArray): kotlin/Boolean
+
+      public final fun eqByte(expected: kotlin/ByteArray, actual: kotlin/ByteArray): kotlin/Boolean
+
+      public final fun eqChar(expected: kotlin/CharArray, actual: kotlin/CharArray): kotlin/Boolean
+
+      public final fun eqDouble(expected: kotlin/DoubleArray, actual: kotlin/DoubleArray): kotlin/Boolean
+
+      public final fun eqFloat(expected: kotlin/FloatArray, actual: kotlin/FloatArray): kotlin/Boolean
+
+      public final fun eqInt(expected: kotlin/IntArray, actual: kotlin/IntArray): kotlin/Boolean
+
+      public final fun eqLong(expected: kotlin/LongArray, actual: kotlin/LongArray): kotlin/Boolean
+
+      public final fun eqShort(expected: kotlin/ShortArray, actual: kotlin/ShortArray): kotlin/Boolean
+    }
+  }
+}

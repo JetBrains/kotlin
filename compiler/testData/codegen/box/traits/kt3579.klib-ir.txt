@@ -1,0 +1,35 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3579.kt
+    CLASS CLASS name:Persistent signature:/Persistent|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Persistent
+      CONSTRUCTOR signature:/Persistent.<init>|<init>(kotlin.String){}[0] visibility:public <> (p:<unbound IrClassSymbolImpl>) returnType:<root>.Persistent [primary]
+        VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Persistent signature:/Persistent|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:p signature:/Persistent.p|{}p[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:p signature:[ /Persistent.p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'p: <unbound IrClassSymbolImpl> declared in <root>.Persistent.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> signature:/Persistent.p.<get-p>|<get-p>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Persistent) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:p signature:/Persistent.p|{}p[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Persistent
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> (): <unbound IrClassSymbolImpl> declared in <root>.Persistent'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p signature:[ /Persistent.p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Persistent declared in <root>.Persistent.<get-p>' type=<root>.Persistent origin=null
+    CLASS INTERFACE name:Hierarchy signature:/Hierarchy|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Hierarchy<T of <root>.Hierarchy>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Hierarchy|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Persistent; <root>.Hierarchy<T of <root>.Hierarchy>] reified:false] ] superTypes:[<root>.Persistent; <root>.Hierarchy<T of <root>.Hierarchy>] reified:false
+    CLASS CLASS name:Location signature:/Location|null[0] modality:FINAL visibility:public superTypes:[<root>.Persistent; <root>.Hierarchy<<root>.Location>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Location
+      CONSTRUCTOR signature:/Location.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Location [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (p: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Persistent'
+            p: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Location signature:/Location|null[0] modality:FINAL visibility:public superTypes:[<root>.Persistent; <root>.Hierarchy<<root>.Location>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Location' type=<root>.Location origin=null

@@ -1,0 +1,28 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:a fileName:/box.kt
+    CLASS CLASS name:X signature:a/X|null[0] modality:FINAL visibility:public superTypes:[pack.SomeClass]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.X
+      CONSTRUCTOR signature:a/X.<init>|<init>(){}[0] visibility:public <> () returnType:a.X [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in pack.SomeClass'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X signature:a/X|null[0] modality:FINAL visibility:public superTypes:[pack.SomeClass]'
+    FUN name:box signature:a/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.X' type=a.X origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in a'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:kotlin.jvm fileName:/file1.kt
+    CLASS CLASS name:SomeClass signature:[ File '/file1.kt' <- kotlin.jvm/SomeClass|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.jvm.SomeClass
+      CONSTRUCTOR signature:[ File '/file1.kt' <- kotlin.jvm/SomeClass.<init>|<init>(){}[0] ] visibility:public <> () returnType:kotlin.jvm.SomeClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeClass signature:[ File '/file1.kt' <- kotlin.jvm/SomeClass|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+  FILE fqName:pack fileName:/file2.kt
+    CLASS CLASS name:SomeClass signature:pack/SomeClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pack.SomeClass
+      CONSTRUCTOR signature:pack/SomeClass.<init>|<init>(){}[0] visibility:public <> () returnType:pack.SomeClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeClass signature:pack/SomeClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'

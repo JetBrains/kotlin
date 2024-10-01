@@ -1,0 +1,40 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/1.kt
+    CLASS INTERFACE name:Check signature:/Check|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Check
+      FUN name:test signature:/Check.test|test(){}[0] visibility:public modality:OPEN <> ($this:<root>.Check) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Check
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Check'
+            CONST String type=<unbound IrClassSymbolImpl> value="fail"
+    CLASS INTERFACE name:SubCheck signature:/SubCheck|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Check]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SubCheck
+      FUN name:test signature:/SubCheck.test|test(){}[0] visibility:public modality:OPEN <> ($this:<root>.SubCheck) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Check
+        $this: VALUE_PARAMETER name:<this> type:<root>.SubCheck
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.SubCheck'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:CheckClass signature:/CheckClass|null[0] modality:OPEN visibility:public superTypes:[<root>.Check]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CheckClass
+      CONSTRUCTOR signature:/CheckClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.CheckClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CheckClass signature:/CheckClass|null[0] modality:OPEN visibility:public superTypes:[<root>.Check]'
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:SubCheckClass signature:/SubCheckClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SubCheckClass
+      CONSTRUCTOR signature:/SubCheckClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SubCheckClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SubCheckClass signature:/SubCheckClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SubCheckClass' type=<root>.SubCheckClass origin=null

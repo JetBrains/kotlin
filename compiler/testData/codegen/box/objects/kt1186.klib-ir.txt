@@ -1,0 +1,149 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt1186.kt
+    CLASS ENUM_CLASS name:Color signature:/Color|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Color>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Color
+      CONSTRUCTOR signature:/Color.<init>|<init>(kotlin.Int){}[0] visibility:private <> (rgb:<unbound IrClassSymbolImpl>) returnType:<root>.Color [primary]
+        VALUE_PARAMETER name:rgb index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Color
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Color signature:/Color|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Color>]'
+      PROPERTY name:rgb signature:/Color.rgb|{}rgb[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:rgb signature:[ /Color.rgb|{}rgb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:rgb type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'rgb: <unbound IrClassSymbolImpl> declared in <root>.Color.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rgb> signature:/Color.rgb.<get-rgb>|<get-rgb>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Color) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:rgb signature:/Color.rgb|{}rgb[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Color
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-rgb> (): <unbound IrClassSymbolImpl> declared in <root>.Color'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rgb signature:[ /Color.rgb|{}rgb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:rgb type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Color declared in <root>.Color.<get-rgb>' type=<root>.Color origin=null
+      ENUM_ENTRY name:RED signature:/Color.RED|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Color'
+            rgb: CONST Int type=<unbound IrClassSymbolImpl> value=16711680
+      ENUM_ENTRY name:GREEN signature:/Color.GREEN|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Color'
+            rgb: CONST Int type=<unbound IrClassSymbolImpl> value=65280
+      ENUM_ENTRY name:BLUE signature:/Color.BLUE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Color'
+            rgb: CONST Int type=<unbound IrClassSymbolImpl> value=255
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Color.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Color>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Color.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Color
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Color.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Color.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Color>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Color.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:Direction signature:/Direction|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Direction>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Direction
+      CONSTRUCTOR signature:/Direction.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Direction [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Direction
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Direction signature:/Direction|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Direction>]'
+      ENUM_ENTRY name:NORTH signature:/Direction.NORTH|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
+      ENUM_ENTRY name:SOUTH signature:/Direction.SOUTH|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
+      ENUM_ENTRY name:WEST signature:/Direction.WEST|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
+      ENUM_ENTRY name:EAST signature:/Direction.EAST|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Direction.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Direction>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Direction.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Direction
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Direction.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Direction.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Direction>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Direction.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:bar signature:/bar|bar(Color){}[0] visibility:public modality:FINAL <> (c:<root>.Color) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<root>.Color
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (c: <root>.Color): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.Color [val]
+              GET_VAR 'c: <root>.Color declared in <root>.bar' type=<root>.Color origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Color [val] declared in <root>.bar' type=<root>.Color origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:RED signature:/Color.RED|null[0]' type=<root>.Color
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Color [val] declared in <root>.bar' type=<root>.Color origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:GREEN signature:/Color.GREEN|null[0]' type=<root>.Color
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Color [val] declared in <root>.bar' type=<root>.Color origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:BLUE signature:/Color.BLUE|null[0]' type=<root>.Color
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:foo signature:/foo|foo(Direction){}[0] visibility:public modality:FINAL <> (d:<root>.Direction) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Direction
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (d: <root>.Direction): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.Direction [val]
+              GET_VAR 'd: <root>.Direction declared in <root>.foo' type=<root>.Direction origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Direction [val] declared in <root>.foo' type=<root>.Direction origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:NORTH signature:/Direction.NORTH|null[0]' type=<root>.Direction
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Direction [val] declared in <root>.foo' type=<root>.Direction origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:SOUTH signature:/Direction.SOUTH|null[0]' type=<root>.Direction
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Direction [val] declared in <root>.foo' type=<root>.Direction origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:WEST signature:/Direction.WEST|null[0]' type=<root>.Direction
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.Direction [val] declared in <root>.foo' type=<root>.Direction origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:EAST signature:/Direction.EAST|null[0]' type=<root>.Direction
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=4
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: CALL 'public final fun foo (d: <root>.Direction): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      d: GET_ENUM 'ENUM_ENTRY name:EAST signature:/Direction.EAST|null[0]' type=<root>.Direction
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: CALL 'public final fun bar (c: <root>.Color): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      c: GET_ENUM 'ENUM_ENTRY name:GREEN signature:/Color.GREEN|null[0]' type=<root>.Color
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

@@ -1,0 +1,109 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/safeAsFunKSmall.kt
+    FUN name:fn0 signature:/fn0|fn0(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn1 signature:/fn1|fn1(kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:safeAsReturnsNull signature:/safeAsReturnsNull|safeAsReturnsNull(kotlin.String;kotlin.Function0<kotlin.Any?>){}[0] visibility:public modality:FINAL <> (operation:<unbound IrClassSymbolImpl>, cast:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:operation index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:cast index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR name:x type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+                $this: GET_VAR 'cast: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.safeAsReturnsNull' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=VARIABLE_AS_FUNCTION
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.safeAsReturnsNull' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.safeAsReturnsNull'
+                      STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                        GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.safeAsReturnsNull' type=<unbound IrClassSymbolImpl> origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value=": should return null, got "
+                        GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.safeAsReturnsNull' type=<unbound IrClassSymbolImpl>? origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.safeAsReturnsNull
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.safeAsReturnsNull' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": should not throw exceptions, got "
+                    GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.safeAsReturnsNull' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:safeAsReturnsNonNull signature:/safeAsReturnsNonNull|safeAsReturnsNonNull(kotlin.String;kotlin.Function0<kotlin.Any?>){}[0] visibility:public modality:FINAL <> (operation:<unbound IrClassSymbolImpl>, cast:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:operation index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:cast index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR name:x type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+                $this: GET_VAR 'cast: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.safeAsReturnsNonNull' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=VARIABLE_AS_FUNCTION
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.safeAsReturnsNonNull' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.safeAsReturnsNonNull'
+                      STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                        GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.safeAsReturnsNonNull' type=<unbound IrClassSymbolImpl> origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value=": should return non-null"
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.safeAsReturnsNonNull
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.safeAsReturnsNonNull' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": should not throw exceptions, got "
+                    GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.safeAsReturnsNonNull' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:f0 type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            FUNCTION_REFERENCE 'public final fun fn0 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        VAR name:f1 type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            FUNCTION_REFERENCE 'public final fun fn1 (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        CALL 'public final fun safeAsReturnsNonNull (operation: <unbound IrClassSymbolImpl>, cast: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          operation: CONST String type=<unbound IrClassSymbolImpl> value="f0 as? Function0<*>"
+          cast: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                  TYPE_OP type=<unbound IrClassSymbolImpl><*>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*>
+                    GET_VAR 'val f0: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun safeAsReturnsNull (operation: <unbound IrClassSymbolImpl>, cast: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          operation: CONST String type=<unbound IrClassSymbolImpl> value="f0 as? Function1<*, *>"
+          cast: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                  TYPE_OP type=<unbound IrClassSymbolImpl><*, *>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*, *>
+                    GET_VAR 'val f0: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun safeAsReturnsNull (operation: <unbound IrClassSymbolImpl>, cast: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          operation: CONST String type=<unbound IrClassSymbolImpl> value="f1 as? Function0<*>"
+          cast: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                  TYPE_OP type=<unbound IrClassSymbolImpl><*>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*>
+                    GET_VAR 'val f1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun safeAsReturnsNonNull (operation: <unbound IrClassSymbolImpl>, cast: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          operation: CONST String type=<unbound IrClassSymbolImpl> value="f1 as? Function1<*, *>"
+          cast: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                  TYPE_OP type=<unbound IrClassSymbolImpl><*, *>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*, *>
+                    GET_VAR 'val f1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,68 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/booleanHashCode.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1231
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1231
+          2: CALL 'public final fun hashCode (b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1237
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1237
+          2: CALL 'public final fun hashCode (b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        VAR name:b type:<unbound IrClassSymbolImpl>? [var]
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'public final fun hashCode (b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        SET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1231
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1231
+          2: CALL 'public final fun hashCode (b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        SET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1237
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1237
+          2: CALL 'public final fun hashCode (b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'var b: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:hashCode signature:/hashCode|hashCode(kotlin.Boolean?){}[0] visibility:public modality:FINAL <> (b:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun hashCode (b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'b: <unbound IrClassSymbolImpl>? declared in <root>.hashCode' type=<unbound IrClassSymbolImpl>? origin=null

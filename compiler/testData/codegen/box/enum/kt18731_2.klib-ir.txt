@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt18731_2.kt
+    CLASS ENUM_CLASS name:Bar signature:/Bar|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Bar>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar
+      CONSTRUCTOR signature:/Bar.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Bar [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Bar
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Bar signature:/Bar|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Bar>]'
+      ENUM_ENTRY name:ONE signature:/Bar.ONE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Bar.ONE'
+        class: CLASS ENUM_ENTRY name:ONE signature:/Bar.ONE.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Bar]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar.ONE
+          CONSTRUCTOR signature:/Bar.ONE.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Bar.ONE [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Bar'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE signature:/Bar.ONE.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Bar]'
+          FUN name:toString signature:/Bar.ONE.<EEC>.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Bar.ONE) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.Bar.ONE
+            BLOCK_BODY
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: GET_VAR '<this>: <root>.Bar.ONE declared in <root>.Bar.ONE.toString' type=<root>.Bar.ONE origin=null
+                          arg1: GET_ENUM 'ENUM_ENTRY name:TWO signature:/Bar.TWO|null[0]' type=<root>.Bar
+                      then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR '<this>: <root>.Bar.ONE declared in <root>.Bar.ONE.toString' type=<root>.Bar.ONE origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ONE signature:/Bar.ONE|null[0]' type=<root>.Bar
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Bar.ONE'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Bar.ONE'
+                    CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+      ENUM_ENTRY name:TWO signature:/Bar.TWO|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Bar'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Bar.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Bar>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Bar.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Bar
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Bar.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Bar.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Bar>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Bar.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:ONE signature:/Bar.ONE|null[0]' type=<root>.Bar

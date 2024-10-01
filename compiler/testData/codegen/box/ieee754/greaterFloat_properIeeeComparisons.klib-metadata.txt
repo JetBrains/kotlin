@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun greater1(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun greater2(a: kotlin/Float?, b: kotlin/Float?): kotlin/Boolean
+
+      public final fun greater3(a: kotlin/Float?, b: kotlin/Float?): kotlin/Boolean
+
+      public final fun greater4(a: kotlin/Float?, b: kotlin/Float?): kotlin/Boolean
+
+      public final fun greater5(a: kotlin/Any?, b: kotlin/Any?): kotlin/Boolean
+    }
+  }
+}

@@ -1,0 +1,70 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NZ1
+    // class name: NZ2
+    // class name: Z
+
+    public final value class NZ1 : kotlin/Any {
+
+      public constructor(nz: Z?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val nz: Z?
+        public final get
+
+      // underlying property: nz
+
+      // underlying type: Z?
+    }
+
+    public final value class NZ2 : kotlin/Any {
+
+      public constructor(nz: NZ1)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val nz: NZ1
+        public final get
+
+      // underlying property: nz
+
+      // underlying type: NZ1
+    }
+
+    public final value class Z : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

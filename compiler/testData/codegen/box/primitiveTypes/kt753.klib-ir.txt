@@ -1,0 +1,35 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:bitwise_demo fileName:/kt753.kt
+    FUN name:shl signature:bitwise_demo/shl|shl@kotlin.Long?(kotlin.Int?){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>?, bits:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:bits index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shl (bits: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in bitwise_demo'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in bitwise_demo.shl' type=<unbound IrClassSymbolImpl>? origin=null
+            1: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: GET_VAR 'bits: <unbound IrClassSymbolImpl>? declared in bitwise_demo.shl' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:bitwise_demo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl>? [val]
+          CONST Long type=<unbound IrClassSymbolImpl> value=10
+        VAR name:y type:<unbound IrClassSymbolImpl>? [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=12
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun shl (bits: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in bitwise_demo' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in bitwise_demo.box' type=<unbound IrClassSymbolImpl>? origin=null
+            bits: GET_VAR 'val y: <unbound IrClassSymbolImpl>? [val] declared in bitwise_demo.box' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in bitwise_demo'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in bitwise_demo.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=40960
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in bitwise_demo.box' type=<unbound IrClassSymbolImpl> origin=null

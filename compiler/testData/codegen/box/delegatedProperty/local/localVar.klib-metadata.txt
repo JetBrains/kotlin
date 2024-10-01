@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/Delegate
+
+    public final class foo/Delegate : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/Int
+
+      public final operator fun setValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>, i: kotlin/Int): kotlin/Unit
+
+      public final var inner: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,46 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:takeWhileSize signature:test/takeWhileSize|takeWhileSize(kotlin.Int;kotlin.Function1<kotlin.String,kotlin.Int>){}[0] visibility:public modality:FINAL <> (initialSize:<unbound IrClassSymbolImpl>, block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:initialSize index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:block index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:current type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="PARAM"
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+                    arg0: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    arg1: GET_VAR 'initialSize: <unbound IrClassSymbolImpl> declared in test.takeWhileSize' type=<unbound IrClassSymbolImpl> origin=null
+                  then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    TRY type=<unbound IrClassSymbolImpl>
+                      try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                          $this: GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in test.takeWhileSize' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                          1: GET_VAR 'val current: <unbound IrClassSymbolImpl> [val] declared in test.takeWhileSize' type=<unbound IrClassSymbolImpl> origin=null
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        VAR name:i type:<unbound IrClassSymbolImpl> [val]
+                          CONST String type=<unbound IrClassSymbolImpl> value="INNER FINALLY"
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    VAR name:e type:<unbound IrClassSymbolImpl> [val]
+                      CONST String type=<unbound IrClassSymbolImpl> value="ELSE"
+            finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              VAR name:o type:<unbound IrClassSymbolImpl> [val]
+                CONST String type=<unbound IrClassSymbolImpl> value="OUTER FINALLY"
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun takeWhileSize (initialSize: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          initialSize: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"

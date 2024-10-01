@@ -1,0 +1,711 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inlineSite.kt
+    FUN name:withDefaultParameter signature:/withDefaultParameter|withDefaultParameter(kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>, s1:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s1 index:1 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.withDefaultParameter' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 's1: <unbound IrClassSymbolImpl> declared in <root>.withDefaultParameter' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:launch signature:/launch|launch(kotlin.String;kotlin.coroutines.SuspendFunction0<kotlin.String>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>, block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      VALUE_PARAMETER name:block index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.launch' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun launch (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:launchCrossinline signature:/launchCrossinline|launchCrossinline(kotlin.String;kotlin.coroutines.SuspendFunction0<kotlin.String>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>, block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      VALUE_PARAMETER name:block index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:withDefaultParameter signature:/withDefaultParameter|withDefaultParameter@Controller(kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Controller, s:<unbound IrClassSymbolImpl>, s1:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Controller
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s1 index:1 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.Controller' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Controller declared in <root>.withDefaultParameter' type=<root>.Controller origin=null
+              1: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.withDefaultParameter' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 's1: <unbound IrClassSymbolImpl> declared in <root>.withDefaultParameter' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:launch signature:/launch|launch@Controller(kotlin.String;kotlin.coroutines.SuspendFunction1<Controller,kotlin.String>){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Controller, s:<unbound IrClassSymbolImpl>, block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Controller
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      VALUE_PARAMETER name:block index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun builder (controller: <root>.Controller, c: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR '<this>: <root>.Controller declared in <root>.launch' type=<root>.Controller origin=null
+          c: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$builder type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> declared in <root>.launch' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                      1: GET_VAR '$this$builder: <root>.Controller declared in <root>.launch.<anonymous>' type=<root>.Controller origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun launch (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launch' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:launchCrossinline signature:/launchCrossinline|launchCrossinline@Controller(kotlin.String;kotlin.coroutines.SuspendFunction1<Controller,kotlin.String>){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Controller, s:<unbound IrClassSymbolImpl>, block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Controller
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      VALUE_PARAMETER name:block index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun builder (controller: <root>.Controller, c: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR '<this>: <root>.Controller declared in <root>.launchCrossinline' type=<root>.Controller origin=null
+          c: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$builder type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.launchCrossinline' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                      1: GET_VAR '$this$builder: <root>.Controller declared in <root>.launchCrossinline.<anonymous>' type=<root>.Controller origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.launchCrossinline' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 2: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 3: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 4: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 5: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value=""
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 6: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 7: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 8: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 9: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value=""
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 10: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:controller type:<root>.Controller [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Controller' type=<root>.Controller origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="AOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 11: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="AOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 12: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launch type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launch: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="AOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 13: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launch type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launch: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="AOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 14: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launch type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launch: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OAK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 15: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launch (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launch type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launch: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value=""
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OAK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 16: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launchCrossinline type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launchCrossinline: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="AOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 17: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launchCrossinline type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launchCrossinline: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="AOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 18: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launchCrossinline type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launchCrossinline: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OAK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 19: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun execute (controller: <root>.Controller, action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'val controller: <root>.Controller [val] declared in <root>.box' type=<root>.Controller origin=null
+          action: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$execute type:<root>.Controller
+              BLOCK_BODY
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun launchCrossinline (s: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$execute: <root>.Controller declared in <root>.box.<anonymous>' type=<root>.Controller origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$launchCrossinline type:<root>.Controller
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                            CALL 'public final fun withDefaultParameter (s: <unbound IrClassSymbolImpl>, s1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR '$this$launchCrossinline: <root>.Controller declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Controller origin=null
+                              s: CONST String type=<unbound IrClassSymbolImpl> value=""
+                              s1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OAK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 20: "
+                GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/inlined.kt
+    CLASS CLASS name:Controller signature:/Controller|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Controller
+      CONSTRUCTOR signature:/Controller.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.Controller [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Controller signature:/Controller|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/Controller.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Controller.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.Controller.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/Controller.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Controller) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/Controller.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Controller
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.Controller'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Controller.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Controller declared in <root>.Controller.<get-s>' type=<root>.Controller origin=null
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: BLOCK type=<root>.builder.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.builder.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.builder.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+              FUN name:resumeWith visibility:public modality:OPEN <> ($this:<root>.builder.<no name provided>, result:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.builder.<no name provided>
+                VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'result: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<no name provided>.resumeWith' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              PROPERTY name:context visibility:public modality:OPEN [val]
+                FUN name:<get-context> visibility:public modality:OPEN <> ($this:<root>.builder.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  correspondingProperty: PROPERTY name:context visibility:public modality:OPEN [val]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.builder.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-context> (): <unbound IrClassSymbolImpl> declared in <root>.builder.<no name provided>'
+                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.builder.<no name provided>' type=<root>.builder.<no name provided> origin=OBJECT_LITERAL
+    FUN name:execute signature:/execute|execute(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (action:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in <root>.execute' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:builder signature:/builder|builder(Controller;kotlin.coroutines.SuspendFunction1<Controller,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (controller:<root>.Controller, c:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:controller index:0 type:<root>.Controller
+      VALUE_PARAMETER name:c index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <root>.Controller
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> declared in <root>.builder' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=null
+          1: GET_VAR 'controller: <root>.Controller declared in <root>.builder' type=<root>.Controller origin=null
+          2: BLOCK type=<root>.builder.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.builder.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.builder.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+              FUN name:resumeWith visibility:public modality:OPEN <> ($this:<root>.builder.<no name provided>, result:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.builder.<no name provided>
+                VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'result: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<no name provided>.resumeWith' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              PROPERTY name:context visibility:public modality:OPEN [val]
+                FUN name:<get-context> visibility:public modality:OPEN <> ($this:<root>.builder.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  correspondingProperty: PROPERTY name:context visibility:public modality:OPEN [val]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.builder.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-context> (): <unbound IrClassSymbolImpl> declared in <root>.builder.<no name provided>'
+                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.builder.<no name provided>' type=<root>.builder.<no name provided> origin=OBJECT_LITERAL
+    FUN name:execute signature:/execute|execute(Controller;kotlin.coroutines.SuspendFunction1<Controller,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (controller:<root>.Controller, action:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:controller index:0 type:<root>.Controller
+      VALUE_PARAMETER name:action index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        CALL 'public final fun builder (controller: <root>.Controller, c: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          controller: GET_VAR 'controller: <root>.Controller declared in <root>.execute' type=<root>.Controller origin=null
+          c: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$builder type:<root>.Controller
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'action: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.execute' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR '$this$builder: <root>.Controller declared in <root>.execute.<anonymous>' type=<root>.Controller origin=null

@@ -1,0 +1,35 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt36237.kt
+    FUN name:cast signature:/cast|cast(kotlin.Any){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <P> (value:<unbound IrClassSymbolImpl>) returnType:P of <root>.cast [inline]
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /cast|cast(kotlin.Any){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun cast <P> (value: <unbound IrClassSymbolImpl>): P of <root>.cast [inline] declared in <root>'
+          CALL 'public final fun cast0 <P, Z> (value: <unbound IrClassSymbolImpl>, func: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0>): Z of <root>.cast0 [inline] declared in <root>' type=P of <root>.cast origin=null
+            <P>: <unbound IrClassSymbolImpl>
+            <Z>: P of <root>.cast
+            value: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.cast' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:cast0 signature:/cast0|cast0(kotlin.Any;kotlin.Function1<kotlin.Any,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <P, Z> (value:<unbound IrClassSymbolImpl>, func:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0>) returnType:Z of <root>.cast0 [inline]
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /cast0|cast0(kotlin.Any;kotlin.Function1<kotlin.Any,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:Z index:1 variance: signature:[ /cast0|cast0(kotlin.Any;kotlin.Function1<kotlin.Any,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:Z index:1 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:func index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0>
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:Z of <root>.cast0
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): Z of <root>.cast0 declared in <root>.cast0'
+                  TYPE_OP type=Z of <root>.cast0 origin=CAST typeOperand=Z of <root>.cast0
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.cast0.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun cast0 <P, Z> (value: <unbound IrClassSymbolImpl>, func: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0>): Z of <root>.cast0 [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=Z of <root>.cast0 origin=INVOKE
+            $this: GET_VAR 'func: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0> declared in <root>.cast0' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, Z of <root>.cast0> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.cast0' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun cast <P> (value: <unbound IrClassSymbolImpl>): P of <root>.cast [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <P>: <unbound IrClassSymbolImpl>
+            value: CONST String type=<unbound IrClassSymbolImpl> value="OK"

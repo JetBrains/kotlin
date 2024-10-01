@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inference2
+    // class name: Inference2.Foo
+
+    public final object Inference2 : kotlin/Any {
+
+      private constructor()
+
+      public final fun <T#0 /* T */> delegate(): Inference2.Foo<T#0>
+
+      public final operator fun <T#0 /* T */> Inference2.Foo<T#0>.getValue(receiver: Inference2, p: kotlin/Any?): kotlin/String
+
+      public final operator fun <T#0 /* T */> Inference2.Foo<T#0>.provideDelegate(host: T#0, p: kotlin/Any?): Inference2.Foo<T#0>
+
+      public final /* delegated */ val test1: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val test2: kotlin/String
+        public final /* non-default */ get
+
+      // nested class: Foo
+    }
+
+    public abstract interface Inference2.Foo<T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

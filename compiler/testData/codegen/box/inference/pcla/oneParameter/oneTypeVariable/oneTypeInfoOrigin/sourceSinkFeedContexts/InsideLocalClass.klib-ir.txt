@@ -1,0 +1,86 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/InsideLocalClass.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testYield (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMaterialize (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:testYield signature:/testYield|testYield(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:arg type:<root>.UserKlass [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UserKlass' type=<root>.UserKlass origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<root>.UserKlass> origin=null
+            <FT>: <root>.UserKlass
+            instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.UserKlass>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.UserKlass>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.UserKlass>
+                BLOCK_BODY
+                  CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testYield.<anonymous>.LocalClass
+                    CONSTRUCTOR visibility:public <> () returnType:<root>.testYield.<anonymous>.LocalClass [primary]
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                    ANONYMOUS_INITIALIZER isStatic=false
+                      BLOCK_BODY
+                        CALL 'public final fun yield (arg: CT of <root>.Buildee): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR '$this$build: <root>.Buildee<<root>.UserKlass> declared in <root>.testYield.<anonymous>' type=<root>.Buildee<<root>.UserKlass> origin=null
+                          arg: GET_VAR 'val arg: <root>.UserKlass [val] declared in <root>.testYield' type=<root>.UserKlass origin=null
+    FUN name:testMaterialize signature:/testMaterialize|testMaterialize(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:consume visibility:local modality:FINAL <> (arg:<root>.UserKlass) returnType:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER name:arg index:0 type:<root>.UserKlass
+          BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<root>.UserKlass> origin=null
+            <FT>: <root>.UserKlass
+            instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.UserKlass>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.UserKlass>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.UserKlass>
+                BLOCK_BODY
+                  CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testMaterialize.<anonymous>.LocalClass
+                    CONSTRUCTOR visibility:public <> () returnType:<root>.testMaterialize.<anonymous>.LocalClass [primary]
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                    ANONYMOUS_INITIALIZER isStatic=false
+                      BLOCK_BODY
+                        CALL 'local final fun consume (arg: <root>.UserKlass): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize' type=<unbound IrClassSymbolImpl> origin=null
+                          arg: CALL 'public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee' type=<root>.UserKlass origin=null
+                            $this: GET_VAR '$this$build: <root>.Buildee<<root>.UserKlass> declared in <root>.testMaterialize.<anonymous>' type=<root>.Buildee<<root>.UserKlass> origin=null
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+      TYPE_PARAMETER name:CT index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<CT of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:yield signature:/Buildee.yield|yield(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>, arg:CT of <root>.Buildee) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+        VALUE_PARAMETER name:arg index:0 type:CT of <root>.Buildee
+        BLOCK_BODY
+      FUN name:materialize signature:/Buildee.materialize|materialize(){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>) returnType:CT of <root>.Buildee
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee'
+            TYPE_OP type=CT of <root>.Buildee origin=CAST typeOperand=CT of <root>.Buildee
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UserKlass' type=<root>.UserKlass origin=null
+    FUN name:build signature:/build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FT> (instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<FT of <root>.build>
+      TYPE_PARAMETER name:FT index:0 variance: signature:[ /build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructions index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<FT of <root>.build> origin=null
+            <1>: <root>.Buildee<FT of <root>.build>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<FT of <root>.build> origin=null
+              <class: CT>: FT of <root>.build
+            1: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> declared in <root>.build' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:UserKlass signature:/UserKlass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.UserKlass
+      CONSTRUCTOR signature:/UserKlass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.UserKlass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:UserKlass signature:/UserKlass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'

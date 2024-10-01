@@ -1,0 +1,475 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Data
+    // class name: Flow
+    // class name: FlowCollector
+
+    public final data class Data : kotlin/Any {
+
+      public constructor(p1: kotlin/Double?, p2: kotlin/Double?, p3: kotlin/Double?, p4: kotlin/Double?, p5: kotlin/Double?, p6: kotlin/Double?, p7: kotlin/Double?, p8: kotlin/Double?, p9: kotlin/Double?, p10: kotlin/Double?, p11: kotlin/Double?, p12: kotlin/Double?, p13: kotlin/Double?, p14: kotlin/Double?, p15: kotlin/Double?, p16: kotlin/Double?, p17: kotlin/Double?, p18: kotlin/Double?, p19: kotlin/Double?, p20: kotlin/Double?, p21: kotlin/Double?, p22: kotlin/Double?, p23: kotlin/Double?, p24: kotlin/Double?, p25: kotlin/Double?, p26: kotlin/Double?, p27: kotlin/Double?, p28: kotlin/Double?, p29: kotlin/Double?, p30: kotlin/Double?, p31: kotlin/Double?, p32: kotlin/Double?, p33: kotlin/Double?, p34: kotlin/Double?, p35: kotlin/Double?, p36: kotlin/Double?, p37: kotlin/Double?, p38: kotlin/Double?, p39: kotlin/Double?, p40: kotlin/Double?, p41: kotlin/Double?, p42: kotlin/Double?, p43: kotlin/Double?, p44: kotlin/Double?, p45: kotlin/Double?, p46: kotlin/Double?, p47: kotlin/Double?, p48: kotlin/Double?, p49: kotlin/Double?, p50: kotlin/Double?, p51: kotlin/Double?, p52: kotlin/Double?, p53: kotlin/Double?, p54: kotlin/Double?, p55: kotlin/Double?, p56: kotlin/Double?, p57: kotlin/Double?, p58: kotlin/Double?, p59: kotlin/Double?, p60: kotlin/Double?, p61: kotlin/Double?, p62: kotlin/Double?, p63: kotlin/Double?, p64: kotlin/Double?, p65: kotlin/Double?, p66: kotlin/Double?, p67: kotlin/Double?, p68: kotlin/Double?, p69: kotlin/Double?, p70: kotlin/Double?, p71: kotlin/Double?, p72: kotlin/Double?, p73: kotlin/Double?, p74: kotlin/Double?, p75: kotlin/Double?, p76: kotlin/Double?, p77: kotlin/Double?, p78: kotlin/Double?, p79: kotlin/Double?, p80: kotlin/Double?, p81: kotlin/Double?, p82: kotlin/Double?, p83: kotlin/Double?, p84: kotlin/Double?, p85: kotlin/Double?, p86: kotlin/Double?)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component10(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component11(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component12(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component13(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component14(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component15(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component16(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component17(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component18(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component19(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component2(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component20(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component21(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component22(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component23(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component24(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component25(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component26(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component27(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component28(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component29(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component3(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component30(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component31(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component32(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component33(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component34(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component35(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component36(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component37(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component38(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component39(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component4(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component40(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component41(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component42(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component43(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component44(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component45(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component46(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component47(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component48(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component49(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component5(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component50(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component51(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component52(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component53(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component54(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component55(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component56(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component57(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component58(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component59(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component6(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component60(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component61(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component62(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component63(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component64(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component65(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component66(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component67(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component68(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component69(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component7(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component70(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component71(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component72(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component73(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component74(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component75(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component76(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component77(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component78(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component79(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component8(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component80(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component81(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component82(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component83(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component84(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component85(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component86(): kotlin/Double?
+
+      public final /* synthesized */ operator fun component9(): kotlin/Double?
+
+      public final /* synthesized */ fun copy(p1: kotlin/Double? /* = ... */, p2: kotlin/Double? /* = ... */, p3: kotlin/Double? /* = ... */, p4: kotlin/Double? /* = ... */, p5: kotlin/Double? /* = ... */, p6: kotlin/Double? /* = ... */, p7: kotlin/Double? /* = ... */, p8: kotlin/Double? /* = ... */, p9: kotlin/Double? /* = ... */, p10: kotlin/Double? /* = ... */, p11: kotlin/Double? /* = ... */, p12: kotlin/Double? /* = ... */, p13: kotlin/Double? /* = ... */, p14: kotlin/Double? /* = ... */, p15: kotlin/Double? /* = ... */, p16: kotlin/Double? /* = ... */, p17: kotlin/Double? /* = ... */, p18: kotlin/Double? /* = ... */, p19: kotlin/Double? /* = ... */, p20: kotlin/Double? /* = ... */, p21: kotlin/Double? /* = ... */, p22: kotlin/Double? /* = ... */, p23: kotlin/Double? /* = ... */, p24: kotlin/Double? /* = ... */, p25: kotlin/Double? /* = ... */, p26: kotlin/Double? /* = ... */, p27: kotlin/Double? /* = ... */, p28: kotlin/Double? /* = ... */, p29: kotlin/Double? /* = ... */, p30: kotlin/Double? /* = ... */, p31: kotlin/Double? /* = ... */, p32: kotlin/Double? /* = ... */, p33: kotlin/Double? /* = ... */, p34: kotlin/Double? /* = ... */, p35: kotlin/Double? /* = ... */, p36: kotlin/Double? /* = ... */, p37: kotlin/Double? /* = ... */, p38: kotlin/Double? /* = ... */, p39: kotlin/Double? /* = ... */, p40: kotlin/Double? /* = ... */, p41: kotlin/Double? /* = ... */, p42: kotlin/Double? /* = ... */, p43: kotlin/Double? /* = ... */, p44: kotlin/Double? /* = ... */, p45: kotlin/Double? /* = ... */, p46: kotlin/Double? /* = ... */, p47: kotlin/Double? /* = ... */, p48: kotlin/Double? /* = ... */, p49: kotlin/Double? /* = ... */, p50: kotlin/Double? /* = ... */, p51: kotlin/Double? /* = ... */, p52: kotlin/Double? /* = ... */, p53: kotlin/Double? /* = ... */, p54: kotlin/Double? /* = ... */, p55: kotlin/Double? /* = ... */, p56: kotlin/Double? /* = ... */, p57: kotlin/Double? /* = ... */, p58: kotlin/Double? /* = ... */, p59: kotlin/Double? /* = ... */, p60: kotlin/Double? /* = ... */, p61: kotlin/Double? /* = ... */, p62: kotlin/Double? /* = ... */, p63: kotlin/Double? /* = ... */, p64: kotlin/Double? /* = ... */, p65: kotlin/Double? /* = ... */, p66: kotlin/Double? /* = ... */, p67: kotlin/Double? /* = ... */, p68: kotlin/Double? /* = ... */, p69: kotlin/Double? /* = ... */, p70: kotlin/Double? /* = ... */, p71: kotlin/Double? /* = ... */, p72: kotlin/Double? /* = ... */, p73: kotlin/Double? /* = ... */, p74: kotlin/Double? /* = ... */, p75: kotlin/Double? /* = ... */, p76: kotlin/Double? /* = ... */, p77: kotlin/Double? /* = ... */, p78: kotlin/Double? /* = ... */, p79: kotlin/Double? /* = ... */, p80: kotlin/Double? /* = ... */, p81: kotlin/Double? /* = ... */, p82: kotlin/Double? /* = ... */, p83: kotlin/Double? /* = ... */, p84: kotlin/Double? /* = ... */, p85: kotlin/Double? /* = ... */, p86: kotlin/Double? /* = ... */): Data
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val p1: kotlin/Double?
+        public final get
+
+      public final val p10: kotlin/Double?
+        public final get
+
+      public final val p11: kotlin/Double?
+        public final get
+
+      public final val p12: kotlin/Double?
+        public final get
+
+      public final val p13: kotlin/Double?
+        public final get
+
+      public final val p14: kotlin/Double?
+        public final get
+
+      public final val p15: kotlin/Double?
+        public final get
+
+      public final val p16: kotlin/Double?
+        public final get
+
+      public final val p17: kotlin/Double?
+        public final get
+
+      public final val p18: kotlin/Double?
+        public final get
+
+      public final val p19: kotlin/Double?
+        public final get
+
+      public final val p2: kotlin/Double?
+        public final get
+
+      public final val p20: kotlin/Double?
+        public final get
+
+      public final val p21: kotlin/Double?
+        public final get
+
+      public final val p22: kotlin/Double?
+        public final get
+
+      public final val p23: kotlin/Double?
+        public final get
+
+      public final val p24: kotlin/Double?
+        public final get
+
+      public final val p25: kotlin/Double?
+        public final get
+
+      public final val p26: kotlin/Double?
+        public final get
+
+      public final val p27: kotlin/Double?
+        public final get
+
+      public final val p28: kotlin/Double?
+        public final get
+
+      public final val p29: kotlin/Double?
+        public final get
+
+      public final val p3: kotlin/Double?
+        public final get
+
+      public final val p30: kotlin/Double?
+        public final get
+
+      public final val p31: kotlin/Double?
+        public final get
+
+      public final val p32: kotlin/Double?
+        public final get
+
+      public final val p33: kotlin/Double?
+        public final get
+
+      public final val p34: kotlin/Double?
+        public final get
+
+      public final val p35: kotlin/Double?
+        public final get
+
+      public final val p36: kotlin/Double?
+        public final get
+
+      public final val p37: kotlin/Double?
+        public final get
+
+      public final val p38: kotlin/Double?
+        public final get
+
+      public final val p39: kotlin/Double?
+        public final get
+
+      public final val p4: kotlin/Double?
+        public final get
+
+      public final val p40: kotlin/Double?
+        public final get
+
+      public final val p41: kotlin/Double?
+        public final get
+
+      public final val p42: kotlin/Double?
+        public final get
+
+      public final val p43: kotlin/Double?
+        public final get
+
+      public final val p44: kotlin/Double?
+        public final get
+
+      public final val p45: kotlin/Double?
+        public final get
+
+      public final val p46: kotlin/Double?
+        public final get
+
+      public final val p47: kotlin/Double?
+        public final get
+
+      public final val p48: kotlin/Double?
+        public final get
+
+      public final val p49: kotlin/Double?
+        public final get
+
+      public final val p5: kotlin/Double?
+        public final get
+
+      public final val p50: kotlin/Double?
+        public final get
+
+      public final val p51: kotlin/Double?
+        public final get
+
+      public final val p52: kotlin/Double?
+        public final get
+
+      public final val p53: kotlin/Double?
+        public final get
+
+      public final val p54: kotlin/Double?
+        public final get
+
+      public final val p55: kotlin/Double?
+        public final get
+
+      public final val p56: kotlin/Double?
+        public final get
+
+      public final val p57: kotlin/Double?
+        public final get
+
+      public final val p58: kotlin/Double?
+        public final get
+
+      public final val p59: kotlin/Double?
+        public final get
+
+      public final val p6: kotlin/Double?
+        public final get
+
+      public final val p60: kotlin/Double?
+        public final get
+
+      public final val p61: kotlin/Double?
+        public final get
+
+      public final val p62: kotlin/Double?
+        public final get
+
+      public final val p63: kotlin/Double?
+        public final get
+
+      public final val p64: kotlin/Double?
+        public final get
+
+      public final val p65: kotlin/Double?
+        public final get
+
+      public final val p66: kotlin/Double?
+        public final get
+
+      public final val p67: kotlin/Double?
+        public final get
+
+      public final val p68: kotlin/Double?
+        public final get
+
+      public final val p69: kotlin/Double?
+        public final get
+
+      public final val p7: kotlin/Double?
+        public final get
+
+      public final val p70: kotlin/Double?
+        public final get
+
+      public final val p71: kotlin/Double?
+        public final get
+
+      public final val p72: kotlin/Double?
+        public final get
+
+      public final val p73: kotlin/Double?
+        public final get
+
+      public final val p74: kotlin/Double?
+        public final get
+
+      public final val p75: kotlin/Double?
+        public final get
+
+      public final val p76: kotlin/Double?
+        public final get
+
+      public final val p77: kotlin/Double?
+        public final get
+
+      public final val p78: kotlin/Double?
+        public final get
+
+      public final val p79: kotlin/Double?
+        public final get
+
+      public final val p8: kotlin/Double?
+        public final get
+
+      public final val p80: kotlin/Double?
+        public final get
+
+      public final val p81: kotlin/Double?
+        public final get
+
+      public final val p82: kotlin/Double?
+        public final get
+
+      public final val p83: kotlin/Double?
+        public final get
+
+      public final val p84: kotlin/Double?
+        public final get
+
+      public final val p85: kotlin/Double?
+        public final get
+
+      public final val p86: kotlin/Double?
+        public final get
+
+      public final val p9: kotlin/Double?
+        public final get
+    }
+
+    public abstract interface Flow<out T#0 /* T */> : kotlin/Any {
+
+      public abstract suspend fun collect(collector: FlowCollector<T#0>): kotlin/Unit
+    }
+
+    public abstract fun interface FlowCollector<in T#0 /* T */> : kotlin/Any {
+
+      public abstract suspend fun emit(value: T#0): kotlin/Unit
+    }
+
+    package {
+
+      internal final fun Flow<kotlin/collections/List<Data>>.aggregate(aggregation: kotlin/Function1<kotlin/collections/List<kotlin/Double>, kotlin/Double>): Flow<Data>
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */, T#1 /* R */ : kotlin/Any> Flow<T#0>.mapNotNull(crossinline transform: suspend kotlin/Function2<@kotlin/ParameterName(name = "value") T#0, kotlin/coroutines/Continuation<T#1?>, kotlin/Any?>): Flow<T#1>
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> Flow<T#0>.transform(crossinline transform: @kotlin/ExtensionFunctionType suspend kotlin/Function3<FlowCollector<T#1>, @kotlin/ParameterName(name = "value") T#0, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): Flow<T#1>
+    }
+  }
+}

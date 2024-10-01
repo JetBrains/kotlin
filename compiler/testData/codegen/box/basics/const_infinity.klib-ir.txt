@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/const_infinity.kt
+    PROPERTY name:fpInfVal signature:/fpInfVal|{}fpInfVal[0] visibility:public modality:FINAL [val]
+      annotations:
+        <unbound>(1 = ["DIVISION_BY_ZERO"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      FIELD PROPERTY_BACKING_FIELD name:fpInfVal signature:[ /fpInfVal|{}fpInfVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fpInfConst type:kotlin.Float visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=DIV
+            $this: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+            1: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fpInfVal> signature:/fpInfVal.<get-fpInfVal>|<get-fpInfVal>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:fpInfVal signature:/fpInfVal|{}fpInfVal[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-fpInfVal> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fpInfVal signature:[ /fpInfVal|{}fpInfVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fpInfConst type:kotlin.Float visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:fpInfConst signature:/fpInfConst|{}fpInfConst[0] visibility:public modality:FINAL [const,val]
+      annotations:
+        <unbound>(1 = ["DIVISION_BY_ZERO"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      FIELD PROPERTY_BACKING_FIELD name:fpInfConst signature:[ /fpInfConst|{}fpInfConst[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fpInfConst type:kotlin.Float visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fpInfConst> signature:/fpInfConst.<get-fpInfConst>|<get-fpInfConst>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:fpInfConst signature:/fpInfConst|{}fpInfConst[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-fpInfConst> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fpInfConst signature:[ /fpInfConst|{}fpInfConst[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fpInfConst type:kotlin.Float visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+          2: CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-fpInfVal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+          2: CALL 'public final fun <get-fpInfVal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

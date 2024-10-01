@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: MyMap
+
+    public abstract class A<T#0 /* T */, T#1 /* E */> : MyMap<T#0, T#1> /* = MyMapAlias^<T#0, T#1> */ {
+
+      public constructor(m: MyMap<T#0, T#1> /* = MyMapAlias^<T#0, T#1> */)
+
+      public open /* delegation */ fun get(k: T#0): T#1
+
+      public final val m: MyMap<T#0, T#1> /* = MyMapAlias^<T#0, T#1> */
+        public final get
+    }
+
+    public final class B : A<kotlin/String, kotlin/String> {
+
+      public constructor()
+    }
+
+    public abstract interface MyMap<T#0 /* K */, T#1 /* V */> : kotlin/Any {
+
+      public abstract fun get(k: T#0): T#1
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public typealias MyMapAlias<T#0 /* X */, T#1 /* Y */> = MyMap<T#0, T#1> /* = MyMap<T#0, T#1> */
+    }
+  }
+}

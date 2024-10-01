@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Container
+    // class name: Element
+
+    public final class Container<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun add(arg: T#0): kotlin/Unit
+    }
+
+    public abstract fun interface Element : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(c: Container<in Element>): kotlin/Unit
+    }
+  }
+}

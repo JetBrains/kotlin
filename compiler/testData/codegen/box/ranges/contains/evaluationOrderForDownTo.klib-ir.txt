@@ -1,0 +1,450 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/evaluationOrderForDownTo.kt
+    PROPERTY name:order signature:/order|{}order[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:order signature:[ /order|{}order[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:order type:kotlin.text.StringBuilder visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> signature:/order.<get-order>|<get-order>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:order signature:/order|{}order[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-order> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:order signature:[ /order|{}order[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:order type:kotlin.text.StringBuilder visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-order> signature:/order.<set-order>|<set-order>(kotlin.text.StringBuilder){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:order signature:/order|{}order[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:order signature:[ /order|{}order[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:order type:kotlin.text.StringBuilder visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-order>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:expectOrder signature:/expectOrder|expectOrder(kotlin.String;kotlin.String;kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (at:<unbound IrClassSymbolImpl>, expected:<unbound IrClassSymbolImpl>, body:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:at index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expected index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:body index:2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'public final fun <set-order> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.expectOrder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-order> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.expectOrder' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'at: <unbound IrClassSymbolImpl> declared in <root>.expectOrder' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=": expected: "
+                  GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.expectOrder' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=", actual: "
+                  CALL 'public final fun <get-order> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:low signature:/low|low(kotlin.Int){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-order> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST String type=<unbound IrClassSymbolImpl> value="L"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.low' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:high signature:/high|high(kotlin.Int){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-order> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST String type=<unbound IrClassSymbolImpl> value="H"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.high' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:x signature:/x|x(kotlin.Int){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-order> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST String type=<unbound IrClassSymbolImpl> value="X"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.x' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(0) in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HLX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="0 in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HL"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(0) in high(3) downTo 1"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(0) in 3 downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="LX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(0) !in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HLX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="0 !in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HL"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(0) !in high(3) downTo 1"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(0) !in 3 downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="LX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(4) in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HLX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="4 in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HL"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(4) in high(3) downTo 1"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(4) in 3 downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="LX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(4) !in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HLX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="4 !in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HL"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(4) !in high(3) downTo 1"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(4) !in 3 downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="LX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(2) in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HLX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="2 in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HL"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(2) in high(3) downTo 1"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(2) in 3 downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="LX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                      1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(2) !in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HLX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="2 !in high(3) downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HL"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(2) !in high(3) downTo 1"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="HX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun high (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun expectOrder (at: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          at: CONST String type=<unbound IrClassSymbolImpl> value="x(2) !in 3 downTo low(1)"
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="LX"
+          body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                        1: CALL 'public final fun low (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      1: CALL 'public final fun x (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

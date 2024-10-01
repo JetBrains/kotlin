@@ -1,0 +1,35 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/decrementInFinally.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:variable type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TRY type=<unbound IrClassSymbolImpl>
+              try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+                  <T0>: <unbound IrClassSymbolImpl>
+                  arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      GET_VAR 'var variable: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                    SET_VAR 'var variable: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'var variable: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+                    then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"

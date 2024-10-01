@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final inline fun assertError(index: kotlin/Int, h: test/Holder, expected: kotlin/String, l: kotlin/Function1<@kotlin/ParameterName(name = "h") test/Holder, test/Holder>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): test/Holder
+
+      public final fun test1Lambda(): test/Holder
+
+      public final fun test2(h: test/Holder): test/Holder
+
+      public final fun test2Lambda(h: test/Holder): test/Holder
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Holder
+
+    public final class test/Holder : kotlin/Any {
+
+      public constructor(value: kotlin/String /* = ... */)
+
+      public final operator fun plusAssign(s: kotlin/String?): kotlin/Unit
+
+      public open fun toString(): kotlin/String
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final inline fun <T#0 /* R */> doCall(h: test/Holder, block: kotlin/Function0<T#0>): kotlin/Unit
+
+      public final inline fun <T#0 /* R */> doCallWithException(h: test/Holder, block: kotlin/Function0<T#0>): kotlin/Unit
+    }
+  }
+}

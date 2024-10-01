@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public final object Test : kotlin/Any {
+
+      private constructor()
+
+      public final fun changeLong(): kotlin/Long
+
+      public final fun changeObject(): kotlin/String
+
+      public final var l: kotlin/Long
+        public final get
+        public final set
+
+      public final var kotlin/Long.someProperty: kotlin/Long
+        public final /* non-default */ get
+        public final /* non-default */ set(left: kotlin/Long)
+
+      public final var kotlin/String.someProperty: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(left: kotlin/Int)
+
+      public final var z: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

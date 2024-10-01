@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public final class B : kotlin/Any {
+
+      public /* secondary */ constructor(pos: kotlin/Int)
+
+      public constructor(a: kotlin/Int, b: kotlin/Int)
+
+      public final val a: kotlin/Int
+        public final get
+
+      public final val pos: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun primaryConstructorCall(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+
+      public final fun secondaryConstructorCall(a: kotlin/Int): kotlin/Int
+    }
+  }
+}

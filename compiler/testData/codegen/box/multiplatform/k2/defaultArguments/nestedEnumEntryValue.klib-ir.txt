@@ -1,0 +1,60 @@
+// MODULE: platform
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+  FILE fqName:<root> fileName:/platform.kt
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(C.E){}[0] visibility:public <> (e:<root>.C.E) returnType:<root>.C [primary]
+        VALUE_PARAMETER name:e index:0 type:<root>.C.E
+          EXPRESSION_BODY
+            GET_ENUM 'ENUM_ENTRY name:O signature:/C.E.O|null[0]' type=<root>.C.E
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:result signature:/C.result|{}result[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ /C.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'e: <root>.C.E declared in <root>.C.<init>' type=<root>.C.E origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/C.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/C.result|{}result[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /C.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-result>' type=<root>.C origin=null
+      CLASS ENUM_CLASS name:E signature:/C.E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.C.E>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C.E
+        CONSTRUCTOR signature:/C.E.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.C.E [primary]
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              <1>: <root>.C.E
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:/C.E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.C.E>]'
+        ENUM_ENTRY name:O signature:/C.E.O|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.C.E'
+        ENUM_ENTRY name:K signature:/C.E.K|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.C.E'
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/C.E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.C.E>
+          SYNTHETIC_BODY kind=ENUM_VALUES
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/C.E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.C.E
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          SYNTHETIC_BODY kind=ENUM_VALUEOF
+        PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/C.E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/C.E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.C.E>
+            correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/C.E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+            SYNTHETIC_BODY kind=ENUM_ENTRIES
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>

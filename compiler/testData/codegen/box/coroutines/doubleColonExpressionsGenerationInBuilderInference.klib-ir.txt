@@ -1,0 +1,106 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:a.b fileName:/doubleColonExpressionsGenerationInBuilderInference.kt
+    CLASS CLASS name:BatchInfo1 signature:a.b/BatchInfo1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.b.BatchInfo1
+      CONSTRUCTOR signature:a.b/BatchInfo1.<init>|<init>(kotlin.Int){}[0] visibility:public <> (batchSize:<unbound IrClassSymbolImpl>) returnType:a.b.BatchInfo1 [primary]
+        VALUE_PARAMETER name:batchSize index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BatchInfo1 signature:a.b/BatchInfo1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:batchSize signature:a.b/BatchInfo1.batchSize|{}batchSize[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:batchSize signature:[ a.b/BatchInfo1.batchSize|{}batchSize[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:batchSize type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'batchSize: <unbound IrClassSymbolImpl> declared in a.b.BatchInfo1.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-batchSize> signature:a.b/BatchInfo1.batchSize.<get-batchSize>|<get-batchSize>(){}[0] visibility:public modality:FINAL <> ($this:a.b.BatchInfo1) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:batchSize signature:a.b/BatchInfo1.batchSize|{}batchSize[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:a.b.BatchInfo1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-batchSize> (): <unbound IrClassSymbolImpl> declared in a.b.BatchInfo1'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:batchSize signature:[ a.b/BatchInfo1.batchSize|{}batchSize[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:batchSize type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: a.b.BatchInfo1 declared in a.b.BatchInfo1.<get-batchSize>' type=a.b.BatchInfo1 origin=null
+    CLASS CLASS name:BatchInfo2 signature:a.b/BatchInfo2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.b.BatchInfo2<T of a.b.BatchInfo2>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ a.b/BatchInfo2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:a.b/BatchInfo2.<init>|<init>(1:0){}[0] visibility:public <> (data:T of a.b.BatchInfo2) returnType:a.b.BatchInfo2<T of a.b.BatchInfo2> [primary]
+        VALUE_PARAMETER name:data index:0 type:T of a.b.BatchInfo2
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BatchInfo2 signature:a.b/BatchInfo2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:data signature:a.b/BatchInfo2.data|{}data[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:data signature:[ a.b/BatchInfo2.data|{}data[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:batchSize type:kotlin.Int visibility:private [final]] ] type:T of a.b.BatchInfo2 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'data: T of a.b.BatchInfo2 declared in a.b.BatchInfo2.<init>' type=T of a.b.BatchInfo2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-data> signature:a.b/BatchInfo2.data.<get-data>|<get-data>(){}[0] visibility:public modality:FINAL <> ($this:a.b.BatchInfo2<T of a.b.BatchInfo2>) returnType:T of a.b.BatchInfo2
+          correspondingProperty: PROPERTY name:data signature:a.b/BatchInfo2.data|{}data[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:a.b.BatchInfo2<T of a.b.BatchInfo2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-data> (): T of a.b.BatchInfo2 declared in a.b.BatchInfo2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:data signature:[ a.b/BatchInfo2.data|{}data[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:batchSize type:kotlin.Int visibility:private [final]] ] type:T of a.b.BatchInfo2 visibility:private [final]' type=T of a.b.BatchInfo2 origin=null
+                receiver: GET_VAR '<this>: a.b.BatchInfo2<T of a.b.BatchInfo2> declared in a.b.BatchInfo2.<get-data>' type=a.b.BatchInfo2<T of a.b.BatchInfo2> origin=null
+    CLASS OBJECT name:Obj signature:a.b/Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.b.Obj
+      CONSTRUCTOR signature:a.b/Obj.<init>|<init>(){}[0] visibility:private <> () returnType:a.b.Obj [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Obj signature:a.b/Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:test signature:a.b/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$sequence type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:x type:<unbound IrClassSymbolImpl><a.b.BatchInfo1> [val]
+                    CLASS_REFERENCE 'CLASS CLASS name:BatchInfo1 signature:a.b/BatchInfo1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1>
+                  VAR name:y type:<unbound IrClassSymbolImpl><a.b.BatchInfo1> [val]
+                    CLASS_REFERENCE 'CLASS CLASS name:BatchInfo1 signature:a.b/BatchInfo1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1>
+                  VAR name:z type:<unbound IrClassSymbolImpl><a.b.Obj> [val]
+                    CLASS_REFERENCE 'CLASS OBJECT name:Obj signature:a.b/Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><a.b.Obj>
+                  VAR name:x1 type:<unbound IrClassSymbolImpl><a.b.BatchInfo1, <unbound IrClassSymbolImpl>> [val]
+                    PROPERTY_REFERENCE 'public final batchSize: <unbound IrClassSymbolImpl> [val] declared in a.b.BatchInfo1' field=null getter='public final fun <get-batchSize> (): <unbound IrClassSymbolImpl> declared in a.b.BatchInfo1' setter=null type=<unbound IrClassSymbolImpl><a.b.BatchInfo1, <unbound IrClassSymbolImpl>> origin=null
+                  VAR name:y1 type:<unbound IrClassSymbolImpl><a.b.BatchInfo1> [val]
+                    CLASS_REFERENCE 'CLASS CLASS name:BatchInfo1 signature:a.b/BatchInfo1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$sequence: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in a.b.test.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      <2>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        <1>: <unbound IrClassSymbolImpl>
+                        1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                          GET_VAR 'val x: <unbound IrClassSymbolImpl><a.b.BatchInfo1> [val] declared in a.b.test.<anonymous>' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1> origin=null
+                          GET_VAR 'val y: <unbound IrClassSymbolImpl><a.b.BatchInfo1> [val] declared in a.b.test.<anonymous>' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1> origin=null
+                          GET_VAR 'val z: <unbound IrClassSymbolImpl><a.b.Obj> [val] declared in a.b.test.<anonymous>' type=<unbound IrClassSymbolImpl><a.b.Obj> origin=null
+                          GET_VAR 'val x1: <unbound IrClassSymbolImpl><a.b.BatchInfo1, <unbound IrClassSymbolImpl>> [val] declared in a.b.test.<anonymous>' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1, <unbound IrClassSymbolImpl>> origin=null
+                          GET_VAR 'val y1: <unbound IrClassSymbolImpl><a.b.BatchInfo1> [val] declared in a.b.test.<anonymous>' type=<unbound IrClassSymbolImpl><a.b.BatchInfo1> origin=null
+                      1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                          VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in a.b.test.<anonymous>'
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                                  GET_VAR 'it: <unbound IrClassSymbolImpl> declared in a.b.test.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:size type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: GET_VAR 'val a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in a.b.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'val size: <unbound IrClassSymbolImpl> [val] declared in a.b.test' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+          2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in a.b.test'
+                  STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    CONST String type=<unbound IrClassSymbolImpl> value="actual size: "
+                    GET_VAR 'val size: <unbound IrClassSymbolImpl> [val] declared in a.b.test' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:a.b/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in a.b' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in a.b'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

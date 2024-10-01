@@ -1,0 +1,40 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Q
+    // class name: Q.S
+
+    public final class Q<T#0 /* T */ : Q.S> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: S
+    }
+
+    public open class Q.S : kotlin/Any {
+
+      public constructor()
+
+      public final val ok: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

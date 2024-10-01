@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: AImpl
+    // class name: Delegate
+
+    public abstract interface A : kotlin/Any {
+
+      public abstract val prop: kotlin/Int
+        public abstract get
+    }
+
+    public final class AImpl : A {
+
+      public constructor()
+
+      public open /* delegated */ val prop: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final class Delegate : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

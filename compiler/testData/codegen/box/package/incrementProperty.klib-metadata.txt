@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Slot
+
+    public final class Slot : kotlin/Any {
+
+      public constructor()
+
+      public final fun increaseVitality(delta: kotlin/Int): kotlin/Unit
+
+      public final var vitality: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

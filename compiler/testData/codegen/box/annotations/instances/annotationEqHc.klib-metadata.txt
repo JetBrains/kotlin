@@ -1,0 +1,54 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Foo
+
+    public final annotation class Bar : kotlin/Annotation {
+
+      public constructor(i: kotlin/Int, s: kotlin/String, f: kotlin/Float)
+
+      public final val f: kotlin/Float
+        public final get
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    public final annotation class Foo : kotlin/Annotation {
+
+      public constructor(int: kotlin/Int, s: kotlin/String, arr: kotlin/Array<kotlin/String>, arr2: kotlin/IntArray, kClass: kotlin/reflect/KClass<*>, bar: Bar)
+
+      public final val arr: kotlin/Array<kotlin/String>
+        public final get
+
+      public final val arr2: kotlin/IntArray
+        public final get
+
+      public final val bar: Bar
+        public final get
+
+      public final val int: kotlin/Int
+        public final get
+
+      public final val kClass: kotlin/reflect/KClass<*>
+        public final get
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun makeHC(name: kotlin/String, value: kotlin/Any): kotlin/Int
+    }
+  }
+}

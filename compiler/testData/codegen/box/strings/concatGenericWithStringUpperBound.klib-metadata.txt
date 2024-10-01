@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String> concat1(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String?> concat2(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String> concat3(x: T#0?): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String> concat4(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String?> concat5(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String> concat6(x: T#0?): kotlin/String
+
+      public final fun concatAny(x: kotlin/Any): kotlin/String
+    }
+  }
+}

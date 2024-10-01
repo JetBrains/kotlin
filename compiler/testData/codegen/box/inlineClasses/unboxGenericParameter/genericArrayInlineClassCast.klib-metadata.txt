@@ -1,0 +1,122 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KoneArray
+
+    public final value class KoneArray<T#0 /* E */> : kotlin/Any {
+
+      public constructor(array: kotlin/Array<out T#0>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val array: kotlin/Array<out T#0>
+        public final get
+
+      // underlying property: array
+
+      // underlying type: kotlin/Array<out T#0>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw0ArrayInt(): kotlin/Array<kotlin/Any?>
+
+      public final fun KoneArray<kotlin/Int>.raw0Int(): kotlin/Array<kotlin/Any?>
+
+      public final fun KoneArray<kotlin/IntArray>.raw0IntArray(): kotlin/Array<kotlin/Any?>
+
+      public final fun KoneArray<kotlin/UInt>.raw0UInt(): kotlin/Array<kotlin/Any?>
+
+      public final fun KoneArray<kotlin/UIntArray>.raw0UIntArray(): kotlin/Array<kotlin/Any?>
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw1ArrayInt(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/Int>.raw1Int(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/IntArray>.raw1IntArray(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/UInt>.raw1UInt(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/UIntArray>.raw1UIntArray(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw2ArrayInt(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/Int>.raw2Int(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/IntArray>.raw2IntArray(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/UInt>.raw2UInt(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/UIntArray>.raw2UIntArray(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw3ArrayInt(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/Int>.raw3Int(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/IntArray>.raw3IntArray(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/UInt>.raw3UInt(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/UIntArray>.raw3UIntArray(): kotlin/Array<kotlin/Any?>?
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw4ArrayInt(): kotlin/Array<kotlin/Array<kotlin/Int>>
+
+      public final fun KoneArray<kotlin/Int>.raw4Int(): kotlin/Array<kotlin/Int>
+
+      public final fun KoneArray<kotlin/IntArray>.raw4IntArray(): kotlin/Array<kotlin/IntArray>
+
+      public final fun KoneArray<kotlin/UInt>.raw4UInt(): kotlin/Array<kotlin/UInt>
+
+      public final fun KoneArray<kotlin/UIntArray>.raw4UIntArray(): kotlin/Array<kotlin/UIntArray>
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw5ArrayInt(): kotlin/Array<kotlin/Array<kotlin/Int>>?
+
+      public final fun KoneArray<kotlin/Int>.raw5Int(): kotlin/Array<kotlin/Int>?
+
+      public final fun KoneArray<kotlin/IntArray>.raw5IntArray(): kotlin/Array<kotlin/IntArray>?
+
+      public final fun KoneArray<kotlin/UInt>.raw5UInt(): kotlin/Array<kotlin/UInt>?
+
+      public final fun KoneArray<kotlin/UIntArray>.raw5UIntArray(): kotlin/Array<kotlin/UIntArray>?
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw6ArrayInt(): kotlin/Array<kotlin/Array<kotlin/Int>>?
+
+      public final fun KoneArray<kotlin/Int>.raw6Int(): kotlin/Array<kotlin/Int>?
+
+      public final fun KoneArray<kotlin/IntArray>.raw6IntArray(): kotlin/Array<kotlin/IntArray>?
+
+      public final fun KoneArray<kotlin/UInt>.raw6UInt(): kotlin/Array<kotlin/UInt>?
+
+      public final fun KoneArray<kotlin/UIntArray>.raw6UIntArray(): kotlin/Array<kotlin/UIntArray>?
+
+      public final fun KoneArray<kotlin/Array<kotlin/Int>>.raw7ArrayInt(): kotlin/Array<kotlin/Array<kotlin/Int>>?
+
+      public final fun KoneArray<kotlin/Int>.raw7Int(): kotlin/Array<kotlin/Int>?
+
+      public final fun KoneArray<kotlin/IntArray>.raw7IntArray(): kotlin/Array<kotlin/IntArray>?
+
+      public final fun KoneArray<kotlin/UInt>.raw7UInt(): kotlin/Array<kotlin/UInt>?
+
+      public final fun KoneArray<kotlin/UIntArray>.raw7UIntArray(): kotlin/Array<kotlin/UIntArray>?
+
+      public final fun testArrayInt(): kotlin/Unit
+
+      public final fun testInt(): kotlin/Unit
+
+      public final fun testIntArray(): kotlin/Unit
+
+      public final fun testUInt(): kotlin/Unit
+
+      public final fun testUIntArray(): kotlin/Unit
+    }
+  }
+}

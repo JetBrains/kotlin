@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AnonymousClassInLambda
+    // class name: Runnable
+
+    public final class AnonymousClassInLambda : kotlin/Any {
+
+      public constructor()
+
+      public final fun run(): kotlin/Int
+    }
+
+    public abstract interface Runnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

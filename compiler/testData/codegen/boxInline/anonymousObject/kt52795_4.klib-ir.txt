@@ -1,0 +1,96 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:mrun signature:/mrun|mrun(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:<unbound IrClassSymbolImpl><T of <root>.mrun>) returnType:T of <root>.mrun [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mrun|mrun(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of <root>.mrun> [noinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mrun <T> (block: <unbound IrClassSymbolImpl><T of <root>.mrun>): T of <root>.mrun [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.mrun origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of <root>.mrun> [noinline] declared in <root>.mrun' type=<unbound IrClassSymbolImpl><T of <root>.mrun> origin=VARIABLE_AS_FUNCTION
+    FUN name:mrunTwice signature:/mrunTwice|mrunTwice(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:<unbound IrClassSymbolImpl><T of <root>.mrunTwice>) returnType:T of <root>.mrunTwice [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mrunTwice|mrunTwice(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of <root>.mrunTwice>
+      BLOCK_BODY
+        VAR name:first type:T of <root>.mrunTwice [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.mrunTwice origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of <root>.mrunTwice> declared in <root>.mrunTwice' type=<unbound IrClassSymbolImpl><T of <root>.mrunTwice> origin=VARIABLE_AS_FUNCTION
+        VAR name:second type:T of <root>.mrunTwice [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.mrunTwice origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of <root>.mrunTwice> declared in <root>.mrunTwice' type=<unbound IrClassSymbolImpl><T of <root>.mrunTwice> origin=VARIABLE_AS_FUNCTION
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_CLASS type=<unbound IrClassSymbolImpl><out {T of <root>.mrunTwice & Any}>
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.mrunTwice & Any} origin=EXCLEXCL
+                    <T0>: {T of <root>.mrunTwice & Any}
+                    arg0: GET_VAR 'val first: T of <root>.mrunTwice [val] declared in <root>.mrunTwice' type=T of <root>.mrunTwice origin=null
+                arg1: GET_CLASS type=<unbound IrClassSymbolImpl><out {T of <root>.mrunTwice & Any}>
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.mrunTwice & Any} origin=EXCLEXCL
+                    <T0>: {T of <root>.mrunTwice & Any}
+                    arg0: GET_VAR 'val second: T of <root>.mrunTwice [val] declared in <root>.mrunTwice' type=T of <root>.mrunTwice origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_CLASS type=<unbound IrClassSymbolImpl><out {T of <root>.mrunTwice & Any}>
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.mrunTwice & Any} origin=EXCLEXCL
+                      <T0>: {T of <root>.mrunTwice & Any}
+                      arg0: GET_VAR 'val first: T of <root>.mrunTwice [val] declared in <root>.mrunTwice' type=T of <root>.mrunTwice origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                  GET_CLASS type=<unbound IrClassSymbolImpl><out {T of <root>.mrunTwice & Any}>
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.mrunTwice & Any} origin=EXCLEXCL
+                      <T0>: {T of <root>.mrunTwice & Any}
+                      arg0: GET_VAR 'val second: T of <root>.mrunTwice [val] declared in <root>.mrunTwice' type=T of <root>.mrunTwice origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mrunTwice <T> (block: <unbound IrClassSymbolImpl><T of <root>.mrunTwice>): T of <root>.mrunTwice [inline] declared in <root>'
+          GET_VAR 'val first: T of <root>.mrunTwice [val] declared in <root>.mrunTwice' type=T of <root>.mrunTwice origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:bar signature:/bar|bar(kotlin.String){}[0] visibility:public modality:FINAL <> (o:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:o index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun mrun <T> (block: <unbound IrClassSymbolImpl><T of <root>.mrun>): T of <root>.mrun [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+            block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  FUN LOCAL_FUNCTION name:localAnonymousFun visibility:local modality:FINAL <> (k:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:k index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      FUN LOCAL_FUNCTION name:localAnonymousFunLevel2 visibility:local modality:FINAL <> () returnType:<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun localAnonymousFunLevel2 (): <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>.localAnonymousFun'
+                            CALL 'public final fun mrunTwice <T> (block: <unbound IrClassSymbolImpl><T of <root>.mrunTwice>): T of <root>.mrunTwice [inline] declared in <root>' type=<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> origin=null
+                              <T>: <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>
+                              block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>
+                                  BLOCK_BODY
+                                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2'
+                                      BLOCK type=<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>
+                                          CONSTRUCTOR visibility:public <> () returnType:<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> [primary]
+                                            BLOCK_BODY
+                                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                                          FUN name:foo visibility:public modality:FINAL <> ($this:<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                            $this: VALUE_PARAMETER name:<this> type:<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>
+                                            BLOCK_BODY
+                                              RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>'
+                                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                  $this: GET_VAR 'o: <unbound IrClassSymbolImpl> declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+                                                  1: GET_VAR 'k: <unbound IrClassSymbolImpl> declared in <root>.bar.<anonymous>.localAnonymousFun' type=<unbound IrClassSymbolImpl> origin=null
+                                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>' type=<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun localAnonymousFun (k: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.bar.<anonymous>'
+                        CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: CALL 'local final fun localAnonymousFunLevel2 (): <root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> declared in <root>.bar.<anonymous>.localAnonymousFun' type=<root>.bar.<anonymous>.localAnonymousFun.localAnonymousFunLevel2.<anonymous>.<no name provided> origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.bar'
+                    FUNCTION_REFERENCE 'local final fun localAnonymousFun (k: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.bar.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (o: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.bar' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun bar (o: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            o: CONST String type=<unbound IrClassSymbolImpl> value="O"

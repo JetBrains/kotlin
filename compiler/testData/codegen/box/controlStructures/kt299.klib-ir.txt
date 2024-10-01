@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt299.kt
+    CLASS CLASS name:MyRange1 signature:/MyRange1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRange1
+      CONSTRUCTOR signature:/MyRange1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyRange1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyRange1 signature:/MyRange1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:start signature:/MyRange1.start|{}start[0] visibility:public modality:OPEN [val]
+        FUN name:<get-start> signature:/MyRange1.start.<get-start>|<get-start>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyRange1) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:start signature:/MyRange1.start|{}start[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyRange1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-start> (): <unbound IrClassSymbolImpl> declared in <root>.MyRange1'
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+      PROPERTY name:endInclusive signature:/MyRange1.endInclusive|{}endInclusive[0] visibility:public modality:OPEN [val]
+        FUN name:<get-endInclusive> signature:/MyRange1.endInclusive.<get-endInclusive>|<get-endInclusive>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyRange1) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:endInclusive signature:/MyRange1.endInclusive|{}endInclusive[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyRange1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-endInclusive> (): <unbound IrClassSymbolImpl> declared in <root>.MyRange1'
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:contains signature:/MyRange1.contains|contains(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.MyRange1, item:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyRange1
+        VALUE_PARAMETER name:item index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (item: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyRange1'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:MyRange2 signature:/MyRange2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRange2
+      CONSTRUCTOR signature:/MyRange2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyRange2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyRange2 signature:/MyRange2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:contains signature:/MyRange2.contains|contains(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.MyRange2, item:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyRange2
+        VALUE_PARAMETER name:item index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun contains (item: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyRange2'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public open fun contains (item: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyRange1' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyRange1' type=<root>.MyRange1 origin=null
+              item: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'public final fun contains (item: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyRange2' type=<unbound IrClassSymbolImpl> origin=IN
+                    $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyRange2' type=<root>.MyRange2 origin=null
+                    item: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="fail 1"

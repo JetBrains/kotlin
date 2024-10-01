@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt1018.kt
+    CLASS CLASS name:StockMarketTableModel signature:/StockMarketTableModel|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StockMarketTableModel
+      CONSTRUCTOR signature:/StockMarketTableModel.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.StockMarketTableModel [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StockMarketTableModel signature:/StockMarketTableModel|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getColumnCount signature:/StockMarketTableModel.getColumnCount|getColumnCount(){}[0] visibility:public modality:FINAL <> ($this:<root>.StockMarketTableModel) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.StockMarketTableModel
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getColumnCount (): <unbound IrClassSymbolImpl> declared in <root>.StockMarketTableModel'
+            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val]
+                  CALL 'private final fun <get-COLUMN_TITLES> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.StockMarketTableModel.Companion' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                    $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/StockMarketTableModel.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.StockMarketTableModel.Companion
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.StockMarketTableModel.getColumnCount' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.StockMarketTableModel.getColumnCount' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+      CLASS OBJECT name:Companion signature:/StockMarketTableModel.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StockMarketTableModel.Companion
+        CONSTRUCTOR signature:/StockMarketTableModel.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.StockMarketTableModel.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/StockMarketTableModel.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:COLUMN_TITLES signature:/StockMarketTableModel.Companion.COLUMN_TITLES|{}COLUMN_TITLES[0] visibility:private modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:COLUMN_TITLES signature:[ /StockMarketTableModel.Companion.COLUMN_TITLES|{}COLUMN_TITLES[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:COLUMN_TITLES type:kotlin.Array<kotlin.Int?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-COLUMN_TITLES> signature:/StockMarketTableModel.Companion.COLUMN_TITLES.<get-COLUMN_TITLES>|<get-COLUMN_TITLES>(){}[0] visibility:private modality:FINAL <> ($this:<root>.StockMarketTableModel.Companion) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+            correspondingProperty: PROPERTY name:COLUMN_TITLES signature:/StockMarketTableModel.Companion.COLUMN_TITLES|{}COLUMN_TITLES[0] visibility:private modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.StockMarketTableModel.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-COLUMN_TITLES> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.StockMarketTableModel.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:COLUMN_TITLES signature:[ /StockMarketTableModel.Companion.COLUMN_TITLES|{}COLUMN_TITLES[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:COLUMN_TITLES type:kotlin.Array<kotlin.Int?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.StockMarketTableModel.Companion declared in <root>.StockMarketTableModel.Companion.<get-COLUMN_TITLES>' type=<root>.StockMarketTableModel.Companion origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun getColumnCount (): <unbound IrClassSymbolImpl> declared in <root>.StockMarketTableModel' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.StockMarketTableModel' type=<root>.StockMarketTableModel origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

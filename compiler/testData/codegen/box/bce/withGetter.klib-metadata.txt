@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: WithGetter
+
+    public final class WithGetter : kotlin/Any {
+
+      public constructor()
+
+      public final val array: kotlin/Array<kotlin/Int>
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var needSmallArray: kotlin/Boolean
+        public final get
+        public final set
+    }
+  }
+}

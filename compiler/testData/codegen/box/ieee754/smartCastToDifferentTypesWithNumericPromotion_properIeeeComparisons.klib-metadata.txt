@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun eqDI(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqDL(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqFI(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqFL(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqID(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqIF(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqLD(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun eqLF(x: kotlin/Any?, y: kotlin/Any?): kotlin/Boolean
+
+      public final fun test01(): kotlin/Unit
+
+      public final fun test0Null(): kotlin/Unit
+
+      public final fun testNull0(): kotlin/Unit
+
+      public final fun testNullNull(): kotlin/Unit
+
+      public final fun testPlusMinus0(): kotlin/Unit
+    }
+  }
+}

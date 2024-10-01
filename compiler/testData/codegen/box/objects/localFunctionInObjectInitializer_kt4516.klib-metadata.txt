@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: O
+
+    public final object O : kotlin/Any {
+
+      private constructor()
+
+      public final val mmmap: kotlin/collections/HashMap<kotlin/String, kotlin/Int>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

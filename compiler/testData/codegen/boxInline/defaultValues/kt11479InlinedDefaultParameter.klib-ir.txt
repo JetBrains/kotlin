@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:log signature:test/log|log(kotlin.Function0<kotlin.Any?>){}[0] visibility:public modality:FINAL <> (lazyMessage:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:lazyMessage index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+            $this: GET_VAR 'lazyMessage: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in test.log' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=VARIABLE_AS_FUNCTION
+    FUN name:z signature:test/z|z(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [inline]
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONST String type=<unbound IrClassSymbolImpl> value="zzz"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun z (): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:getOrCreate signature:/getOrCreate|getOrCreate(kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (z:<unbound IrClassSymbolImpl>, s:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:z index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CALL 'public final fun z (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+      VALUE_PARAMETER name:s index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'public final fun log (lazyMessage: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          lazyMessage: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.getOrCreate'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 's: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.getOrCreate' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:z type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        CALL 'public final fun getOrCreate (z: <unbound IrClassSymbolImpl>, s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          s: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                SET_VAR 'var z: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  GET_VAR 'var z: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var z: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

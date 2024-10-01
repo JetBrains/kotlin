@@ -1,0 +1,371 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/boxedRealsCmp.kt
+    PROPERTY name:PLUS0F signature:/PLUS0F|{}PLUS0F[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:PLUS0F signature:[ /PLUS0F|{}PLUS0F[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-PLUS0F> signature:/PLUS0F.<get-PLUS0F>|<get-PLUS0F>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:PLUS0F signature:/PLUS0F|{}PLUS0F[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:PLUS0F signature:[ /PLUS0F|{}PLUS0F[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MINUS0F signature:/MINUS0F|{}MINUS0F[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:MINUS0F signature:[ /MINUS0F|{}MINUS0F[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MINUS0F> signature:/MINUS0F.<get-MINUS0F>|<get-MINUS0F>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MINUS0F signature:/MINUS0F|{}MINUS0F[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MINUS0F signature:[ /MINUS0F|{}MINUS0F[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:PLUS0D signature:/PLUS0D|{}PLUS0D[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:PLUS0D signature:[ /PLUS0D|{}PLUS0D[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-PLUS0D> signature:/PLUS0D.<get-PLUS0D>|<get-PLUS0D>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:PLUS0D signature:/PLUS0D|{}PLUS0D[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:PLUS0D signature:[ /PLUS0D|{}PLUS0D[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MINUS0D signature:/MINUS0D|{}MINUS0D[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:MINUS0D signature:[ /MINUS0D|{}MINUS0D[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MINUS0D> signature:/MINUS0D.<get-MINUS0D>|<get-MINUS0D>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MINUS0D signature:/MINUS0D|{}MINUS0D[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MINUS0D signature:[ /MINUS0D|{}MINUS0D[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:PLUS0F type:kotlin.Float visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:ltx signature:/ltx|ltx(kotlin.Comparable<kotlin.Any>;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ltx (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=LT
+              $this: GET_VAR 'a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ltx' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.ltx' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:lex signature:/lex|lex(kotlin.Comparable<kotlin.Any>;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun lex (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun lessOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LTEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=LTEQ
+              $this: GET_VAR 'a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.lex' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.lex' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:gex signature:/gex|gex(kotlin.Comparable<kotlin.Any>;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun gex (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GTEQ
+              $this: GET_VAR 'a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.gex' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.gex' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:gtx signature:/gtx|gtx(kotlin.Comparable<kotlin.Any>;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun gtx (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GT
+              $this: GET_VAR 'a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.gtx' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.gtx' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:lt signature:/lt|lt(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun ltx (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.lt' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.lt' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:le signature:/le|le(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun lex (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.le' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.le' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:ge signature:/ge|ge(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun gex (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.ge' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.ge' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:gt signature:/gt|gt(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun gtx (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.gt' type=<unbound IrClassSymbolImpl> origin=null
+            b: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.gt' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LT F"
+            BRANCH
+              if: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+                b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LT F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LE F"
+            BRANCH
+              if: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+                b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LE F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 LE F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+                  b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GE F"
+            BRANCH
+              if: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                b: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GE F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 GE F"
+            BRANCH
+              if: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                b: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GT F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+                  b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GT F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LT D"
+            BRANCH
+              if: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LT D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LE D"
+            BRANCH
+              if: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LE D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 LE D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+                  b: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GE D"
+            BRANCH
+              if: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GE D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                  b: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 GE D"
+            BRANCH
+              if: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GT D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+                  b: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GT D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LT +-0 F"
+            BRANCH
+              if: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LT +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LE +-0 F"
+            BRANCH
+              if: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LE +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 LE +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 LE +-0 F"
+            BRANCH
+              if: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GE +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GE +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 GE +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 GE +-0 F"
+            BRANCH
+              if: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GT +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0F> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GT +-0 F"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LT +-0 D"
+            BRANCH
+              if: CALL 'public final fun lt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LT +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 LE +-0 D"
+            BRANCH
+              if: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 LE +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 LE +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun le (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 LE +-0 D"
+            BRANCH
+              if: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GE +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GE +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 GE +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun ge (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 3 GE +-0 D"
+            BRANCH
+              if: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                b: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 1 GT +-0 D"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun gt (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  a: CALL 'public final fun <get-PLUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  b: CALL 'public final fun <get-MINUS0D> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail 2 GT +-0 D"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

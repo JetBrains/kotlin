@@ -1,0 +1,83 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/refinedIntTypesAnalysis.kt
+    CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:discardSuspend signature:/Test.discardSuspend|discardSuspend(kotlin.Long;kotlin.Long){}[0] visibility:public modality:FINAL <> ($this:<root>.Test, discarded0:<unbound IrClassSymbolImpl>, max:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        VALUE_PARAMETER name:discarded0 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:max index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          WHILE label=null origin=WHILE_LOOP
+            condition: CALL 'public final fun <get-isClosedForRead> (): <unbound IrClassSymbolImpl> declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.discardSuspend' type=<root>.Test origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              VAR name:rc type:<unbound IrClassSymbolImpl> [val]
+                CALL 'private final fun reading (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.discardSuspend' type=<root>.Test origin=null
+                  block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.Test.discardSuspend'
+                          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CALL 'private final fun readSuspend (size: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.discardSuspend' type=<root>.Test origin=null
+                      size: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  then: BREAK label=null loop.label=null
+      FUN name:reading signature:/Test.reading|reading(kotlin.Function0<kotlin.Boolean>){}[0] visibility:private modality:FINAL <> ($this:<root>.Test, block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                CALL 'private final fun setupStateForRead (): <unbound IrClassSymbolImpl>? declared in <root>.Test' type=<unbound IrClassSymbolImpl>? origin=null
+                  $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.reading' type=<root>.Test origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.Test.reading' type=<unbound IrClassSymbolImpl>? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='private final fun reading (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Test'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.Test.reading' type=<unbound IrClassSymbolImpl>? origin=null
+          TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun reading (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Test'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Test.reading' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isClosedForRead signature:/Test.isClosedForRead|{}isClosedForRead[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:isClosedForRead signature:[ /Test.isClosedForRead|{}isClosedForRead[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isClosedForRead type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isClosedForRead> signature:/Test.isClosedForRead.<get-isClosedForRead>|<get-isClosedForRead>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isClosedForRead signature:/Test.isClosedForRead|{}isClosedForRead[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isClosedForRead> (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isClosedForRead signature:[ /Test.isClosedForRead|{}isClosedForRead[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isClosedForRead type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-isClosedForRead>' type=<root>.Test origin=null
+      FUN name:readSuspend signature:/Test.readSuspend|readSuspend(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.Test, size:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        VALUE_PARAMETER name:size index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun readSuspend (size: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Test'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:setupStateForRead signature:/Test.setupStateForRead|setupStateForRead(){}[0] visibility:private modality:FINAL <> ($this:<root>.Test) returnType:<unbound IrClassSymbolImpl>?
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun setupStateForRead (): <unbound IrClassSymbolImpl>? declared in <root>.Test'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

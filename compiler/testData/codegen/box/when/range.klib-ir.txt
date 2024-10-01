@@ -1,0 +1,97 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/range.kt
+    FUN name:isDigit signature:/isDigit|isDigit(kotlin.Int){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:aa type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val aa: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.isDigit' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=239
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isDigit (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.isDigit' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                  $this: GET_VAR 'val aa: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.isDigit' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  1: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.isDigit' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="array list"
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+                  1: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.isDigit' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="digit"
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                      $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=100
+                    1: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.isDigit' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="not small"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST String type=<unbound IrClassSymbolImpl> value="something"
+    FUN name:assertDigit signature:/assertDigit|assertDigit(kotlin.Int;kotlin.String){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>, expected:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expected index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun isDigit (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.assertDigit' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.assertDigit' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.assertDigit' type=<unbound IrClassSymbolImpl> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value=""
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: isDigit("
+                GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.assertDigit' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=") = \""
+                GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.assertDigit' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value="\""
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=239
+                      expected: CONST String type=<unbound IrClassSymbolImpl> value="array list"
+                    1: CALL 'public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                      expected: CONST String type=<unbound IrClassSymbolImpl> value="digit"
+                  1: CALL 'public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=9
+                    expected: CONST String type=<unbound IrClassSymbolImpl> value="digit"
+                1: CALL 'public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=5
+                  expected: CONST String type=<unbound IrClassSymbolImpl> value="digit"
+              1: CALL 'public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                i: CONST Int type=<unbound IrClassSymbolImpl> value=19
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="something"
+            1: CALL 'public final fun assertDigit (i: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              i: CONST Int type=<unbound IrClassSymbolImpl> value=190
+              expected: CONST String type=<unbound IrClassSymbolImpl> value="not small"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

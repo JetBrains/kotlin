@@ -1,0 +1,36 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nestedObjects.kt
+    CLASS OBJECT name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:B signature:/A.B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.B
+        CONSTRUCTOR signature:/A.B.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.B [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:B signature:/A.B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS OBJECT name:C signature:/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.B.C
+          CONSTRUCTOR signature:/A.B.C.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.B.C [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:C signature:/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          PROPERTY name:ok signature:/A.B.C.ok|{}ok[0] visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:ok signature:[ /A.B.C.ok|{}ok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> signature:/A.B.C.ok.<get-ok>|<get-ok>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.B.C) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:ok signature:/A.B.C.ok|{}ok[0] visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.A.B.C
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in <root>.A.B.C'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok signature:[ /A.B.C.ok|{}ok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.A.B.C declared in <root>.A.B.C.<get-ok>' type=<root>.A.B.C origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in <root>.A.B.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS OBJECT name:C signature:/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.A.B.C

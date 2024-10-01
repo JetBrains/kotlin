@@ -1,0 +1,113 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt12983_forInGenericArrayIndices.kt
+    CLASS CLASS name:BaseGeneric signature:/BaseGeneric|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseGeneric<T of <root>.BaseGeneric>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /BaseGeneric|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/BaseGeneric.<init>|<init>(1:0){}[0] visibility:public <> (t:T of <root>.BaseGeneric) returnType:<root>.BaseGeneric<T of <root>.BaseGeneric> [primary]
+        VALUE_PARAMETER name:t index:0 type:T of <root>.BaseGeneric
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseGeneric signature:/BaseGeneric|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:t signature:/BaseGeneric.t|{}t[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:t signature:[ /BaseGeneric.t|{}t[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.BaseGeneric visibility:private [final]] ] type:T of <root>.BaseGeneric visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 't: T of <root>.BaseGeneric declared in <root>.BaseGeneric.<init>' type=T of <root>.BaseGeneric origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-t> signature:/BaseGeneric.t.<get-t>|<get-t>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseGeneric<T of <root>.BaseGeneric>) returnType:T of <root>.BaseGeneric
+          correspondingProperty: PROPERTY name:t signature:/BaseGeneric.t|{}t[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseGeneric<T of <root>.BaseGeneric>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-t> (): T of <root>.BaseGeneric declared in <root>.BaseGeneric'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:t signature:[ /BaseGeneric.t|{}t[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.BaseGeneric visibility:private [final]] ] type:T of <root>.BaseGeneric visibility:private [final]' type=T of <root>.BaseGeneric origin=null
+                receiver: GET_VAR '<this>: <root>.BaseGeneric<T of <root>.BaseGeneric> declared in <root>.BaseGeneric.<get-t>' type=<root>.BaseGeneric<T of <root>.BaseGeneric> origin=null
+      FUN name:iterate signature:/BaseGeneric.iterate|iterate(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.BaseGeneric<T of <root>.BaseGeneric>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseGeneric<T of <root>.BaseGeneric>
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseGeneric<<unbound IrClassSymbolImpl><T of <root>.Derived>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived<T of <root>.Derived>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Derived|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Derived.<init>|<init>(kotlin.Array<1:0>){}[0] visibility:public <> (array:<unbound IrClassSymbolImpl><T of <root>.Derived>) returnType:<root>.Derived<T of <root>.Derived> [primary]
+        VALUE_PARAMETER name:array index:0 type:<unbound IrClassSymbolImpl><T of <root>.Derived>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (t: T of <root>.BaseGeneric) [primary] declared in <root>.BaseGeneric'
+            <T>: <unbound IrClassSymbolImpl><T of <root>.Derived>
+            t: GET_VAR 'array: <unbound IrClassSymbolImpl><T of <root>.Derived> declared in <root>.Derived.<init>' type=<unbound IrClassSymbolImpl><T of <root>.Derived> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseGeneric<<unbound IrClassSymbolImpl><T of <root>.Derived>>]'
+      PROPERTY name:test signature:/Derived.test|{}test[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:test signature:[ /Derived.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.BaseGeneric visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> signature:/Derived.test.<get-test>|<get-test>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived<T of <root>.Derived>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/Derived.test|{}test[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived<T of <root>.Derived>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test signature:[ /Derived.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.BaseGeneric visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived<T of <root>.Derived> declared in <root>.Derived.<get-test>' type=<root>.Derived<T of <root>.Derived> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test> signature:/Derived.test.<set-test>|<set-test>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived<T of <root>.Derived>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/Derived.test|{}test[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived<T of <root>.Derived>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test signature:[ /Derived.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.BaseGeneric visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived<T of <root>.Derived> declared in <root>.Derived.<set-test>' type=<root>.Derived<T of <root>.Derived> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-test>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterate signature:/Derived.iterate|iterate(){}[0] visibility:public modality:OPEN <> ($this:<root>.Derived<T of <root>.Derived>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun iterate (): <unbound IrClassSymbolImpl> declared in <root>.BaseGeneric
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived<T of <root>.Derived>
+        BLOCK_BODY
+          CALL 'public final fun <set-test> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived<T of <root>.Derived> declared in <root>.Derived.iterate' type=<root>.Derived<T of <root>.Derived> origin=null
+            <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+            VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  <1>: T of <root>.Derived
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.Derived> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Derived<T of <root>.Derived> declared in <root>.Derived.iterate' type=<root>.Derived<T of <root>.Derived> origin=null
+            WHILE label=null origin=FOR_LOOP_INNER_WHILE
+              condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.Derived.iterate' type=<unbound IrClassSymbolImpl> origin=null
+              body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                    $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.Derived.iterate' type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun <set-test> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+                    $this: GET_VAR '<this>: <root>.Derived<T of <root>.Derived> declared in <root>.Derived.iterate' type=<root>.Derived<T of <root>.Derived> origin=null
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                        $this: CALL 'public final fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.Derived<T of <root>.Derived> declared in <root>.Derived.iterate' type=<root>.Derived<T of <root>.Derived> origin=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                      1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.Derived.iterate' type=<unbound IrClassSymbolImpl> origin=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:t type:<root>.Derived<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (array: <unbound IrClassSymbolImpl><T of <root>.Derived>) [primary] declared in <root>.Derived' type=<root>.Derived<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            array: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value=""
+                CONST String type=<unbound IrClassSymbolImpl> value=""
+                CONST String type=<unbound IrClassSymbolImpl> value=""
+                CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public open fun iterate (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val t: <root>.Derived<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Derived<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val t: <root>.Derived<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Derived<<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1234
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                CALL 'public final fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val t: <root>.Derived<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Derived<<unbound IrClassSymbolImpl>> origin=null

@@ -1,0 +1,334 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/interfaceCompanionObjectReference.kt
+    CLASS INTERFACE name:Test signature:/Test|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.Companion
+        CONSTRUCTOR signature:/Test.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:x signature:/Test.Companion.x|{}x[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Test.Companion.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="O"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Test.Companion.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:x signature:/Test.Companion.x|{}x[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Test.Companion.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-x>' type=<root>.Test.Companion origin=null
+        PROPERTY name:y1 signature:/Test.Companion.y1|{}y1[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y1 signature:[ /Test.Companion.y1|{}y1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test.Companion
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y1> signature:/Test.Companion.y1.<get-y1>|<get-y1>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y1 signature:/Test.Companion.y1|{}y1[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y1> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y1 signature:[ /Test.Companion.y1|{}y1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-y1>' type=<root>.Test.Companion origin=null
+        PROPERTY name:y2 signature:/Test.Companion.y2|{}y2[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y2 signature:[ /Test.Companion.y2|{}y2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion.y2'
+                        CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test.Companion
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y2> signature:/Test.Companion.y2.<get-y2>|<get-y2>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y2 signature:/Test.Companion.y2|{}y2[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y2> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y2 signature:[ /Test.Companion.y2|{}y2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-y2>' type=<root>.Test.Companion origin=null
+        PROPERTY name:y3 signature:/Test.Companion.y3|{}y3[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y3 signature:[ /Test.Companion.y3|{}y3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y3> signature:/Test.Companion.y3.<get-y3>|<get-y3>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y3 signature:/Test.Companion.y3|{}y3[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y3> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y3 signature:[ /Test.Companion.y3|{}y3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-y3>' type=<root>.Test.Companion origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            FUN LOCAL_FUNCTION name:localFun visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun localFun (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                  CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y3 signature:[ /Test.Companion.y3|{}y3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+              value: CALL 'local final fun localFun (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=null
+        FUN name:method signature:/Test.Companion.method|method(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun method (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+              CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.method' type=<root>.Test.Companion origin=null
+        PROPERTY name:y4 signature:/Test.Companion.y4|{}y4[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y4 signature:[ /Test.Companion.y4|{}y4[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'public final fun method (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y4> signature:/Test.Companion.y4.<get-y4>|<get-y4>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y4 signature:/Test.Companion.y4|{}y4[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y4> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y4 signature:[ /Test.Companion.y4|{}y4[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-y4>' type=<root>.Test.Companion origin=null
+        PROPERTY name:anonObject signature:/Test.Companion.anonObject|{}anonObject[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:anonObject signature:[ /Test.Companion.anonObject|{}anonObject[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              BLOCK type=<root>.Test.Companion.anonObject.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.Companion.anonObject.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.Test.Companion.anonObject.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                  FUN name:toString visibility:public modality:OPEN <> ($this:<root>.Test.Companion.anonObject.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                    overridden:
+                      UNBOUND IrSimpleFunctionSymbolImpl
+                    $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion.anonObject.<no name provided>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion.anonObject.<no name provided>'
+                        CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test.Companion
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test.Companion.anonObject.<no name provided>' type=<root>.Test.Companion.anonObject.<no name provided> origin=OBJECT_LITERAL
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonObject> signature:/Test.Companion.anonObject.<get-anonObject>|<get-anonObject>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:anonObject signature:/Test.Companion.anonObject|{}anonObject[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-anonObject> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonObject signature:[ /Test.Companion.anonObject|{}anonObject[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-anonObject>' type=<root>.Test.Companion origin=null
+        PROPERTY name:y5 signature:/Test.Companion.y5|{}y5[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y5 signature:[ /Test.Companion.y5|{}y5[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun <get-anonObject> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y5> signature:/Test.Companion.y5.<get-y5>|<get-y5>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y5 signature:/Test.Companion.y5|{}y5[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y5> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y5 signature:[ /Test.Companion.y5|{}y5[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion.<get-y5>' type=<root>.Test.Companion origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+              2: CALL 'public final fun <get-y1> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+              2: CALL 'public final fun <get-y2> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+              2: CALL 'public final fun <get-y3> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+              2: CALL 'public final fun <get-y4> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+              2: CALL 'public final fun <get-y5> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test.Companion declared in <root>.Test.Companion' type=<root>.Test.Companion origin=null
+    CLASS ANNOTATION_CLASS name:Anno signature:/Anno|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno
+      CONSTRUCTOR signature:/Anno.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Anno [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Anno signature:/Anno|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/Anno.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno.Companion
+        CONSTRUCTOR signature:/Anno.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Anno.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Anno.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:x signature:/Anno.Companion.x|{}x[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Anno.Companion.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Anno.Companion.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:x signature:/Anno.Companion.x|{}x[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Anno.Companion.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-x>' type=<root>.Anno.Companion origin=null
+        PROPERTY name:y1 signature:/Anno.Companion.y1|{}y1[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y1 signature:[ /Anno.Companion.y1|{}y1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Anno.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Anno.Companion
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y1> signature:/Anno.Companion.y1.<get-y1>|<get-y1>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y1 signature:/Anno.Companion.y1|{}y1[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y1> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y1 signature:[ /Anno.Companion.y1|{}y1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-y1>' type=<root>.Anno.Companion origin=null
+        PROPERTY name:y2 signature:/Anno.Companion.y2|{}y2[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y2 signature:[ /Anno.Companion.y2|{}y2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion.y2'
+                        CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Anno.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Anno.Companion
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y2> signature:/Anno.Companion.y2.<get-y2>|<get-y2>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y2 signature:/Anno.Companion.y2|{}y2[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y2> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y2 signature:[ /Anno.Companion.y2|{}y2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-y2>' type=<root>.Anno.Companion origin=null
+        PROPERTY name:y3 signature:/Anno.Companion.y3|{}y3[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y3 signature:[ /Anno.Companion.y3|{}y3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y3> signature:/Anno.Companion.y3.<get-y3>|<get-y3>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y3 signature:/Anno.Companion.y3|{}y3[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y3> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y3 signature:[ /Anno.Companion.y3|{}y3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-y3>' type=<root>.Anno.Companion origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            FUN LOCAL_FUNCTION name:localFun visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun localFun (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                  CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y3 signature:[ /Anno.Companion.y3|{}y3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+              value: CALL 'local final fun localFun (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=null
+        FUN name:method signature:/Anno.Companion.method|method(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun method (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+              CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.method' type=<root>.Anno.Companion origin=null
+        PROPERTY name:y4 signature:/Anno.Companion.y4|{}y4[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y4 signature:[ /Anno.Companion.y4|{}y4[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'public final fun method (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y4> signature:/Anno.Companion.y4.<get-y4>|<get-y4>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y4 signature:/Anno.Companion.y4|{}y4[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y4> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y4 signature:[ /Anno.Companion.y4|{}y4[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-y4>' type=<root>.Anno.Companion origin=null
+        PROPERTY name:anonObject signature:/Anno.Companion.anonObject|{}anonObject[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:anonObject signature:[ /Anno.Companion.anonObject|{}anonObject[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              BLOCK type=<root>.Anno.Companion.anonObject.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno.Companion.anonObject.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.Anno.Companion.anonObject.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                  FUN name:toString visibility:public modality:OPEN <> ($this:<root>.Anno.Companion.anonObject.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                    overridden:
+                      UNBOUND IrSimpleFunctionSymbolImpl
+                    $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion.anonObject.<no name provided>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion.anonObject.<no name provided>'
+                        CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Anno.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Anno.Companion
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Anno.Companion.anonObject.<no name provided>' type=<root>.Anno.Companion.anonObject.<no name provided> origin=OBJECT_LITERAL
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonObject> signature:/Anno.Companion.anonObject.<get-anonObject>|<get-anonObject>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:anonObject signature:/Anno.Companion.anonObject|{}anonObject[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-anonObject> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonObject signature:[ /Anno.Companion.anonObject|{}anonObject[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-anonObject>' type=<root>.Anno.Companion origin=null
+        PROPERTY name:y5 signature:/Anno.Companion.y5|{}y5[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y5 signature:[ /Anno.Companion.y5|{}y5[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun <get-anonObject> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y5> signature:/Anno.Companion.y5.<get-y5>|<get-y5>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Anno.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:y5 signature:/Anno.Companion.y5|{}y5[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Anno.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y5> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y5 signature:[ /Anno.Companion.y5|{}y5[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion.<get-y5>' type=<root>.Anno.Companion origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+              2: CALL 'public final fun <get-y1> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+              2: CALL 'public final fun <get-y2> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+              2: CALL 'public final fun <get-y3> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+              2: CALL 'public final fun <get-y4> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+              2: CALL 'public final fun <get-y5> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Anno.Companion declared in <root>.Anno.Companion' type=<root>.Anno.Companion origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test.Companion
+            1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Anno.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Anno.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Anno.Companion

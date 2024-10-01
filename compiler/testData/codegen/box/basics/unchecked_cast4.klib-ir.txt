@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unchecked_cast4.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun uncheckedCast <R> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <R>: <root>.CI1I2
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CI1I2' type=<root>.CI1I2 origin=null
+        CALL 'public final fun uncheckedCast <R> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <R>: <root>.OtherCI1I2
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CI1I2' type=<root>.CI1I2 origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'public final fun uncheckedCast <R> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <R>: <root>.CI1I2
+                    $receiver: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:uncheckedCast signature:/uncheckedCast|uncheckedCast@kotlin.Any?(){0§<C&I1&I2>}[0] visibility:public modality:FINAL <R> ($receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /uncheckedCast|uncheckedCast@kotlin.Any?(){0§<C&I1&I2>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[<root>.C; <root>.I1; <root>.I2] reified:false] ] superTypes:[<root>.C; <root>.I1; <root>.I2] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TYPE_OP type=R of <root>.uncheckedCast origin=CAST typeOperand=R of <root>.uncheckedCast
+            GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in <root>.uncheckedCast' type=<unbound IrClassSymbolImpl>? origin=null
+    CLASS INTERFACE name:I1 signature:/I1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
+    CLASS INTERFACE name:I2 signature:/I2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2
+    CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:CI1I2 signature:/CI1I2|null[0] modality:FINAL visibility:public superTypes:[<root>.C; <root>.I1; <root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CI1I2
+      CONSTRUCTOR signature:/CI1I2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.CI1I2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CI1I2 signature:/CI1I2|null[0] modality:FINAL visibility:public superTypes:[<root>.C; <root>.I1; <root>.I2]'
+    CLASS CLASS name:OtherCI1I2 signature:/OtherCI1I2|null[0] modality:FINAL visibility:public superTypes:[<root>.C; <root>.I1; <root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OtherCI1I2
+      CONSTRUCTOR signature:/OtherCI1I2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.OtherCI1I2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OtherCI1I2 signature:/OtherCI1I2|null[0] modality:FINAL visibility:public superTypes:[<root>.C; <root>.I1; <root>.I2]'

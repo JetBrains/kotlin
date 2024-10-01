@@ -1,0 +1,15 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val xs: kotlin/collections/List<kotlin/String>
+        public final get
+    }
+  }
+}

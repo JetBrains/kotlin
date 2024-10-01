@@ -1,0 +1,145 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
+    CLASS CLASS name:L signature:/L|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L<LL of <root>.L>
+      TYPE_PARAMETER name:LL index:0 variance: signature:[ /L|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:LL index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/L.<init>|<init>(1:0){}[0] visibility:public <> (ll:LL of <root>.L) returnType:<root>.L<LL of <root>.L> [primary]
+        VALUE_PARAMETER name:ll index:0 type:LL of <root>.L
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L signature:/L|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:ll signature:/L.ll|{}ll[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:ll signature:[ /L.ll|{}ll[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ll type:LL of <root>.L visibility:private [final]] ] type:LL of <root>.L visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'll: LL of <root>.L declared in <root>.L.<init>' type=LL of <root>.L origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ll> signature:/L.ll.<get-ll>|<get-ll>(){}[0] visibility:public modality:FINAL <> ($this:<root>.L<LL of <root>.L>) returnType:LL of <root>.L
+          correspondingProperty: PROPERTY name:ll signature:/L.ll|{}ll[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.L<LL of <root>.L>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ll> (): LL of <root>.L declared in <root>.L'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ll signature:[ /L.ll|{}ll[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ll type:LL of <root>.L visibility:private [final]] ] type:LL of <root>.L visibility:private [final]' type=LL of <root>.L origin=null
+                receiver: GET_VAR '<this>: <root>.L<LL of <root>.L> declared in <root>.L.<get-ll>' type=<root>.L<LL of <root>.L> origin=null
+    CLASS CLASS name:Rec signature:/Rec|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Rec<T of <root>.Rec>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Rec|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:LL index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Rec.<init>|<init>(1:0){}[0] visibility:public <> (rt:T of <root>.Rec) returnType:<root>.Rec<T of <root>.Rec> [primary]
+        VALUE_PARAMETER name:rt index:0 type:T of <root>.Rec
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Rec signature:/Rec|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:rt signature:/Rec.rt|{}rt[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:rt signature:[ /Rec.rt|{}rt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ll type:LL of <root>.L visibility:private [final]] ] type:T of <root>.Rec visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'rt: T of <root>.Rec declared in <root>.Rec.<init>' type=T of <root>.Rec origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rt> signature:/Rec.rt.<get-rt>|<get-rt>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Rec<T of <root>.Rec>) returnType:T of <root>.Rec
+          correspondingProperty: PROPERTY name:rt signature:/Rec.rt|{}rt[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Rec<T of <root>.Rec>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rt signature:[ /Rec.rt|{}rt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ll type:LL of <root>.L visibility:private [final]] ] type:T of <root>.Rec visibility:private [final]' type=T of <root>.Rec origin=null
+                receiver: GET_VAR '<this>: <root>.Rec<T of <root>.Rec> declared in <root>.Rec.<get-rt>' type=<root>.Rec<T of <root>.Rec> origin=null
+    FUN name:fn signature:/fn|fn@Rec<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FT> ($receiver:<root>.Rec<FT of <root>.fn>) returnType:<root>.L<FT of <root>.fn>
+      TYPE_PARAMETER name:FT index:0 variance: signature:[ /fn|fn@Rec<0:0>(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:LL index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Rec<FT of <root>.fn>
+      BLOCK_BODY
+        CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn>
+          TYPE_PARAMETER name:LT index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+          CONSTRUCTOR visibility:public <> (lt:LT of <root>.fn.FLocal, pt:FT of <root>.fn) returnType:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> [primary]
+            VALUE_PARAMETER name:lt index:0 type:LT of <root>.fn.FLocal
+            VALUE_PARAMETER name:pt index:1 type:FT of <root>.fn
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) [primary] declared in <root>.L'
+                <LL>: LT of <root>.fn.FLocal
+                ll: GET_VAR 'lt: LT of <root>.fn.FLocal declared in <root>.fn.FLocal.<init>' type=LT of <root>.fn.FLocal origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]'
+          PROPERTY name:pt visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:pt type:FT of <root>.fn visibility:private [final]
+              EXPRESSION_BODY
+                GET_VAR 'pt: FT of <root>.fn declared in <root>.fn.FLocal.<init>' type=FT of <root>.fn origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pt> visibility:public modality:FINAL <> ($this:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn>) returnType:FT of <root>.fn
+              correspondingProperty: PROPERTY name:pt visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-pt> (): FT of <root>.fn declared in <root>.fn.FLocal'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:FT of <root>.fn visibility:private [final]' type=FT of <root>.fn origin=null
+                    receiver: GET_VAR '<this>: <root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> declared in <root>.fn.FLocal.<get-pt>' type=<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun fn <FT> (): <root>.L<FT of <root>.fn> declared in <root>'
+          CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: <unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.fn.FLocal<FT of <root>.fn, FT of <root>.fn> origin=null
+            <T1>: FT of <root>.fn
+            <T2>: FT of <root>.fn
+            <R>: <root>.fn.FLocal<FT of <root>.fn, FT of <root>.fn>
+            t1: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=FT of <root>.fn origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Rec<FT of <root>.fn> declared in <root>.fn' type=<root>.Rec<FT of <root>.fn> origin=null
+            t2: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=FT of <root>.fn origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Rec<FT of <root>.fn> declared in <root>.fn' type=<root>.Rec<FT of <root>.fn> origin=null
+            bb: FUNCTION_REFERENCE 'public constructor <init> (lt: LT of <root>.fn.FLocal, pt: FT of <root>.fn) [primary] declared in <root>.fn.FLocal' type=<unbound IrClassSymbolImpl><FT of <root>.fn, FT of <root>.fn, <root>.fn.FLocal<FT of <root>.fn, FT of <root>.fn>> origin=null reflectionTarget=<same>
+              <LT>: FT of <root>.fn
+    PROPERTY name:p signature:/p|@Rec<0:0>{0§<kotlin.Any?>}p[0] visibility:public modality:FINAL [val]
+      FUN name:<get-p> signature:/p.<get-p>|<get-p>@Rec<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <PT> ($receiver:<root>.Rec<PT of <root>.<get-p>>) returnType:<root>.L<PT of <root>.<get-p>>
+        correspondingProperty: PROPERTY name:p signature:/p|@Rec<0:0>{0§<kotlin.Any?>}p[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:PT index:0 variance: signature:[ /p|@Rec<0:0>{0§<kotlin.Any?>}p[0] <- Local[<TP>,0|TYPE_PARAMETER name:LL index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.Rec<PT of <root>.<get-p>>
+        BLOCK_BODY
+          CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>
+            TYPE_PARAMETER name:LT index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+            CONSTRUCTOR visibility:public <> (lt:LT of <root>.<get-p>.PLocal, pt:PT of <root>.<get-p>) returnType:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> [primary]
+              VALUE_PARAMETER name:lt index:0 type:LT of <root>.<get-p>.PLocal
+              VALUE_PARAMETER name:pt index:1 type:PT of <root>.<get-p>
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) [primary] declared in <root>.L'
+                  <LL>: LT of <root>.<get-p>.PLocal
+                  ll: GET_VAR 'lt: LT of <root>.<get-p>.PLocal declared in <root>.<get-p>.PLocal.<init>' type=LT of <root>.<get-p>.PLocal origin=null
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]'
+            PROPERTY name:pt visibility:public modality:FINAL [val]
+              FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]
+                EXPRESSION_BODY
+                  GET_VAR 'pt: PT of <root>.<get-p> declared in <root>.<get-p>.PLocal.<init>' type=PT of <root>.<get-p> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pt> visibility:public modality:FINAL <> ($this:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>) returnType:PT of <root>.<get-p>
+                correspondingProperty: PROPERTY name:pt visibility:public modality:FINAL [val]
+                $this: VALUE_PARAMETER name:<this> type:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-pt> (): PT of <root>.<get-p> declared in <root>.<get-p>.PLocal'
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]' type=PT of <root>.<get-p> origin=null
+                      receiver: GET_VAR '<this>: <root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> declared in <root>.<get-p>.PLocal.<get-pt>' type=<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> <PT> (): <root>.L<PT of <root>.<get-p>> declared in <root>'
+            CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: <unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>> origin=null
+              <T1>: PT of <root>.<get-p>
+              <T2>: PT of <root>.<get-p>
+              <R>: <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>
+              t1: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
+              t2: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
+              bb: FUNCTION_REFERENCE 'public constructor <init> (lt: LT of <root>.<get-p>.PLocal, pt: PT of <root>.<get-p>) [primary] declared in <root>.<get-p>.PLocal' type=<unbound IrClassSymbolImpl><PT of <root>.<get-p>, PT of <root>.<get-p>, <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>> origin=null reflectionTarget=<same>
+                <LT>: PT of <root>.<get-p>
+    FUN name:foo2 signature:/foo2|foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] visibility:public modality:FINAL <T1, T2, R> (t1:T1 of <root>.foo2, t2:T2 of <root>.foo2, bb:<unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>) returnType:R of <root>.foo2
+      TYPE_PARAMETER name:T1 index:0 variance: signature:[ /foo2|foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:LL index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T2 index:1 variance: signature:[ /foo2|foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:2 variance: signature:[ /foo2|foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:t1 index:0 type:T1 of <root>.foo2
+      VALUE_PARAMETER name:t2 index:1 type:T2 of <root>.foo2
+      VALUE_PARAMETER name:bb index:2 type:<unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: <unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.foo2 origin=INVOKE
+            $this: GET_VAR 'bb: <unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2> declared in <root>.foo2' type=<unbound IrClassSymbolImpl><T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 't1: T1 of <root>.foo2 declared in <root>.foo2' type=T1 of <root>.foo2 origin=null
+            2: GET_VAR 't2: T2 of <root>.foo2 declared in <root>.foo2' type=T2 of <root>.foo2 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-ll> (): LL of <root>.L declared in <root>.L' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'public final fun fn <FT> (): <root>.L<FT of <root>.fn> declared in <root>' type=<root>.L<<unbound IrClassSymbolImpl>> origin=null
+                <FT>: <unbound IrClassSymbolImpl>
+                $receiver: CONSTRUCTOR_CALL 'public constructor <init> (rt: T of <root>.Rec) [primary] declared in <root>.Rec' type=<root>.Rec<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  rt: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CALL 'public final fun <get-ll> (): LL of <root>.L declared in <root>.L' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-p> <PT> (): <root>.L<PT of <root>.<get-p>> declared in <root>' type=<root>.L<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                <PT>: <unbound IrClassSymbolImpl>
+                $receiver: CONSTRUCTOR_CALL 'public constructor <init> (rt: T of <root>.Rec) [primary] declared in <root>.Rec' type=<root>.Rec<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  rt: CONST String type=<unbound IrClassSymbolImpl> value="K"

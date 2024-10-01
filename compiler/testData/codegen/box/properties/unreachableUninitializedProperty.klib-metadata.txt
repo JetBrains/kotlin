@@ -1,0 +1,58 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: C
+    // class name: Foo
+
+    public final class Bar : kotlin/Any {
+
+      public constructor()
+
+      public final val initializedVal: kotlin/Int /* = ... */
+        public final get
+
+      public final val uninitializedVal: kotlin/String
+        public final get
+
+      public final var uninitializedVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      public final val todo: kotlin/String
+        public final get
+
+      public final val uninitializedVal: kotlin/String
+        public final get
+
+      public final var uninitializedVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final val uninitializedVal: kotlin/String
+        public final get
+
+      public final var uninitializedVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

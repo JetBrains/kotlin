@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun for_byte_list(): kotlin/Int
+
+      public final fun for_byte_range(): kotlin/Int
+
+      public final fun for_double_list(): kotlin/Int
+
+      public final fun for_int_list(): kotlin/Int
+
+      public final fun for_int_range(): kotlin/Int
+
+      public final fun for_intarray(): kotlin/Int
+
+      public final fun for_long_list(): kotlin/Int
+
+      public final fun for_long_range(): kotlin/Int
+
+      public final fun for_object_list(): kotlin/Int
+
+      public final fun for_str_array(): kotlin/Int
+    }
+  }
+}

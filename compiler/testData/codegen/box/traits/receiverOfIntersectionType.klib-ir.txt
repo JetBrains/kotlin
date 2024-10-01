@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
+    CLASS INTERFACE name:K signature:/K|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.K]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+      FUN name:ff signature:/I.ff|ff(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.I
+    CLASS INTERFACE name:J signature:/J|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.K]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]'
+      FUN name:ff signature:/A.ff|ff(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun ff (): <unbound IrClassSymbolImpl> declared in <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun ff (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]'
+      FUN name:ff signature:/B.ff|ff(){}[0] visibility:public modality:OPEN <> ($this:<root>.B) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun ff (): <unbound IrClassSymbolImpl> declared in <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun ff (): <unbound IrClassSymbolImpl> declared in <root>.B'
+            CONST String type=<unbound IrClassSymbolImpl> value="Irrelevant"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:v type:<root>.K [val]
+          WHEN type=<root>.K origin=IF
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun ff (): <unbound IrClassSymbolImpl> declared in <root>.I' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
+              GET_VAR 'val v: <root>.K [val] declared in <root>.box' type=<root>.K origin=null

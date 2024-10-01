@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f(b: @kotlin/ExtensionFunctionType kotlin/Function2<kotlin/Long, kotlin/Long, kotlin/Long>): kotlin/Long?
+    }
+  }
+}

@@ -1,0 +1,103 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/breakInLoopConditions.kt
+    FUN name:breakInDoWhileCondition signature:/breakInDoWhileCondition|breakInDoWhileCondition(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                SET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    $this: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            VAR name:j type:<unbound IrClassSymbolImpl> [var]
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              DO_WHILE label=null origin=DO_WHILE_LOOP
+                body: COMPOSITE type=<unbound IrClassSymbolImpl> origin=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                      SET_VAR 'var j: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                          $this: GET_VAR 'var j: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                      GET_VAR 'var j: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                condition: BREAK label=null loop.label=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'var j: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun breakInDoWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST String type=<unbound IrClassSymbolImpl> value="FAIL1"
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                then: BREAK label=null loop.label=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInDoWhileCondition' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun breakInDoWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun breakInDoWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:breakInWhileCondition signature:/breakInWhileCondition|breakInWhileCondition(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                SET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    $this: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            VAR name:j type:<unbound IrClassSymbolImpl> [var]
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+            WHILE label=null origin=WHILE_LOOP
+              condition: BREAK label=null loop.label=null
+              body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      GET_VAR 'var j: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    SET_VAR 'var j: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun breakInWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.breakInWhileCondition' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun breakInWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL4"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun breakInWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:breakInDoWhileResult type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun breakInDoWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val breakInDoWhileResult: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              GET_VAR 'val breakInDoWhileResult: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun breakInWhileCondition (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

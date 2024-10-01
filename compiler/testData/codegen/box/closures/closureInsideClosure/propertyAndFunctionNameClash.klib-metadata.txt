@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: d
+
+    // class name: d/A
+    // class name: d/HtmlTag
+    // class name: d/LI
+    // class name: d/ListTag
+
+    public abstract class d/A : d/HtmlTag {
+
+      public constructor()
+
+      public abstract var text: kotlin/String
+        public abstract get
+        public abstract set
+    }
+
+    public open class d/HtmlTag : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class d/LI : d/ListTag {
+
+      public constructor()
+    }
+
+    public open class d/ListTag : d/HtmlTag {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun d/HtmlTag.a(contents: @kotlin/ExtensionFunctionType kotlin/Function1<d/A, kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun d/ListTag.item(body: @kotlin/ExtensionFunctionType kotlin/Function1<d/LI, kotlin/Unit>): kotlin/Unit
+
+      public final fun listOf(vararg strings: kotlin/String /* kotlin/Array<out kotlin/String> */): kotlin/collections/List<kotlin/String>
+
+      public final fun d/ListTag.test(list: kotlin/collections/List<kotlin/String>): kotlin/Unit
+    }
+  }
+}

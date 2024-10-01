@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Callback
+
+    public open class Base : Callback {
+
+      public constructor(fn: Callback)
+
+      public open fun invoke(): kotlin/String
+
+      public final val fn: Callback
+        public final get
+    }
+
+    public abstract interface Callback : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(vararg xs: kotlin/Char /* kotlin/CharArray */): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final inline fun foo(mkString: kotlin/Function2<kotlin/Char, kotlin/Char, kotlin/String>): kotlin/String
+    }
+  }
+}

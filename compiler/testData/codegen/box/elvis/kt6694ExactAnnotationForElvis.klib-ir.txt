@@ -1,0 +1,79 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt6694ExactAnnotationForElvis.kt
+    CLASS INTERFACE name:PsiElement signature:/PsiElement|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PsiElement
+      FUN name:findChildByType signature:/PsiElement.findChildByType|findChildByType(kotlin.Int){0§<PsiElement>}[0] visibility:public modality:OPEN <T> ($this:<root>.PsiElement, i:<unbound IrClassSymbolImpl>) returnType:T of <root>.PsiElement.findChildByType?
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /PsiElement.findChildByType|findChildByType(kotlin.Int){0§<PsiElement>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.PsiElement] reified:false] ] superTypes:[<root>.PsiElement] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.PsiElement
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun findChildByType <T> (i: <unbound IrClassSymbolImpl>): T of <root>.PsiElement.findChildByType? declared in <root>.PsiElement'
+            WHEN type=T of <root>.PsiElement.findChildByType? origin=IF
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.PsiElement.findChildByType' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                then: TYPE_OP type=T of <root>.PsiElement.findChildByType origin=CAST typeOperand=T of <root>.PsiElement.findChildByType
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JetOperationReferenceExpression' type=<root>.JetOperationReferenceExpression origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: THROW type=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:JetSimpleNameExpression signature:/JetSimpleNameExpression|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.PsiElement]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JetSimpleNameExpression
+      FUN name:getReferencedNameElement signature:/JetSimpleNameExpression.getReferencedNameElement|getReferencedNameElement(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.JetSimpleNameExpression) returnType:<root>.PsiElement
+        $this: VALUE_PARAMETER name:<this> type:<root>.JetSimpleNameExpression
+    CLASS CLASS name:JetOperationReferenceExpression signature:/JetOperationReferenceExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.JetSimpleNameExpression]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JetOperationReferenceExpression
+      CONSTRUCTOR signature:/JetOperationReferenceExpression.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JetOperationReferenceExpression [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JetOperationReferenceExpression signature:/JetOperationReferenceExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.JetSimpleNameExpression]'
+      FUN name:getReferencedNameElement signature:/JetOperationReferenceExpression.getReferencedNameElement|getReferencedNameElement(){}[0] visibility:public modality:OPEN <> ($this:<root>.JetOperationReferenceExpression) returnType:<root>.JetOperationReferenceExpression
+        overridden:
+          public abstract fun getReferencedNameElement (): <root>.PsiElement declared in <root>.JetSimpleNameExpression
+        $this: VALUE_PARAMETER name:<this> type:<root>.JetOperationReferenceExpression
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getReferencedNameElement (): <root>.JetOperationReferenceExpression declared in <root>.JetOperationReferenceExpression'
+            GET_VAR '<this>: <root>.JetOperationReferenceExpression declared in <root>.JetOperationReferenceExpression.getReferencedNameElement' type=<root>.JetOperationReferenceExpression origin=null
+    CLASS CLASS name:JetLabelReferenceExpression signature:/JetLabelReferenceExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.JetSimpleNameExpression]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JetLabelReferenceExpression
+      CONSTRUCTOR signature:/JetLabelReferenceExpression.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JetLabelReferenceExpression [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JetLabelReferenceExpression signature:/JetLabelReferenceExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.JetSimpleNameExpression]'
+      FUN name:getReferencedNameElement signature:/JetLabelReferenceExpression.getReferencedNameElement|getReferencedNameElement(){}[0] visibility:public modality:OPEN <> ($this:<root>.JetLabelReferenceExpression) returnType:<root>.PsiElement
+        overridden:
+          public abstract fun getReferencedNameElement (): <root>.PsiElement declared in <root>.JetSimpleNameExpression
+        $this: VALUE_PARAMETER name:<this> type:<root>.JetLabelReferenceExpression
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getReferencedNameElement (): <root>.PsiElement declared in <root>.JetLabelReferenceExpression'
+            BLOCK type=<root>.PsiElement origin=ELVIS
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<root>.PsiElement? [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.PsiElement? origin=null
+                  <1>: <root>.PsiElement
+                  $this: GET_VAR '<this>: <root>.JetLabelReferenceExpression declared in <root>.JetLabelReferenceExpression.getReferencedNameElement' type=<root>.JetLabelReferenceExpression origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+              WHEN type=<root>.PsiElement origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_elvis_lhs: <root>.PsiElement? [val] declared in <root>.JetLabelReferenceExpression.getReferencedNameElement' type=<root>.PsiElement? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: GET_VAR '<this>: <root>.JetLabelReferenceExpression declared in <root>.JetLabelReferenceExpression.getReferencedNameElement' type=<root>.JetLabelReferenceExpression origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: GET_VAR 'val tmp0_elvis_lhs: <root>.PsiElement? [val] declared in <root>.JetLabelReferenceExpression.getReferencedNameElement' type=<root>.PsiElement? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:element type:<root>.PsiElement [val]
+          CALL 'public open fun getReferencedNameElement (): <root>.PsiElement declared in <root>.JetLabelReferenceExpression' type=<root>.PsiElement origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JetLabelReferenceExpression' type=<root>.JetLabelReferenceExpression origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.JetOperationReferenceExpression
+                GET_VAR 'val element: <root>.PsiElement [val] declared in <root>.box' type=<root>.PsiElement origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

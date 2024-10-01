@@ -1,0 +1,74 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+    // class name: Delegate
+    // class name: Delegate2
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun f(): kotlin/String
+
+      public final inline fun g(): kotlin/String
+
+      public final fun get2(): kotlin/String
+
+      public final inline fun get3(): kotlin/String
+
+      public final fun set2(): kotlin/Unit
+
+      public final inline fun set3(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val s: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ var s2: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+
+      public final /* delegated */ var s3: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+    }
+
+    public final class Delegate : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/String
+    }
+
+    public final class Delegate2 : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/String
+
+      public final operator fun setValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>, value: kotlin/String): kotlin/Unit
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

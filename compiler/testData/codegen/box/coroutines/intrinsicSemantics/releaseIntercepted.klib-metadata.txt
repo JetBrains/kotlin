@@ -1,0 +1,59 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ContinuationDispatcher
+    // class name: DispatchedContinuation
+
+    public final class ContinuationDispatcher : kotlin/coroutines/AbstractCoroutineContextElement, kotlin/coroutines/ContinuationInterceptor {
+
+      public constructor()
+
+      public open fun <T#0 /* T */> interceptContinuation(continuation: kotlin/coroutines/Continuation<T#0>): kotlin/coroutines/Continuation<T#0>
+
+      public open fun releaseInterceptedContinuation(continuation: kotlin/coroutines/Continuation<*>): kotlin/Unit
+    }
+
+    private final class DispatchedContinuation<T#0 /* T */> : kotlin/coroutines/Continuation<T#0> {
+
+      public constructor(continuation: kotlin/coroutines/Continuation<T#0>)
+
+      public open fun resumeWith(result: kotlin/Result<T#0>): kotlin/Unit
+
+      public open val context: kotlin/coroutines/CoroutineContext
+        public open get
+
+      public final val continuation: kotlin/coroutines/Continuation<T#0>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(testNum: kotlin/Int, expectedResult: kotlin/Result<kotlin/String>, c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/Unit
+
+      public final suspend fun suspendHere(): kotlin/String
+
+      public final suspend fun suspendHereIntercepted(): kotlin/String
+
+      public final var c: kotlin/coroutines/Continuation<kotlin/String>?
+        public final get
+        public final set
+
+      public final var interceptions: kotlin/Int
+        public final get
+        public final set
+
+      public final var invocations: kotlin/Int
+        public final get
+        public final set
+
+      public final var releases: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Box
+    // class name: StringBox
+
+    public open class Box<T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0)
+
+      public final inline fun act(): T#0
+
+      public final fun get(): T#0
+
+      public final fun set(t: T#0): T#0
+
+      private final var t: T#0
+        private final get
+        private final set
+    }
+
+    public final class StringBox : Box<kotlin/String> {
+
+      public constructor(t: kotlin/String)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(uuu: StringBox): kotlin/String
+    }
+  }
+}

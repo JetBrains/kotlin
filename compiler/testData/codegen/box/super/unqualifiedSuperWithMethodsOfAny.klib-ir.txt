@@ -1,0 +1,75 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unqualifiedSuperWithMethodsOfAny.kt
+    CLASS INTERFACE name:ISomething signature:/ISomething|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ISomething
+    CLASS CLASS name:ClassWithToString signature:/ClassWithToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ClassWithToString
+      CONSTRUCTOR signature:/ClassWithToString.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ClassWithToString [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassWithToString signature:/ClassWithToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:/ClassWithToString.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.ClassWithToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithToString
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithToString'
+            CONST String type=<unbound IrClassSymbolImpl> value="C"
+    CLASS INTERFACE name:IWithToString signature:/IWithToString|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IWithToString
+      FUN name:toString signature:/IWithToString.toString|toString(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IWithToString) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IWithToString
+    CLASS CLASS name:C1 signature:/C1|null[0] modality:FINAL visibility:public superTypes:[<root>.ClassWithToString; <root>.ISomething]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1
+      CONSTRUCTOR signature:/C1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ClassWithToString'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 signature:/C1|null[0] modality:FINAL visibility:public superTypes:[<root>.ClassWithToString; <root>.ISomething]'
+      FUN name:toString signature:/C1.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.C1) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithToString
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C1
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.C1'
+            CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithToString' superQualifier='CLASS CLASS name:ClassWithToString signature:/ClassWithToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.C1 declared in <root>.C1.toString' type=<root>.C1 origin=null
+    CLASS CLASS name:C2 signature:/C2|null[0] modality:FINAL visibility:public superTypes:[<root>.ClassWithToString; <root>.IWithToString; <root>.ISomething]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2
+      CONSTRUCTOR signature:/C2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ClassWithToString'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 signature:/C2|null[0] modality:FINAL visibility:public superTypes:[<root>.ClassWithToString; <root>.IWithToString; <root>.ISomething]'
+      FUN name:toString signature:/C2.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.C2) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithToString
+          public abstract fun toString (): <unbound IrClassSymbolImpl> declared in <root>.IWithToString
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C2
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.C2'
+            CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithToString' superQualifier='CLASS CLASS name:ClassWithToString signature:/ClassWithToString|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.C2 declared in <root>.C2.toString' type=<root>.C2 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.C1' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C1' type=<root>.C1 origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="C"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Failed #1"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.C2' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C2' type=<root>.C2 origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="C"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Failed #2"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Value
+    // class name: ValueRange
+
+    public final class Value : kotlin/Comparable<Value> {
+
+      public constructor(x: kotlin/Int)
+
+      public open operator fun compareTo(other: Value): kotlin/Int
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    public final class ValueRange : kotlin/ranges/ClosedRange<Value> {
+
+      public constructor(start: Value, endInclusive: Value)
+
+      public open operator fun contains(value: Value): kotlin/Boolean
+
+      public open val endInclusive: Value
+        public open get
+
+      public open val start: Value
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun Value.rangeTo(other: Value): kotlin/ranges/ClosedRange<Value>
+    }
+  }
+}

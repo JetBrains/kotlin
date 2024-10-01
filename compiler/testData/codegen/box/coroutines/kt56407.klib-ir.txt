@@ -1,0 +1,89 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt56407.kt
+    CLASS INTERFACE name:ServerBase signature:/ServerBase|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ServerBase
+    CLASS INTERFACE name:Client signature:/Client|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Client<ServerType of <root>.Client>
+      TYPE_PARAMETER name:ServerType index:0 variance: signature:[ /Client|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:ServerType index:0 variance: superTypes:[<root>.ServerBase] reified:false] ] superTypes:[<root>.ServerBase] reified:false
+      FUN name:connectToServer signature:/Client.connectToServer|connectToServer(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Client<ServerType of <root>.Client>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Client<ServerType of <root>.Client>
+    FUN name:consumeEach signature:/consumeEach|consumeEach@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> ($receiver:E of <root>.consumeEach, action:<unbound IrClassSymbolImpl><E of <root>.consumeEach, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline,suspend]
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /consumeEach|consumeEach@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:ServerType index:0 variance: superTypes:[<root>.ServerBase] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:E of <root>.consumeEach
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><E of <root>.consumeEach, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun consumeEach <E> (action: <unbound IrClassSymbolImpl><E of <root>.consumeEach, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'action: <unbound IrClassSymbolImpl><E of <root>.consumeEach, <unbound IrClassSymbolImpl>> declared in <root>.consumeEach' type=<unbound IrClassSymbolImpl><E of <root>.consumeEach, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR '<this>: E of <root>.consumeEach declared in <root>.consumeEach' type=E of <root>.consumeEach origin=null
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction1<kotlin.String,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value=""
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:DefaultAuthorizableClient signature:/DefaultAuthorizableClient|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Client<ServerType of <root>.DefaultAuthorizableClient>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>
+      TYPE_PARAMETER name:ServerType index:0 variance: signature:[ /DefaultAuthorizableClient|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:ServerType index:0 variance: superTypes:[<root>.ServerBase] reified:false] ] superTypes:[<root>.ServerBase] reified:false
+      CONSTRUCTOR signature:/DefaultAuthorizableClient.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefaultAuthorizableClient signature:/DefaultAuthorizableClient|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Client<ServerType of <root>.DefaultAuthorizableClient>]'
+      FUN name:connectToServer signature:/DefaultAuthorizableClient.connectToServer|connectToServer(){}[0] visibility:public modality:OPEN <> ($this:<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        overridden:
+          public abstract fun connectToServer (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Client
+        $this: VALUE_PARAMETER name:<this> type:<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>
+        BLOCK_BODY
+          CLASS CLASS name:NextObjectQuery modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery<ServerType of <root>.DefaultAuthorizableClient>
+            CONSTRUCTOR visibility:public <> () returnType:<root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery<ServerType of <root>.DefaultAuthorizableClient> [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NextObjectQuery modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          VAR name:nextObjectQuery type:<root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery<ServerType of <root>.DefaultAuthorizableClient> [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery' type=<root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery<ServerType of <root>.DefaultAuthorizableClient> origin=null
+          CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'public final fun consumeEach <E> (action: <unbound IrClassSymbolImpl><E of <root>.consumeEach, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <E>: <root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>
+                    $receiver: GET_VAR '<this>: <root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient> declared in <root>.DefaultAuthorizableClient.connectToServer' type=<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient> origin=null
+                    action: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>) returnType:<unbound IrClassSymbolImpl>
+                        VALUE_PARAMETER name:it index:0 type:<root>.DefaultAuthorizableClient<ServerType of <root>.DefaultAuthorizableClient>
+                        BLOCK_BODY
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            GET_VAR 'val nextObjectQuery: <root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery<ServerType of <root>.DefaultAuthorizableClient> [val] declared in <root>.DefaultAuthorizableClient.connectToServer' type=<root>.DefaultAuthorizableClient.connectToServer.NextObjectQuery<ServerType of <root>.DefaultAuthorizableClient> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: BLOCK type=<root>.box.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DefaultAuthorizableClient<<root>.ServerBase>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.<no name provided>
+                      CONSTRUCTOR visibility:public <> () returnType:<root>.box.<anonymous>.<no name provided> [primary]
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DefaultAuthorizableClient'
+                            <ServerType>: <root>.ServerBase
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DefaultAuthorizableClient<<root>.ServerBase>]'
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<anonymous>.<no name provided>' type=<root>.box.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

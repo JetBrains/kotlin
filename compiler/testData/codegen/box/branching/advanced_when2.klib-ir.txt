@@ -1,0 +1,57 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/advanced_when2.kt
+    FUN name:advanced_when2 signature:/advanced_when2|advanced_when2(kotlin.Int){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:value type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:v type:<unbound IrClassSymbolImpl> [val]
+                  CONST Int type=<unbound IrClassSymbolImpl> value=42
+                SET_VAR 'var value: <unbound IrClassSymbolImpl> [var] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=EQ
+                  GET_VAR 'val v: <unbound IrClassSymbolImpl> [val] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:v type:<unbound IrClassSymbolImpl> [val]
+                  CONST Int type=<unbound IrClassSymbolImpl> value=43
+                SET_VAR 'var value: <unbound IrClassSymbolImpl> [var] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=EQ
+                  GET_VAR 'val v: <unbound IrClassSymbolImpl> [val] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:v type:<unbound IrClassSymbolImpl> [val]
+                  CONST Int type=<unbound IrClassSymbolImpl> value=44
+                SET_VAR 'var value: <unbound IrClassSymbolImpl> [var] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=EQ
+                  GET_VAR 'val v: <unbound IrClassSymbolImpl> [val] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun advanced_when2 (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var value: <unbound IrClassSymbolImpl> [var] declared in <root>.advanced_when2' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun advanced_when2 (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            i: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL "
+                GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

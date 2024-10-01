@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun runs(f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final suspend fun suspendListOf(s: kotlin/String): kotlin/collections/List<kotlin/String>
+
+      public final val strings: kotlin/collections/MutableCollection<kotlin/String>
+        public final get
+    }
+  }
+}

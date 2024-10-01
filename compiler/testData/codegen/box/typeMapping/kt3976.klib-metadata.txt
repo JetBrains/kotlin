@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SessionAccessor
+
+    public final class SessionAccessor<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(o: kotlin/Nothing?, desc: kotlin/reflect/KProperty<*>): T#0
+
+      public final operator fun setValue(o: kotlin/Nothing?, desc: kotlin/reflect/KProperty<*>, value: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ var currentAccountId: kotlin/Int?
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int?)
+    }
+  }
+}

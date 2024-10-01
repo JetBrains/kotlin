@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CountingIterable
+    // class name: CountingIterable.CountingIterableIterator
+
+    public final class CountingIterable<out T#0 /* T */> : kotlin/collections/Iterable<T#0> {
+
+      public constructor(s: kotlin/collections/Iterable<T#0>)
+
+      public open operator fun iterator(): CountingIterable<T#0>.CountingIterableIterator
+
+      public final var hasNextCtr: kotlin/Int
+        public final get
+        public final set
+
+      public final var nextCtr: kotlin/Int
+        public final get
+        public final set
+
+      private final val s: kotlin/collections/Iterable<T#0>
+        private final get
+
+      // nested class: CountingIterableIterator
+    }
+
+    public final inner class CountingIterable.CountingIterableIterator : kotlin/collections/Iterator<T#0> {
+
+      public constructor(it: kotlin/collections/Iterator<T#0>)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): T#0
+
+      private final val it: kotlin/collections/Iterator<T#0>
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val xs: CountingIterable<kotlin/String>
+        public final get
+    }
+  }
+}

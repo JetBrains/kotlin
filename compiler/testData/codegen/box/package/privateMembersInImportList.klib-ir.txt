@@ -1,0 +1,85 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/privateMembersInImportList.kt
+    CLASS ENUM_CLASS name:C signature:[ File '/privateMembersInImportList.kt' <- test/C|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><test.C>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+      CONSTRUCTOR signature:[ File '/privateMembersInImportList.kt' <- test/C.<init>|<init>(){}[0] ] visibility:private <> () returnType:test.C [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.C
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:C signature:[ File '/privateMembersInImportList.kt' <- test/C|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><test.C>]'
+      ENUM_ENTRY name:E1 signature:[ File '/privateMembersInImportList.kt' <- test/C.E1|null[0] ]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.C'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:[ File '/privateMembersInImportList.kt' <- test/C.values|values#static(){}[0] ] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.C>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:[ File '/privateMembersInImportList.kt' <- test/C.valueOf|valueOf#static(kotlin.String){}[0] ] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.C
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:[ File '/privateMembersInImportList.kt' <- test/C.entries|#static{}entries[0] ] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:[ File '/privateMembersInImportList.kt' <- test/C.entries.<get-entries>|<get-entries>#static(){}[0] ] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.C>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:[ File '/privateMembersInImportList.kt' <- test/C.entries|#static{}entries[0] ] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:B signature:test/A.B|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A.B
+        CONSTRUCTOR signature:test/A.B.<init>|<init>(){}[0] visibility:public <> () returnType:test.A.B [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:test/A.B|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS OBJECT name:C signature:test/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A.B.C
+          CONSTRUCTOR signature:test/A.B.C.<init>|<init>(){}[0] visibility:private <> () returnType:test.A.B.C [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:C signature:test/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS CLASS name:D signature:test/A.B.D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A.B.D
+          CONSTRUCTOR signature:test/A.B.D.<init>|<init>(){}[0] visibility:public <> () returnType:test.A.B.D [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D signature:test/A.B.D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:test/A.test|test(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            GET_OBJECT 'CLASS OBJECT name:C signature:test/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=test.A.B.C
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A.B.D' type=test.A.B.D origin=null
+    CLASS OBJECT name:Obj signature:[ File '/privateMembersInImportList.kt' <- test/Obj|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Obj
+      CONSTRUCTOR signature:[ File '/privateMembersInImportList.kt' <- test/Obj.<init>|<init>(){}[0] ] visibility:private <> () returnType:test.Obj [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Obj signature:[ File '/privateMembersInImportList.kt' <- test/Obj|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:CInObj signature:[ File '/privateMembersInImportList.kt' <- test/Obj.CInObj|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Obj.CInObj
+        CONSTRUCTOR signature:[ File '/privateMembersInImportList.kt' <- test/Obj.CInObj.<init>|<init>(){}[0] ] visibility:public <> () returnType:test.Obj.CInObj [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CInObj signature:[ File '/privateMembersInImportList.kt' <- test/Obj.CInObj|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS CLASS name:Tt signature:[ File '/privateMembersInImportList.kt' <- test/Obj.CInObj.Tt|null[0] ] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Obj.CInObj.Tt
+          CONSTRUCTOR signature:[ File '/privateMembersInImportList.kt' <- test/Obj.CInObj.Tt.<init>|<init>(){}[0] ] visibility:public <> () returnType:test.Obj.CInObj.Tt [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Tt signature:[ File '/privateMembersInImportList.kt' <- test/Obj.CInObj.Tt|null[0] ] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:[ File '/privateMembersInImportList.kt' <- test/Obj.foo|foo(){}[0] ] visibility:public modality:FINAL <> ($this:test.Obj) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Obj
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Obj.CInObj.Tt' type=test.Obj.CInObj.Tt origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_ENUM 'ENUM_ENTRY name:E1 signature:[ File '/privateMembersInImportList.kt' <- test/C.E1|null[0] ]' type=test.C
+        CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null
+        CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in test.Obj' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_OBJECT 'CLASS OBJECT name:Obj signature:[ File '/privateMembersInImportList.kt' <- test/Obj|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]' type=test.Obj
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

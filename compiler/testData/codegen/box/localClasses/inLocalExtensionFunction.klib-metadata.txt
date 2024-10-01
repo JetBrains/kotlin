@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/C
+
+    public final class test/A : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    public final class test/C : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final fun test/A.a(): kotlin/String
+
+      public final fun test(a: test/A): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

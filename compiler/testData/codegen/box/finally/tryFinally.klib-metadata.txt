@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun runtimeEx(): kotlin/Unit
+
+      public final fun test1WithFinally(): kotlin/String
+
+      public final fun test2WithFinally(): kotlin/String
+
+      public final fun unsupportedEx(): kotlin/Unit
+    }
+  }
+}

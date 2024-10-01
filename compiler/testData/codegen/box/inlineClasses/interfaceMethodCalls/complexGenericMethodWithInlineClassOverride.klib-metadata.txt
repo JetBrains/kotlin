@@ -1,0 +1,64 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: E
+
+    public final value class A : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+
+      // underlying property: s
+
+      // underlying type: kotlin/String
+    }
+
+    public abstract class B<T#0 /* T */, T#1 /* U */> : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun f(x: T#0, y: T#1): kotlin/String
+    }
+
+    public open class C<T#0 /* T */> : B<T#0, A> {
+
+      public constructor()
+
+      public open fun f(x: T#0, y: A): kotlin/String
+    }
+
+    public open class D : C<A> {
+
+      public constructor()
+
+      public open fun f(x: A, y: A): kotlin/String
+    }
+
+    public final class E : D {
+
+      public constructor()
+
+      public open fun f(x: A, y: A): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

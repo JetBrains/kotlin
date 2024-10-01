@@ -1,0 +1,51 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CInt
+    // class name: CLong
+
+    public final class CInt : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    public final class CLong : kotlin/Any {
+
+      public constructor(value: kotlin/Long)
+
+      public final val value: kotlin/Long
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun doTestInt(i: kotlin/Int?): kotlin/String
+
+      public final fun doTestLong(i: kotlin/Long?): kotlin/String
+
+      public final fun <T#0 /* T */> subject(x: T#0): T#0
+
+      public final fun testInt(i: kotlin/Int?): kotlin/String
+
+      public final fun testLong(i: kotlin/Long?): kotlin/String
+
+      public final val nCInt3: CInt?
+        public final get
+
+      public final val nCLong3: CLong?
+        public final get
+
+      public final var subjectEvaluated: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

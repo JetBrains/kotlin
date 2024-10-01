@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/reifiedTypeArgumentWithRecursion.kt
+    FUN name:causeBug signature:/causeBug|causeBug@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.causeBug) returnType:<unbound IrClassSymbolImpl> [inline]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /causeBug|causeBug@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.causeBug
+      BLOCK_BODY
+        VAR name:x type:T of <root>.causeBug [val]
+          GET_VAR '<this>: T of <root>.causeBug declared in <root>.causeBug' type=T of <root>.causeBug origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=T of <root>.causeBug
+            GET_VAR 'val x: T of <root>.causeBug [val] declared in <root>.causeBug' type=T of <root>.causeBug origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TYPE_OP type=T of <root>.causeBug origin=CAST typeOperand=T of <root>.causeBug
+            GET_VAR 'val x: T of <root>.causeBug [val] declared in <root>.causeBug' type=T of <root>.causeBug origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: signature:[ /causeBug|causeBug@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><T of <root>.causeBug>
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.causeBug> origin=null
+            <class: 1>: T of <root>.causeBug
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, T of <root>.causeBug> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:T of <root>.causeBug
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): T of <root>.causeBug declared in <root>.causeBug'
+                    GET_VAR 'val x: T of <root>.causeBug [val] declared in <root>.causeBug' type=T of <root>.causeBug origin=null
+    CLASS INTERFACE name:SomeToImplement signature:/SomeToImplement|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SomeToImplement<SELF_TVAR of <root>.SomeToImplement>
+      TYPE_PARAMETER name:SELF_TVAR index:0 variance: signature:[ /SomeToImplement|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:Y signature:/Y|null[0] modality:FINAL visibility:public superTypes:[<root>.SomeToImplement<<root>.Y>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Y
+      CONSTRUCTOR signature:/Y.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Y [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Y signature:/Y|null[0] modality:FINAL visibility:public superTypes:[<root>.SomeToImplement<<root>.Y>]'
+    CLASS CLASS name:Something signature:/Something|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Something<Z of <root>.Something>
+      TYPE_PARAMETER name:Z index:0 variance: signature:[ /Something|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<root>.SomeToImplement<Z of <root>.Something>] reified:false
+      CONSTRUCTOR signature:/Something.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Something<Z of <root>.Something> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Something signature:/Something|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:op signature:/Something.op|op(){}[0] visibility:public modality:FINAL <> ($this:<root>.Something<Z of <root>.Something>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Something<Z of <root>.Something>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun op (): <unbound IrClassSymbolImpl> declared in <root>.Something'
+            CALL 'public final fun causeBug <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <root>.Something<Z of <root>.Something>
+              $receiver: GET_VAR '<this>: <root>.Something<Z of <root>.Something> declared in <root>.Something.op' type=<root>.Something<Z of <root>.Something> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun op (): <unbound IrClassSymbolImpl> declared in <root>.Something' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Something' type=<root>.Something<<root>.Y> origin=null
+            <class: Z>: <root>.Y
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

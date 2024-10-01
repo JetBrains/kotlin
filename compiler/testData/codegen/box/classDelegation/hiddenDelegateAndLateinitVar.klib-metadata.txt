@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: E
+
+    public abstract interface A : kotlin/Any {
+
+      public abstract var x: kotlin/String
+        public abstract get
+        public abstract set
+    }
+
+    public open class B : A {
+
+      public constructor()
+
+      public open lateinit var x: kotlin/String
+        public open get
+        public open set
+    }
+
+    public abstract interface C : A {
+    }
+
+    public open class D : C {
+
+      public constructor()
+
+      public open var x: kotlin/String
+        public open /* non-default */ get
+        public open /* non-default */ set(_: kotlin/String)
+    }
+
+    public final class E : B, C {
+
+      public constructor()
+
+      public open /* delegation */ var x: kotlin/String
+        public open get
+        public open set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

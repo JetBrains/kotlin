@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Composed
+
+    public final value class Composed<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public /* secondary */ constructor(s: kotlin/String, x: kotlin/Int)
+
+      private /* secondary */ constructor(s1: kotlin/String, s2: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun p1(s2: kotlin/String): kotlin/Function0<Composed<kotlin/String>>
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,104 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unboxResultParameterWhenCapturingToCrossinlineLambda.kt
+    CLASS INTERFACE name:Flow signature:/Flow|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Flow<T of <root>.Flow>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /Flow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:collect signature:/Flow.collect|collect(FlowCollector<1:0>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Flow<T of <root>.Flow>, collector:<root>.FlowCollector<T of <root>.Flow>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.Flow>
+        VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<T of <root>.Flow>
+    CLASS INTERFACE name:FlowCollector signature:/FlowCollector|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlowCollector<T of <root>.FlowCollector>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /FlowCollector|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:emit signature:/FlowCollector.emit|emit(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FlowCollector<T of <root>.FlowCollector>, value:T of <root>.FlowCollector) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FlowCollector<T of <root>.FlowCollector>
+        VALUE_PARAMETER name:value index:0 type:T of <root>.FlowCollector
+    FUN name:collect signature:/collect|collect@Flow<0:0>(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.collect>, action:<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] T of <root>.collect, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline,suspend]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /collect|collect@Flow<0:0>(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.collect>
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] T of <root>.collect, <unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun collect <T> (action: <unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] T of <root>.collect, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>'
+          CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Flow' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.Flow<T of <root>.collect> declared in <root>.collect' type=<root>.Flow<T of <root>.collect> origin=null
+            collector: BLOCK type=<root>.collect.<no name provided><T of <root>.collect> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FlowCollector<T of <root>.collect>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.collect.<no name provided><T of <root>.collect>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.collect.<no name provided><T of <root>.collect> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FlowCollector<T of <root>.collect>]'
+                FUN name:emit visibility:public modality:OPEN <> ($this:<root>.collect.<no name provided><T of <root>.collect>, value:T of <root>.collect) returnType:<unbound IrClassSymbolImpl> [suspend]
+                  overridden:
+                    public abstract fun emit (value: T of <root>.FlowCollector): <unbound IrClassSymbolImpl> [suspend] declared in <root>.FlowCollector
+                  $this: VALUE_PARAMETER name:<this> type:<root>.collect.<no name provided><T of <root>.collect>
+                  VALUE_PARAMETER name:value index:0 type:T of <root>.collect
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun emit (value: T of <root>.collect): <unbound IrClassSymbolImpl> [suspend] declared in <root>.collect.<no name provided>'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'action: <unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] T of <root>.collect, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.collect' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] T of <root>.collect, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                        1: GET_VAR 'value: T of <root>.collect declared in <root>.collect.<no name provided>.emit' type=T of <root>.collect origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.collect.<no name provided>' type=<root>.collect.<no name provided><T of <root>.collect> origin=OBJECT_LITERAL
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:flow type:<root>.Flow<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Flow<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Flow<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>]'
+              FUN name:collect visibility:public modality:OPEN <> ($this:<root>.box.<no name provided>, collector:<root>.FlowCollector<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                overridden:
+                  public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Flow
+                $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                BLOCK_BODY
+                  CALL 'public abstract fun emit (value: T of <root>.FlowCollector): <unbound IrClassSymbolImpl> [suspend] declared in <root>.FlowCollector' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'collector: <root>.FlowCollector<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> declared in <root>.box.<no name provided>.collect' type=<root>.FlowCollector<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                    value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public final fun collect <T> (action: <unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] T of <root>.collect, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                  $receiver: GET_VAR 'val flow: <root>.Flow<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<root>.Flow<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                  action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (result:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                      VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      BLOCK_BODY
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            $receiver: GET_VAR 'result: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (text:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                                VALUE_PARAMETER name:text index:0 type:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                                    GET_VAR 'text: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

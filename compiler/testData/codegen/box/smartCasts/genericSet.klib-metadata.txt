@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Wrapper
+
+    public final class Wrapper<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public final var x: T#0
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> change(w: Wrapper<T#0>, x: kotlin/Any?): kotlin/Unit
+    }
+  }
+}

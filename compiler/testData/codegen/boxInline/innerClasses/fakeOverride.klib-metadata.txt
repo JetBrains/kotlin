@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public open class C : kotlin/Any {
+
+      public constructor()
+
+      public final fun o(): kotlin/String
+
+      public final val k: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun inlineFun(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,99 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/reifiedIsFunKSmall.kt
+    FUN name:fn0 signature:/fn0|fn0(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn1 signature:/fn1|fn1(kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:assertReifiedIs signature:/assertReifiedIs|assertReifiedIs(kotlin.Any;kotlin.String){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>, type:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /assertReifiedIs|assertReifiedIs(kotlin.Any;kotlin.String){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:type index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:answer type:<unbound IrClassSymbolImpl> [val]
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            SET_VAR 'val answer: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=EQ
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=T of <root>.assertReifiedIs
+                GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIs
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=" is "
+                    GET_VAR 'type: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": should not throw exceptions, got "
+                    GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'val answer: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+          2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIs'
+                  STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=" is "
+                    GET_VAR 'type: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": failed"
+    FUN name:assertReifiedIsNot signature:/assertReifiedIsNot|assertReifiedIsNot(kotlin.Any;kotlin.String){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>, type:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /assertReifiedIsNot|assertReifiedIsNot(kotlin.Any;kotlin.String){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:type index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:answer type:<unbound IrClassSymbolImpl> [val]
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            SET_VAR 'val answer: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=EQ
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=T of <root>.assertReifiedIsNot
+                GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIsNot
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=" !is "
+                    GET_VAR 'type: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": should not throw exceptions, got "
+                    GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'val answer: <unbound IrClassSymbolImpl> [val] declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+          2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIsNot'
+                  STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=" !is "
+                    GET_VAR 'type: <unbound IrClassSymbolImpl> declared in <root>.assertReifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": failed"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:f0 type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            FUNCTION_REFERENCE 'public final fun fn0 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        VAR name:f1 type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            FUNCTION_REFERENCE 'public final fun fn1 (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        CALL 'public final fun assertReifiedIs <T> (x: <unbound IrClassSymbolImpl>, type: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl><*>
+          x: GET_VAR 'val f0: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          type: CONST String type=<unbound IrClassSymbolImpl> value="Function0<*>"
+        CALL 'public final fun assertReifiedIs <T> (x: <unbound IrClassSymbolImpl>, type: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl><*, *>
+          x: GET_VAR 'val f1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          type: CONST String type=<unbound IrClassSymbolImpl> value="Function1<*, *>"
+        CALL 'public final fun assertReifiedIsNot <T> (x: <unbound IrClassSymbolImpl>, type: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl><*>
+          x: GET_VAR 'val f1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          type: CONST String type=<unbound IrClassSymbolImpl> value="Function0<*>"
+        CALL 'public final fun assertReifiedIsNot <T> (x: <unbound IrClassSymbolImpl>, type: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl><*, *>
+          x: GET_VAR 'val f0: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          type: CONST String type=<unbound IrClassSymbolImpl> value="Function1<*, *>"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+
+    public final class test/C : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun assertEqual(a: kotlin/reflect/KType, b: kotlin/reflect/KType): kotlin/Unit
+
+      public final fun assertNotEqual(a: kotlin/reflect/KType, b: kotlin/reflect/KType): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* A */, reified T#1 /* B */> equal(): kotlin/Unit
+
+      public final inline fun <reified T#0 /* A */, reified T#1 /* B */> notEqual(): kotlin/Unit
+    }
+  }
+}

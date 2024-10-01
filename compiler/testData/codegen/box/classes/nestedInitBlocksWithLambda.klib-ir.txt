@@ -1,0 +1,282 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:foo fileName:/nestedInitBlocksWithLambda.kt
+    FUN name:doSomething signature:foo/doSomething|doSomething(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (lambda:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:lambda index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in foo.doSomething' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:CompilerBug1 signature:foo/CompilerBug1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.CompilerBug1
+      CONSTRUCTOR signature:foo/CompilerBug1.<init>|<init>(kotlin.String){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:foo.CompilerBug1 [primary]
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CompilerBug1 signature:foo/CompilerBug1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:result signature:foo/CompilerBug1.result|{}result[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug1.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="Failed"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:foo/CompilerBug1.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug1) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:foo/CompilerBug1.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug1'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug1.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: foo.CompilerBug1 declared in foo.CompilerBug1.<get-result>' type=foo.CompilerBug1 origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:foo/CompilerBug1.result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug1, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:foo/CompilerBug1.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug1
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug1.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: foo.CompilerBug1 declared in foo.CompilerBug1.<set-result>' type=foo.CompilerBug1 origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in foo.CompilerBug1.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=foo.CompilerBug1.<anonymous>.<no name provided> origin=null
+              <1>: foo.CompilerBug1
+              <2>: foo.CompilerBug1.<anonymous>.<no name provided>
+              $receiver: GET_VAR '<this>: foo.CompilerBug1 declared in foo.CompilerBug1' type=foo.CompilerBug1 origin=null
+              1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><foo.CompilerBug1, foo.CompilerBug1.<anonymous>.<no name provided>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:foo.CompilerBug1) returnType:foo.CompilerBug1.<anonymous>.<no name provided>
+                  $receiver: VALUE_PARAMETER name:$this$run type:foo.CompilerBug1
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): foo.CompilerBug1.<anonymous>.<no name provided> declared in foo.CompilerBug1'
+                      BLOCK type=foo.CompilerBug1.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.CompilerBug1.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:foo.CompilerBug1.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                          ANONYMOUS_INITIALIZER isStatic=false
+                            BLOCK_BODY
+                              CALL 'public final fun doSomething (lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+                                lambda: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                    BLOCK_BODY
+                                      CALL 'public final fun completed (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug1' type=<unbound IrClassSymbolImpl> origin=null
+                                        $this: GET_VAR '$this$run: foo.CompilerBug1 declared in foo.CompilerBug1.<anonymous>' type=foo.CompilerBug1 origin=null
+                                        value: GET_VAR 'result: <unbound IrClassSymbolImpl> declared in foo.CompilerBug1.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.CompilerBug1.<anonymous>.<no name provided>' type=foo.CompilerBug1.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      FUN name:completed signature:foo/CompilerBug1.completed|completed(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug1, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug1
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug1' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: foo.CompilerBug1 declared in foo.CompilerBug1.completed' type=foo.CompilerBug1 origin=null
+            <set-?>: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in foo.CompilerBug1.completed' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:CompilerBug2 signature:foo/CompilerBug2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.CompilerBug2
+      CONSTRUCTOR signature:foo/CompilerBug2.<init>|<init>(kotlin.String){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:foo.CompilerBug2 [primary]
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CompilerBug2 signature:foo/CompilerBug2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:result signature:foo/CompilerBug2.result|{}result[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug2.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:foo/CompilerBug2.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug2) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:foo/CompilerBug2.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug2.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: foo.CompilerBug2 declared in foo.CompilerBug2.<get-result>' type=foo.CompilerBug2 origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:foo/CompilerBug2.result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug2, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:foo/CompilerBug2.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug2
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug2.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: foo.CompilerBug2 declared in foo.CompilerBug2.<set-result>' type=foo.CompilerBug2 origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in foo.CompilerBug2.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=foo.CompilerBug2.<anonymous>.Foo origin=null
+              <1>: foo.CompilerBug2
+              <2>: foo.CompilerBug2.<anonymous>.Foo
+              $receiver: GET_VAR '<this>: foo.CompilerBug2 declared in foo.CompilerBug2' type=foo.CompilerBug2 origin=null
+              1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><foo.CompilerBug2, foo.CompilerBug2.<anonymous>.Foo> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:foo.CompilerBug2) returnType:foo.CompilerBug2.<anonymous>.Foo
+                  $receiver: VALUE_PARAMETER name:$this$run type:foo.CompilerBug2
+                  BLOCK_BODY
+                    CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.CompilerBug2.<anonymous>.Foo
+                      ANONYMOUS_INITIALIZER isStatic=false
+                        BLOCK_BODY
+                          CALL 'public final fun doSomething (lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+                            lambda: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  CALL 'public final fun completed (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug2' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR '$this$run: foo.CompilerBug2 declared in foo.CompilerBug2.<anonymous>' type=foo.CompilerBug2 origin=null
+                                    value: GET_VAR 'result: <unbound IrClassSymbolImpl> declared in foo.CompilerBug2.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                      CONSTRUCTOR visibility:public <> () returnType:foo.CompilerBug2.<anonymous>.Foo
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): foo.CompilerBug2.<anonymous>.Foo declared in foo.CompilerBug2'
+                      CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.CompilerBug2.<anonymous>.Foo' type=foo.CompilerBug2.<anonymous>.Foo origin=null
+      FUN name:completed signature:foo/CompilerBug2.completed|completed(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug2, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug2
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug2' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: foo.CompilerBug2 declared in foo.CompilerBug2.completed' type=foo.CompilerBug2 origin=null
+            <set-?>: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in foo.CompilerBug2.completed' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:CompilerBug3 signature:foo/CompilerBug3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.CompilerBug3
+      CONSTRUCTOR signature:foo/CompilerBug3.<init>|<init>(kotlin.String){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:foo.CompilerBug3 [primary]
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CompilerBug3 signature:foo/CompilerBug3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:result signature:foo/CompilerBug3.result|{}result[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug3.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:foo/CompilerBug3.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug3) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:foo/CompilerBug3.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug3
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug3.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: foo.CompilerBug3 declared in foo.CompilerBug3.<get-result>' type=foo.CompilerBug3 origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:foo/CompilerBug3.result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug3, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:foo/CompilerBug3.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug3
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ foo/CompilerBug3.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: foo.CompilerBug3 declared in foo.CompilerBug3.<set-result>' type=foo.CompilerBug3 origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in foo.CompilerBug3.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: foo.CompilerBug3
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR '<this>: foo.CompilerBug3 declared in foo.CompilerBug3' type=foo.CompilerBug3 origin=null
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><foo.CompilerBug3, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:foo.CompilerBug3) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$run type:foo.CompilerBug3
+                BLOCK_BODY
+                  CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.CompilerBug3.<anonymous>.Foo
+                    ANONYMOUS_INITIALIZER isStatic=false
+                      BLOCK_BODY
+                        CALL 'public final fun doSomething (lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+                          lambda: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                CALL 'public final fun completed (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR '$this$run: foo.CompilerBug3 declared in foo.CompilerBug3.<anonymous>' type=foo.CompilerBug3 origin=null
+                                  value: GET_VAR 'result: <unbound IrClassSymbolImpl> declared in foo.CompilerBug3.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                    CONSTRUCTOR visibility:public <> () returnType:foo.CompilerBug3.<anonymous>.Foo
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                    CONSTRUCTOR visibility:public <> (test:<unbound IrClassSymbolImpl>) returnType:foo.CompilerBug3.<anonymous>.Foo
+                      VALUE_PARAMETER name:test index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '$this$run: foo.CompilerBug3 declared in foo.CompilerBug3.<anonymous>' type=foo.CompilerBug3 origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=foo.CompilerBug3.<anonymous>.Foo origin=null
+                          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=EQ
+                            $this: GET_VAR '$this$run: foo.CompilerBug3 declared in foo.CompilerBug3.<anonymous>' type=foo.CompilerBug3 origin=null
+                            <set-?>: CONST String type=<unbound IrClassSymbolImpl> value="Failed with the empty constructor"
+                          CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.CompilerBug3.<anonymous>.Foo' type=foo.CompilerBug3.<anonymous>.Foo origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '$this$run: foo.CompilerBug3 declared in foo.CompilerBug3.<anonymous>' type=foo.CompilerBug3 origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=foo.CompilerBug3.<anonymous>.Foo origin=null
+                          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=EQ
+                            $this: GET_VAR '$this$run: foo.CompilerBug3 declared in foo.CompilerBug3.<anonymous>' type=foo.CompilerBug3 origin=null
+                            <set-?>: CONST String type=<unbound IrClassSymbolImpl> value="Failed with one parameter constructor"
+                          CONSTRUCTOR_CALL 'public constructor <init> (test: <unbound IrClassSymbolImpl>) declared in foo.CompilerBug3.<anonymous>.Foo' type=foo.CompilerBug3.<anonymous>.Foo origin=null
+                            test: CONST String type=<unbound IrClassSymbolImpl> value="Test"
+      FUN name:completed signature:foo/CompilerBug3.completed|completed(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:foo.CompilerBug3, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:foo.CompilerBug3
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: foo.CompilerBug3 declared in foo.CompilerBug3.completed' type=foo.CompilerBug3 origin=null
+            <set-?>: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in foo.CompilerBug3.completed' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in foo.CompilerBug1' type=foo.CompilerBug1 origin=null
+                result: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in foo.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+                        STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="CompilerBug1: "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in foo.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in foo.CompilerBug2' type=foo.CompilerBug2 origin=null
+                result: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in foo.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+                        STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="CompilerBug2: "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in foo.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in foo.CompilerBug3' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in foo.CompilerBug3' type=foo.CompilerBug3 origin=null
+                result: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in foo.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+                        STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="CompilerBug3: "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in foo.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

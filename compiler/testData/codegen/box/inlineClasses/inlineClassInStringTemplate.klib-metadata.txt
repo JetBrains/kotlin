@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Z
+
+    public final value class Z : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Int
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1_1(z: Z): kotlin/String
+
+      public final fun test1_2(z: Z): kotlin/String
+
+      public final fun test1_concat1(z: Z): kotlin/String
+
+      public final fun test1_concat2(z: Z): kotlin/String
+
+      public final fun test1_concat3(z: Z): kotlin/String
+
+      public final fun test1_many(z: Z): kotlin/String
+
+      public final fun test2_1(z: Z?): kotlin/String
+
+      public final fun test2_2(z: Z?): kotlin/String
+
+      public final fun test2_concat1(z: Z?): kotlin/String
+
+      public final fun test2_concat2(z: Z?): kotlin/String
+
+      public final fun test2_concat3(z: Z?): kotlin/String
+
+      public final fun test2_many(z: Z?): kotlin/String
+    }
+  }
+}

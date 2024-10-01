@@ -1,0 +1,191 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/primitiveConversions.kt
+    CLASS INTERFACE name:CharToAny signature:/CharToAny|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CharToAny
+      FUN name:invoke signature:/CharToAny.invoke|invoke(kotlin.Char){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.CharToAny, c:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharToAny
+        VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl>
+    CLASS INTERFACE name:GenericToAny signature:/GenericToAny|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericToAny<T of <root>.GenericToAny>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GenericToAny|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:invoke signature:/GenericToAny.invoke|invoke(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.GenericToAny<T of <root>.GenericToAny>, t:T of <root>.GenericToAny) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericToAny<T of <root>.GenericToAny>
+        VALUE_PARAMETER name:t index:0 type:T of <root>.GenericToAny
+    CLASS INTERFACE name:GenericCharToAny signature:/GenericCharToAny|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<root>.GenericToAny<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericCharToAny
+    FUN name:foo1 signature:/foo1|foo1(CharToAny){}[0] visibility:public modality:FINAL <> (c:<root>.CharToAny) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<root>.CharToAny
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo1 (c: <root>.CharToAny): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun invoke (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CharToAny' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'c: <root>.CharToAny declared in <root>.foo1' type=<root>.CharToAny origin=null
+            c: CONST Char type=<unbound IrClassSymbolImpl> value='1'
+    FUN name:foo2 signature:/foo2|foo2(0:0;GenericToAny<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (t:T of <root>.foo2, g:<root>.GenericToAny<T of <root>.foo2>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo2|foo2(0:0;GenericToAny<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:t index:0 type:T of <root>.foo2
+      VALUE_PARAMETER name:g index:1 type:<root>.GenericToAny<T of <root>.foo2>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo2 <T> (t: T of <root>.foo2, g: <root>.GenericToAny<T of <root>.foo2>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun invoke (t: T of <root>.GenericToAny): <unbound IrClassSymbolImpl> declared in <root>.GenericToAny' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'g: <root>.GenericToAny<T of <root>.foo2> declared in <root>.foo2' type=<root>.GenericToAny<T of <root>.foo2> origin=null
+            t: GET_VAR 't: T of <root>.foo2 declared in <root>.foo2' type=T of <root>.foo2 origin=null
+    FUN name:foo3 signature:/foo3|foo3(GenericCharToAny){}[0] visibility:public modality:FINAL <> (c:<root>.GenericCharToAny) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<root>.GenericCharToAny
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo3 (c: <root>.GenericCharToAny): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'c: <root>.GenericCharToAny declared in <root>.foo3' type=<root>.GenericCharToAny origin=null
+            1: CONST Char type=<unbound IrClassSymbolImpl> value='3'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun foo1 (c: <root>.CharToAny): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c: TYPE_OP type=<root>.CharToAny origin=SAM_CONVERSION typeOperand=<root>.CharToAny
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val c1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val c1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Char type=<unbound IrClassSymbolImpl> value='1'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail1"
+        VAR name:c2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun foo2 <T> (t: T of <root>.foo2, g: <root>.GenericToAny<T of <root>.foo2>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            t: CONST Char type=<unbound IrClassSymbolImpl> value='2'
+            g: TYPE_OP type=<root>.GenericToAny<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.GenericToAny<<unbound IrClassSymbolImpl>>
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val c2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val c2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Char type=<unbound IrClassSymbolImpl> value='2'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail2"
+        VAR name:c3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun foo3 (c: <root>.GenericCharToAny): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c: TYPE_OP type=<root>.GenericCharToAny origin=SAM_CONVERSION typeOperand=<root>.GenericCharToAny
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val c3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val c3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Char type=<unbound IrClassSymbolImpl> value='3'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail3"
+        VAR name:c4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public abstract fun invoke (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CharToAny' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<root>.CharToAny origin=SAM_CONVERSION typeOperand=<root>.CharToAny
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            c: CONST Char type=<unbound IrClassSymbolImpl> value='4'
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val c4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val c4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Char type=<unbound IrClassSymbolImpl> value='4'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail4"
+        VAR name:c5 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public abstract fun invoke (t: T of <root>.GenericToAny): <unbound IrClassSymbolImpl> declared in <root>.GenericToAny' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<root>.GenericToAny<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.GenericToAny<<unbound IrClassSymbolImpl>>
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            t: CONST Char type=<unbound IrClassSymbolImpl> value='5'
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val c5: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val c5: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Char type=<unbound IrClassSymbolImpl> value='5'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail5"
+        VAR name:c6 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<root>.GenericCharToAny origin=SAM_CONVERSION typeOperand=<root>.GenericCharToAny
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Char type=<unbound IrClassSymbolImpl> value='6'
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val c6: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'val c6: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Char type=<unbound IrClassSymbolImpl> value='6'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail6"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

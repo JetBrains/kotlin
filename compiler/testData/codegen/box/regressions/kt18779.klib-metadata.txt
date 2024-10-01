@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Result
+    // class name: Result.Failure
+    // class name: Result.Success
+
+    public sealed class Result : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: Failure
+
+      // nested class: Success
+
+      // sealed subclass: Result.Failure
+
+      // sealed subclass: Result.Success
+    }
+
+    public final class Result.Failure : Result {
+
+      public constructor(exception: kotlin/Exception)
+
+      public final val exception: kotlin/Exception
+        public final get
+    }
+
+    public final class Result.Success : Result {
+
+      public constructor(message: kotlin/String)
+
+      public final val message: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,75 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/returnTypeSignature.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:Parser signature:/Parser|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Parser<IN of <root>.Parser, OUT of <root>.Parser>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /Parser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:OUT index:1 variance:out signature:[ /Parser|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:OUT index:1 variance:out superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:parse signature:/Parser.parse|parse(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Parser<IN of <root>.Parser, OUT of <root>.Parser>, source:IN of <root>.Parser) returnType:OUT of <root>.Parser
+        $this: VALUE_PARAMETER name:<this> type:<root>.Parser<IN of <root>.Parser, OUT of <root>.Parser>
+        VALUE_PARAMETER name:source index:0 type:IN of <root>.Parser
+    CLASS INTERFACE name:MultiParser signature:/MultiParser|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MultiParser<IN of <root>.MultiParser, OUT of <root>.MultiParser>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /MultiParser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:OUT index:1 variance:out signature:[ /MultiParser|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:OUT index:1 variance:out superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:parse signature:/MultiParser.parse|parse(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MultiParser<IN of <root>.MultiParser, OUT of <root>.MultiParser>, source:IN of <root>.MultiParser) returnType:<unbound IrClassSymbolImpl><OUT of <root>.MultiParser>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MultiParser<IN of <root>.MultiParser, OUT of <root>.MultiParser>
+        VALUE_PARAMETER name:source index:0 type:IN of <root>.MultiParser
+    CLASS INTERFACE name:ExtendsInterface signature:/ExtendsInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Parser<<root>.A, T of <root>.ExtendsInterface>; <root>.MultiParser<<root>.B, T of <root>.ExtendsInterface>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExtendsInterface<T of <root>.ExtendsInterface>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ExtendsInterface|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:parse signature:/ExtendsInterface.parse|parse(B){}[0] visibility:public modality:OPEN <> ($this:<root>.ExtendsInterface<T of <root>.ExtendsInterface>, source:<root>.B) returnType:<unbound IrClassSymbolImpl><T of <root>.ExtendsInterface>
+        overridden:
+          public abstract fun parse (source: IN of <root>.MultiParser): <unbound IrClassSymbolImpl><OUT of <root>.MultiParser> declared in <root>.MultiParser
+        $this: VALUE_PARAMETER name:<this> type:<root>.ExtendsInterface<T of <root>.ExtendsInterface>
+        VALUE_PARAMETER name:source index:0 type:<root>.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun parse (source: <root>.B): <unbound IrClassSymbolImpl><T of <root>.ExtendsInterface> declared in <root>.ExtendsInterface'
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.ExtendsInterface> origin=null
+              <class: 1>: T of <root>.ExtendsInterface
+    CLASS CLASS name:AbstractClass signature:/AbstractClass|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.ExtendsInterface<<root>.C>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractClass
+      CONSTRUCTOR signature:/AbstractClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AbstractClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractClass signature:/AbstractClass|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.ExtendsInterface<<root>.C>]'
+      FUN name:parse signature:/AbstractClass.parse|parse(A){}[0] visibility:public modality:OPEN <> ($this:<root>.AbstractClass, source:<root>.A) returnType:<root>.C
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.AbstractClass
+        VALUE_PARAMETER name:source index:0 type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun parse (source: <root>.A): <root>.C declared in <root>.AbstractClass'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:array type:<unbound IrClassSymbolImpl><<root>.C> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.C> origin=null
+            $this: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.AbstractClass]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AbstractClass'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.AbstractClass]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

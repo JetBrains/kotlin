@@ -1,0 +1,83 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CR
+    // class name: IDelegate1
+    // class name: IDelegate2
+    // class name: IR
+    // class name: P
+    // class name: Value
+
+    public final class CR<T#0 /* R */> : IR<T#0> {
+
+      public constructor(r: T#0)
+
+      public open fun foo(): T#0
+
+      public final val r: T#0
+        public final get
+    }
+
+    public abstract interface IDelegate1<T#0 /* T1 */, T#1 /* R1 */> : kotlin/Any {
+
+      public abstract operator fun getValue(t: T#0, p: kotlin/reflect/KProperty<*>): T#1
+    }
+
+    public abstract interface IDelegate2<T#0 /* T2 */, T#1 /* R2 */> : kotlin/Any {
+
+      public abstract operator fun getValue(t: T#0, p: kotlin/reflect/KProperty<*>): T#1
+    }
+
+    public abstract interface IR<T#0 /* R */> : kotlin/Any {
+
+      public abstract fun foo(): T#0
+    }
+
+    public final class P<T#0 /* P1 */, T#1 /* P2 */> : kotlin/Any {
+
+      public constructor(p1: T#0, p2: T#1)
+
+      public final val p1: T#0
+        public final get
+
+      public final val p2: T#1
+        public final get
+    }
+
+    public final class Value<T#0 /* T */, T#1 /* IT */ : IR<T#0>> : kotlin/Any {
+
+      public constructor(value1: T#0, value2: T#1)
+
+      public final var value1: T#0
+        public final get
+        public final set
+
+      public final val value2: T#1
+        public final get
+    }
+
+    package {
+
+      public final /* delegated */ val <T#0 /* T */> Value<T#0, CR<T#0>>.additionalText: P<T#0, T#0>
+        public final /* non-default */ get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

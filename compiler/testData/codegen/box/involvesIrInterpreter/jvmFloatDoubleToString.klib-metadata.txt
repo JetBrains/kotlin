@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.id(): T#0
+
+      public final const val toStringDouble1: kotlin/String /* = "1.0" */
+        public final get
+
+      public final const val toStringDouble2: kotlin/String /* = "2.0" */
+        public final get
+
+      public final const val toStringDouble3: kotlin/String /* = "1.5" */
+        public final get
+
+      public final const val toStringFloat1: kotlin/String /* = "1.0" */
+        public final get
+
+      public final const val toStringFloat2: kotlin/String /* = "2.0" */
+        public final get
+
+      public final const val toStringFloat3: kotlin/String /* = "1.5" */
+        public final get
+    }
+  }
+}

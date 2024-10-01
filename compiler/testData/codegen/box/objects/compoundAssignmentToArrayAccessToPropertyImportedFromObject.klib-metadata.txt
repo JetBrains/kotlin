@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Host
+
+    public final object Host : kotlin/Any {
+
+      private constructor()
+
+      public final val x: kotlin/IntArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

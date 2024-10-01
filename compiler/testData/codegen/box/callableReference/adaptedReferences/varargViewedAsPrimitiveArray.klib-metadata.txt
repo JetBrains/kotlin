@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun nsum(vararg args: kotlin/Number /* kotlin/Array<out kotlin/Number> */): kotlin/Int
+
+      public final fun sum(vararg args: kotlin/Int /* kotlin/IntArray */): kotlin/Int
+
+      public final fun useArray(fn: kotlin/Function1<kotlin/Array<kotlin/Int>, kotlin/Int>): kotlin/Int
+
+      public final fun usePlainArgs(fn: kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>): kotlin/Int
+
+      public final fun usePrimitiveArray(fn: kotlin/Function1<kotlin/IntArray, kotlin/Int>): kotlin/Int
+    }
+  }
+}

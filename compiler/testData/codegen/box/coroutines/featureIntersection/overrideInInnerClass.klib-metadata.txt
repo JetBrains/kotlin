@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: B.C
+    // class name: B.C.D
+
+    public abstract interface A<T#0 /* T */> : kotlin/Any {
+
+      public open suspend fun getTotalFrames(): kotlin/Long?
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+
+      public final suspend fun get1(): kotlin/Long?
+
+      public final suspend fun get2(): kotlin/Long?
+
+      public final val value: kotlin/Long /* = ... */
+        public final get
+
+      // nested class: C
+    }
+
+    public open inner class B.C : A<kotlin/Unit> {
+
+      public constructor()
+
+      public final suspend fun getInnerTotalFrames(): kotlin/Long?
+
+      public open suspend fun getTotalFrames(): kotlin/Long?
+
+      // nested class: D
+    }
+
+    public open inner class B.C.D : A<kotlin/Unit> {
+
+      public constructor()
+
+      public open suspend fun getTotalFrames(): kotlin/Long?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ExtProvider
+
+    public final object ExtProvider : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun kotlin/Long.get(i: kotlin/Int): kotlin/Long
+
+      public final operator fun kotlin/Long.set(i: kotlin/Int, newValue: kotlin/Long): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

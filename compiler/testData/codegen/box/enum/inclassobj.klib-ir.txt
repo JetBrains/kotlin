@@ -1,0 +1,56 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inclassobj.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-operatingSystemType> (): <root>.Context.Companion.OsType declared in <root>.Context.Companion' type=<root>.Context.Companion.OsType origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Context.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Context.Companion
+                arg1: GET_ENUM 'ENUM_ENTRY name:OTHER signature:/Context.Companion.OsType.OTHER|null[0]' type=<root>.Context.Companion.OsType
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+    CLASS CLASS name:Context signature:/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Context
+      CONSTRUCTOR signature:/Context.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Context [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Context signature:/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/Context.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Context.Companion
+        CONSTRUCTOR signature:/Context.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Context.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Context.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS ENUM_CLASS name:OsType signature:/Context.Companion.OsType|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Context.Companion.OsType>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Context.Companion.OsType
+          CONSTRUCTOR signature:/Context.Companion.OsType.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Context.Companion.OsType [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                <1>: <root>.Context.Companion.OsType
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:OsType signature:/Context.Companion.OsType|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Context.Companion.OsType>]'
+          ENUM_ENTRY name:LINUX signature:/Context.Companion.OsType.LINUX|null[0]
+            init: EXPRESSION_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Context.Companion.OsType'
+          ENUM_ENTRY name:OTHER signature:/Context.Companion.OsType.OTHER|null[0]
+            init: EXPRESSION_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Context.Companion.OsType'
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Context.Companion.OsType.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Context.Companion.OsType>
+            SYNTHETIC_BODY kind=ENUM_VALUES
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Context.Companion.OsType.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Context.Companion.OsType
+            VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+            SYNTHETIC_BODY kind=ENUM_VALUEOF
+          PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Context.Companion.OsType.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+            FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Context.Companion.OsType.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Context.Companion.OsType>
+              correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Context.Companion.OsType.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+              SYNTHETIC_BODY kind=ENUM_ENTRIES
+        PROPERTY name:operatingSystemType signature:/Context.Companion.operatingSystemType|{}operatingSystemType[0] visibility:public modality:FINAL [val]
+          FUN name:<get-operatingSystemType> signature:/Context.Companion.operatingSystemType.<get-operatingSystemType>|<get-operatingSystemType>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Context.Companion) returnType:<root>.Context.Companion.OsType
+            correspondingProperty: PROPERTY name:operatingSystemType signature:/Context.Companion.operatingSystemType|{}operatingSystemType[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Context.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-operatingSystemType> (): <root>.Context.Companion.OsType declared in <root>.Context.Companion'
+                GET_ENUM 'ENUM_ENTRY name:OTHER signature:/Context.Companion.OsType.OTHER|null[0]' type=<root>.Context.Companion.OsType

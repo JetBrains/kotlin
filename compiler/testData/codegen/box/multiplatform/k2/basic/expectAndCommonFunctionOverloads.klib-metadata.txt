@@ -1,0 +1,23 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun commonFun(): kotlin/String
+
+      public final fun f(param: kotlin/Any): kotlin/String
+
+      public final fun f(param: kotlin/Int): kotlin/String
+
+      public final fun platformFun(): kotlin/String
+
+      public final val p: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}

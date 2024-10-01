@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun ltCD(x: kotlin/Comparable<kotlin/Double>, y: kotlin/Double): kotlin/Boolean
+
+      public final fun ltDD(x: kotlin/Comparable<kotlin/Double>, y: kotlin/Double): kotlin/Boolean
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: t
+
+    public final object t : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Any.foo1(): kotlin/Function0<kotlin/String>
+
+      public final fun kotlin/Int.foo2(): kotlin/Function1<@kotlin/ParameterName(name = "i") kotlin/Int, kotlin/Int>
+
+      public final fun <T#0 /* T */> fooT1(t: T#0): kotlin/Function0<kotlin/String>
+
+      public final fun <T#0 /* T */> fooT2(t: T#0): kotlin/Function1<T#0, kotlin/String>
+    }
+  }
+}

@@ -1,0 +1,47 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:example2 fileName:/kt2626.kt
+    FUN name:box signature:example2/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in example2'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:OK signature:example2/Context.OsType.OK|null[0]' type=example2.Context.OsType
+    CLASS OBJECT name:Context signature:example2/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:example2.Context
+      CONSTRUCTOR signature:example2/Context.<init>|<init>(){}[0] visibility:private <> () returnType:example2.Context [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Context signature:example2/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS ENUM_CLASS name:OsType signature:example2/Context.OsType|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><example2.Context.OsType>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:example2.Context.OsType
+        CONSTRUCTOR signature:example2/Context.OsType.<init>|<init>(){}[0] visibility:private <> () returnType:example2.Context.OsType [primary]
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              <1>: example2.Context.OsType
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:OsType signature:example2/Context.OsType|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><example2.Context.OsType>]'
+        ENUM_ENTRY name:WIN2000 signature:example2/Context.OsType.WIN2000|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in example2.Context.OsType'
+        ENUM_ENTRY name:WINDOWS signature:example2/Context.OsType.WINDOWS|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in example2.Context.OsType'
+        ENUM_ENTRY name:MACOSX signature:example2/Context.OsType.MACOSX|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in example2.Context.OsType'
+        ENUM_ENTRY name:LINUX signature:example2/Context.OsType.LINUX|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in example2.Context.OsType'
+        ENUM_ENTRY name:OTHER signature:example2/Context.OsType.OTHER|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in example2.Context.OsType'
+        ENUM_ENTRY name:OK signature:example2/Context.OsType.OK|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in example2.Context.OsType'
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:example2/Context.OsType.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><example2.Context.OsType>
+          SYNTHETIC_BODY kind=ENUM_VALUES
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:example2/Context.OsType.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:example2.Context.OsType
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          SYNTHETIC_BODY kind=ENUM_VALUEOF
+        PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:example2/Context.OsType.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:example2/Context.OsType.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><example2.Context.OsType>
+            correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:example2/Context.OsType.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+            SYNTHETIC_BODY kind=ENUM_ENTRIES

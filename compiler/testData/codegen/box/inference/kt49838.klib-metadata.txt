@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Event
+    // class name: Service
+    // class name: SomeService
+    // class name: SomeService.SomeEvent
+
+    public abstract interface Event<out T#0 /* T */ : Service<out T#0, *>> : kotlin/Any {
+    }
+
+    public abstract interface Service<T#0 /* Self */ : Service<T#0, T#1>, in T#1 /* TEvent */ : Event<T#0>> : kotlin/Any {
+    }
+
+    public final class SomeService : Service<SomeService, SomeService.SomeEvent> {
+
+      public constructor()
+
+      // nested class: SomeEvent
+    }
+
+    public final class SomeService.SomeEvent : Event<SomeService> {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* TService */ : Service<T#0, T#1>, reified T#1 /* TEvent */ : Event<T#0>> event(noinline handler: suspend kotlin/Function2<T#1, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+    }
+  }
+}

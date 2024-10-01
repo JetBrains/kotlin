@@ -1,0 +1,259 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/trimOptimization.kt
+    FUN name:trimIndentConstant signature:/trimIndentConstant|trimIndentConstant(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimIndentConstant (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        Hello,\n        World\n    "
+    PROPERTY name:HAS_INDENT signature:[ File '/trimOptimization.kt' <- /HAS_INDENT|{}HAS_INDENT[0] ] visibility:private modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT signature:[ [ File '/trimOptimization.kt' <- /HAS_INDENT|{}HAS_INDENT[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="Hello,\n        World"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-HAS_INDENT> signature:[ File '/trimOptimization.kt' <- /HAS_INDENT.<get-HAS_INDENT>|<get-HAS_INDENT>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:HAS_INDENT signature:[ File '/trimOptimization.kt' <- /HAS_INDENT|{}HAS_INDENT[0] ] visibility:private modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-HAS_INDENT> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT signature:[ [ File '/trimOptimization.kt' <- /HAS_INDENT|{}HAS_INDENT[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:trimIndentInterpolatedUsingConstant signature:/trimIndentInterpolatedUsingConstant|trimIndentInterpolatedUsingConstant(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimIndentInterpolatedUsingConstant (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="\n        Hello,\n        "
+              CONST String type=<unbound IrClassSymbolImpl> value="Hello,\n        World"
+              CONST String type=<unbound IrClassSymbolImpl> value="\n        World\n    "
+    PROPERTY name:SPACES signature:[ File '/trimOptimization.kt' <- /SPACES|{}SPACES[0] ] visibility:private modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:SPACES signature:[ [ File '/trimOptimization.kt' <- /SPACES|{}SPACES[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="    "
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-SPACES> signature:[ File '/trimOptimization.kt' <- /SPACES.<get-SPACES>|<get-SPACES>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:SPACES signature:[ File '/trimOptimization.kt' <- /SPACES|{}SPACES[0] ] visibility:private modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-SPACES> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:SPACES signature:[ [ File '/trimOptimization.kt' <- /SPACES|{}SPACES[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:HELLO signature:[ File '/trimOptimization.kt' <- /HELLO|{}HELLO[0] ] visibility:private modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:HELLO signature:[ [ File '/trimOptimization.kt' <- /HELLO|{}HELLO[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="Hello"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-HELLO> signature:[ File '/trimOptimization.kt' <- /HELLO.<get-HELLO>|<get-HELLO>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:HELLO signature:[ File '/trimOptimization.kt' <- /HELLO|{}HELLO[0] ] visibility:private modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-HELLO> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:HELLO signature:[ [ File '/trimOptimization.kt' <- /HELLO|{}HELLO[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:WORLD signature:[ File '/trimOptimization.kt' <- /WORLD|{}WORLD[0] ] visibility:private modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:WORLD signature:[ [ File '/trimOptimization.kt' <- /WORLD|{}WORLD[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="World"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-WORLD> signature:[ File '/trimOptimization.kt' <- /WORLD.<get-WORLD>|<get-WORLD>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:WORLD signature:[ File '/trimOptimization.kt' <- /WORLD|{}WORLD[0] ] visibility:private modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-WORLD> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:WORLD signature:[ [ File '/trimOptimization.kt' <- /WORLD|{}WORLD[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:trimIndentReliesOnNestedStringBuilderFlatteningAndConstantConcatenation signature:/trimIndentReliesOnNestedStringBuilderFlatteningAndConstantConcatenation|trimIndentReliesOnNestedStringBuilderFlatteningAndConstantConcatenation(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimIndentReliesOnNestedStringBuilderFlatteningAndConstantConcatenation (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CONST String type=<unbound IrClassSymbolImpl> value=""
+                      1: CONST Char type=<unbound IrClassSymbolImpl> value='\n'
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="    "
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    CONST String type=<unbound IrClassSymbolImpl> value="    "
+                    CONST String type=<unbound IrClassSymbolImpl> value="Hey"
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="\n        "
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value="Hello"
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="Hello"
+                  CONST String type=<unbound IrClassSymbolImpl> value=",\n        "
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value="World"
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="World"
+                  CONST String type=<unbound IrClassSymbolImpl> value="\n"
+              1: CONST String type=<unbound IrClassSymbolImpl> value="    "
+    FUN name:trimIndentNotConstant signature:/trimIndentNotConstant|trimIndentNotConstant(kotlin.String){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimIndentNotConstant (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.trimIndentNotConstant' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:trimIndentInterpolated signature:/trimIndentInterpolated|trimIndentInterpolated(kotlin.Int){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimIndentInterpolated (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="\n        Hello,\n        "
+              GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.trimIndentInterpolated' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value="\n    "
+    FUN name:trimMarginConstant signature:/trimMarginConstant|trimMarginConstant(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginConstant (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        |Hello,\n        |World\n    "
+    PROPERTY name:HAS_MARGIN signature:[ File '/trimOptimization.kt' <- /HAS_MARGIN|{}HAS_MARGIN[0] ] visibility:private modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:HAS_MARGIN signature:[ [ File '/trimOptimization.kt' <- /HAS_MARGIN|{}HAS_MARGIN[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="Hello,\n        |World"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-HAS_MARGIN> signature:[ File '/trimOptimization.kt' <- /HAS_MARGIN.<get-HAS_MARGIN>|<get-HAS_MARGIN>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:HAS_MARGIN signature:[ File '/trimOptimization.kt' <- /HAS_MARGIN|{}HAS_MARGIN[0] ] visibility:private modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-HAS_MARGIN> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:HAS_MARGIN signature:[ [ File '/trimOptimization.kt' <- /HAS_MARGIN|{}HAS_MARGIN[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:trimMarginInterpolatedUsingConstant signature:/trimMarginInterpolatedUsingConstant|trimMarginInterpolatedUsingConstant(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginInterpolatedUsingConstant (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="\n        |Hello,\n        |"
+              CONST String type=<unbound IrClassSymbolImpl> value="Hello,\n        |World"
+              CONST String type=<unbound IrClassSymbolImpl> value="\n        |World\n    "
+    FUN name:trimMarginReliesOnNestedStringBuilderFlatteningAndConstantConcatenation signature:/trimMarginReliesOnNestedStringBuilderFlatteningAndConstantConcatenation|trimMarginReliesOnNestedStringBuilderFlatteningAndConstantConcatenation(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginReliesOnNestedStringBuilderFlatteningAndConstantConcatenation (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CONST String type=<unbound IrClassSymbolImpl> value=""
+                      1: CONST Char type=<unbound IrClassSymbolImpl> value='\n'
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="    "
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    CONST String type=<unbound IrClassSymbolImpl> value="    "
+                    CONST String type=<unbound IrClassSymbolImpl> value="|Hey"
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="\n        |"
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value="Hello"
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="Hello"
+                  CONST String type=<unbound IrClassSymbolImpl> value=",\n        |"
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value="World"
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="World"
+                  CONST String type=<unbound IrClassSymbolImpl> value="\n"
+              1: CONST String type=<unbound IrClassSymbolImpl> value="    "
+    FUN name:trimMarginConstantCustomPrefix signature:/trimMarginConstantCustomPrefix|trimMarginConstantCustomPrefix(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginConstantCustomPrefix (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        ###Hello,\n        ###World\n    "
+            1: CONST String type=<unbound IrClassSymbolImpl> value="###"
+    PROPERTY name:OCTOTHORPE signature:[ File '/trimOptimization.kt' <- /OCTOTHORPE|{}OCTOTHORPE[0] ] visibility:private modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:OCTOTHORPE signature:[ [ File '/trimOptimization.kt' <- /OCTOTHORPE|{}OCTOTHORPE[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Char type=<unbound IrClassSymbolImpl> value='#'
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-OCTOTHORPE> signature:[ File '/trimOptimization.kt' <- /OCTOTHORPE.<get-OCTOTHORPE>|<get-OCTOTHORPE>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:OCTOTHORPE signature:[ File '/trimOptimization.kt' <- /OCTOTHORPE|{}OCTOTHORPE[0] ] visibility:private modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-OCTOTHORPE> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:OCTOTHORPE signature:[ [ File '/trimOptimization.kt' <- /OCTOTHORPE|{}OCTOTHORPE[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:HAS_INDENT type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:trimMarginConstantCustomPrefixInterpolatedUsingConstant signature:/trimMarginConstantCustomPrefixInterpolatedUsingConstant|trimMarginConstantCustomPrefixInterpolatedUsingConstant(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginConstantCustomPrefixInterpolatedUsingConstant (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        #@#Hello,\n        #@#World\n    "
+            1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST Char type=<unbound IrClassSymbolImpl> value='#'
+              CONST String type=<unbound IrClassSymbolImpl> value="@"
+              CONST Char type=<unbound IrClassSymbolImpl> value='#'
+    FUN name:trimMarginNotConstant signature:/trimMarginNotConstant|trimMarginNotConstant(kotlin.String){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginNotConstant (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.trimMarginNotConstant' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:trimMarginNotConstantCustomPrefix signature:/trimMarginNotConstantCustomPrefix|trimMarginNotConstantCustomPrefix(kotlin.String){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginNotConstantCustomPrefix (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.trimMarginNotConstantCustomPrefix' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="###"
+    FUN name:trimMarginInterpolated signature:/trimMarginInterpolated|trimMarginInterpolated(kotlin.Int){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginInterpolated (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="\n        |Hello,\n        |"
+              GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.trimMarginInterpolated' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value="\n    "
+    FUN name:trimMarginConstantWithNonConstantCustomPrefix signature:/trimMarginConstantWithNonConstantCustomPrefix|trimMarginConstantWithNonConstantCustomPrefix(kotlin.String){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun trimMarginConstantWithNonConstantCustomPrefix (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        |Hello,\n        |World\n    "
+            1: GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.trimMarginConstantWithNonConstantCustomPrefix' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimIndentConstant (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nHello,\nWorld\nWorld"
+          2: CALL 'public final fun trimIndentInterpolatedUsingConstant (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hey\nHelloHello,\nWorldWorld"
+          2: CALL 'public final fun trimIndentReliesOnNestedStringBuilderFlatteningAndConstantConcatenation (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimIndentNotConstant (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST String type=<unbound IrClassSymbolImpl> value="\n        Hello,\n        World\n    "
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\n42"
+          2: CALL 'public final fun trimIndentInterpolated (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimMarginConstant (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nHello,\nWorld\nWorld"
+          2: CALL 'public final fun trimMarginInterpolatedUsingConstant (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hey\nHelloHello,\nWorldWorld"
+          2: CALL 'public final fun trimMarginReliesOnNestedStringBuilderFlatteningAndConstantConcatenation (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimMarginConstantCustomPrefix (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimMarginConstantCustomPrefixInterpolatedUsingConstant (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimMarginNotConstant (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST String type=<unbound IrClassSymbolImpl> value="\n        |Hello,\n        |World\n    "
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimMarginNotConstantCustomPrefix (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST String type=<unbound IrClassSymbolImpl> value="\n        ###Hello,\n        ###World\n    "
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\n42"
+          2: CALL 'public final fun trimMarginInterpolated (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Hello,\nWorld"
+          2: CALL 'public final fun trimMarginConstantWithNonConstantCustomPrefix (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST String type=<unbound IrClassSymbolImpl> value="|"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

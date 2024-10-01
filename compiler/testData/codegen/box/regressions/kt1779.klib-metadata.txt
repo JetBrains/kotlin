@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyIterator
+
+    public final class MyIterator : kotlin/collections/AbstractIterator<kotlin/String> {
+
+      public constructor()
+
+      public open fun computeNext(): kotlin/Unit
+
+      public final var i: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

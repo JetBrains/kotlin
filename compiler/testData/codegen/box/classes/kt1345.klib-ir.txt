@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt1345.kt
+    CLASS INTERFACE name:Creator signature:/Creator|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Creator<T of <root>.Creator>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Creator|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:create signature:/Creator.create|create(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Creator<T of <root>.Creator>) returnType:T of <root>.Creator
+        $this: VALUE_PARAMETER name:<this> type:<root>.Creator<T of <root>.Creator>
+    CLASS CLASS name:Actor signature:/Actor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Actor
+      CONSTRUCTOR signature:/Actor.<init>|<init>(kotlin.String){}[0] visibility:public <> (code:<unbound IrClassSymbolImpl>) returnType:<root>.Actor [primary]
+        VALUE_PARAMETER name:code index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Actor signature:/Actor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:code signature:/Actor.code|{}code[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:code signature:[ /Actor.code|{}code[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'code: <unbound IrClassSymbolImpl> declared in <root>.Actor.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-code> signature:/Actor.code.<get-code>|<get-code>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Actor) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:code signature:/Actor.code|{}code[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Actor
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-code> (): <unbound IrClassSymbolImpl> declared in <root>.Actor'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:code signature:[ /Actor.code|{}code[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Actor declared in <root>.Actor.<get-code>' type=<root>.Actor origin=null
+    CLASS INTERFACE name:Factory signature:/Factory|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Creator<<root>.Actor>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Factory
+    CLASS CLASS name:MyFactory signature:/MyFactory|null[0] modality:FINAL visibility:public superTypes:[<root>.Factory]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFactory
+      CONSTRUCTOR signature:/MyFactory.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFactory [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFactory signature:/MyFactory|null[0] modality:FINAL visibility:public superTypes:[<root>.Factory]'
+      FUN name:create signature:/MyFactory.create|create(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyFactory) returnType:<root>.Actor
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyFactory
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun create (): <root>.Actor declared in <root>.MyFactory'
+            CONSTRUCTOR_CALL 'public constructor <init> (code: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Actor' type=<root>.Actor origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-code> (): <unbound IrClassSymbolImpl> declared in <root>.Actor' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public open fun create (): <root>.Actor declared in <root>.MyFactory' type=<root>.Actor origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFactory' type=<root>.MyFactory origin=null

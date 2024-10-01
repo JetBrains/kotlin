@@ -1,0 +1,149 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: foo.bar
+
+    // class name: foo/bar/C
+    // class name: foo/bar/C.D
+    // class name: foo/bar/C.D.E
+    // class name: foo/bar/C2
+    // class name: foo/bar/C2.D2
+    // class name: foo/bar/C2.D2.E2
+    // class name: foo/bar/C3
+    // class name: foo/bar/C3.D3
+    // class name: foo/bar/C3.D3.E3
+    // class name: foo/bar/C4
+    // class name: foo/bar/C4.D4
+    // class name: foo/bar/C4.D4.E4
+    // class name: foo/bar/R
+
+    public final class foo/bar/C : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(): kotlin/Unit
+
+      // nested class: D
+    }
+
+    public final class foo/bar/C.D : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(): kotlin/Unit
+
+      // nested class: E
+    }
+
+    public final class foo/bar/C.D.E : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(): kotlin/Unit
+    }
+
+    public final class foo/bar/C2 : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(): kotlin/Unit
+
+      // nested class: D2
+    }
+
+    public final inner class foo/bar/C2.D2 : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(): kotlin/Unit
+
+      // nested class: E2
+    }
+
+    public final inner class foo/bar/C2.D2.E2 : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(): kotlin/Unit
+    }
+
+    public final class foo/bar/C3<T#0 /* X */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(x: T#0): kotlin/Unit
+
+      // nested class: D3
+    }
+
+    public final class foo/bar/C3.D3<T#1 /* X */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(x: T#1): kotlin/Unit
+
+      // nested class: E3
+    }
+
+    public final class foo/bar/C3.D3.E3<T#2 /* X */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(x: T#2): kotlin/Unit
+    }
+
+    public final class foo/bar/C4<T#0 /* X */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(x: T#0): kotlin/Unit
+
+      // nested class: D4
+    }
+
+    public final inner class foo/bar/C4.D4<T#1 /* Y */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(x: T#0, y: T#1): kotlin/Unit
+
+      // nested class: E4
+    }
+
+    public final inner class foo/bar/C4.D4.E4<T#2 /* Z */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo(x: T#0, y: T#1, z: T#2): kotlin/Unit
+    }
+
+    public final class foo/bar/R<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun bar(t: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

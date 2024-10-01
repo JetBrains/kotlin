@@ -1,0 +1,281 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:foo fileName:/assignToDotQualifiedWithSideEffect.kt
+    PROPERTY name:global signature:foo/global|{}global[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:global signature:[ foo/global|{}global[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-global> signature:foo/global.<get-global>|<get-global>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:global signature:foo/global|{}global[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:global signature:[ foo/global|{}global[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-global> signature:foo/global.<set-global>|<set-global>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:global signature:foo/global|{}global[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:global signature:[ foo/global|{}global[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in foo.<set-global>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:A signature:foo/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.A
+      CONSTRUCTOR signature:foo/A.<init>|<init>(){}[0] visibility:public <> () returnType:foo.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:foo/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:prop signature:foo/A.prop|{}prop[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:prop signature:[ foo/A.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:foo/A.prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> ($this:foo.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:prop signature:foo/A.prop|{}prop[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ foo/A.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: foo.A declared in foo.A.<get-prop>' type=foo.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop> signature:foo/A.prop.<set-prop>|<set-prop>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:foo.A, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:prop signature:foo/A.prop|{}prop[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:foo.A
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ foo/A.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: foo.A declared in foo.A.<set-prop>' type=foo.A origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in foo.A.<set-prop>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:bar signature:foo/bar|bar(kotlin.String;foo.A){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>, a:foo.A) returnType:foo.A
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:1 type:foo.A
+      BLOCK_BODY
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: GET_VAR 's: <unbound IrClassSymbolImpl> declared in foo.bar' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo'
+          GET_VAR 'a: foo.A declared in foo.bar' type=foo.A origin=null
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:foo.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.A' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+            a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+          <set-?>: TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+              CONST Int type=<unbound IrClassSymbolImpl> value=10
+            finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="AB"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=10
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+            CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+              a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+          CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              1: TRY type=<unbound IrClassSymbolImpl>
+                try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+                  CONST Int type=<unbound IrClassSymbolImpl> value=20
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="AB"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=30
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=MINUSEQ
+          VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+            CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+              a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+          CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=MINUSEQ
+            $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUSEQ
+              $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=MINUSEQ
+                $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              1: TRY type=<unbound IrClassSymbolImpl>
+                try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+                  CONST Int type=<unbound IrClassSymbolImpl> value=20
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="AB"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=10
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=MULTEQ
+          VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+            CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+              a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+          CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=MULTEQ
+            $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MULTEQ
+              $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=MULTEQ
+                $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              1: TRY type=<unbound IrClassSymbolImpl>
+                try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="AB"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=20
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=DIVEQ
+          VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+            CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+              a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+          CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=DIVEQ
+            $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=DIVEQ
+              $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=DIVEQ
+                $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              1: TRY type=<unbound IrClassSymbolImpl>
+                try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+                  CONST Int type=<unbound IrClassSymbolImpl> value=5
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="AB"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=4
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=PERCEQ
+          VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+            CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+              a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+          CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PERCEQ
+            $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PERCEQ
+              $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PERCEQ
+                $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              1: TRY type=<unbound IrClassSymbolImpl>
+                try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      $this: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+                  CONST Int type=<unbound IrClassSymbolImpl> value=3
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="AB"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+              TRY type=foo.A
+                try: BLOCK type=foo.A origin=null
+                  CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+                    a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in foo.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in foo.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="A"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun <set-global> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<receiver> type:foo.A [val]
+              TRY type=foo.A
+                try: BLOCK type=foo.A origin=null
+                  CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, a: foo.A): foo.A declared in foo' type=foo.A origin=null
+                    s: CONST String type=<unbound IrClassSymbolImpl> value="A"
+                    a: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+                finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+            CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              $this: GET_VAR 'val <receiver>: foo.A [val] declared in foo.box' type=foo.A origin=null
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST String type=<unbound IrClassSymbolImpl> value="A"
+          second: CALL 'public final fun <get-global> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'public final fun assertEquals (first: <unbound IrClassSymbolImpl>?, second: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=null
+          first: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          second: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in foo.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val a: foo.A [val] declared in foo.box' type=foo.A origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:assertEquals signature:foo/assertEquals|assertEquals(kotlin.Any?;kotlin.Any?){}[0] visibility:public modality:FINAL <> (first:<unbound IrClassSymbolImpl>?, second:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:first index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:second index:1 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'first: <unbound IrClassSymbolImpl>? declared in foo.assertEquals' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: GET_VAR 'second: <unbound IrClassSymbolImpl>? declared in foo.assertEquals' type=<unbound IrClassSymbolImpl>? origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'first: <unbound IrClassSymbolImpl>? declared in foo.assertEquals' type=<unbound IrClassSymbolImpl>? origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                  GET_VAR 'second: <unbound IrClassSymbolImpl>? declared in foo.assertEquals' type=<unbound IrClassSymbolImpl>? origin=null

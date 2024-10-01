@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A<T#0 /* T */> : kotlin/Any {
+
+      public constructor(prop: T#0)
+
+      public final val prop: T#0
+        public final get
+    }
+
+    package {
+
+      public final inline fun acceptInt(p: kotlin/Int, action: kotlin/Function1<kotlin/Int, kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> A<T#0>.process(action: kotlin/Function1<T#0, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

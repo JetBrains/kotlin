@@ -1,0 +1,44 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/file1.kt
+    CLASS INTERFACE name:LazyGridLayoutInfo signature:/LazyGridLayoutInfo|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LazyGridLayoutInfo
+      FUN name:ok signature:/LazyGridLayoutInfo.ok|ok(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.LazyGridLayoutInfo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.LazyGridLayoutInfo
+  FILE fqName:<root> fileName:/file2.kt
+    CLASS CLASS name:LazyGridState signature:/LazyGridState|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LazyGridState
+      CONSTRUCTOR signature:/LazyGridState.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.LazyGridState [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LazyGridState signature:/LazyGridState|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:layoutInfo signature:/LazyGridState.layoutInfo|{}layoutInfo[0] visibility:public modality:FINAL [val]
+        FUN name:<get-layoutInfo> signature:/LazyGridState.layoutInfo.<get-layoutInfo>|<get-layoutInfo>(){}[0] visibility:public modality:FINAL <> ($this:<root>.LazyGridState) returnType:<root>.LazyGridLayoutInfo
+          correspondingProperty: PROPERTY name:layoutInfo signature:/LazyGridState.layoutInfo|{}layoutInfo[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LazyGridState
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-layoutInfo> (): <root>.LazyGridLayoutInfo declared in <root>.LazyGridState'
+              GET_OBJECT 'CLASS OBJECT name:EmptyLazyGridLayoutInfo signature:[ File '/file2.kt' <- /EmptyLazyGridLayoutInfo|null[0] ] modality:FINAL visibility:private superTypes:[<root>.LazyGridLayoutInfo]' type=<root>.EmptyLazyGridLayoutInfo
+    CLASS OBJECT name:EmptyLazyGridLayoutInfo signature:[ File '/file2.kt' <- /EmptyLazyGridLayoutInfo|null[0] ] modality:FINAL visibility:private superTypes:[<root>.LazyGridLayoutInfo]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyLazyGridLayoutInfo
+      CONSTRUCTOR signature:[ File '/file2.kt' <- /EmptyLazyGridLayoutInfo.<init>|<init>(){}[0] ] visibility:private <> () returnType:<root>.EmptyLazyGridLayoutInfo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:EmptyLazyGridLayoutInfo signature:[ File '/file2.kt' <- /EmptyLazyGridLayoutInfo|null[0] ] modality:FINAL visibility:private superTypes:[<root>.LazyGridLayoutInfo]'
+      FUN name:ok signature:[ File '/file2.kt' <- /EmptyLazyGridLayoutInfo.ok|ok(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.EmptyLazyGridLayoutInfo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun ok (): <unbound IrClassSymbolImpl> declared in <root>.LazyGridLayoutInfo
+        $this: VALUE_PARAMETER name:<this> type:<root>.EmptyLazyGridLayoutInfo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun ok (): <unbound IrClassSymbolImpl> declared in <root>.EmptyLazyGridLayoutInfo'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null

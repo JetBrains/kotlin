@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestFailureException
+
+    public final class TestFailureException : kotlin/Exception {
+
+      public constructor(description: kotlin/String)
+
+      public final val description: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testEquivalence(marker: kotlin/String, reference: kotlin/String, value: kotlin/String): kotlin/Unit
+
+      public final fun testEquivalence(marker: kotlin/String, reference: kotlin/String, values: kotlin/collections/List<kotlin/String>): kotlin/Unit
+
+      public final const val text: kotlin/String /* = "text" */
+        public final get
+
+      public final const val value: kotlin/Int /* = 42 */
+        public final get
+    }
+  }
+}

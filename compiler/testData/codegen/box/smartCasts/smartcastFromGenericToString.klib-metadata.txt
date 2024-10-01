@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Some
+
+    public final class Some<T#0 /* V */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(map: kotlin/collections/Map<kotlin/String, T#0>)
+
+      public final fun addK(s: kotlin/String): kotlin/String
+
+      public final fun test(key: kotlin/String): kotlin/String
+
+      public final val map: kotlin/collections/Map<kotlin/String, T#0>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

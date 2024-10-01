@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val a: kotlin/String
+        public final get
+
+      public final val aa: kotlin/String
+        public final get
+
+      public final val b: kotlin/String
+        public final get
+
+      public final val bb: kotlin/String
+        public final get
+
+      public final val c: kotlin/String
+        public final get
+
+      public final val cc: kotlin/String
+        public final get
+
+      public final val ubyte: kotlin/UInt /* = ... */
+        public final get
+
+      public final val uint: kotlin/UInt /* = ... */
+        public final get
+
+      public final val ulong: kotlin/ULong /* = ... */
+        public final get
+    }
+  }
+}

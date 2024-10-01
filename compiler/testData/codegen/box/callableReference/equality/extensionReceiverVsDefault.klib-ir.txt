@@ -1,0 +1,68 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/fromOtherFile.kt
+    FUN name:captureFromOtherFile signature:/captureFromOtherFile|captureFromOtherFile(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun captureFromOtherFile (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun capture2 (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            fn: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:target visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'public final fun target (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              FUNCTION_REFERENCE 'local final fun target (): <unbound IrClassSymbolImpl> declared in <root>.captureFromOtherFile' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun target (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>
+  FILE fqName:<root> fileName:/test.kt
+    FUN name:checkNotEqual signature:/checkNotEqual|checkNotEqual(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" and "
+                  GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" should NOT be equal"
+    FUN name:target signature:/target|target(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      BLOCK_BODY
+    FUN name:capture1 signature:/capture1|capture1(kotlin.Function1<kotlin.String,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (fn:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:fn index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun capture1 (fn: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'fn: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.capture1' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:capture2 signature:/capture2|capture2(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (fn:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun capture2 (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.capture2' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'public final fun capture1 (fn: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            fn: FUNCTION_REFERENCE 'public final fun target (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+          y: CALL 'public final fun capture2 (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            fn: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:target visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'public final fun target (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              FUNCTION_REFERENCE 'local final fun target (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun target (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'public final fun capture1 (fn: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            fn: FUNCTION_REFERENCE 'public final fun target (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+          y: CALL 'public final fun captureFromOtherFile (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

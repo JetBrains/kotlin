@@ -1,0 +1,59 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt37204.kt
+    PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-log> signature:/log.<get-log>|<get-log>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:test signature:/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [inline]
+      BLOCK_BODY
+        LOCAL_DELEGATED_PROPERTY name:localLazy type:<unbound IrClassSymbolImpl> flags:val
+          VAR PROPERTY_DELEGATE name:localLazy$delegate type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        1: CONST String type=<unbound IrClassSymbolImpl> value="localLazy;"
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test'
+                      CONST String type=<unbound IrClassSymbolImpl> value="v;"
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-localLazy> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-localLazy> (): <unbound IrClassSymbolImpl> declared in <root>.test'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val localLazy$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  2: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val localLazy: <unbound IrClassSymbolImpl> by (...)' delegate='val localLazy$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test' getter='local final fun <get-localLazy> (): <unbound IrClassSymbolImpl> declared in <root>.test' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST String type=<unbound IrClassSymbolImpl> value="test;"
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CALL 'local final fun <get-localLazy> (): <unbound IrClassSymbolImpl> declared in <root>.test' type=<unbound IrClassSymbolImpl> origin=GET_LOCAL_PROPERTY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:t type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="test;localLazy;v;"
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 'val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testInt(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/UInt): kotlin/UInt
+
+      public final fun testLong(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/ULong): kotlin/ULong
+    }
+  }
+
+  library fragment {
+    // package name: kotlin.internal
+
+    // class name: kotlin/internal/ImplicitIntegerCoercion
+
+    public final annotation class kotlin/internal/ImplicitIntegerCoercion : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}

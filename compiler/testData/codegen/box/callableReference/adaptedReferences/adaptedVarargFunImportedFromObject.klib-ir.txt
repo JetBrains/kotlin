@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/adaptedVarargFunImportedFromObject.kt
+    FUN name:withO signature:/withO|withO(kotlin.Function1<kotlin.String,kotlin.String>){}[0] visibility:public modality:FINAL <> (fn:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun withO (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.withO' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="O"
+    CLASS OBJECT name:Host signature:/Host|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+      CONSTRUCTOR signature:/Host.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Host [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Host signature:/Host|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:/Host.foo|foo(kotlin.Array<out|kotlin.String>...){}[0] visibility:public modality:FINAL <> ($this:<root>.Host, x:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (vararg x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Host'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: GET_VAR 'x: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [vararg] declared in <root>.Host.foo' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun withO (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            fn: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL <> ($receiver:<root>.Host, p0:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.Host
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun foo (p0: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'public final fun foo (vararg x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Host' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.Host declared in <root>.box.foo' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                      x: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                        GET_VAR 'p0: <unbound IrClassSymbolImpl> declared in <root>.box.foo' type=<unbound IrClassSymbolImpl> origin=null
+              FUNCTION_REFERENCE 'local final fun foo (p0: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo (vararg x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Host
+                $receiver: GET_OBJECT 'CLASS OBJECT name:Host signature:/Host|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Host

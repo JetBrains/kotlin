@@ -1,0 +1,43 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    PROPERTY name:v1 signature:/v1|{}v1[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:v1 signature:[ /v1|{}v1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v1 type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="V1"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v1> signature:/v1.<get-v1>|<get-v1>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:v1 signature:/v1|{}v1[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v1> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v1 signature:[ /v1|{}v1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v1 type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-v1> signature:/v1.<set-v1>|<set-v1>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:v1 signature:/v1|{}v1[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v1 signature:[ /v1|{}v1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v1 type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-v1>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s type:<unbound IrClassSymbolImpl> [val]
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="v1: "
+            CALL 'public final fun <get-v1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            CONST String type=<unbound IrClassSymbolImpl> value=", v2: "
+            CALL 'public final fun <get-v2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/2.kt
+    PROPERTY name:v2 signature:/v2|{}v2[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:v2 signature:[ /v2|{}v2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v2 type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="V2"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v2> signature:/v2.<get-v2>|<get-v2>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:v2 signature:/v2|{}v2[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v2> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v2 signature:[ /v2|{}v2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v2 type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-v2> signature:/v2.<set-v2>|<set-v2>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:v2 signature:/v2|{}v2[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v2 signature:[ /v2|{}v2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v2 type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-v2>' type=<unbound IrClassSymbolImpl> origin=null

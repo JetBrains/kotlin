@@ -1,0 +1,51 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/localFunctionInObjectInitializer_kt4516.kt
+    CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
+      CONSTRUCTOR signature:/O.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.O [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:mmmap signature:/O.mmmap|{}mmmap[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:mmmap signature:[ /O.mmmap|{}mmmap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:mmmap type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+              <class: 2>: <unbound IrClassSymbolImpl>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mmmap> signature:/O.mmmap.<get-mmmap>|<get-mmmap>(){}[0] visibility:public modality:FINAL <> ($this:<root>.O) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:mmmap signature:/O.mmmap|{}mmmap[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.O
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-mmmap> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.O'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mmmap signature:[ /O.mmmap|{}mmmap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:mmmap type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.O declared in <root>.O.<get-mmmap>' type=<root>.O origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          FUN LOCAL_FUNCTION name:doStuff visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                  $this: CALL 'public final fun <get-mmmap> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.O' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.O declared in <root>.O' type=<root>.O origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="two"
+                  2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          CALL 'local final fun doStuff (): <unbound IrClassSymbolImpl> declared in <root>.O' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:r type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+            $this: CALL 'public final fun <get-mmmap> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.O' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.O
+            1: CONST String type=<unbound IrClassSymbolImpl> value="two"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val r: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val r: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

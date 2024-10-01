@@ -1,0 +1,239 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt37370.kt
+    FUN name:testContinue1 signature:/testContinue1|testContinue1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue1' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue1' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONTINUE label=null loop.label=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue1' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue1' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testContinue2 signature:/testContinue2|testContinue2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        1: CONTINUE label=null loop.label=null
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:falseCond signature:/falseCond|falseCond(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun falseCond (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:testContinue3 signature:/testContinue3|testContinue3(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue3' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue3' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'public final fun falseCond (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                            then: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CONTINUE label=null loop.label=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue3' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue3' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testContinue4 signature:/testContinue4|testContinue4(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue4' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue4' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                        1: WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'public final fun falseCond (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                            then: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CONTINUE label=null loop.label=null
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue4' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue4' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testContinue5 signature:/testContinue5|testContinue5(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue5' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue5' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: TRY type=<unbound IrClassSymbolImpl>
+                              try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                                  BRANCH
+                                    if: CALL 'public final fun falseCond (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                  BRANCH
+                                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContinue5 (): <unbound IrClassSymbolImpl> declared in <root>'
+                                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                              finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                                  BRANCH
+                                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                      $this: CALL 'public final fun falseCond (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                                    then: CONTINUE label=null loop.label=null
+                            then: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CONTINUE label=null loop.label=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue5' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue5' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:start signature:/start|start(kotlin.Int;kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> (i1:<unbound IrClassSymbolImpl>, i2:<unbound IrClassSymbolImpl>, i3:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i1 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i2 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i3 index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun start (i1: <unbound IrClassSymbolImpl>, i2: <unbound IrClassSymbolImpl>, i3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=10
+    FUN name:testContinue6 signature:/testContinue6|testContinue6(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue6' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue6' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'public final fun start (i1: <unbound IrClassSymbolImpl>, i2: <unbound IrClassSymbolImpl>, i3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                          i1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                          i2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                          i3: CONTINUE label=null loop.label=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue6' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue6' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testContinue1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testContinue2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testContinue3 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testContinue4 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testContinue5 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testContinue6 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

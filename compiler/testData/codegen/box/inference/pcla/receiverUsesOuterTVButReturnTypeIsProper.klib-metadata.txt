@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buildee
+    // class name: Logger
+
+    public final class Buildee<T#0 /* CT */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun yield(arg: T#0): kotlin/Unit
+
+      public final var r: T#0?
+        public final get
+        public final set
+    }
+
+    public final class Logger : kotlin/Any {
+
+      public constructor()
+
+      public final fun error(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* FT */> build(instructions: @kotlin/ExtensionFunctionType kotlin/Function1<Buildee<T#0>, kotlin/Unit>): Buildee<T#0>
+
+      public final fun <T#0 /* T */> logger(arg: T#0): Logger
+    }
+  }
+}

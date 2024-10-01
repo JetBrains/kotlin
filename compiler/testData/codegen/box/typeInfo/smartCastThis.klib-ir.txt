@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:h fileName:/smartCastThis.kt
+    CLASS CLASS name:A signature:h/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:h.A
+      CONSTRUCTOR signature:h/A.<init>|<init>(){}[0] visibility:public <> () returnType:h.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:h/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:bar signature:h/A.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:h.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:h.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in h.A'
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=h.B
+                  GET_VAR '<this>: h.A declared in h.A.bar' type=h.A origin=null
+                then: CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in h.B' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=h.B origin=IMPLICIT_CAST typeOperand=h.B
+                    GET_VAR '<this>: h.A declared in h.A.bar' type=h.A origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+    CLASS CLASS name:B signature:h/B|null[0] modality:FINAL visibility:public superTypes:[h.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:h.B
+      CONSTRUCTOR signature:h/B.<init>|<init>(){}[0] visibility:public <> () returnType:h.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in h.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:h/B|null[0] modality:FINAL visibility:public superTypes:[h.A]'
+      FUN name:foo signature:h/B.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:h.B) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:h.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in h.B'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:h/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in h'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in h.B' type=h.B origin=null

@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Measurements
+
+    public final class test/Measurements : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun measure(key: kotlin/String, logEvery: kotlin/Long /* = ... */, divisor: kotlin/Int /* = ... */, body: kotlin/Function0<kotlin/Unit>): kotlin/String
+    }
+  }
+}

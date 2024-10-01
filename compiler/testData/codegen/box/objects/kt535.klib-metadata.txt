@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Identifier
+    // class name: Identifier.Companion
+
+    public final class Identifier<T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0?, myHasDollar: kotlin/Boolean)
+
+      public final fun getName(): T#0?
+
+      private final val myT: T#0?
+        private final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Identifier.Companion : kotlin/Any {
+
+      private constructor()
+
+      public open fun <T#1 /* T */> init(name: T#1?): Identifier<T#1>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final object C : kotlin/Any {
+
+      private constructor()
+
+      public final fun getS(): kotlin/String
+
+      public final fun setS(value: kotlin/String): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final lateinit var s: kotlin/String
+        private final get
+        private final set
+    }
+  }
+}

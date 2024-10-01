@@ -1,0 +1,149 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/github1856.kt
+    CLASS OBJECT name:RGBA signature:/RGBA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RGBA
+      CONSTRUCTOR signature:/RGBA.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.RGBA [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:RGBA signature:/RGBA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:packFast signature:/RGBA.packFast|packFast(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.RGBA, r:<unbound IrClassSymbolImpl>, g:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>, a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.RGBA
+        VALUE_PARAMETER name:r index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:g index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:b index:2 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:a index:3 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun packFast (r: <unbound IrClassSymbolImpl>, g: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>, a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'r: <unbound IrClassSymbolImpl> declared in <root>.RGBA.packFast' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'g: <unbound IrClassSymbolImpl> declared in <root>.RGBA.packFast' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=8
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.RGBA.packFast' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=16
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.RGBA.packFast' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=24
+      FUN name:getFastR signature:/RGBA.getFastR|getFastR(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.RGBA, v:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.RGBA
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getFastR (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.getFastR' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=255
+      FUN name:getFastG signature:/RGBA.getFastG|getFastG(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.RGBA, v:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.RGBA
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getFastG (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.getFastG' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=8
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=255
+      FUN name:getFastB signature:/RGBA.getFastB|getFastB(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.RGBA, v:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.RGBA
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getFastB (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.getFastB' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=16
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=255
+      FUN name:getFastA signature:/RGBA.getFastA|getFastA(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.RGBA, v:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.RGBA
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getFastA (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.getFastA' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=24
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=255
+      FUN name:premultiplyFastInt signature:/RGBA.premultiplyFastInt|premultiplyFastInt(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.RGBA, v:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.RGBA
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          VAR name:A type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun getFastA (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.RGBA declared in <root>.RGBA.premultiplyFastInt' type=<root>.RGBA origin=null
+                v: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          VAR name:RB type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=16711935
+                  1: GET_VAR 'val A: <unbound IrClassSymbolImpl> [val] declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=8
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=16711935
+          VAR name:G type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=65280
+                  1: GET_VAR 'val A: <unbound IrClassSymbolImpl> [val] declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=8
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=65280
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun premultiplyFastInt (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=16777215
+                1: GET_VAR 'val RB: <unbound IrClassSymbolImpl> [val] declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+              1: GET_VAR 'val G: <unbound IrClassSymbolImpl> [val] declared in <root>.RGBA.premultiplyFastInt' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:source type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Long type=<unbound IrClassSymbolImpl> value=4294967295
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Long type=<unbound IrClassSymbolImpl> value=4294967159
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=2004318207
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=2004318071
+        VAR name:expect type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=-1
+              CONST Int type=<unbound IrClassSymbolImpl> value=-137
+              CONST Int type=<unbound IrClassSymbolImpl> value=2000107383
+              CONST Int type=<unbound IrClassSymbolImpl> value=2000107319
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          1: GET_VAR 'val expect: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val source: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'public final fun premultiplyFastInt (v: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.RGBA' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_OBJECT 'CLASS OBJECT name:RGBA signature:/RGBA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.RGBA
+                      v: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

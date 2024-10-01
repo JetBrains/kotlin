@@ -1,0 +1,20 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt37715.kt
+    FUN name:foo signature:/foo|foo(kotlin.Array<out|0:0>...){0§<kotlin.Number>}[0] visibility:public modality:FINAL <T> (values:<unbound IrClassSymbolImpl><out T of <root>.foo>) returnType:<unbound IrClassSymbolImpl><T of <root>.foo>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(kotlin.Array<out|0:0>...){0§<kotlin.Number>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Number] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.foo> varargElementType:T of <root>.foo [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T> (vararg values: T of <root>.foo): <unbound IrClassSymbolImpl><T of <root>.foo> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.foo> origin=null
+            <1>: T of <root>.foo
+            $receiver: GET_VAR 'values: <unbound IrClassSymbolImpl><out T of <root>.foo> [vararg] declared in <root>.foo' type=<unbound IrClassSymbolImpl><out T of <root>.foo> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun foo <T> (vararg values: T of <root>.foo): <unbound IrClassSymbolImpl><T of <root>.foo> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Double type=<unbound IrClassSymbolImpl> value=4.5
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseClass
+    // class name: Subclass
+
+    public abstract class BaseClass : kotlin/Any {
+
+      public constructor()
+
+      public final fun debug(): kotlin/String
+
+      protected abstract val kind: kotlin/String
+        protected abstract get
+
+      protected open val kind2: kotlin/String /* = ... */
+        protected open get
+    }
+
+    public final class Subclass : BaseClass {
+
+      public constructor()
+
+      protected open val kind: kotlin/String /* = ... */
+        protected open get
+
+      protected open val kind2: kotlin/String /* = ... */
+        protected open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

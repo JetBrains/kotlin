@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestClass
+
+    public final class TestClass : kotlin/Any {
+
+      public /* secondary */ constructor()
+
+      public /* secondary */ constructor(x: kotlin/Int)
+
+      public final val f: kotlin/text/StringBuilder
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

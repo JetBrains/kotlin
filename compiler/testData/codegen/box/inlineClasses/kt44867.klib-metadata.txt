@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseWrapper
+    // class name: Wrapper
+
+    public open class BaseWrapper<T#0 /* T */> : kotlin/Any {
+
+      public constructor(response: T#0)
+
+      public final val response: T#0
+        public final get
+    }
+
+    public final class Wrapper : BaseWrapper<kotlin/Result<kotlin/String>> {
+
+      public constructor(result: kotlin/Result<kotlin/String>)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

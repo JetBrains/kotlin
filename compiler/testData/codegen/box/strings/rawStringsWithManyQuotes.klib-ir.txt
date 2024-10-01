@@ -1,0 +1,126 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/rawStringsWithManyQuotes.kt
+    CLASS CLASS name:P signature:/P|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P
+      CONSTRUCTOR signature:/P.<init>|<init>(kotlin.String;kotlin.String){}[0] visibility:public <> (actual:<unbound IrClassSymbolImpl>, expected:<unbound IrClassSymbolImpl>) returnType:<root>.P [primary]
+        VALUE_PARAMETER name:actual index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:expected index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P signature:/P|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:actual signature:/P.actual|{}actual[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:actual signature:[ /P.actual|{}actual[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:actual type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'actual: <unbound IrClassSymbolImpl> declared in <root>.P.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-actual> signature:/P.actual.<get-actual>|<get-actual>(){}[0] visibility:public modality:FINAL <> ($this:<root>.P) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:actual signature:/P.actual|{}actual[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.P
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-actual> (): <unbound IrClassSymbolImpl> declared in <root>.P'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:actual signature:[ /P.actual|{}actual[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:actual type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-actual>' type=<root>.P origin=null
+      PROPERTY name:expected signature:/P.expected|{}expected[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:expected signature:[ /P.expected|{}expected[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:actual type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.P.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-expected> signature:/P.expected.<get-expected>|<get-expected>(){}[0] visibility:public modality:FINAL <> ($this:<root>.P) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:expected signature:/P.expected|{}expected[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.P
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-expected> (): <unbound IrClassSymbolImpl> declared in <root>.P'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:expected signature:[ /P.expected|{}expected[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:actual type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-expected>' type=<root>.P origin=null
+    FUN name:array signature:/array|array(kotlin.Array<out|P>...){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><out <root>.P>) returnType:<unbound IrClassSymbolImpl><out <root>.P>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><out <root>.P> varargElementType:<root>.P [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun array (vararg s: <root>.P): <unbound IrClassSymbolImpl><out <root>.P> declared in <root>'
+          GET_VAR 's: <unbound IrClassSymbolImpl><out <root>.P> [vararg] declared in <root>.array' type=<unbound IrClassSymbolImpl><out <root>.P> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:data type:<unbound IrClassSymbolImpl><out <root>.P> [val]
+          CALL 'public final fun array (vararg s: <root>.P): <unbound IrClassSymbolImpl><out <root>.P> declared in <root>' type=<unbound IrClassSymbolImpl><out <root>.P> origin=null
+            s: VARARG type=<unbound IrClassSymbolImpl><out <root>.P> varargElementType=<root>.P
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value=""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value=""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\"\"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\"\"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\"\"\"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\"\"\"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\" "
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\" "
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\"\" "
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\"\" "
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value=" \""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value=" \""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value=" \"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value=" \"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value=" \"\"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value=" \"\"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value=" \"\"\"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value=" \"\"\"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value=" \"\"\"\"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value=" \"\"\"\"\""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\" \""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\" \""
+              CONSTRUCTOR_CALL 'public constructor <init> (actual: <unbound IrClassSymbolImpl>, expected: <unbound IrClassSymbolImpl>) [primary] declared in <root>.P' type=<root>.P origin=null
+                actual: CONST String type=<unbound IrClassSymbolImpl> value="\"\" \"\""
+                expected: CONST String type=<unbound IrClassSymbolImpl> value="\"\" \"\""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'val data: <unbound IrClassSymbolImpl><out <root>.P> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><out <root>.P> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:p type:<root>.P [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.P origin=GET_ARRAY_ELEMENT
+                    $this: GET_VAR 'val data: <unbound IrClassSymbolImpl><out <root>.P> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><out <root>.P> origin=null
+                    1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun <get-actual> (): <unbound IrClassSymbolImpl> declared in <root>.P' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val p: <root>.P [val] declared in <root>.box' type=<root>.P origin=null
+                        arg1: CALL 'public final fun <get-expected> (): <unbound IrClassSymbolImpl> declared in <root>.P' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val p: <root>.P [val] declared in <root>.box' type=<root>.P origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                        CONST String type=<unbound IrClassSymbolImpl> value="Fail at #"
+                        GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value=". actual='"
+                        CALL 'public final fun <get-actual> (): <unbound IrClassSymbolImpl> declared in <root>.P' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val p: <root>.P [val] declared in <root>.box' type=<root>.P origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value="', expected='"
+                        CALL 'public final fun <get-expected> (): <unbound IrClassSymbolImpl> declared in <root>.P' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val p: <root>.P [val] declared in <root>.box' type=<root>.P origin=null
+                        CONST String type=<unbound IrClassSymbolImpl> value="'"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

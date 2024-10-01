@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(f: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(s: kotlin/String /* = ... */, vararg t: kotlin/String /* kotlin/Array<out kotlin/String> */): kotlin/Boolean
+    }
+  }
+}

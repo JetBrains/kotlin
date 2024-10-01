@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:Measurements signature:test/Measurements|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Measurements
+      CONSTRUCTOR signature:test/Measurements.<init>|<init>(){}[0] visibility:public <> () returnType:test.Measurements [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Measurements signature:test/Measurements|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:measure signature:test/Measurements.measure|measure(kotlin.String;kotlin.Long;kotlin.Int;kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:test.Measurements, key:<unbound IrClassSymbolImpl>, logEvery:<unbound IrClassSymbolImpl>, divisor:<unbound IrClassSymbolImpl>, body:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.Measurements
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:logEvery index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=-1
+        VALUE_PARAMETER name:divisor index:2 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:body index:3 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.Measurements.measure' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun measure (key: <unbound IrClassSymbolImpl>, logEvery: <unbound IrClassSymbolImpl>, divisor: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test.Measurements'
+            GET_VAR 'key: <unbound IrClassSymbolImpl> declared in test.Measurements.measure' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s1 type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:s2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun measure (key: <unbound IrClassSymbolImpl>, logEvery: <unbound IrClassSymbolImpl>, divisor: <unbound IrClassSymbolImpl>, body: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test.Measurements' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Measurements' type=test.Measurements origin=null
+            key: CONST String type=<unbound IrClassSymbolImpl> value="K"
+            body: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  SET_VAR 'var s1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                    CONST String type=<unbound IrClassSymbolImpl> value="O"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: GET_VAR 'var s1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val s2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

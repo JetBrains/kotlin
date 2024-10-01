@@ -1,0 +1,88 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FooImpl
+    // class name: GFoo
+    // class name: GFooImpl
+    // class name: IFoo
+    // class name: S
+    // class name: TestFoo
+    // class name: TestGFoo
+
+    public final object FooImpl : IFoo {
+
+      private constructor()
+
+      public open var S.extVar: kotlin/String
+        public open /* non-default */ get
+        public open /* non-default */ set(value: kotlin/String)
+    }
+
+    public abstract interface GFoo<T#0 /* T */> : kotlin/Any {
+
+      public abstract var T#0.extVar: kotlin/String
+        public abstract get
+        public abstract set
+    }
+
+    public final object GFooImpl : GFoo<S> {
+
+      private constructor()
+
+      public open var S.extVar: kotlin/String
+        public open /* non-default */ get
+        public open /* non-default */ set(value: kotlin/String)
+    }
+
+    public abstract interface IFoo : kotlin/Any {
+
+      public abstract var S.extVar: kotlin/String
+        public abstract get
+        public abstract set
+    }
+
+    public final value class S : kotlin/Any {
+
+      public constructor(xs: kotlin/Array<kotlin/String>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val xs: kotlin/Array<kotlin/String>
+        public final get
+
+      // underlying property: xs
+
+      // underlying type: kotlin/Array<kotlin/String>
+    }
+
+    public final class TestFoo : IFoo {
+
+      public constructor()
+
+      public open /* delegation */ var S.extVar: kotlin/String
+        public open get
+        public open set
+    }
+
+    public final class TestGFoo : GFoo<S> {
+
+      public constructor()
+
+      public open /* delegation */ var S.extVar: kotlin/String
+        public open get
+        public open set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

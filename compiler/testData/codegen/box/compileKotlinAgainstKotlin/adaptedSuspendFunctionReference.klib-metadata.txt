@@ -1,0 +1,35 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    package {
+
+      public final fun f(): kotlin/Unit
+
+      public final fun g(block: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final inline fun h(): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: b
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

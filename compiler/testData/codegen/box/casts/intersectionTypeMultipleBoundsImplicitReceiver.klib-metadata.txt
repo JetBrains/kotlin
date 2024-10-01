@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FirstTrait
+    // class name: Foo
+    // class name: SecondTrait
+
+    public abstract interface FirstTrait : kotlin/Any {
+    }
+
+    public final class Foo : FirstTrait, SecondTrait {
+
+      public constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    public abstract interface SecondTrait : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : FirstTrait & SecondTrait> T#0.doSomething(): kotlin/String
+    }
+  }
+}

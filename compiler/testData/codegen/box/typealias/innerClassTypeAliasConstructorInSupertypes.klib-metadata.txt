@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Inner
+    // class name: Outer.InnerBase
+
+    public final class Outer : kotlin/Any {
+
+      public constructor(x: kotlin/String)
+
+      public final val x: kotlin/String
+        public final get
+
+      // nested class: InnerBase
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner : Outer.InnerBase /* = OIB^ */ {
+
+      public constructor(y: kotlin/String)
+
+      public final val y: kotlin/String
+        public final get
+
+      public final val z: kotlin/String
+        public final get
+    }
+
+    public abstract inner class Outer.InnerBase : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public typealias OIB = Outer.InnerBase /* = Outer.InnerBase */
+    }
+  }
+}

@@ -1,0 +1,74 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt10729.kt
+    FUN name:eval signature:/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (fn:<unbound IrClassSymbolImpl><T of <root>.eval>) returnType:T of <root>.eval
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><T of <root>.eval>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.eval origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of <root>.eval> declared in <root>.eval' type=<unbound IrClassSymbolImpl><T of <root>.eval> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:IntentionsBundle signature:/IntentionsBundle|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntentionsBundle
+      CONSTRUCTOR signature:/IntentionsBundle.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.IntentionsBundle [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IntentionsBundle signature:/IntentionsBundle|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/IntentionsBundle.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntentionsBundle.Companion
+        CONSTRUCTOR signature:/IntentionsBundle.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.IntentionsBundle.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/IntentionsBundle.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:message signature:/IntentionsBundle.Companion.message|message(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.IntentionsBundle.Companion, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntentionsBundle.Companion
+          VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun message (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion.message' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        FUN name:message2 signature:/IntentionsBundle.Companion.message2|message2(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.IntentionsBundle.Companion, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntentionsBundle.Companion
+          VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun message2 (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion'
+              CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion.message2'
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                          $this: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion.message2' type=<unbound IrClassSymbolImpl> origin=null
+                          1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        PROPERTY name:BUNDLE signature:/IntentionsBundle.Companion.BUNDLE|{}BUNDLE[0] visibility:private modality:FINAL [const,val]
+          FIELD PROPERTY_BACKING_FIELD name:BUNDLE signature:[ /IntentionsBundle.Companion.BUNDLE|{}BUNDLE[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:BUNDLE type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BUNDLE> signature:/IntentionsBundle.Companion.BUNDLE.<get-BUNDLE>|<get-BUNDLE>(){}[0] visibility:private modality:FINAL <> ($this:<root>.IntentionsBundle.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:BUNDLE signature:/IntentionsBundle.Companion.BUNDLE|{}BUNDLE[0] visibility:private modality:FINAL [const,val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.IntentionsBundle.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-BUNDLE> (): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BUNDLE signature:[ /IntentionsBundle.Companion.BUNDLE|{}BUNDLE[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:BUNDLE type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.IntentionsBundle.Companion declared in <root>.IntentionsBundle.Companion.<get-BUNDLE>' type=<root>.IntentionsBundle.Companion origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun message (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/IntentionsBundle.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.IntentionsBundle.Companion
+                  key: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 1: "
+                CALL 'public final fun message (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/IntentionsBundle.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.IntentionsBundle.Companion
+                  key: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun message2 (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntentionsBundle.Companion' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/IntentionsBundle.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.IntentionsBundle.Companion
+            key: CONST String type=<unbound IrClassSymbolImpl> value="O"

@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SomeAnnotation
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.EXPRESSION])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class SomeAnnotation : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun foo(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

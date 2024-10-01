@@ -1,0 +1,58 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D1
+    // class name: I
+    // class name: Impl
+
+    public final class D1 : I {
+
+      public constructor(foo: I)
+
+      public open /* delegation */ val bar: kotlin/Int
+        public open get
+    }
+
+    public abstract interface I : kotlin/Any {
+
+      public abstract val bar: kotlin/Int
+        public abstract get
+    }
+
+    public final class Impl : I {
+
+      public constructor()
+
+      public open val bar: kotlin/Int /* = ... */
+        public open get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D2
+
+    public final class D2 : I {
+
+      public constructor(foo: I)
+
+      public open /* delegation */ val bar: kotlin/Int
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

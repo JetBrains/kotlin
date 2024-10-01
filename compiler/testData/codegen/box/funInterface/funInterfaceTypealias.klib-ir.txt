@@ -1,0 +1,69 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceTypealias.kt
+    CLASS INTERFACE name:KRunnable signature:/KRunnable|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
+      FUN name:invoke signature:/KRunnable.invoke|invoke(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
+    CLASS INTERFACE name:KConsumer signature:/KConsumer|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /KConsumer|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:accept signature:/KConsumer.accept|accept(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.KConsumer<T of <root>.KConsumer>, value:T of <root>.KConsumer) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
+        VALUE_PARAMETER name:value index:0 type:T of <root>.KConsumer
+    TYPEALIAS name:KRunnableAlias signature:/KRunnableAlias|null[0] visibility:public expandedType:<root>.KRunnable
+    TYPEALIAS name:StringConsumer signature:/StringConsumer|null[0] visibility:public expandedType:<root>.KConsumer<<unbound IrClassSymbolImpl>>
+    FUN name:foo signature:/foo|foo(KRunnable){}[0] visibility:public modality:FINAL <> (f:<root>.KRunnable) returnType:<root>.KRunnable
+      VALUE_PARAMETER name:f index:0 type:<root>.KRunnable
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (f: <root>.KRunnable): <root>.KRunnable declared in <root>'
+          GET_VAR 'f: <root>.KRunnable declared in <root>.foo' type=<root>.KRunnable origin=null
+    FUN name:bar signature:/bar|bar(KConsumer<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f:<root>.KConsumer<T of <root>.bar>) returnType:<root>.KConsumer<T of <root>.bar>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /bar|bar(KConsumer<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<root>.KConsumer<T of <root>.bar>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar <T> (f: <root>.KConsumer<T of <root>.bar>): <root>.KConsumer<T of <root>.bar> declared in <root>'
+          GET_VAR 'f: <root>.KConsumer<T of <root>.bar> declared in <root>.bar' type=<root>.KConsumer<T of <root>.bar> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public abstract fun invoke (): <unbound IrClassSymbolImpl> declared in <root>.KRunnable' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun foo (f: <root>.KRunnable): <root>.KRunnable declared in <root>' type=<root>.KRunnable origin=null
+            f: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'public abstract fun accept (value: T of <root>.KConsumer): <unbound IrClassSymbolImpl> declared in <root>.KConsumer' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun bar <T> (f: <root>.KConsumer<T of <root>.bar>): <root>.KConsumer<T of <root>.bar> declared in <root>' type=<root>.KConsumer<<unbound IrClassSymbolImpl>> origin=null
+                        <T>: <unbound IrClassSymbolImpl>
+                        f: TYPE_OP type=<root>.KConsumer<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<<unbound IrClassSymbolImpl>>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                    $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                    1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      value: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        CALL 'public abstract fun invoke (): <unbound IrClassSymbolImpl> declared in <root>.KRunnable' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun foo (f: <root>.KRunnable): <root>.KRunnable declared in <root>' type=<root>.KRunnable origin=null
+            f: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'public abstract fun accept (value: T of <root>.KConsumer): <unbound IrClassSymbolImpl> declared in <root>.KConsumer' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun bar <T> (f: <root>.KConsumer<T of <root>.bar>): <root>.KConsumer<T of <root>.bar> declared in <root>' type=<root>.KConsumer<<unbound IrClassSymbolImpl>> origin=null
+                        <T>: <unbound IrClassSymbolImpl>
+                        f: TYPE_OP type=<root>.KConsumer<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<<unbound IrClassSymbolImpl>>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                    $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                    1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      value: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

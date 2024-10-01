@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Blumbs
+
+    public final class Blumbs : kotlin/Any {
+
+      public constructor()
+
+      public final var t: kotlin/Unit
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Unit
+
+      public final fun foo1(): kotlin/Unit
+
+      public final fun varfoo(vararg t: kotlin/Unit /* kotlin/Array<out kotlin/Unit> */): kotlin/Unit
+
+      public final fun zoot(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EmptyList
+
+    private final object EmptyList : kotlin/collections/List<kotlin/Nothing> {
+
+      private constructor()
+
+      public open operator fun contains(element: kotlin/Nothing): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<kotlin/Nothing>): kotlin/Boolean
+
+      public open operator fun get(index: kotlin/Int): kotlin/Nothing
+
+      public open fun indexOf(element: kotlin/Nothing): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<kotlin/Nothing>
+
+      public open fun lastIndexOf(element: kotlin/Nothing): kotlin/Int
+
+      public open fun listIterator(): kotlin/collections/ListIterator<kotlin/Nothing>
+
+      public open fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<kotlin/Nothing>
+
+      public open fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<kotlin/Nothing>
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

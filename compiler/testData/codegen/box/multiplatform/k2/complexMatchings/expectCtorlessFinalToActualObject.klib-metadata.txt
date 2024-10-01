@@ -1,0 +1,27 @@
+library {
+  // module name: <actual>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestResult
+
+    public final object TestResult : kotlin/Any {
+
+      private constructor()
+
+      public final fun doTest(): TestResult
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun commonBox(): kotlin/String
+
+      public final fun createTestResult(): TestResult
+
+      public final fun platformBox(): kotlin/String
+    }
+  }
+}

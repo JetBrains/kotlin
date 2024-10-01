@@ -1,0 +1,99 @@
+// MODULE: libxxxxx
+library {
+  // module name: <libxxxxx>
+
+  library fragment {
+    // package name: com.soywiz.korag.shader
+
+    // class name: com/soywiz/korag/shader/Operand
+    // class name: com/soywiz/korag/shader/Program
+    // class name: com/soywiz/korag/shader/Program.Stm
+    // class name: com/soywiz/korag/shader/Program.Visitor
+    // class name: com/soywiz/korag/shader/Shader
+    // class name: com/soywiz/korag/shader/Uniform
+    // class name: com/soywiz/korag/shader/Variable
+
+    public open class com/soywiz/korag/shader/Operand : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class com/soywiz/korag/shader/Program : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Stm
+
+      // nested class: Visitor
+    }
+
+    public final class com/soywiz/korag/shader/Program.Stm : kotlin/Any {
+
+      public constructor(o: com/soywiz/korag/shader/Operand)
+
+      public final val o: com/soywiz/korag/shader/Operand
+        public final get
+    }
+
+    public open class com/soywiz/korag/shader/Program.Visitor<T#0 /* E */> : kotlin/Any {
+
+      public constructor(default: T#0)
+
+      public open fun visit(o: com/soywiz/korag/shader/Operand): T#0
+
+      public open fun visit(stm: com/soywiz/korag/shader/Program.Stm?): kotlin/Unit
+
+      public open fun visit(operand: com/soywiz/korag/shader/Uniform): T#0
+
+      public final val default: T#0
+        public final get
+    }
+
+    public open class com/soywiz/korag/shader/Shader : kotlin/Any {
+
+      public constructor(stm: com/soywiz/korag/shader/Program.Stm?)
+
+      public final val stm: com/soywiz/korag/shader/Program.Stm?
+        public final get
+
+      public final val uniforms: kotlin/collections/Set<com/soywiz/korag/shader/Uniform>
+        public final get
+    }
+
+    public open class com/soywiz/korag/shader/Uniform : com/soywiz/korag/shader/Variable {
+
+      public constructor(result: kotlin/String)
+
+      public final val result: kotlin/String
+        public final get
+    }
+
+    public open class com/soywiz/korag/shader/Variable : com/soywiz/korag/shader/Operand {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D
+
+    public final class D : com/soywiz/korag/shader/Shader {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): com/soywiz/korag/shader/Shader
+    }
+  }
+}

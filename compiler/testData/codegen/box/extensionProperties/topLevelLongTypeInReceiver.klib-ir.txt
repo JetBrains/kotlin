@@ -1,0 +1,78 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/topLevelLongTypeInReceiver.kt
+    PROPERTY name:fooStorage signature:/fooStorage|{}fooStorage[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:fooStorage signature:[ /fooStorage|{}fooStorage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fooStorage type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fooStorage> signature:/fooStorage.<get-fooStorage>|<get-fooStorage>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:fooStorage signature:/fooStorage|{}fooStorage[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-fooStorage> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fooStorage signature:[ /fooStorage|{}fooStorage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fooStorage type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fooStorage> signature:/fooStorage.<set-fooStorage>|<set-fooStorage>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:fooStorage signature:/fooStorage|{}fooStorage[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fooStorage signature:[ /fooStorage|{}fooStorage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fooStorage type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-fooStorage>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:barStorage signature:/barStorage|{}barStorage[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:barStorage signature:[ /barStorage|{}barStorage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fooStorage type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barStorage> signature:/barStorage.<get-barStorage>|<get-barStorage>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:barStorage signature:/barStorage|{}barStorage[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-barStorage> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barStorage signature:[ /barStorage|{}barStorage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fooStorage type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-barStorage> signature:/barStorage.<set-barStorage>|<set-barStorage>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:barStorage signature:/barStorage|{}barStorage[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barStorage signature:[ /barStorage|{}barStorage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fooStorage type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-barStorage>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:foo signature:/foo|@kotlin.Double{}foo[0] visibility:public modality:FINAL [var]
+      FUN name:<get-foo> signature:/foo.<get-foo>|<get-foo>@kotlin.Double(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:foo signature:/foo|@kotlin.Double{}foo[0] visibility:public modality:FINAL [var]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-foo> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CALL 'public final fun <get-fooStorage> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+      FUN name:<set-foo> signature:/foo.<set-foo>|<set-foo>@kotlin.Double(kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:foo signature:/foo|@kotlin.Double{}foo[0] visibility:public modality:FINAL [var]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-fooStorage> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.<set-foo>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:bar signature:/bar|@kotlin.Long{}bar[0] visibility:public modality:FINAL [var]
+      FUN name:<get-bar> signature:/bar.<get-bar>|<get-bar>@kotlin.Long(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:bar signature:/bar|@kotlin.Long{}bar[0] visibility:public modality:FINAL [var]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CALL 'public final fun <get-barStorage> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+      FUN name:<set-bar> signature:/bar.<set-bar>|<set-bar>@kotlin.Long(kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:bar signature:/bar|@kotlin.Long{}bar[0] visibility:public modality:FINAL [var]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-barStorage> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.<set-bar>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:d type:<unbound IrClassSymbolImpl> [val]
+          CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        CALL 'public final fun <set-foo> (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          $receiver: GET_VAR 'val d: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          value: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        VAR name:l type:<unbound IrClassSymbolImpl> [val]
+          CONST Long type=<unbound IrClassSymbolImpl> value=1
+        CALL 'public final fun <set-bar> (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          $receiver: GET_VAR 'val l: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          value: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-foo> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $receiver: GET_VAR 'val d: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $receiver: GET_VAR 'val l: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

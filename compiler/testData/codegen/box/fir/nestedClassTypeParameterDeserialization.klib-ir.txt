@@ -1,0 +1,82 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:lib fileName:/lib.kt
+    CLASS CLASS name:BaseRoot signature:lib/BaseRoot|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.BaseRoot<TNested of lib.BaseRoot>
+      TYPE_PARAMETER name:TNested index:0 variance: signature:[ lib/BaseRoot|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TNested index:0 variance: superTypes:[lib.BaseRoot.BaseNested<*>] reified:false] ] superTypes:[lib.BaseRoot.BaseNested<*>] reified:false
+      CONSTRUCTOR signature:lib/BaseRoot.<init>|<init>(){}[0] visibility:public <> () returnType:lib.BaseRoot<TNested of lib.BaseRoot> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseRoot signature:lib/BaseRoot|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:BaseNested signature:lib/BaseRoot.BaseNested|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.BaseRoot.BaseNested<V of lib.BaseRoot.BaseNested>
+        TYPE_PARAMETER name:V index:0 variance: signature:[ lib/BaseRoot.BaseNested|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TNested index:0 variance: superTypes:[lib.BaseRoot.BaseNested<*>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        CONSTRUCTOR signature:lib/BaseRoot.BaseNested.<init>|<init>(1:0){}[0] visibility:public <> (box:V of lib.BaseRoot.BaseNested) returnType:lib.BaseRoot.BaseNested<V of lib.BaseRoot.BaseNested> [primary]
+          VALUE_PARAMETER name:box index:0 type:V of lib.BaseRoot.BaseNested
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseNested signature:lib/BaseRoot.BaseNested|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:box signature:lib/BaseRoot.BaseNested.box|{}box[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:box signature:[ lib/BaseRoot.BaseNested.box|{}box[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:box type:V of lib.BaseRoot.BaseNested visibility:private [final]] ] type:V of lib.BaseRoot.BaseNested visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'box: V of lib.BaseRoot.BaseNested declared in lib.BaseRoot.BaseNested.<init>' type=V of lib.BaseRoot.BaseNested origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-box> signature:lib/BaseRoot.BaseNested.box.<get-box>|<get-box>(){}[0] visibility:public modality:FINAL <> ($this:lib.BaseRoot.BaseNested<V of lib.BaseRoot.BaseNested>) returnType:V of lib.BaseRoot.BaseNested
+            correspondingProperty: PROPERTY name:box signature:lib/BaseRoot.BaseNested.box|{}box[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:lib.BaseRoot.BaseNested<V of lib.BaseRoot.BaseNested>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-box> (): V of lib.BaseRoot.BaseNested declared in lib.BaseRoot.BaseNested'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:box signature:[ lib/BaseRoot.BaseNested.box|{}box[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:box type:V of lib.BaseRoot.BaseNested visibility:private [final]] ] type:V of lib.BaseRoot.BaseNested visibility:private [final]' type=V of lib.BaseRoot.BaseNested origin=null
+                  receiver: GET_VAR '<this>: lib.BaseRoot.BaseNested<V of lib.BaseRoot.BaseNested> declared in lib.BaseRoot.BaseNested.<get-box>' type=lib.BaseRoot.BaseNested<V of lib.BaseRoot.BaseNested> origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:main fileName:/main.kt
+    CLASS CLASS name:Foo signature:main/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:main.Foo
+      CONSTRUCTOR signature:main/Foo.<init>|<init>(kotlin.String){}[0] visibility:public <> (v:<unbound IrClassSymbolImpl>) returnType:main.Foo [primary]
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:main/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:v signature:main/Foo.v|{}v[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:v signature:[ main/Foo.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'v: <unbound IrClassSymbolImpl> declared in main.Foo.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:main/Foo.v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL <> ($this:main.Foo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:v signature:main/Foo.v|{}v[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:main.Foo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in main.Foo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ main/Foo.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: main.Foo declared in main.Foo.<get-v>' type=main.Foo origin=null
+    CLASS CLASS name:ImplRoot signature:main/ImplRoot|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><main.ImplRoot.ImplNested>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:main.ImplRoot
+      CONSTRUCTOR signature:main/ImplRoot.<init>|<init>(){}[0] visibility:public <> () returnType:main.ImplRoot [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: main.ImplRoot.ImplNested
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ImplRoot signature:main/ImplRoot|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><main.ImplRoot.ImplNested>]'
+      CLASS CLASS name:ImplNested signature:main/ImplRoot.ImplNested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><main.Foo>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:main.ImplRoot.ImplNested
+        CONSTRUCTOR signature:main/ImplRoot.ImplNested.<init>|<init>(){}[0] visibility:public <> () returnType:main.ImplRoot.ImplNested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              <1>: main.Foo
+              1: CONSTRUCTOR_CALL 'public constructor <init> (v: <unbound IrClassSymbolImpl>) [primary] declared in main.Foo' type=main.Foo origin=null
+                v: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ImplNested signature:main/ImplRoot.ImplNested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><main.Foo>]'
+        FUN name:bar signature:main/ImplRoot.ImplNested.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:main.ImplRoot.ImplNested) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:main.ImplRoot.ImplNested
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in main.ImplRoot.ImplNested'
+              CALL 'public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in main.Foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=main.Foo origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><main.Foo> origin=null
+                    <class: 1>: main.Foo
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=main.Foo origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: main.ImplRoot.ImplNested declared in main.ImplRoot.ImplNested.bar' type=main.ImplRoot.ImplNested origin=null
+    FUN name:box signature:main/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in main'
+          CALL 'public final fun bar (): <unbound IrClassSymbolImpl> declared in main.ImplRoot.ImplNested' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in main.ImplRoot.ImplNested' type=main.ImplRoot.ImplNested origin=null

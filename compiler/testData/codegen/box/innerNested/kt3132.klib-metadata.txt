@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+    // class name: Test.Foo
+    // class name: Test.FooImplInner
+    // class name: Test.FooImplNested
+
+    public final class Test : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Foo
+
+      // nested class: FooImplNested
+
+      // nested class: FooImplInner
+    }
+
+    public abstract interface Test.Foo : kotlin/Any {
+    }
+
+    public final inner class Test.FooImplInner : Test.Foo {
+
+      public constructor()
+    }
+
+    public final class Test.FooImplNested : Test.Foo {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

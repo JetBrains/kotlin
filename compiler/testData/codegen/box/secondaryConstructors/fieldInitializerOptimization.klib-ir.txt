@@ -1,0 +1,333 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/fieldInitializerOptimization.kt
+    PROPERTY name:placeHolder signature:/placeHolder|{}placeHolder[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:placeHolder signature:[ /placeHolder|{}placeHolder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-placeHolder> signature:/placeHolder.<get-placeHolder>|<get-placeHolder>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:placeHolder signature:/placeHolder|{}placeHolder[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-placeHolder> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:placeHolder signature:[ /placeHolder|{}placeHolder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Base signature:/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      CONSTRUCTOR signature:/Base.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Base [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:setup signature:/Base.setup|setup(){}[0] visibility:public modality:OPEN <> ($this:<root>.Base) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        BLOCK_BODY
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'public open fun setup (): <unbound IrClassSymbolImpl> declared in <root>.Base' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.Base declared in <root>.Base' type=<root>.Base origin=null
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+      CONSTRUCTOR signature:/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Derived
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]'
+      FUN name:setup signature:/Derived.setup|setup(){}[0] visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun setup (): <unbound IrClassSymbolImpl> declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+        BLOCK_BODY
+          CALL 'public final fun <set-xBool> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          CALL 'public final fun <set-xByte> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          CALL 'public final fun <set-xChar> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          CALL 'public final fun <set-xShort> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          CALL 'public final fun <set-xInt> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=4
+          CALL 'public final fun <set-xLong> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CONST Long type=<unbound IrClassSymbolImpl> value=5
+          CALL 'public final fun <set-xFloat> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CONST Float type=<unbound IrClassSymbolImpl> value=6.0
+          CALL 'public final fun <set-xDouble> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CONST Double type=<unbound IrClassSymbolImpl> value=7.0
+          CALL 'public final fun <set-xRef> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setup' type=<root>.Derived origin=null
+            <set-?>: CALL 'public final fun <get-placeHolder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+      PROPERTY name:xBool signature:/Derived.xBool|{}xBool[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xBool signature:[ /Derived.xBool|{}xBool[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xBool> signature:/Derived.xBool.<get-xBool>|<get-xBool>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xBool signature:/Derived.xBool|{}xBool[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xBool> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xBool signature:[ /Derived.xBool|{}xBool[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xBool>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xBool> signature:/Derived.xBool.<set-xBool>|<set-xBool>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xBool signature:/Derived.xBool|{}xBool[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xBool signature:[ /Derived.xBool|{}xBool[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xBool>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xBool>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xByte signature:/Derived.xByte|{}xByte[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xByte signature:[ /Derived.xByte|{}xByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xByte> signature:/Derived.xByte.<get-xByte>|<get-xByte>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xByte signature:/Derived.xByte|{}xByte[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xByte> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xByte signature:[ /Derived.xByte|{}xByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xByte>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xByte> signature:/Derived.xByte.<set-xByte>|<set-xByte>(kotlin.Byte){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xByte signature:/Derived.xByte|{}xByte[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xByte signature:[ /Derived.xByte|{}xByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xByte>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xByte>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xChar signature:/Derived.xChar|{}xChar[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xChar signature:[ /Derived.xChar|{}xChar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xChar> signature:/Derived.xChar.<get-xChar>|<get-xChar>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xChar signature:/Derived.xChar|{}xChar[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xChar> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xChar signature:[ /Derived.xChar|{}xChar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xChar>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xChar> signature:/Derived.xChar.<set-xChar>|<set-xChar>(kotlin.Char){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xChar signature:/Derived.xChar|{}xChar[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xChar signature:[ /Derived.xChar|{}xChar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xChar>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xChar>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xShort signature:/Derived.xShort|{}xShort[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xShort signature:[ /Derived.xShort|{}xShort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xShort> signature:/Derived.xShort.<get-xShort>|<get-xShort>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xShort signature:/Derived.xShort|{}xShort[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xShort> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xShort signature:[ /Derived.xShort|{}xShort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xShort>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xShort> signature:/Derived.xShort.<set-xShort>|<set-xShort>(kotlin.Short){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xShort signature:/Derived.xShort|{}xShort[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xShort signature:[ /Derived.xShort|{}xShort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xShort>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xShort>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xInt signature:/Derived.xInt|{}xInt[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xInt signature:[ /Derived.xInt|{}xInt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xInt> signature:/Derived.xInt.<get-xInt>|<get-xInt>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xInt signature:/Derived.xInt|{}xInt[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xInt> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xInt signature:[ /Derived.xInt|{}xInt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xInt>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xInt> signature:/Derived.xInt.<set-xInt>|<set-xInt>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xInt signature:/Derived.xInt|{}xInt[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xInt signature:[ /Derived.xInt|{}xInt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xInt>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xInt>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xLong signature:/Derived.xLong|{}xLong[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xLong signature:[ /Derived.xLong|{}xLong[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xLong> signature:/Derived.xLong.<get-xLong>|<get-xLong>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xLong signature:/Derived.xLong|{}xLong[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xLong> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xLong signature:[ /Derived.xLong|{}xLong[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xLong>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xLong> signature:/Derived.xLong.<set-xLong>|<set-xLong>(kotlin.Long){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xLong signature:/Derived.xLong|{}xLong[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xLong signature:[ /Derived.xLong|{}xLong[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xLong>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xLong>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xFloat signature:/Derived.xFloat|{}xFloat[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xFloat signature:[ /Derived.xFloat|{}xFloat[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xFloat> signature:/Derived.xFloat.<get-xFloat>|<get-xFloat>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xFloat signature:/Derived.xFloat|{}xFloat[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xFloat> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xFloat signature:[ /Derived.xFloat|{}xFloat[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xFloat>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xFloat> signature:/Derived.xFloat.<set-xFloat>|<set-xFloat>(kotlin.Float){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xFloat signature:/Derived.xFloat|{}xFloat[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xFloat signature:[ /Derived.xFloat|{}xFloat[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xFloat>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xFloat>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xDouble signature:/Derived.xDouble|{}xDouble[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xDouble signature:[ /Derived.xDouble|{}xDouble[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xDouble> signature:/Derived.xDouble.<get-xDouble>|<get-xDouble>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xDouble signature:/Derived.xDouble|{}xDouble[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xDouble> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xDouble signature:[ /Derived.xDouble|{}xDouble[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xDouble>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xDouble> signature:/Derived.xDouble.<set-xDouble>|<set-xDouble>(kotlin.Double){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xDouble signature:/Derived.xDouble|{}xDouble[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xDouble signature:[ /Derived.xDouble|{}xDouble[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xDouble>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Derived.<set-xDouble>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:xRef signature:/Derived.xRef|{}xRef[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:xRef signature:[ /Derived.xRef|{}xRef[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xRef> signature:/Derived.xRef.<get-xRef>|<get-xRef>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:xRef signature:/Derived.xRef|{}xRef[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xRef> (): <unbound IrClassSymbolImpl>? declared in <root>.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xRef signature:[ /Derived.xRef|{}xRef[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-xRef>' type=<root>.Derived origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xRef> signature:/Derived.xRef.<set-xRef>|<set-xRef>(kotlin.Any?){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:xRef signature:/Derived.xRef|{}xRef[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xRef signature:[ /Derived.xRef|{}xRef[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:placeHolder type:kotlin.Any visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-xRef>' type=<root>.Derived origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.Derived.<set-xRef>' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:d type:<root>.Derived [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Derived' type=<root>.Derived origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xBool> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Bool"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-xByte> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Byte"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xChar> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Char"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-xShort> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Short"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xInt> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Int"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xLong> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=5
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Long"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xFloat> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CONST Float type=<unbound IrClassSymbolImpl> value=6.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Float"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xDouble> (): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CONST Double type=<unbound IrClassSymbolImpl> value=7.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Double"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-xRef> (): <unbound IrClassSymbolImpl>? declared in <root>.Derived' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+                arg1: CALL 'public final fun <get-placeHolder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail Ref"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

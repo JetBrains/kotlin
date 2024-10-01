@@ -1,0 +1,118 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AC1
+    // class name: AC2
+    // class name: AC3
+    // class name: BAC1
+    // class name: BAC2
+    // class name: BAC3
+    // class name: Change
+    // class name: I1
+    // class name: I2
+    // class name: I3
+    // class name: IsChange
+    // class name: RPPG1
+    // class name: RPPG2
+    // class name: RPPG3
+
+    public abstract class AC1 : BAC1<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public abstract class AC2<T#0 /* PP1 */ : kotlin/Any> : BAC2<kotlin/Any, T#0> {
+
+      public constructor()
+    }
+
+    public abstract class AC3<T#0 /* PP1 */ : kotlin/Any, T#1 /* PP2 */ : kotlin/Any> : BAC3<kotlin/Any, T#0, T#1> {
+
+      public constructor()
+    }
+
+    public abstract class BAC1<T#0 /* D1 */ : kotlin/Any> : I1 {
+
+      public constructor()
+    }
+
+    public abstract class BAC2<T#0 /* D1 */ : kotlin/Any, T#1 /* D2 */ : kotlin/Any> : I2 {
+
+      public constructor()
+    }
+
+    public abstract class BAC3<T#0 /* D1 */ : kotlin/Any, T#1 /* D2 */ : kotlin/Any, T#2 /* D3 */ : kotlin/Any> : I3 {
+
+      public constructor()
+    }
+
+    public final class Change : IsChange {
+
+      public constructor()
+
+      public open fun bar(a: RPPG2<out AC1, in AC2<out I2>>, b: RPPG3<in AC1, AC2<in I2>, out AC3<in I2, out I3>>): Change?
+
+      public open fun foo(select: RPPG1<out AC1>, sss: RPPG1<in I1>): Change?
+
+      public open fun qux(select: RPPG1<out AC1>): IsChange?
+    }
+
+    public abstract interface I1 : kotlin/Any {
+    }
+
+    public abstract interface I2 : kotlin/Any {
+    }
+
+    public abstract interface I3 : kotlin/Any {
+    }
+
+    public abstract interface IsChange : kotlin/Any {
+
+      public abstract fun bar(a: RPPG2<out AC1, in AC2<out I2>>, b: RPPG3<in AC1, AC2<in I2>, out AC3<in I2, out I3>>): IsChange?
+
+      public abstract fun foo(select: RPPG1<out AC1>, sss: RPPG1<in I1>): IsChange?
+
+      public abstract fun qux(select: RPPG1<out AC1>): IsChange?
+    }
+
+    public final class RPPG1<T#0 /* P1 */ : I1> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class RPPG2<T#0 /* P1 */ : I1, T#1 /* P2 */ : I2> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class RPPG3<T#0 /* P1 */ : I1, T#1 /* P2 */ : I2, T#2 /* P3 */ : I3> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

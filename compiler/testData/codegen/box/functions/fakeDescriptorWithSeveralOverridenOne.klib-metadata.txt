@@ -1,0 +1,51 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: ClassDescriptor
+    // class name: ClassDescriptorImpl
+    // class name: ClassifierDescriptor
+    // class name: MemberDescriptor
+    // class name: Named
+
+    public final class A : kotlin/Any {
+
+      public constructor(descriptor: ClassDescriptor)
+
+      public final val descriptor: ClassDescriptor
+        public final get
+
+      public final val result: kotlin/String
+        public final get
+    }
+
+    public abstract interface ClassDescriptor : MemberDescriptor, ClassifierDescriptor {
+    }
+
+    public final class ClassDescriptorImpl : ClassDescriptor {
+
+      public constructor()
+
+      public open fun getName(): kotlin/String
+    }
+
+    public abstract interface ClassifierDescriptor : Named {
+    }
+
+    public abstract interface MemberDescriptor : Named {
+    }
+
+    public abstract interface Named : kotlin/Any {
+
+      public abstract fun getName(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

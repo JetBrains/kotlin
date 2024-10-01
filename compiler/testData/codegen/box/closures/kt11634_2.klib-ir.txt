@@ -1,0 +1,96 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt11634_2.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      FUN name:foo signature:/A.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+    CLASS CLASS name:AImpl signature:/AImpl|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AImpl
+      CONSTRUCTOR signature:/AImpl.<init>|<init>(kotlin.String){}[0] visibility:public <> (z:<unbound IrClassSymbolImpl>) returnType:<root>.AImpl [primary]
+        VALUE_PARAMETER name:z index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AImpl signature:/AImpl|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+      PROPERTY name:z signature:/AImpl.z|{}z[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:z signature:[ /AImpl.z|{}z[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'z: <unbound IrClassSymbolImpl> declared in <root>.AImpl.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> signature:/AImpl.z.<get-z>|<get-z>(){}[0] visibility:public modality:FINAL <> ($this:<root>.AImpl) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:z signature:/AImpl.z|{}z[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.AImpl
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-z> (): <unbound IrClassSymbolImpl> declared in <root>.AImpl'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z signature:[ /AImpl.z|{}z[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.AImpl declared in <root>.AImpl.<get-z>' type=<root>.AImpl origin=null
+      FUN name:foo signature:/AImpl.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.AImpl) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.AImpl
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.AImpl'
+            CALL 'public final fun <get-z> (): <unbound IrClassSymbolImpl> declared in <root>.AImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.AImpl declared in <root>.AImpl.foo' type=<root>.AImpl origin=null
+    CLASS CLASS name:AFabric signature:/AFabric|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AFabric
+      CONSTRUCTOR signature:/AFabric.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AFabric [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AFabric signature:/AFabric|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:createA signature:/AFabric.createA|createA(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.AFabric, z:<unbound IrClassSymbolImpl>) returnType:<root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.AFabric
+        VALUE_PARAMETER name:z index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun createA (z: <unbound IrClassSymbolImpl>): <root>.A declared in <root>.AFabric'
+            CONSTRUCTOR_CALL 'public constructor <init> (z: <unbound IrClassSymbolImpl>) [primary] declared in <root>.AImpl' type=<root>.AImpl origin=null
+              z: GET_VAR 'z: <unbound IrClassSymbolImpl> declared in <root>.AFabric.createA' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:AWrapperFabric signature:/AWrapperFabric|null[0] modality:FINAL visibility:public superTypes:[<root>.AFabric]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AWrapperFabric
+      CONSTRUCTOR signature:/AWrapperFabric.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AWrapperFabric [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AFabric'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AWrapperFabric signature:/AWrapperFabric|null[0] modality:FINAL visibility:public superTypes:[<root>.AFabric]'
+      FUN name:createA signature:/AWrapperFabric.createA|createA(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.AWrapperFabric, z:<unbound IrClassSymbolImpl>) returnType:<root>.A
+        overridden:
+          public open fun createA (z: <unbound IrClassSymbolImpl>): <root>.A declared in <root>.AFabric
+        $this: VALUE_PARAMETER name:<this> type:<root>.AWrapperFabric
+        VALUE_PARAMETER name:z index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun createA (z: <unbound IrClassSymbolImpl>): <root>.A declared in <root>.AWrapperFabric'
+            CONSTRUCTOR_CALL 'public constructor <init> (z: <unbound IrClassSymbolImpl>) [primary] declared in <root>.AImpl' type=<root>.AImpl origin=null
+              z: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: "
+                GET_VAR 'z: <unbound IrClassSymbolImpl> declared in <root>.AWrapperFabric.createA' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:createMyA signature:/AWrapperFabric.createMyA|createMyA(){}[0] visibility:public modality:FINAL <> ($this:<root>.AWrapperFabric) returnType:<root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.AWrapperFabric
+        BLOCK_BODY
+          VAR name:z type:<unbound IrClassSymbolImpl> [val]
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun createMyA (): <root>.A declared in <root>.AWrapperFabric'
+            BLOCK type=<root>.AWrapperFabric.createMyA.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AWrapperFabric.createMyA.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.AWrapperFabric.createMyA.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A]'
+                FIELD DELEGATE name:$$delegate_0 type:<root>.A visibility:private [final]
+                  EXPRESSION_BODY
+                    CALL 'public open fun createA (z: <unbound IrClassSymbolImpl>): <root>.A declared in <root>.AFabric' superQualifier='CLASS CLASS name:AFabric signature:/AFabric|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.A origin=null
+                      $this: GET_VAR '<this>: <root>.AWrapperFabric declared in <root>.AWrapperFabric.createMyA' type=<root>.AWrapperFabric origin=null
+                      z: GET_VAR 'val z: <unbound IrClassSymbolImpl> [val] declared in <root>.AWrapperFabric.createMyA' type=<unbound IrClassSymbolImpl> origin=null
+                FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.AWrapperFabric.createMyA.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.A
+                  $this: VALUE_PARAMETER name:<this> type:<root>.AWrapperFabric.createMyA.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.AWrapperFabric.createMyA.<no name provided>'
+                      CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.A visibility:private [final] declared in <root>.AWrapperFabric.createMyA.<no name provided>' type=<root>.A origin=null
+                          receiver: GET_VAR '<this>: <root>.AWrapperFabric.createMyA.<no name provided> declared in <root>.AWrapperFabric.createMyA.<no name provided>.foo' type=<root>.AWrapperFabric.createMyA.<no name provided> origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AWrapperFabric.createMyA.<no name provided>' type=<root>.AWrapperFabric.createMyA.<no name provided> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun createMyA (): <root>.A declared in <root>.AWrapperFabric' type=<root>.A origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AWrapperFabric' type=<root>.AWrapperFabric origin=null

@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(p0: kotlin/UByte /* = ... */, p1: kotlin/UShort /* = ... */, p2: kotlin/UInt /* = ... */, p4: kotlin/ULong /* = ... */): kotlin/ULong
+    }
+  }
+}

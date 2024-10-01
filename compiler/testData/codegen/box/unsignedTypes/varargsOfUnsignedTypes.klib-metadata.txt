@@ -1,0 +1,89 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AnnoUByte
+    // class name: AnnoUInt
+    // class name: AnnoULong
+    // class name: AnnoUShort
+
+    public final annotation class AnnoUByte : kotlin/Annotation {
+
+      public constructor(vararg args: kotlin/UByte /* kotlin/UByteArray */)
+
+      public final val args: kotlin/UByteArray
+        public final get
+    }
+
+    public final annotation class AnnoUInt : kotlin/Annotation {
+
+      public constructor(vararg args: kotlin/UInt /* kotlin/UIntArray */)
+
+      public final val args: kotlin/UIntArray
+        public final get
+    }
+
+    public final annotation class AnnoULong : kotlin/Annotation {
+
+      public constructor(vararg args: kotlin/ULong /* kotlin/ULongArray */)
+
+      public final val args: kotlin/ULongArray
+        public final get
+    }
+
+    public final annotation class AnnoUShort : kotlin/Annotation {
+
+      public constructor(vararg args: kotlin/UShort /* kotlin/UShortArray */)
+
+      public final val args: kotlin/UShortArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun inlinedUInt(vararg us: kotlin/UInt /* kotlin/UIntArray */): kotlin/UIntArray
+
+      public final fun nullableUInt(vararg us: kotlin/UInt? /* kotlin/Array<out kotlin/UInt?> */): kotlin/UIntArray
+
+      public final fun sum(vararg us: kotlin/UInt /* kotlin/UIntArray */): kotlin/UInt
+
+      public final fun uint(vararg us: kotlin/UInt /* kotlin/UIntArray */): kotlin/UIntArray
+
+      @AnnoUByte(args = [])
+      public final val ubyte0: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoUByte(args = [0.toUByte()])
+      public final val ubyte1: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoUInt(args = [])
+      public final val uint0: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoUInt(args = [0u])
+      public final val uint1: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoULong(args = [])
+      public final val ulong0: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoULong(args = [0uL])
+      public final val ulong1: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoUShort(args = [])
+      public final val ushort0: kotlin/Int /* = ... */
+        public final get
+
+      @AnnoUShort(args = [0.toUShort()])
+      public final val ushort1: kotlin/Int /* = ... */
+        public final get
+    }
+  }
+}

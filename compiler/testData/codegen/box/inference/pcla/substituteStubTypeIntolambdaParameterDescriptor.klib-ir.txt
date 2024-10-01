@@ -1,0 +1,54 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/substituteStubTypeIntolambdaParameterDescriptor.kt
+    CLASS CLASS name:TypeDefinition signature:/TypeDefinition|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeDefinition<K of <root>.TypeDefinition>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /TypeDefinition|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/TypeDefinition.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TypeDefinition<K of <root>.TypeDefinition> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TypeDefinition signature:/TypeDefinition|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:parse signature:/TypeDefinition.parse|parse(kotlin.Function1<kotlin.String,1:0?>){}[0] visibility:public modality:FINAL <> ($this:<root>.TypeDefinition<K of <root>.TypeDefinition>, parser:<unbound IrClassSymbolImpl><@[<unbound>(1 = "serializedValue")] <unbound IrClassSymbolImpl>, K of <root>.TypeDefinition?>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TypeDefinition<K of <root>.TypeDefinition>
+        VALUE_PARAMETER name:parser index:0 type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "serializedValue")] <unbound IrClassSymbolImpl>, K of <root>.TypeDefinition?>
+        BLOCK_BODY
+      FUN name:serialize signature:/TypeDefinition.serialize|serialize(kotlin.Function1<1:0,kotlin.Any?>){}[0] visibility:public modality:FINAL <> ($this:<root>.TypeDefinition<K of <root>.TypeDefinition>, parser:<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] K of <root>.TypeDefinition, <unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TypeDefinition<K of <root>.TypeDefinition>
+        VALUE_PARAMETER name:parser index:0 type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] K of <root>.TypeDefinition, <unbound IrClassSymbolImpl>?>
+        BLOCK_BODY
+    FUN name:defineType signature:/defineType|defineType(kotlin.Function1<TypeDefinition<0:0>,kotlin.Unit>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (definition:@[<unbound>] <unbound IrClassSymbolImpl><<root>.TypeDefinition<T of <root>.defineType>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /defineType|defineType(kotlin.Function1<TypeDefinition<0:0>,kotlin.Unit>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:definition index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.TypeDefinition<T of <root>.defineType>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:test signature:/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun defineType <T> (definition: @[<unbound>] <unbound IrClassSymbolImpl><<root>.TypeDefinition<T of <root>.defineType>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          definition: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.TypeDefinition<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.TypeDefinition<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$defineType type:<root>.TypeDefinition<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'public final fun parse (parser: <unbound IrClassSymbolImpl><@[<unbound>(1 = "serializedValue")] <unbound IrClassSymbolImpl>, K of <root>.TypeDefinition?>): <unbound IrClassSymbolImpl> declared in <root>.TypeDefinition' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$defineType: <root>.TypeDefinition<<unbound IrClassSymbolImpl>> declared in <root>.test.<anonymous>' type=<root>.TypeDefinition<<unbound IrClassSymbolImpl>> origin=null
+                  parser: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>.test.<anonymous>'
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.test.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun serialize (parser: <unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] K of <root>.TypeDefinition, <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>.TypeDefinition' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$defineType: <root>.TypeDefinition<<unbound IrClassSymbolImpl>> declared in <root>.test.<anonymous>' type=<root>.TypeDefinition<<unbound IrClassSymbolImpl>> origin=null
+                  parser: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>.test.<anonymous>'
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.test.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

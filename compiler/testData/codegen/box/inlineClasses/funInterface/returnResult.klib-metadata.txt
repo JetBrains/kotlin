@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ResultHandler
+
+    public abstract fun interface ResultHandler<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun onResult(): kotlin/Result<T#0>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun doSmth(resultHandler: ResultHandler<kotlin/Boolean>): kotlin/Result<kotlin/Boolean>
+    }
+  }
+}

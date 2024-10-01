@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Supplier
+    // class name: SupplierInvoker
+
+    public abstract fun interface Supplier<T#0 /* SupplierTP */> : kotlin/Any {
+
+      public abstract fun get(): T#0
+    }
+
+    public abstract fun interface SupplierInvoker<T#0 /* SupplierInvokerTP1 */, T#1 /* SupplierInvokerTP2 */ : Supplier<T#0>> : kotlin/Any {
+
+      public abstract fun invokeSupplier(supplier: T#1): T#0
+    }
+
+    package {
+
+      public final fun <T#0 /* BarTP1 */, T#1 /* BarTP2 */ : Supplier<T#0>> bar(): SupplierInvoker<T#0, T#1>
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* FooTP */> foo(t: T#0): Supplier<T#0>
+    }
+  }
+}

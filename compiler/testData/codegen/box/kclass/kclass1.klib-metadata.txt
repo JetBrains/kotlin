@@ -1,0 +1,59 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.kclass.kclass1
+
+    // class name: codegen/kclass/kclass1/App
+    // class name: codegen/kclass/kclass1/DslMain
+    // class name: codegen/kclass/kclass1/KClassDsl
+    // class name: codegen/kclass/kclass1/MyDsl
+    // class name: codegen/kclass/kclass1/TestClass
+
+    public final class codegen/kclass/kclass1/App : kotlin/Any {
+
+      public constructor(testQualified: kotlin/Boolean)
+
+      public final var type: kotlin/reflect/KClass<codegen/kclass/kclass1/TestClass>
+        public final get
+        public final set
+    }
+
+    @codegen/kclass/kclass1/MyDsl
+    public final class codegen/kclass/kclass1/DslMain : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#0 /* T */ : kotlin/Any> kClass(block: @kotlin/ExtensionFunctionType kotlin/Function1<codegen/kclass/kclass1/KClassDsl, T#0>): T#0
+    }
+
+    @codegen/kclass/kclass1/MyDsl
+    public final class codegen/kclass/kclass1/KClassDsl : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Any> of(): kotlin/reflect/KClass<T#0>
+    }
+
+    @kotlin/DslMarker
+    public final annotation class codegen/kclass/kclass1/MyDsl : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final class codegen/kclass/kclass1/TestClass : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Any> dsl(block: @kotlin/ExtensionFunctionType kotlin/Function1<codegen/kclass/kclass1/DslMain, T#0>): T#0
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

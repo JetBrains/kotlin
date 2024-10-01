@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final value class A : kotlin/Any {
+
+      public constructor(a: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/String
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isEqualAN(x: A, y: A?): kotlin/Boolean
+
+      public final fun isEqualNA(x: A?, y: A): kotlin/Boolean
+    }
+  }
+}

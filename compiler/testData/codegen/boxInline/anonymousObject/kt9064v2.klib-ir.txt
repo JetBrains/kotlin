@@ -1,0 +1,109 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:Test signature:test/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Test
+      CONSTRUCTOR signature:test/Test.<init>|<init>(kotlin.String){}[0] visibility:public <> (_member:<unbound IrClassSymbolImpl>) returnType:test.Test [primary]
+        VALUE_PARAMETER name:_member index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:test/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:_member signature:test/Test._member|{}_member[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:_member signature:[ test/Test._member|{}_member[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_member type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR '_member: <unbound IrClassSymbolImpl> declared in test.Test.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_member> signature:test/Test._member.<get-_member>|<get-_member>(){}[0] visibility:public modality:FINAL <> ($this:test.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:_member signature:test/Test._member|{}_member[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-_member> (): <unbound IrClassSymbolImpl> declared in test.Test'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_member signature:[ test/Test._member|{}_member[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_member type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Test declared in test.Test.<get-_member>' type=test.Test origin=null
+      PROPERTY name:_parameter signature:test/Test._parameter|{}_parameter[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:_parameter signature:[ test/Test._parameter|{}_parameter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_member type:kotlin.String visibility:private [final]] ] type:test.Z<test.Z<<unbound IrClassSymbolImpl>>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun test <T> (s: <unbound IrClassSymbolImpl><test.Z<T of test.test>>): test.Z<T of test.test> [inline] declared in test' type=test.Z<test.Z<<unbound IrClassSymbolImpl>>> origin=null
+              <T>: test.Z<<unbound IrClassSymbolImpl>>
+              s: FUN_EXPR type=<unbound IrClassSymbolImpl><test.Z<test.Z<<unbound IrClassSymbolImpl>>>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:test.Z<test.Z<<unbound IrClassSymbolImpl>>>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): test.Z<test.Z<<unbound IrClassSymbolImpl>>> declared in test.Test._parameter'
+                      BLOCK type=test.Test._parameter.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Z<test.Z<<unbound IrClassSymbolImpl>>>]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Test._parameter.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:test.Test._parameter.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Z<test.Z<<unbound IrClassSymbolImpl>>>]'
+                          PROPERTY name:property visibility:public modality:OPEN [val]
+                            FIELD PROPERTY_BACKING_FIELD name:property type:test.Z<<unbound IrClassSymbolImpl>> visibility:private [final]
+                              EXPRESSION_BODY
+                                CALL 'public final fun test <T> (s: <unbound IrClassSymbolImpl><test.Z<T of test.test>>): test.Z<T of test.test> [inline] declared in test' type=test.Z<<unbound IrClassSymbolImpl>> origin=null
+                                  <T>: <unbound IrClassSymbolImpl>
+                                  s: FUN_EXPR type=<unbound IrClassSymbolImpl><test.Z<<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:test.Z<<unbound IrClassSymbolImpl>>
+                                      BLOCK_BODY
+                                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): test.Z<<unbound IrClassSymbolImpl>> declared in test.Test._parameter.<anonymous>.<no name provided>.property'
+                                          BLOCK type=test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Z<<unbound IrClassSymbolImpl>>]
+                                              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided>
+                                              CONSTRUCTOR visibility:public <> () returnType:test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided> [primary]
+                                                BLOCK_BODY
+                                                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Z<<unbound IrClassSymbolImpl>>]'
+                                              PROPERTY name:property visibility:public modality:OPEN [val]
+                                                FIELD PROPERTY_BACKING_FIELD name:property type:<unbound IrClassSymbolImpl> visibility:private [final]
+                                                  EXPRESSION_BODY
+                                                    CALL 'public final fun <get-_member> (): <unbound IrClassSymbolImpl> declared in test.Test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                                      $this: GET_VAR '<this>: test.Test declared in test.Test' type=test.Test origin=null
+                                                FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> visibility:public modality:OPEN <> ($this:test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                                  correspondingProperty: PROPERTY name:property visibility:public modality:OPEN [val]
+                                                  overridden:
+                                                    public abstract fun <get-property> (): T of test.Z declared in test.Z
+                                                  $this: VALUE_PARAMETER name:<this> type:test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided>
+                                                  BLOCK_BODY
+                                                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided>'
+                                                      GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                                                        receiver: GET_VAR '<this>: test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided> declared in test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided>.<get-property>' type=test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided> origin=null
+                                            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided>' type=test.Test._parameter.<anonymous>.<no name provided>.property.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> visibility:public modality:OPEN <> ($this:test.Test._parameter.<anonymous>.<no name provided>) returnType:test.Z<<unbound IrClassSymbolImpl>>
+                              correspondingProperty: PROPERTY name:property visibility:public modality:OPEN [val]
+                              overridden:
+                                public abstract fun <get-property> (): T of test.Z declared in test.Z
+                              $this: VALUE_PARAMETER name:<this> type:test.Test._parameter.<anonymous>.<no name provided>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-property> (): test.Z<<unbound IrClassSymbolImpl>> declared in test.Test._parameter.<anonymous>.<no name provided>'
+                                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property type:test.Z<<unbound IrClassSymbolImpl>> visibility:private [final]' type=test.Z<<unbound IrClassSymbolImpl>> origin=null
+                                    receiver: GET_VAR '<this>: test.Test._parameter.<anonymous>.<no name provided> declared in test.Test._parameter.<anonymous>.<no name provided>.<get-property>' type=test.Test._parameter.<anonymous>.<no name provided> origin=null
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Test._parameter.<anonymous>.<no name provided>' type=test.Test._parameter.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_parameter> signature:test/Test._parameter.<get-_parameter>|<get-_parameter>(){}[0] visibility:public modality:FINAL <> ($this:test.Test) returnType:test.Z<test.Z<<unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY name:_parameter signature:test/Test._parameter|{}_parameter[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-_parameter> (): test.Z<test.Z<<unbound IrClassSymbolImpl>>> declared in test.Test'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_parameter signature:[ test/Test._parameter|{}_parameter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_member type:kotlin.String visibility:private [final]] ] type:test.Z<test.Z<<unbound IrClassSymbolImpl>>> visibility:private [final]' type=test.Z<test.Z<<unbound IrClassSymbolImpl>>> origin=null
+                receiver: GET_VAR '<this>: test.Test declared in test.Test.<get-_parameter>' type=test.Test origin=null
+    CLASS INTERFACE name:Z signature:test/Z|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Z<T of test.Z>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/Z|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:property signature:test/Z.property|{}property[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> signature:test/Z.property.<get-property>|<get-property>(){}[0] visibility:public modality:ABSTRACT <> ($this:test.Z<T of test.Z>) returnType:T of test.Z
+          correspondingProperty: PROPERTY name:property signature:test/Z.property|{}property[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Z<T of test.Z>
+    FUN name:test signature:test/test|test(kotlin.Function0<test.Z<0:0>>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (s:<unbound IrClassSymbolImpl><test.Z<T of test.test>>) returnType:test.Z<T of test.test> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/test|test(kotlin.Function0<test.Z<0:0>>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><test.Z<T of test.test>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (s: <unbound IrClassSymbolImpl><test.Z<T of test.test>>): test.Z<T of test.test> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test.Z<T of test.test> origin=INVOKE
+            $this: GET_VAR 's: <unbound IrClassSymbolImpl><test.Z<T of test.test>> declared in test.test' type=<unbound IrClassSymbolImpl><test.Z<T of test.test>> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test type:test.Test [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (_member: <unbound IrClassSymbolImpl>) [primary] declared in test.Test' type=test.Test origin=null
+            _member: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun <get-property> (): T of test.Z declared in test.Z' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public abstract fun <get-property> (): T of test.Z declared in test.Z' type=test.Z<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-_parameter> (): test.Z<test.Z<<unbound IrClassSymbolImpl>>> declared in test.Test' type=test.Z<test.Z<<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+                $this: GET_VAR 'val test: test.Test [val] declared in <root>.box' type=test.Test origin=null

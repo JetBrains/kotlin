@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    public final class A<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: kotlin/String, y: kotlin/String, z: T#0)
+
+      public final val x: kotlin/String
+        public final get
+
+      public final val y: kotlin/String
+        public final get
+
+      public final val z: T#0
+        public final get
+    }
+
+    public final object B : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun A<*>.component2(): kotlin/String
+    }
+
+    package {
+
+      public final fun B.bar(): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final operator fun A<*>.component1(): kotlin/String
+
+      public final fun <T#0 /* T */> foo(a: A<T#0>, block: kotlin/Function1<A<T#0>, kotlin/String>): kotlin/String
+    }
+  }
+}

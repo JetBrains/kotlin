@@ -1,0 +1,217 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nested.kt
+    FUN name:intRange signature:/intRange|intRange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [inline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intRange (): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+    FUN name:testIntSumOfIntRange signature:/testIntSumOfIntRange|testIntSumOfIntRange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfIntRange (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun intRange (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIntRange'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIntRange.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:intRangeAsReturnableBlock signature:/intRangeAsReturnableBlock|intRangeAsReturnableBlock(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [inline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intRangeAsReturnableBlock (): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+    FUN name:testIntSumOfIntRangeAsReturnableBlock signature:/testIntSumOfIntRangeAsReturnableBlock|testIntSumOfIntRangeAsReturnableBlock(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfIntRangeAsReturnableBlock (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun intRangeAsReturnableBlock (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIntRangeAsReturnableBlock'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIntRangeAsReturnableBlock.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:multipleReturnsRequireDeeperAnalysis signature:/multipleReturnsRequireDeeperAnalysis|multipleReturnsRequireDeeperAnalysis(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (useShorterRange:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline]
+      VALUE_PARAMETER name:useShorterRange index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'useShorterRange: <unbound IrClassSymbolImpl> declared in <root>.multipleReturnsRequireDeeperAnalysis' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun multipleReturnsRequireDeeperAnalysis (useShorterRange: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  CONST Int type=<unbound IrClassSymbolImpl> value=3
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun multipleReturnsRequireDeeperAnalysis (useShorterRange: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+    FUN name:testMultipleReturnsRequireDeeperAnalysisLongRange signature:/testMultipleReturnsRequireDeeperAnalysisLongRange|testMultipleReturnsRequireDeeperAnalysisLongRange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testMultipleReturnsRequireDeeperAnalysisLongRange (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun multipleReturnsRequireDeeperAnalysis (useShorterRange: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              useShorterRange: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testMultipleReturnsRequireDeeperAnalysisLongRange'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testMultipleReturnsRequireDeeperAnalysisLongRange.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testMultipleReturnsRequireDeeperAnalysisShortRange signature:/testMultipleReturnsRequireDeeperAnalysisShortRange|testMultipleReturnsRequireDeeperAnalysisShortRange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testMultipleReturnsRequireDeeperAnalysisShortRange (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun multipleReturnsRequireDeeperAnalysis (useShorterRange: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              useShorterRange: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testMultipleReturnsRequireDeeperAnalysisShortRange'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testMultipleReturnsRequireDeeperAnalysisShortRange.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:iterableInt signature:/iterableInt|iterableInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterableInt (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+    FUN name:testIntSumOfIterableInt signature:/testIntSumOfIterableInt|testIntSumOfIterableInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfIterableInt (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun iterableInt (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableInt'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableInt.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testIntSumOfTempVal signature:/testIntSumOfTempVal|testIntSumOfTempVal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:iterableInt type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun iterableInt (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfTempVal (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val iterableInt: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testIntSumOfTempVal' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfTempVal'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfTempVal.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:iterableIntWithTempVal signature:/iterableIntWithTempVal|iterableIntWithTempVal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline]
+      BLOCK_BODY
+        VAR name:iterableInt type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterableIntWithTempVal (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          GET_VAR 'val iterableInt: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.iterableIntWithTempVal' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:testIntSumOfIterableIntWithTempVal signature:/testIntSumOfIterableIntWithTempVal|testIntSumOfIterableIntWithTempVal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfIterableIntWithTempVal (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun iterableIntWithTempVal (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableIntWithTempVal'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableIntWithTempVal.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:iterableIntWithTempValIterableInt signature:/iterableIntWithTempValIterableInt|iterableIntWithTempValIterableInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline]
+      BLOCK_BODY
+        VAR name:iterableInt type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun iterableInt (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterableIntWithTempValIterableInt (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          GET_VAR 'val iterableInt: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.iterableIntWithTempValIterableInt' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:testIntSumOfIterableIntWithTempValIterableInt signature:/testIntSumOfIterableIntWithTempValIterableInt|testIntSumOfIterableIntWithTempValIterableInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfIterableIntWithTempValIterableInt (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun iterableIntWithTempValIterableInt (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableIntWithTempValIterableInt'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableIntWithTempValIterableInt.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testIntSumOfIterableIntInParam signature:/testIntSumOfIterableIntInParam|testIntSumOfIterableIntInParam(kotlin.collections.Iterable<kotlin.Int>){}[0] visibility:public modality:FINAL <> (param:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:param index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIntSumOfIterableIntInParam (param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.testIntSumOfIterableIntInParam' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableIntInParam'
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIntSumOfIterableIntInParam.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIntRange (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIntRangeAsReturnableBlock (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testMultipleReturnsRequireDeeperAnalysisLongRange (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+          2: CALL 'public final fun testMultipleReturnsRequireDeeperAnalysisShortRange (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfTempVal (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIterableInt (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIterableIntWithTempVal (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIterableIntWithTempValIterableInt (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIterableIntInParam (param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            param: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+          2: CALL 'public final fun testIntSumOfIterableIntInParam (param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            param: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST Int type=<unbound IrClassSymbolImpl> value=50
+                CONST Int type=<unbound IrClassSymbolImpl> value=5
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/suspendConversionWithFunInterfaces.kt
+    CLASS INTERFACE name:SuspendRunnable signature:/SuspendRunnable|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuspendRunnable
+      FUN name:invoke signature:/SuspendRunnable.invoke|invoke(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SuspendRunnable) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendRunnable
+    FUN name:foo1 signature:/foo1|foo1(SuspendRunnable){}[0] visibility:public modality:FINAL <> (s:<root>.SuspendRunnable) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<root>.SuspendRunnable
+      BLOCK_BODY
+    FUN name:bar1 signature:/bar1|bar1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:bar2 signature:/bar2|bar2(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar2 (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:bar3 signature:/bar3|bar3(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:bar3 signature:/bar3|bar3(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar3 (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun foo1 (s: <root>.SuspendRunnable): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          s: BLOCK type=<root>.SuspendRunnable origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar1 visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public final fun bar1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
+              FUNCTION_REFERENCE 'local final fun bar1 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar1 (): <unbound IrClassSymbolImpl> declared in <root>
+        CALL 'public final fun foo1 (s: <root>.SuspendRunnable): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          s: BLOCK type=<root>.SuspendRunnable origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar2 visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun bar2 (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
+              FUNCTION_REFERENCE 'local final fun bar2 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar2 (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>
+        CALL 'public final fun foo1 (s: <root>.SuspendRunnable): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          s: BLOCK type=<root>.SuspendRunnable origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar3 visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public final fun bar3 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
+              FUNCTION_REFERENCE 'local final fun bar3 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar3 (): <unbound IrClassSymbolImpl> declared in <root>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

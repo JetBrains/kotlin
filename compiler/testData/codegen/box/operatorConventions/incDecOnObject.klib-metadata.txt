@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: X
+    // class name: Z
+
+    public final class X : kotlin/Any {
+
+      public constructor(value: kotlin/Long)
+
+      public final var value: kotlin/Long
+        public final get
+        public final set
+    }
+
+    public final class Z : kotlin/Any {
+
+      public constructor()
+
+      public final var counter: kotlin/Int
+        public final get
+        public final set
+
+      public final var prop: X
+        public final /* non-default */ get
+        public final /* non-default */ set(a: X)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun X.dec(): X
+
+      public final operator fun X.inc(): X
+    }
+  }
+}

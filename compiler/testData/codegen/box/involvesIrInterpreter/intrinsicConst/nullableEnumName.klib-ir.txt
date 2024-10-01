@@ -1,0 +1,144 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nullableEnumName.kt
+    PROPERTY name:shouldNotBeEvaluated1 signature:/shouldNotBeEvaluated1|{}shouldNotBeEvaluated1[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 signature:[ /shouldNotBeEvaluated1|{}shouldNotBeEvaluated1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.EnumClass [val]
+                  GET_ENUM 'ENUM_ENTRY name:OK signature:/EnumClass.OK|null[0]' type=<root>.EnumClass
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <root>.EnumClass [val] declared in <root>.shouldNotBeEvaluated1' type=<root>.EnumClass origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val tmp0_safe_receiver: <root>.EnumClass [val] declared in <root>.shouldNotBeEvaluated1' type=<root>.EnumClass origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.shouldNotBeEvaluated1' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value=""
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.shouldNotBeEvaluated1' type=<unbound IrClassSymbolImpl>? origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-shouldNotBeEvaluated1> signature:/shouldNotBeEvaluated1.<get-shouldNotBeEvaluated1>|<get-shouldNotBeEvaluated1>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:shouldNotBeEvaluated1 signature:/shouldNotBeEvaluated1|{}shouldNotBeEvaluated1[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-shouldNotBeEvaluated1> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 signature:[ /shouldNotBeEvaluated1|{}shouldNotBeEvaluated1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:shouldNotBeEvaluated2 signature:/shouldNotBeEvaluated2|{}shouldNotBeEvaluated2[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated2 signature:[ /shouldNotBeEvaluated2|{}shouldNotBeEvaluated2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.EnumClass [val]
+                  GET_ENUM 'ENUM_ENTRY name:OK signature:/EnumClass.OK|null[0]' type=<root>.EnumClass
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <root>.EnumClass [val] declared in <root>.shouldNotBeEvaluated2' type=<root>.EnumClass origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val tmp0_safe_receiver: <root>.EnumClass [val] declared in <root>.shouldNotBeEvaluated2' type=<root>.EnumClass origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.shouldNotBeEvaluated2' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.shouldNotBeEvaluated2' type=<unbound IrClassSymbolImpl>? origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-shouldNotBeEvaluated2> signature:/shouldNotBeEvaluated2.<get-shouldNotBeEvaluated2>|<get-shouldNotBeEvaluated2>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:shouldNotBeEvaluated2 signature:/shouldNotBeEvaluated2|{}shouldNotBeEvaluated2[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-shouldNotBeEvaluated2> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated2 signature:[ /shouldNotBeEvaluated2|{}shouldNotBeEvaluated2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:shouldNotBeEvaluated3 signature:/shouldNotBeEvaluated3|{}shouldNotBeEvaluated3[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated3 signature:[ /shouldNotBeEvaluated3|{}shouldNotBeEvaluated3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.EnumClass [val]
+                GET_ENUM 'ENUM_ENTRY name:OK signature:/EnumClass.OK|null[0]' type=<root>.EnumClass
+              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_safe_receiver: <root>.EnumClass [val] declared in <root>.shouldNotBeEvaluated3' type=<root>.EnumClass origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'val tmp0_safe_receiver: <root>.EnumClass [val] declared in <root>.shouldNotBeEvaluated3' type=<root>.EnumClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-shouldNotBeEvaluated3> signature:/shouldNotBeEvaluated3.<get-shouldNotBeEvaluated3>|<get-shouldNotBeEvaluated3>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:shouldNotBeEvaluated3 signature:/shouldNotBeEvaluated3|{}shouldNotBeEvaluated3[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-shouldNotBeEvaluated3> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated3 signature:[ /shouldNotBeEvaluated3|{}shouldNotBeEvaluated3[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:shouldNotBeEvaluated1 type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.id) returnType:T of <root>.id
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /id|id@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.id
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id <T> (): T of <root>.id declared in <root>'
+          GET_VAR '<this>: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+    CLASS ENUM_CLASS name:EnumClass signature:/EnumClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumClass>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EnumClass
+      CONSTRUCTOR signature:/EnumClass.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EnumClass [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.EnumClass
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EnumClass signature:/EnumClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumClass>]'
+      ENUM_ENTRY name:OK signature:/EnumClass.OK|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumClass'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/EnumClass.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumClass>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/EnumClass.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.EnumClass
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumClass.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/EnumClass.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumClass>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumClass.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-shouldNotBeEvaluated1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-shouldNotBeEvaluated2> (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-shouldNotBeEvaluated3> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 3"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun id <T> (): T of <root>.id declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun <get-shouldNotBeEvaluated1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

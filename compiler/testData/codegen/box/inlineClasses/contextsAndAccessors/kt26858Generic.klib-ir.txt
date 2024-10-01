@@ -1,0 +1,199 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt26858Generic.kt
+    CLASS CLASS name:Direction signature:/Direction|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Direction<T of <root>.Direction>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Direction|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/Direction.<init>|<init>(1:0){}[0] visibility:public <> (direction:T of <root>.Direction) returnType:<root>.Direction<T of <root>.Direction> [primary]
+        VALUE_PARAMETER name:direction index:0 type:T of <root>.Direction
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Direction signature:/Direction|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:direction signature:/Direction.direction|{}direction[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /Direction.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:T of <root>.Direction visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'direction: T of <root>.Direction declared in <root>.Direction.<init>' type=T of <root>.Direction origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-direction> signature:/Direction.direction.<get-direction>|<get-direction>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Direction<T of <root>.Direction>) returnType:T of <root>.Direction
+          correspondingProperty: PROPERTY name:direction signature:/Direction.direction|{}direction[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Direction<T of <root>.Direction>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-direction> (): T of <root>.Direction declared in <root>.Direction'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /Direction.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:T of <root>.Direction visibility:private [final]' type=T of <root>.Direction origin=null
+                receiver: GET_VAR '<this>: <root>.Direction<T of <root>.Direction> declared in <root>.Direction.<get-direction>' type=<root>.Direction<T of <root>.Direction> origin=null
+      FUN name:dx signature:/Direction.dx|dx(){}[0] visibility:public modality:FINAL <> ($this:<root>.Direction<T of <root>.Direction>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Direction<T of <root>.Direction>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun dx (): <unbound IrClassSymbolImpl> declared in <root>.Direction'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'private final fun <get-dx> (): <unbound IrClassSymbolImpl> declared in <root>.Direction.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Direction.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Direction.Companion
+              1: CALL 'private final fun <get-direction> (): T of <root>.Direction declared in <root>.Direction' type=T of <root>.Direction origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Direction<T of <root>.Direction> declared in <root>.Direction.dx' type=<root>.Direction<T of <root>.Direction> origin=null
+      FUN name:dy signature:/Direction.dy|dy(){}[0] visibility:public modality:FINAL <> ($this:<root>.Direction<T of <root>.Direction>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Direction<T of <root>.Direction>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun dy (): <unbound IrClassSymbolImpl> declared in <root>.Direction'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'private final fun <get-dy> (): <unbound IrClassSymbolImpl> declared in <root>.Direction.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Direction.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Direction.Companion
+              1: CALL 'private final fun <get-direction> (): T of <root>.Direction declared in <root>.Direction' type=T of <root>.Direction origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Direction<T of <root>.Direction> declared in <root>.Direction.dy' type=<root>.Direction<T of <root>.Direction> origin=null
+      CLASS OBJECT name:Companion signature:/Direction.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Direction.Companion
+        CONSTRUCTOR signature:/Direction.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Direction.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Direction.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:dx signature:/Direction.Companion.dx|{}dx[0] visibility:private modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:dx signature:[ /Direction.Companion.dx|{}dx[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  CONST Int type=<unbound IrClassSymbolImpl> value=-1
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dx> signature:/Direction.Companion.dx.<get-dx>|<get-dx>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Direction.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:dx signature:/Direction.Companion.dx|{}dx[0] visibility:private modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Direction.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-dx> (): <unbound IrClassSymbolImpl> declared in <root>.Direction.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dx signature:[ /Direction.Companion.dx|{}dx[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Direction.Companion declared in <root>.Direction.Companion.<get-dx>' type=<root>.Direction.Companion origin=null
+        PROPERTY name:dy signature:/Direction.Companion.dy|{}dy[0] visibility:private modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:dy signature:[ /Direction.Companion.dy|{}dy[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=-1
+                  CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dy> signature:/Direction.Companion.dy.<get-dy>|<get-dy>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Direction.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:dy signature:/Direction.Companion.dy|{}dy[0] visibility:private modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Direction.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-dy> (): <unbound IrClassSymbolImpl> declared in <root>.Direction.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dy signature:[ /Direction.Companion.dy|{}dy[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Direction.Companion declared in <root>.Direction.Companion.<get-dy>' type=<root>.Direction.Companion origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/Direction.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Direction<T of <root>.Direction>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Direction<T of <root>.Direction>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Direction'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Direction("
+              CONST String type=<unbound IrClassSymbolImpl> value="direction="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /Direction.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:T of <root>.Direction visibility:private [final]' type=T of <root>.Direction origin=null
+                receiver: GET_VAR '<this>: <root>.Direction<T of <root>.Direction> declared in <root>.Direction.toString' type=<root>.Direction<T of <root>.Direction> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/Direction.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Direction<T of <root>.Direction>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Direction<T of <root>.Direction>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Direction'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /Direction.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:T of <root>.Direction visibility:private [final]' type=T of <root>.Direction origin=null
+                receiver: GET_VAR '<this>: <root>.Direction<T of <root>.Direction> declared in <root>.Direction.hashCode' type=<root>.Direction<T of <root>.Direction> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/Direction.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Direction<T of <root>.Direction>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Direction<T of <root>.Direction>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Direction<T of <root>.Direction>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Direction.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Direction'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Direction<T of <root>.Direction> [val]
+            TYPE_OP type=<root>.Direction<T of <root>.Direction> origin=CAST typeOperand=<root>.Direction<T of <root>.Direction>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Direction.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /Direction.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:T of <root>.Direction visibility:private [final]' type=T of <root>.Direction origin=null
+                    receiver: GET_VAR '<this>: <root>.Direction<T of <root>.Direction> declared in <root>.Direction.equals' type=<root>.Direction<T of <root>.Direction> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /Direction.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.Direction visibility:private [final]] ] type:T of <root>.Direction visibility:private [final]' type=T of <root>.Direction origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Direction<T of <root>.Direction> [val] declared in <root>.Direction.equals' type=<root>.Direction<T of <root>.Direction> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Direction'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Direction'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:dirs type:<unbound IrClassSymbolImpl><<root>.Direction<<unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Direction<<unbound IrClassSymbolImpl>>> origin=null
+            <1>: <root>.Direction<<unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <root>.Direction<<unbound IrClassSymbolImpl>>> varargElementType=<root>.Direction<<unbound IrClassSymbolImpl>>
+              CONSTRUCTOR_CALL 'public constructor <init> (direction: T of <root>.Direction) [primary] declared in <root>.Direction' type=<root>.Direction<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                direction: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              CONSTRUCTOR_CALL 'public constructor <init> (direction: T of <root>.Direction) [primary] declared in <root>.Direction' type=<root>.Direction<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                direction: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONSTRUCTOR_CALL 'public constructor <init> (direction: T of <root>.Direction) [primary] declared in <root>.Direction' type=<root>.Direction<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                direction: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONSTRUCTOR_CALL 'public constructor <init> (direction: T of <root>.Direction) [primary] declared in <root>.Direction' type=<root>.Direction<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                direction: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        VAR name:expectedDx type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+              CONST Int type=<unbound IrClassSymbolImpl> value=-1
+        VAR name:expectedDy type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=-1
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun dx (): <unbound IrClassSymbolImpl> declared in <root>.Direction' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Direction<<unbound IrClassSymbolImpl>> origin=GET_ARRAY_ELEMENT
+                            $this: GET_VAR 'val dirs: <unbound IrClassSymbolImpl><<root>.Direction<<unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.Direction<<unbound IrClassSymbolImpl>>> origin=null
+                            1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                          $this: GET_VAR 'val expectedDx: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                          1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    then: THROW type=<unbound IrClassSymbolImpl>
+                      CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun dy (): <unbound IrClassSymbolImpl> declared in <root>.Direction' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Direction<<unbound IrClassSymbolImpl>> origin=GET_ARRAY_ELEMENT
+                            $this: GET_VAR 'val dirs: <unbound IrClassSymbolImpl><<root>.Direction<<unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.Direction<<unbound IrClassSymbolImpl>>> origin=null
+                            1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                          $this: GET_VAR 'val expectedDy: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                          1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    then: THROW type=<unbound IrClassSymbolImpl>
+                      CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

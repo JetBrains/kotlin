@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Z
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+
+      internal open fun test(): kotlin/String
+
+      internal open val field: kotlin/String /* = ... */
+        internal open get
+    }
+
+    public final class Z : A {
+
+      public constructor()
+
+      internal open fun test(): kotlin/String
+
+      internal open val field: kotlin/String /* = ... */
+        internal open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun invokeOnA(a: A): kotlin/String
+    }
+  }
+}

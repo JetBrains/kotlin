@@ -1,0 +1,92 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Canvas
+    // class name: Circle
+    // class name: Ellipse
+    // class name: Fill
+    // class name: Rectangle
+    // class name: Stroke
+
+    public abstract interface Canvas : kotlin/Any {
+
+      public abstract fun circle(circle: Circle, fill: Fill): kotlin/Unit
+
+      public abstract fun circle(circle: Circle, stroke: Stroke, fill: Fill?): kotlin/Unit
+
+      public abstract fun rect(rectangle: Rectangle, fill: Fill): kotlin/Unit
+
+      public abstract fun rect(rectangle: Rectangle, stroke: Stroke, fill: Fill?): kotlin/Unit
+
+      public abstract fun rect(rectangle: Rectangle, radius: kotlin/Double, fill: Fill): kotlin/Unit
+
+      public abstract fun rect(rectangle: Rectangle, radius: kotlin/Double, stroke: Stroke, fill: Fill?): kotlin/Unit
+    }
+
+    public final data class Circle : Ellipse {
+
+      public constructor(radius: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(radius: kotlin/Int /* = ... */): Circle
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val radius: kotlin/Int
+        public final get
+    }
+
+    public open class Ellipse : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface Fill : kotlin/Any {
+    }
+
+    public final data class Rectangle : kotlin/Any {
+
+      public constructor(width: kotlin/Int, height: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ operator fun component2(): kotlin/Int
+
+      public final /* synthesized */ fun copy(width: kotlin/Int /* = ... */, height: kotlin/Int /* = ... */): Rectangle
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val height: kotlin/Int
+        public final get
+
+      public final val width: kotlin/Int
+        public final get
+    }
+
+    public abstract interface Stroke : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(block: @kotlin/ExtensionFunctionType kotlin/Function3<Canvas, Stroke, Fill, kotlin/Unit>): kotlin/Unit
+
+      public final fun test1(): kotlin/Unit
+
+      public final fun test2(): kotlin/Unit
+    }
+  }
+}

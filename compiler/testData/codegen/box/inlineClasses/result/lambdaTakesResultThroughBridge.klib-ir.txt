@@ -1,0 +1,36 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/lambdaTakesResultThroughBridge.kt
+    PROPERTY name:x signature:/x|{}x[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x signature:[ /x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Function2<kotlin.Int, kotlin.Result<kotlin.String>, kotlin.String?> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>?
+              VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl>? declared in <root>.x'
+                  CALL 'public final fun getOrNullNoinline <T> (): T of <root>.getOrNullNoinline? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'b: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.x.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?>
+        correspondingProperty: PROPERTY name:x signature:/x|{}x[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Function2<kotlin.Int, kotlin.Result<kotlin.String>, kotlin.String?> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> origin=null
+    FUN name:getOrNullNoinline signature:/getOrNullNoinline|getOrNullNoinline@kotlin.Result<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.getOrNullNoinline>) returnType:T of <root>.getOrNullNoinline?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /getOrNullNoinline|getOrNullNoinline@kotlin.Result<0:0>(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.getOrNullNoinline>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getOrNullNoinline <T> (): T of <root>.getOrNullNoinline? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.getOrNullNoinline? origin=null
+            $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.getOrNullNoinline> declared in <root>.getOrNullNoinline' type=<unbound IrClassSymbolImpl><T of <root>.getOrNullNoinline> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+            $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value="OK"

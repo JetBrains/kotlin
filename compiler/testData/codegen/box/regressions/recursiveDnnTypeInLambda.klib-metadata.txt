@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CR
+    // class name: Impl
+    // class name: In
+
+    public abstract interface CR<T#0 /* D */> : kotlin/Any {
+    }
+
+    public final class Impl : In<Impl> {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public abstract interface In<T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      // requires language version 1.7.0 (level=ERROR)
+      public final fun <T#0 /* T */ : In<T#0 & Any>?> foo(value: T#0, range: CR<T#0 & Any>): kotlin/String
+    }
+  }
+}

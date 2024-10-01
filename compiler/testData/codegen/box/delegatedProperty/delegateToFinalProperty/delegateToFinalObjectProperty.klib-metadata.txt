@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: O
+
+    public final object O : kotlin/Any {
+
+      private constructor()
+
+      public final val impl: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun kotlin/Any?.getValue(thisRef: kotlin/Any?, property: kotlin/Any?): kotlin/String
+
+      public final /* delegated */ val s: kotlin/String
+        public final /* non-default */ get
+    }
+  }
+}

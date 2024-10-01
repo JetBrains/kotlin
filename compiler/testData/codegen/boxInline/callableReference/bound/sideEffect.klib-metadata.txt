@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun create(a: kotlin/String): test/Foo
+
+      public final var effects: kotlin/String
+        public final get
+        public final set
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Foo
+
+    public final class test/Foo : kotlin/Any {
+
+      public constructor(a: kotlin/String)
+
+      public final fun test(): kotlin/String
+
+      public final val a: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final inline fun test(a: kotlin/String, b: kotlin/Function0<kotlin/String>, c: kotlin/Function0<kotlin/String>, d: kotlin/String): kotlin/String
+    }
+  }
+}

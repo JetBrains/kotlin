@@ -1,0 +1,1698 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/reifiedIsWithMutable.kt
+    CLASS CLASS name:Itr signature:/Itr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Itr
+      CONSTRUCTOR signature:/Itr.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Itr [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Itr signature:/Itr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/Itr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:next signature:/Itr.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.Itr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Itr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <unbound IrClassSymbolImpl> [operator] declared in <root>.Itr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/Itr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.Itr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Itr declared in <root>.Itr.next' type=<root>.Itr origin=null
+      FUN DELEGATED_MEMBER name:hasNext signature:/Itr.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.Itr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Itr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.Itr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/Itr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.Itr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Itr declared in <root>.Itr.hasNext' type=<root>.Itr origin=null
+    CLASS CLASS name:MItr signature:/MItr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MItr
+      CONSTRUCTOR signature:/MItr.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MItr [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MItr signature:/MItr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:remove signature:/MItr.remove|remove(){}[0] visibility:public modality:OPEN <> ($this:<root>.MItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MItr
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MItr declared in <root>.MItr.remove' type=<root>.MItr origin=null
+      FUN DELEGATED_MEMBER name:next signature:/MItr.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.MItr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MItr declared in <root>.MItr.next' type=<root>.MItr origin=null
+      FUN DELEGATED_MEMBER name:hasNext signature:/MItr.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.MItr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MItr declared in <root>.MItr.hasNext' type=<root>.MItr origin=null
+    CLASS CLASS name:LItr signature:/LItr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LItr
+      CONSTRUCTOR signature:/LItr.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.LItr [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LItr signature:/LItr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:next signature:/LItr.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.LItr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <unbound IrClassSymbolImpl> [operator] declared in <root>.LItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.LItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.LItr declared in <root>.LItr.next' type=<root>.LItr origin=null
+      FUN DELEGATED_MEMBER name:hasNext signature:/LItr.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.LItr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.LItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.LItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.LItr declared in <root>.LItr.hasNext' type=<root>.LItr origin=null
+      FUN DELEGATED_MEMBER name:hasPrevious signature:/LItr.hasPrevious|hasPrevious(){}[0] visibility:public modality:OPEN <> ($this:<root>.LItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasPrevious (): <unbound IrClassSymbolImpl> declared in <root>.LItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.LItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.LItr declared in <root>.LItr.hasPrevious' type=<root>.LItr origin=null
+      FUN DELEGATED_MEMBER name:previous signature:/LItr.previous|previous(){}[0] visibility:public modality:OPEN <> ($this:<root>.LItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun previous (): <unbound IrClassSymbolImpl> declared in <root>.LItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.LItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.LItr declared in <root>.LItr.previous' type=<root>.LItr origin=null
+      FUN DELEGATED_MEMBER name:nextIndex signature:/LItr.nextIndex|nextIndex(){}[0] visibility:public modality:OPEN <> ($this:<root>.LItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun nextIndex (): <unbound IrClassSymbolImpl> declared in <root>.LItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.LItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.LItr declared in <root>.LItr.nextIndex' type=<root>.LItr origin=null
+      FUN DELEGATED_MEMBER name:previousIndex signature:/LItr.previousIndex|previousIndex(){}[0] visibility:public modality:OPEN <> ($this:<root>.LItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun previousIndex (): <unbound IrClassSymbolImpl> declared in <root>.LItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/LItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.LItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.LItr declared in <root>.LItr.previousIndex' type=<root>.LItr origin=null
+    CLASS CLASS name:MLItr signature:/MLItr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MLItr
+      CONSTRUCTOR signature:/MLItr.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MLItr [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MLItr signature:/MLItr|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:next signature:/MLItr.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MLItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.next' type=<root>.MLItr origin=null
+      FUN DELEGATED_MEMBER name:hasNext signature:/MLItr.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MLItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.hasNext' type=<root>.MLItr origin=null
+      FUN DELEGATED_MEMBER name:remove signature:/MLItr.remove|remove(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.remove' type=<root>.MLItr origin=null
+      FUN DELEGATED_MEMBER name:set signature:/MLItr.set|set(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.set' type=<root>.MLItr origin=null
+            1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MLItr.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:add signature:/MLItr.add|add(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.add' type=<root>.MLItr origin=null
+            1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MLItr.add' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:hasPrevious signature:/MLItr.hasPrevious|hasPrevious(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasPrevious (): <unbound IrClassSymbolImpl> declared in <root>.MLItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.hasPrevious' type=<root>.MLItr origin=null
+      FUN DELEGATED_MEMBER name:previous signature:/MLItr.previous|previous(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun previous (): <unbound IrClassSymbolImpl> declared in <root>.MLItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.previous' type=<root>.MLItr origin=null
+      FUN DELEGATED_MEMBER name:nextIndex signature:/MLItr.nextIndex|nextIndex(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun nextIndex (): <unbound IrClassSymbolImpl> declared in <root>.MLItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.nextIndex' type=<root>.MLItr origin=null
+      FUN DELEGATED_MEMBER name:previousIndex signature:/MLItr.previousIndex|previousIndex(){}[0] visibility:public modality:OPEN <> ($this:<root>.MLItr) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MLItr
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun previousIndex (): <unbound IrClassSymbolImpl> declared in <root>.MLItr'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MLItr.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MLItr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MLItr declared in <root>.MLItr.previousIndex' type=<root>.MLItr origin=null
+    CLASS CLASS name:It signature:/It|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.It
+      CONSTRUCTOR signature:/It.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.It [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:It signature:/It|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/It.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:iterator signature:/It.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.It) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.It
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.It'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/It.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.It' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.It declared in <root>.It.iterator' type=<root>.It origin=null
+    CLASS CLASS name:MIt signature:/MIt|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MIt
+      CONSTRUCTOR signature:/MIt.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MIt [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MIt signature:/MIt|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MIt.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:iterator signature:/MIt.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.MIt) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MIt
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.MIt'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MIt.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MIt' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MIt declared in <root>.MIt.iterator' type=<root>.MIt origin=null
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/C.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:isEmpty signature:/C.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/C.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.isEmpty' type=<root>.C origin=null
+      FUN DELEGATED_MEMBER name:contains signature:/C.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.C, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/C.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.contains' type=<root>.C origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.C.contains' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:iterator signature:/C.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/C.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.iterator' type=<root>.C origin=null
+      FUN DELEGATED_MEMBER name:containsAll signature:/C.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.C, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/C.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.containsAll' type=<root>.C origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.C.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/C.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/C.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/C.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/C.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-size>' type=<root>.C origin=null
+    CLASS CLASS name:MC signature:/MC|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MC
+      CONSTRUCTOR signature:/MC.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MC [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MC signature:/MC|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:iterator signature:/MC.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.MC) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.iterator' type=<root>.MC origin=null
+      FUN DELEGATED_MEMBER name:add signature:/MC.add|add(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun add (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.add' type=<root>.MC origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MC.add' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:remove signature:/MC.remove|remove(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun remove (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.remove' type=<root>.MC origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MC.remove' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:addAll signature:/MC.addAll|addAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun addAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.addAll' type=<root>.MC origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MC.addAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:removeAll signature:/MC.removeAll|removeAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.removeAll' type=<root>.MC origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MC.removeAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:retainAll signature:/MC.retainAll|retainAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun retainAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.retainAll' type=<root>.MC origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MC.retainAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:clear signature:/MC.clear|clear(){}[0] visibility:public modality:OPEN <> ($this:<root>.MC) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.clear' type=<root>.MC origin=null
+      FUN DELEGATED_MEMBER name:isEmpty signature:/MC.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.MC) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.isEmpty' type=<root>.MC origin=null
+      FUN DELEGATED_MEMBER name:contains signature:/MC.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.contains' type=<root>.MC origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MC.contains' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:containsAll signature:/MC.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MC, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.containsAll' type=<root>.MC origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MC.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/MC.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/MC.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MC) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/MC.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MC
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.MC'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MC' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.<get-size>' type=<root>.MC origin=null
+    CLASS CLASS name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L
+      CONSTRUCTOR signature:/L.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.L [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:isEmpty signature:/L.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.L) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.isEmpty' type=<root>.L origin=null
+      FUN DELEGATED_MEMBER name:contains signature:/L.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.L, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.contains' type=<root>.L origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.L.contains' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:iterator signature:/L.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.L) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.iterator' type=<root>.L origin=null
+      FUN DELEGATED_MEMBER name:containsAll signature:/L.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.L, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.containsAll' type=<root>.L origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.L.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/L.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.L, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.get' type=<root>.L origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.L.get' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:indexOf signature:/L.indexOf|indexOf(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.L, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun indexOf (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.indexOf' type=<root>.L origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.L.indexOf' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:lastIndexOf signature:/L.lastIndexOf|lastIndexOf(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.L, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun lastIndexOf (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.lastIndexOf' type=<root>.L origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.L.lastIndexOf' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:listIterator signature:/L.listIterator|listIterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.L) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun listIterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.listIterator' type=<root>.L origin=null
+      FUN DELEGATED_MEMBER name:listIterator signature:/L.listIterator|listIterator(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.L, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun listIterator (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.listIterator' type=<root>.L origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.L.listIterator' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:subList signature:/L.subList|subList(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.L, fromIndex:<unbound IrClassSymbolImpl>, toIndex:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.L
+        VALUE_PARAMETER name:fromIndex index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:toIndex index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun subList (fromIndex: <unbound IrClassSymbolImpl>, toIndex: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.L'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.L declared in <root>.L.subList' type=<root>.L origin=null
+              1: GET_VAR 'fromIndex: <unbound IrClassSymbolImpl> declared in <root>.L.subList' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'toIndex: <unbound IrClassSymbolImpl> declared in <root>.L.subList' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/L.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/L.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.L) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/L.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.L
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.L'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/L.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.L' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.L declared in <root>.L.<get-size>' type=<root>.L origin=null
+    CLASS CLASS name:ML signature:/ML|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ML
+      CONSTRUCTOR signature:/ML.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ML [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ML signature:/ML|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:add signature:/ML.add|add(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun add (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.add' type=<root>.ML origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.add' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:add signature:/ML.add|add(kotlin.Int;kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, index:<unbound IrClassSymbolImpl>, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.add' type=<root>.ML origin=null
+            1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ML.add' type=<unbound IrClassSymbolImpl> origin=null
+            2: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.add' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:remove signature:/ML.remove|remove(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun remove (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.remove' type=<root>.ML origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.remove' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:addAll signature:/ML.addAll|addAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun addAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.addAll' type=<root>.ML origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML.addAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:addAll signature:/ML.addAll|addAll(kotlin.Int;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, index:<unbound IrClassSymbolImpl>, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:elements index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun addAll (index: <unbound IrClassSymbolImpl>, elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.addAll' type=<root>.ML origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ML.addAll' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML.addAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:removeAll signature:/ML.removeAll|removeAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.removeAll' type=<root>.ML origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML.removeAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:retainAll signature:/ML.retainAll|retainAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun retainAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.retainAll' type=<root>.ML origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML.retainAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:clear signature:/ML.clear|clear(){}[0] visibility:public modality:OPEN <> ($this:<root>.ML) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.clear' type=<root>.ML origin=null
+      FUN DELEGATED_MEMBER name:set signature:/ML.set|set(kotlin.Int;kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, index:<unbound IrClassSymbolImpl>, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (index: <unbound IrClassSymbolImpl>, element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.set' type=<root>.ML origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ML.set' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:removeAt signature:/ML.removeAt|removeAt(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAt (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.removeAt' type=<root>.ML origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ML.removeAt' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:listIterator signature:/ML.listIterator|listIterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.ML) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun listIterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.listIterator' type=<root>.ML origin=null
+      FUN DELEGATED_MEMBER name:listIterator signature:/ML.listIterator|listIterator(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun listIterator (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.listIterator' type=<root>.ML origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ML.listIterator' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:subList signature:/ML.subList|subList(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, fromIndex:<unbound IrClassSymbolImpl>, toIndex:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:fromIndex index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:toIndex index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun subList (fromIndex: <unbound IrClassSymbolImpl>, toIndex: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.subList' type=<root>.ML origin=null
+              1: GET_VAR 'fromIndex: <unbound IrClassSymbolImpl> declared in <root>.ML.subList' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'toIndex: <unbound IrClassSymbolImpl> declared in <root>.ML.subList' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:isEmpty signature:/ML.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.ML) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.isEmpty' type=<root>.ML origin=null
+      FUN DELEGATED_MEMBER name:contains signature:/ML.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.contains' type=<root>.ML origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.contains' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:iterator signature:/ML.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.ML) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.iterator' type=<root>.ML origin=null
+      FUN DELEGATED_MEMBER name:containsAll signature:/ML.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.containsAll' type=<root>.ML origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ML.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/ML.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.get' type=<root>.ML origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ML.get' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:indexOf signature:/ML.indexOf|indexOf(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun indexOf (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.indexOf' type=<root>.ML origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.indexOf' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:lastIndexOf signature:/ML.lastIndexOf|lastIndexOf(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ML, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ML
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun lastIndexOf (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ML'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.lastIndexOf' type=<root>.ML origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.ML.lastIndexOf' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/ML.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/ML.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ML) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/ML.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ML
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.ML'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ML.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ML' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ML declared in <root>.ML.<get-size>' type=<root>.ML origin=null
+    CLASS CLASS name:S signature:/S|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.S
+      CONSTRUCTOR signature:/S.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.S [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:S signature:/S|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/S.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:isEmpty signature:/S.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.S) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.S
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.S'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/S.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.S' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.S declared in <root>.S.isEmpty' type=<root>.S origin=null
+      FUN DELEGATED_MEMBER name:contains signature:/S.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.S, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.S
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.S'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/S.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.S' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.S declared in <root>.S.contains' type=<root>.S origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.S.contains' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:iterator signature:/S.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.S) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.S
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.S'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/S.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.S' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.S declared in <root>.S.iterator' type=<root>.S origin=null
+      FUN DELEGATED_MEMBER name:containsAll signature:/S.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.S, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.S
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.S'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/S.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.S' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.S declared in <root>.S.containsAll' type=<root>.S origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.S.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/S.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/S.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.S) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/S.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.S
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.S'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/S.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.S' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.S declared in <root>.S.<get-size>' type=<root>.S origin=null
+    CLASS CLASS name:MS signature:/MS|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MS
+      CONSTRUCTOR signature:/MS.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MS [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MS signature:/MS|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:iterator signature:/MS.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.MS) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.iterator' type=<root>.MS origin=null
+      FUN DELEGATED_MEMBER name:add signature:/MS.add|add(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun add (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.add' type=<root>.MS origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MS.add' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:remove signature:/MS.remove|remove(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun remove (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.remove' type=<root>.MS origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MS.remove' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:addAll signature:/MS.addAll|addAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun addAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.addAll' type=<root>.MS origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MS.addAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:removeAll signature:/MS.removeAll|removeAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.removeAll' type=<root>.MS origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MS.removeAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:retainAll signature:/MS.retainAll|retainAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun retainAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.retainAll' type=<root>.MS origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MS.retainAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:clear signature:/MS.clear|clear(){}[0] visibility:public modality:OPEN <> ($this:<root>.MS) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.clear' type=<root>.MS origin=null
+      FUN DELEGATED_MEMBER name:isEmpty signature:/MS.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.MS) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.isEmpty' type=<root>.MS origin=null
+      FUN DELEGATED_MEMBER name:contains signature:/MS.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.contains' type=<root>.MS origin=null
+              1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.MS.contains' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:containsAll signature:/MS.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MS, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MS
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.MS'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.containsAll' type=<root>.MS origin=null
+              1: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MS.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/MS.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/MS.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MS) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/MS.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MS
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.MS'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MS.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MS' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.MS declared in <root>.MS.<get-size>' type=<root>.MS origin=null
+    CLASS CLASS name:M signature:/M|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.M
+      CONSTRUCTOR signature:/M.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.M [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:M signature:/M|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+            <class: 2>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:isEmpty signature:/M.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.M) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.M
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.M'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.M declared in <root>.M.isEmpty' type=<root>.M origin=null
+      FUN DELEGATED_MEMBER name:containsKey signature:/M.containsKey|containsKey(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.M, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.M
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsKey (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.M'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.M declared in <root>.M.containsKey' type=<root>.M origin=null
+              1: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.M.containsKey' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:containsValue signature:/M.containsValue|containsValue(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.M, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.M
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsValue (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.M'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.M declared in <root>.M.containsValue' type=<root>.M origin=null
+              1: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.M.containsValue' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/M.get|get(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.M, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>? [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.M
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? [operator] declared in <root>.M'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.M declared in <root>.M.get' type=<root>.M origin=null
+              1: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.M.get' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/M.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/M.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.M) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/M.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.M
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.M'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.M declared in <root>.M.<get-size>' type=<root>.M origin=null
+      PROPERTY DELEGATED_MEMBER name:keys signature:/M.keys|{}keys[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-keys> signature:/M.keys.<get-keys>|<get-keys>(){}[0] visibility:public modality:OPEN <> ($this:<root>.M) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:keys signature:/M.keys|{}keys[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.M
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-keys> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.M'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.M declared in <root>.M.<get-keys>' type=<root>.M origin=null
+      PROPERTY DELEGATED_MEMBER name:values signature:/M.values|{}values[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-values> signature:/M.values.<get-values>|<get-values>(){}[0] visibility:public modality:OPEN <> ($this:<root>.M) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:values signature:/M.values|{}values[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.M
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-values> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.M'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.M declared in <root>.M.<get-values>' type=<root>.M origin=null
+      PROPERTY DELEGATED_MEMBER name:entries signature:/M.entries|{}entries[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-entries> signature:/M.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:OPEN <> ($this:<root>.M) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:entries signature:/M.entries|{}entries[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.M
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in <root>.M'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/M.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.M' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.M declared in <root>.M.<get-entries>' type=<root>.M origin=null
+    CLASS CLASS name:MM signature:/MM|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MM
+      CONSTRUCTOR signature:/MM.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MM [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MM signature:/MM|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+            <class: 2>: <unbound IrClassSymbolImpl>
+      FUN DELEGATED_MEMBER name:put signature:/MM.put|put(kotlin.String;kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MM, key:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun put (key: <unbound IrClassSymbolImpl>, value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>.MM'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.put' type=<root>.MM origin=null
+              1: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.MM.put' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.MM.put' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:remove signature:/MM.remove|remove(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MM, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun remove (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>.MM'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.remove' type=<root>.MM origin=null
+              1: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.MM.remove' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:putAll signature:/MM.putAll|putAll(kotlin.collections.Map<out|kotlin.String,kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.MM, from:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        VALUE_PARAMETER name:from index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.putAll' type=<root>.MM origin=null
+            1: GET_VAR 'from: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.MM.putAll' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+      FUN DELEGATED_MEMBER name:clear signature:/MM.clear|clear(){}[0] visibility:public modality:OPEN <> ($this:<root>.MM) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.clear' type=<root>.MM origin=null
+      PROPERTY DELEGATED_MEMBER name:keys signature:/MM.keys|{}keys[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-keys> signature:/MM.keys.<get-keys>|<get-keys>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MM) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:keys signature:/MM.keys|{}keys[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MM
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-keys> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MM'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.<get-keys>' type=<root>.MM origin=null
+      PROPERTY DELEGATED_MEMBER name:values signature:/MM.values|{}values[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-values> signature:/MM.values.<get-values>|<get-values>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MM) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:values signature:/MM.values|{}values[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MM
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-values> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MM'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.<get-values>' type=<root>.MM origin=null
+      PROPERTY DELEGATED_MEMBER name:entries signature:/MM.entries|{}entries[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-entries> signature:/MM.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MM) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:entries signature:/MM.entries|{}entries[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MM
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in <root>.MM'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.<get-entries>' type=<root>.MM origin=null
+      FUN DELEGATED_MEMBER name:isEmpty signature:/MM.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.MM) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.MM'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.isEmpty' type=<root>.MM origin=null
+      FUN DELEGATED_MEMBER name:containsKey signature:/MM.containsKey|containsKey(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MM, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsKey (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MM'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.containsKey' type=<root>.MM origin=null
+              1: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.MM.containsKey' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:containsValue signature:/MM.containsValue|containsValue(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MM, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsValue (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MM'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.containsValue' type=<root>.MM origin=null
+              1: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.MM.containsValue' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/MM.get|get(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MM, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>? [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MM
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? [operator] declared in <root>.MM'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.get' type=<root>.MM origin=null
+              1: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in <root>.MM.get' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/MM.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/MM.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MM) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/MM.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MM
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.MM'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MM.$$delegate_0|[0] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.MM' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.MM declared in <root>.MM.<get-size>' type=<root>.MM origin=null
+    CLASS CLASS name:ME signature:/ME|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ME
+      CONSTRUCTOR signature:/ME.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ME [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ME signature:/ME|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      PROPERTY name:key signature:/ME.key|{}key[0] visibility:public modality:OPEN [val]
+        FUN name:<get-key> signature:/ME.key.<get-key>|<get-key>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ME) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:key signature:/ME.key|{}key[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ME
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:value signature:/ME.value|{}value[0] visibility:public modality:OPEN [val]
+        FUN name:<get-value> signature:/ME.value.<get-value>|<get-value>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ME) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/ME.value|{}value[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ME
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:MME signature:/MME|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MME
+      CONSTRUCTOR signature:/MME.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MME [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MME signature:/MME|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      PROPERTY name:key signature:/MME.key|{}key[0] visibility:public modality:OPEN [val]
+        FUN name:<get-key> signature:/MME.key.<get-key>|<get-key>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MME) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:key signature:/MME.key|{}key[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MME
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:value signature:/MME.value|{}value[0] visibility:public modality:OPEN [val]
+        FUN name:<get-value> signature:/MME.value.<get-value>|<get-value>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MME) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/MME.value|{}value[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MME
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:setValue signature:/MME.setValue|setValue(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MME, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MME
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:reifiedIs signature:/reifiedIs|reifiedIs(kotlin.Any){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /reifiedIs|reifiedIs(kotlin.Any){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=T of <root>.reifiedIs
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.reifiedIs' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:reifiedIsNot signature:/reifiedIsNot|reifiedIsNot(kotlin.Any){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /reifiedIsNot|reifiedIsNot(kotlin.Any){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=T of <root>.reifiedIsNot
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.reifiedIsNot' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:assert signature:/assert|assert(kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (condition:<unbound IrClassSymbolImpl>, message:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:condition index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:message index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'condition: <unbound IrClassSymbolImpl> declared in <root>.assert' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.assert' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:itr type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Itr' type=<root>.Itr origin=null
+        VAR name:mitr type:<root>.MItr [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MItr' type=<root>.MItr origin=null
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val itr: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableIterator<*>>(itr)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mitr: <root>.MItr [val] declared in <root>.box' type=<root>.MItr origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterator<*>>(mitr)"
+        VAR name:litr type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.LItr' type=<root>.LItr origin=null
+        VAR name:mlitr type:<root>.MLItr [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MLItr' type=<root>.MLItr origin=null
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val litr: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableIterator<*>>(litr)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val litr: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableListIterator<*>>(litr)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mlitr: <root>.MLItr [val] declared in <root>.box' type=<root>.MLItr origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableListIterator<*>>(mlitr)"
+        VAR name:it type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.It' type=<root>.It origin=null
+        VAR name:mit type:<root>.MIt [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MIt' type=<root>.MIt origin=null
+        VAR name:arrayList type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val it: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableIterable<*>>(it)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mit: <root>.MIt [val] declared in <root>.box' type=<root>.MIt origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterable<*>>(mit)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val arrayList: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterable<*>>(arrayList)"
+        VAR name:coll type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+        VAR name:mcoll type:<root>.MC [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MC' type=<root>.MC origin=null
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val coll: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableCollection<*>>(coll)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val coll: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableIterable<*>>(coll)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mcoll: <root>.MC [val] declared in <root>.box' type=<root>.MC origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableCollection<*>>(mcoll)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mcoll: <root>.MC [val] declared in <root>.box' type=<root>.MC origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterable<*>>(mcoll)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val arrayList: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableCollection<*>>(arrayList)"
+        VAR name:list type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.L' type=<root>.L origin=null
+        VAR name:mlist type:<root>.ML [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ML' type=<root>.ML origin=null
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val list: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableList<*>>(list)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val list: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableCollection<*>>(list)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val list: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableIterable<*>>(list)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mlist: <root>.ML [val] declared in <root>.box' type=<root>.ML origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableList<*>>(mlist)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mlist: <root>.ML [val] declared in <root>.box' type=<root>.ML origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableCollection<*>>(mlist)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mlist: <root>.ML [val] declared in <root>.box' type=<root>.ML origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterable<*>>(mlist)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val arrayList: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableList<*>>(arrayList)"
+        VAR name:set type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.S' type=<root>.S origin=null
+        VAR name:mset type:<root>.MS [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MS' type=<root>.MS origin=null
+        VAR name:hashSet type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val set: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableSet<*>>(set)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val set: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableCollection<*>>(set)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val set: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableIterable<*>>(set)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mset: <root>.MS [val] declared in <root>.box' type=<root>.MS origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableSet<*>>(mset)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mset: <root>.MS [val] declared in <root>.box' type=<root>.MS origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableCollection<*>>(mset)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val mset: <root>.MS [val] declared in <root>.box' type=<root>.MS origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterable<*>>(mset)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val hashSet: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableSet<*>>(hashSet)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val hashSet: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableCollection<*>>(hashSet)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*>
+            x: GET_VAR 'val hashSet: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableIterable<*>>(hashSet)"
+        VAR name:map type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.M' type=<root>.M origin=null
+        VAR name:mmap type:<root>.MM [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MM' type=<root>.MM origin=null
+        VAR name:hashMap type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+            <class: 2>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*, *>
+            x: GET_VAR 'val map: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableMap<*, *>>(map)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*, *>
+            x: GET_VAR 'val mmap: <root>.MM [val] declared in <root>.box' type=<root>.MM origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableMap<*, *>>(mmap)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*, *>
+            x: GET_VAR 'val hashMap: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableMap<*, *>>(hashMap)"
+        VAR name:entry type:<unbound IrClassSymbolImpl> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ME' type=<root>.ME origin=null
+        VAR name:mentry type:<root>.MME [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MME' type=<root>.MME origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'val hashMap: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value=""
+          2: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:hashMapEntry type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+              $this: GET_VAR 'val hashMap: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIsNot <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*, *>
+            x: GET_VAR 'val entry: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIsNot<MutableMap.MutableEntry<*, *>>(entry)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*, *>
+            x: GET_VAR 'val mentry: <root>.MME [val] declared in <root>.box' type=<root>.MME origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableMap.MutableEntry<*, *>>(mentry)"
+        CALL 'public final fun assert (condition: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          condition: CALL 'public final fun reifiedIs <T> (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl><*, *>
+            x: GET_VAR 'val hashMapEntry: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+          message: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="reifiedIs<MutableMap.MutableEntry<*, *>>(hashMapEntry)"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

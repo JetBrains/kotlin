@@ -1,0 +1,98 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/cast_null.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testCast (x: <unbound IrClassSymbolImpl>?, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          expectSuccess: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        CALL 'public final fun testCastToNullable (x: <unbound IrClassSymbolImpl>?, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          expectSuccess: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'public final fun testCastToNullable (x: <unbound IrClassSymbolImpl>?, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestKlass' type=<root>.TestKlass origin=null
+          expectSuccess: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'public final fun testCastToNullable (x: <unbound IrClassSymbolImpl>?, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONST String type=<unbound IrClassSymbolImpl> value=""
+          expectSuccess: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        CALL 'public final fun testCastNotNullableToNullable (x: <unbound IrClassSymbolImpl>, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestKlass' type=<root>.TestKlass origin=null
+          expectSuccess: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'public final fun testCastNotNullableToNullable (x: <unbound IrClassSymbolImpl>, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONST String type=<unbound IrClassSymbolImpl> value=""
+          expectSuccess: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:TestKlass signature:/TestKlass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestKlass
+      CONSTRUCTOR signature:/TestKlass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TestKlass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestKlass signature:/TestKlass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:ensure signature:/ensure|ensure(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.ensure' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="Error"
+    FUN name:testCast signature:/testCast|testCast(kotlin.Any?;kotlin.Boolean){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, expectSuccess:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:expectSuccess index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TRY type=<root>.TestKlass
+            try: BLOCK type=<root>.TestKlass origin=null
+              TYPE_OP type=<root>.TestKlass origin=CAST typeOperand=<root>.TestKlass
+                GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.testCast' type=<unbound IrClassSymbolImpl>? origin=null
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.testCast
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun ensure (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'expectSuccess: <unbound IrClassSymbolImpl> declared in <root>.testCast' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun testCast (x: <unbound IrClassSymbolImpl>?, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun ensure (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          b: GET_VAR 'expectSuccess: <unbound IrClassSymbolImpl> declared in <root>.testCast' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testCastToNullable signature:/testCastToNullable|testCastToNullable(kotlin.Any?;kotlin.Boolean){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, expectSuccess:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:expectSuccess index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TRY type=<root>.TestKlass?
+            try: BLOCK type=<root>.TestKlass? origin=null
+              TYPE_OP type=<root>.TestKlass? origin=CAST typeOperand=<root>.TestKlass?
+                GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.testCastToNullable' type=<unbound IrClassSymbolImpl>? origin=null
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.testCastToNullable
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun ensure (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'expectSuccess: <unbound IrClassSymbolImpl> declared in <root>.testCastToNullable' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun testCastToNullable (x: <unbound IrClassSymbolImpl>?, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun ensure (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          b: GET_VAR 'expectSuccess: <unbound IrClassSymbolImpl> declared in <root>.testCastToNullable' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testCastNotNullableToNullable signature:/testCastNotNullableToNullable|testCastNotNullableToNullable(kotlin.Any;kotlin.Boolean){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, expectSuccess:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expectSuccess index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TRY type=<root>.TestKlass?
+            try: BLOCK type=<root>.TestKlass? origin=null
+              TYPE_OP type=<root>.TestKlass? origin=CAST typeOperand=<root>.TestKlass?
+                GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.testCastNotNullableToNullable' type=<unbound IrClassSymbolImpl> origin=null
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.testCastNotNullableToNullable
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun ensure (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'expectSuccess: <unbound IrClassSymbolImpl> declared in <root>.testCastNotNullableToNullable' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun testCastNotNullableToNullable (x: <unbound IrClassSymbolImpl>, expectSuccess: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun ensure (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          b: GET_VAR 'expectSuccess: <unbound IrClassSymbolImpl> declared in <root>.testCastNotNullableToNullable' type=<unbound IrClassSymbolImpl> origin=null

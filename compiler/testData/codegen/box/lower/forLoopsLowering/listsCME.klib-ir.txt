@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/listsCME.kt
+    FUN name:testMutableListCME signature:/testMutableListCME|testMutableListCME(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:xs type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="a"
+              CONST String type=<unbound IrClassSymbolImpl> value="b"
+              CONST String type=<unbound IrClassSymbolImpl> value="c"
+              CONST String type=<unbound IrClassSymbolImpl> value="d"
+        VAR name:sb type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:cmeThrown type:<unbound IrClassSymbolImpl> [var]
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+              VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+                  $this: GET_VAR 'val xs: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                  VAR FOR_LOOP_VARIABLE name:elem type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=null
+                          1: GET_VAR 'val elem: <unbound IrClassSymbolImpl> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=null
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'val xs: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        1: GET_VAR 'val elem: <unbound IrClassSymbolImpl> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.testMutableListCME
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var cmeThrown: <unbound IrClassSymbolImpl> [var] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=EQ
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'var cmeThrown: <unbound IrClassSymbolImpl> [var] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testMutableListCME (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL testMutableListCME(): kotlin.ConcurrentModificationException should have been thrown. sb="
+                GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testMutableListCME (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in <root>.testMutableListCME' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="a"
+          2: CALL 'public final fun testMutableListCME (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

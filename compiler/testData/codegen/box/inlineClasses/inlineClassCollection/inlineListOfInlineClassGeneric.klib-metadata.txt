@@ -1,0 +1,101 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Z
+    // class name: ZArray
+    // class name: ZArray.ZArrayIterator
+
+    public final value class Z<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class ZArray : kotlin/collections/List<Z<kotlin/Int>> {
+
+      public constructor(storage: kotlin/IntArray)
+
+      public open operator fun contains(element: Z<kotlin/Int>): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<Z<kotlin/Int>>): kotlin/Boolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open operator fun get(index: kotlin/Int): Z<kotlin/Int>
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun indexOf(element: Z<kotlin/Int>): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<Z<kotlin/Int>>
+
+      public open fun lastIndexOf(element: Z<kotlin/Int>): kotlin/Int
+
+      public open fun listIterator(): kotlin/collections/ListIterator<Z<kotlin/Int>>
+
+      public open fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<Z<kotlin/Int>>
+
+      public open fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<Z<kotlin/Int>>
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      public final val storage: kotlin/IntArray
+        public final get
+
+      // nested class: ZArrayIterator
+
+      // underlying property: storage
+
+      // underlying type: kotlin/IntArray
+    }
+
+    private final class ZArray.ZArrayIterator : kotlin/collections/ListIterator<Z<kotlin/Int>> {
+
+      public constructor(storage: kotlin/IntArray, index: kotlin/Int /* = ... */)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open fun hasPrevious(): kotlin/Boolean
+
+      public open operator fun next(): Z<kotlin/Int>
+
+      public open fun nextIndex(): kotlin/Int
+
+      public open fun previous(): Z<kotlin/Int>
+
+      public open fun previousIndex(): kotlin/Int
+
+      public final var index: kotlin/Int
+        public final get
+        public final set
+
+      public final val storage: kotlin/IntArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

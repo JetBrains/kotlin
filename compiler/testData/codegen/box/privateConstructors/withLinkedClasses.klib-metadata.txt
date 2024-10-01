@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.First
+    // class name: Outer.Other
+
+    public open class Outer : kotlin/Any {
+
+      private constructor(p: Outer?)
+
+      public final val p: Outer?
+        public final get
+
+      // nested class: First
+
+      // nested class: Other
+    }
+
+    public final object Outer.First : Outer {
+
+      private constructor()
+    }
+
+    public final class Outer.Other : Outer {
+
+      public constructor(p: Outer /* = ... */)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

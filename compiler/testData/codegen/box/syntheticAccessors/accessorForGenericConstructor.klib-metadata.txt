@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+    // class name: A.Nested
+    // class name: A.Nested.Inner
+
+    public final class A<T#0 /* T */> : kotlin/Any {
+
+      private constructor(x: T#0, y: kotlin/Int /* = ... */)
+
+      public final val x: T#0
+        public final get
+
+      public final val y: kotlin/Int
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Nested
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun companionA(): A<kotlin/Long>
+    }
+
+    public final class A.Nested : kotlin/Any {
+
+      public constructor()
+
+      public final fun nestedA(): A<kotlin/Long>
+
+      // nested class: Inner
+    }
+
+    public final inner class A.Nested.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun innerA(): A<kotlin/Long>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

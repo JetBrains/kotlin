@@ -1,0 +1,190 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    PROPERTY name:a signature:/a|{}a[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a signature:[ /a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "IntAnno")] <unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> () returnType:@[TypeAnnotation(str = "IntAnno")] <unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:a signature:/a|{}a[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): @[TypeAnnotation(str = "IntAnno")] <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "IntAnno")] <unbound IrClassSymbolImpl> visibility:private [final,static]' type=@[TypeAnnotation(str = "IntAnno")] <unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:b signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? visibility:private [static]
+        EXPRESSION_BODY
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> signature:/b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> () returnType:@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>?
+        correspondingProperty: PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): @[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? visibility:private [static]' type=@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> signature:/b.<set-b>|<set-b>(kotlin.collections.List<kotlin.Pair<kotlin.Int,kotlin.Int>>?){}[0] visibility:public modality:FINAL <> (<set-?>:@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>?) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>?
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: @[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? declared in <root>.<set-b>' type=@[TypeAnnotation(str = "ListAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairAnno")] <unbound IrClassSymbolImpl><@[TypeAnnotation(str = "PairInt1Anno")] <unbound IrClassSymbolImpl>, @[TypeAnnotation(str = "PairInt2Anno")] <unbound IrClassSymbolImpl>>>? origin=null
+    PROPERTY name:typeOperator signature:/typeOperator|{}typeOperator[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:typeOperator signature:[ /typeOperator|{}typeOperator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          TYPE_OP type=@[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl> origin=CAST typeOperand=@[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl>
+            CONST Long type=<unbound IrClassSymbolImpl> value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-typeOperator> signature:/typeOperator.<get-typeOperator>|<get-typeOperator>(){}[0] visibility:public modality:FINAL <> () returnType:@[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:typeOperator signature:/typeOperator|{}typeOperator[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-typeOperator> (): @[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:typeOperator signature:[ /typeOperator|{}typeOperator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl> visibility:private [final,static]' type=@[TypeAnnotation(str = "LongAnno")] <unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:inProjection signature:/inProjection|{}inProjection[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:inProjection signature:[ /inProjection|{}inProjection[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><in @[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>> origin=null
+            <1>: @[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-inProjection> signature:/inProjection.<get-inProjection>|<get-inProjection>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><in @[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:inProjection signature:/inProjection|{}inProjection[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-inProjection> (): <unbound IrClassSymbolImpl><in @[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:inProjection signature:[ /inProjection|{}inProjection[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><in @[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><in @[TypeAnnotation(str = "InProjectionAnno")] <unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:outProjection signature:/outProjection|{}outProjection[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:outProjection signature:[ /outProjection|{}outProjection[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><out @[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>> origin=null
+            <1>: @[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-outProjection> signature:/outProjection.<get-outProjection>|<get-outProjection>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><out @[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:outProjection signature:/outProjection|{}outProjection[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-outProjection> (): <unbound IrClassSymbolImpl><out @[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:outProjection signature:[ /outProjection|{}outProjection[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><out @[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><out @[TypeAnnotation(str = "OutProjectionAnno")] <unbound IrClassSymbolImpl>> origin=null
+    CLASS ANNOTATION_CLASS name:TypeAnnotation signature:/TypeAnnotation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeAnnotation
+      CONSTRUCTOR signature:/TypeAnnotation.<init>|<init>(kotlin.String){}[0] visibility:public <> (str:<unbound IrClassSymbolImpl>) returnType:<root>.TypeAnnotation [primary]
+        VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:TypeAnnotation signature:/TypeAnnotation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:str signature:/TypeAnnotation.str|{}str[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:str signature:[ /TypeAnnotation.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'str: <unbound IrClassSymbolImpl> declared in <root>.TypeAnnotation.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> signature:/TypeAnnotation.str.<get-str>|<get-str>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TypeAnnotation) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:str signature:/TypeAnnotation.str|{}str[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TypeAnnotation
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-str> (): <unbound IrClassSymbolImpl> declared in <root>.TypeAnnotation'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:str signature:[ /TypeAnnotation.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TypeAnnotation declared in <root>.TypeAnnotation.<get-str>' type=<root>.TypeAnnotation origin=null
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:B signature:/B|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[@[TypeAnnotation(str = "AClassAnno")] <root>.A; @[TypeAnnotation(str = "BInterfaceAnno")] <root>.B]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[@[TypeAnnotation(str = "AClassAnno")] <root>.A; @[TypeAnnotation(str = "BInterfaceAnno")] <root>.B]'
+    FUN name:foo signature:/foo|foo(kotlin.String){}[0] visibility:public modality:FINAL <> (a:@[TypeAnnotation(str = "StringAnno")] <unbound IrClassSymbolImpl>) returnType:@[TypeAnnotation(str = "AnyAnno")] <unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:@[TypeAnnotation(str = "StringAnno")] <unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:b type:@[TypeAnnotation(str = "DoubleAnno")] <unbound IrClassSymbolImpl> [val]
+          CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (a: @[TypeAnnotation(str = "StringAnno")] <unbound IrClassSymbolImpl>): @[TypeAnnotation(str = "AnyAnno")] <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'val b: @[TypeAnnotation(str = "DoubleAnno")] <unbound IrClassSymbolImpl> [val] declared in <root>.foo' type=@[TypeAnnotation(str = "DoubleAnno")] <unbound IrClassSymbolImpl> origin=null
+    FUN name:bar signature:/bar|bar(0:0){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (a:@[TypeAnnotation(str = "TAnno")] T of <root>.bar) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /bar|bar(0:0){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnnotation(str = "SuperTAnno")] kotlin.Any] reified:false] ] superTypes:[@[TypeAnnotation(str = "SuperTAnno")] <unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:@[TypeAnnotation(str = "TAnno")] T of <root>.bar
+      BLOCK_BODY
+    FUN name:example signature:/example|example(kotlin.Function0<kotlin.Any>){}[0] visibility:public modality:FINAL <> (computeAny:@[TypeAnnotation(str = "FunAnno")] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:computeAny index:0 type:@[TypeAnnotation(str = "FunAnno")] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        LOCAL_DELEGATED_PROPERTY name:memoizedFoo type:@[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl> flags:val
+          VAR PROPERTY_DELEGATE name:memoizedFoo$delegate type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: GET_VAR 'computeAny: @[TypeAnnotation(str = "FunAnno")] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.example' type=@[TypeAnnotation(str = "FunAnno")] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-memoizedFoo> visibility:local modality:FINAL <> () returnType:@[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-memoizedFoo> (): @[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl> declared in <root>.example'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=@[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl> origin=null
+                  <1>: @[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val memoizedFoo$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.example' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  2: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val memoizedFoo: @[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl> by (...)' delegate='val memoizedFoo$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.example' getter='local final fun <get-memoizedFoo> (): @[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl> declared in <root>.example' setter=null type=<unbound IrClassSymbolImpl><@[TypeAnnotation(str = "LocalDelegateAnno")] <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    TYPEALIAS name:Fun signature:/Fun|null[0] visibility:public expandedType:@[TypeAnnotation(str = "TypeAliasAnno")] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+    FUN name:memberAccess signature:/memberAccess|memberAccess(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun bar <T> (a: @[TypeAnnotation(str = "TAnno")] T of <root>.bar): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: @[TypeAnnotation(str = "FloatAnno")] <unbound IrClassSymbolImpl>
+          a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+    FUN name:withVararg signature:/withVararg|withVararg(kotlin.ByteArray...){}[0] visibility:public modality:FINAL <> (args:@[TypeAnnotation(str = "ByteAnno")] <unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:args index:0 type:@[TypeAnnotation(str = "ByteAnno")] <unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+    FUN name:withAnonymousObject signature:/withAnonymousObject|withAnonymousObject(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<root>.withAnonymousObject.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.withAnonymousObject.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.withAnonymousObject.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+              FUN name:bar visibility:public modality:FINAL <> ($this:<root>.withAnonymousObject.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                $this: VALUE_PARAMETER name:<this> type:<root>.withAnonymousObject.<no name provided>
+                BLOCK_BODY
+                  VAR name:a type:@[TypeAnnotation(str = "InsideObjectAnno")] <root>.A? [val]
+                    CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.withAnonymousObject.<no name provided>' type=<root>.withAnonymousObject.<no name provided> origin=OBJECT_LITERAL
+    CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+      CONSTRUCTOR signature:/Outer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Inner signature:/Outer.Inner|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
+        CONSTRUCTOR signature:/Outer.Inner.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner signature:/Outer.Inner|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:foo signature:/Outer.Inner.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:@[TypeAnnotation(str = "InsideInnerAnno")] <unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): @[TypeAnnotation(str = "InsideInnerAnno")] <unbound IrClassSymbolImpl> declared in <root>.Outer.Inner'
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:functionWithLambda signature:/functionWithLambda|functionWithLambda(kotlin.Function2<kotlin.Int,kotlin.String,kotlin.Any>){}[0] visibility:public modality:FINAL <> (action:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.functionWithLambda' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST String type=<unbound IrClassSymbolImpl> value=""
+    FUN name:lambda signature:/lambda|lambda(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun functionWithLambda (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          action: FUN_EXPR type=<unbound IrClassSymbolImpl><@[TypeAnnotation(str = "InsideLambdaIntAnno")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (integer:@[TypeAnnotation(str = "InsideLambdaIntAnno")] <unbound IrClassSymbolImpl>, string:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:integer index:0 type:@[TypeAnnotation(str = "InsideLambdaIntAnno")] <unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:string index:1 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                VAR name:a type:@[TypeAnnotation(str = "InsideLambdaAnno")] <unbound IrClassSymbolImpl> [val]
+                  CONST Int type=<unbound IrClassSymbolImpl> value=0
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (integer: @[TypeAnnotation(str = "InsideLambdaIntAnno")] <unbound IrClassSymbolImpl>, string: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.lambda'
+                  GET_VAR 'val a: @[TypeAnnotation(str = "InsideLambdaAnno")] <unbound IrClassSymbolImpl> [val] declared in <root>.lambda.<anonymous>' type=@[TypeAnnotation(str = "InsideLambdaAnno")] <unbound IrClassSymbolImpl> origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

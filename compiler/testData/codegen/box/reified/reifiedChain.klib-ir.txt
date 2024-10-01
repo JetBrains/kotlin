@@ -1,0 +1,85 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/reifiedChain.kt
+    PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-log> signature:/log.<get-log>|<get-log>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-log> signature:/log.<set-log>|<set-log>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-log>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:check signature:/check|check@kotlin.Any?(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /check|check@kotlin.Any?(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun check <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=T of <root>.check
+            GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:check2 signature:/check2|check2@kotlin.Any?(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /check2|check2@kotlin.Any?(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun check2 <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun check <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: T of <root>.check2
+            $receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in <root>.check2' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:log signature:/log|log(kotlin.Any?){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-log> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: GET_VAR 'a: <unbound IrClassSymbolImpl>? declared in <root>.log' type=<unbound IrClassSymbolImpl>? origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value=";"
+    FUN name:test signature:/test|test(kotlin.Any?){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun log (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CALL 'public final fun check <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'a: <unbound IrClassSymbolImpl>? declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'public final fun log (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CALL 'public final fun check <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>?
+            $receiver: GET_VAR 'a: <unbound IrClassSymbolImpl>? declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:test2 signature:/test2|test2(kotlin.Any?){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun log (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CALL 'public final fun check2 <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'a: <unbound IrClassSymbolImpl>? declared in <root>.test2' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'public final fun log (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CALL 'public final fun check2 <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>?
+            $receiver: GET_VAR 'a: <unbound IrClassSymbolImpl>? declared in <root>.test2' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public final fun test (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'public final fun test2 (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public final fun test2 (a: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="true;true;false;true;true;true;false;true;"
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun inDouble(x: kotlin/Float): kotlin/Boolean
+
+      public final fun inFloat(x: kotlin/Double): kotlin/Boolean
+
+      public final fun inInt(x: kotlin/Long): kotlin/Boolean
+
+      public final fun inLong(x: kotlin/Int): kotlin/Boolean
+
+      public final fun notInDouble(x: kotlin/Float): kotlin/Boolean
+
+      public final fun notInFloat(x: kotlin/Double): kotlin/Boolean
+
+      public final fun notInInt(x: kotlin/Long): kotlin/Boolean
+
+      public final fun notInLong(x: kotlin/Int): kotlin/Boolean
+    }
+  }
+}

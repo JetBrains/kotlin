@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* R */> doWork(crossinline job: kotlin/Function0<T#0>): T#0
+
+      public final fun <T#0 /* R */> notInline(job: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

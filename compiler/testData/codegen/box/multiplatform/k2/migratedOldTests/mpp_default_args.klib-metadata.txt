@@ -1,0 +1,47 @@
+library {
+  // module name: <actual>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test4
+    // class name: Test5
+    // class name: Test5.Inner
+
+    public final class Test4 : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(arg: kotlin/Any /* = ... */): kotlin/String
+    }
+
+    public final class Test5 : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final inner class Test5.Inner : kotlin/Any {
+
+      public /* secondary */ constructor(arg: kotlin/Any /* = ... */)
+
+      public final fun test(arg1: kotlin/Any /* = ... */, arg2: kotlin/Any /* = ... */): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun inlineFunction(a: kotlin/String, b: kotlin/Int /* = ... */, c: kotlin/Function0<kotlin/Double?> /* = ... */): kotlin/String
+
+      public final fun test1(x: kotlin/Int /* = ... */): kotlin/Int
+
+      public final fun test2(x: kotlin/Int, y: kotlin/Int /* = ... */): kotlin/Int
+
+      public final fun test3(x: kotlin/Int /* = ... */, y: kotlin/Int /* = ... */): kotlin/Int
+
+      public final fun kotlin/Int.test6(arg: kotlin/Int /* = ... */): kotlin/String
+    }
+  }
+}

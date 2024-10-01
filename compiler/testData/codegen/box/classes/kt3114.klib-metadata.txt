@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KeySpan
+
+    public final class KeySpan : kotlin/Any {
+
+      public constructor(left: kotlin/String)
+
+      public final fun matches(value: kotlin/String): kotlin/Boolean
+
+      public final val left: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

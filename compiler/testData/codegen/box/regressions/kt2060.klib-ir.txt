@@ -1,0 +1,76 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    CLASS CLASS name:HelloServer signature:/HelloServer|null[0] modality:FINAL visibility:public superTypes:[testing.ClassWithInternals]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.HelloServer
+      CONSTRUCTOR signature:/HelloServer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.HelloServer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in testing.ClassWithInternals'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:HelloServer signature:/HelloServer|null[0] modality:FINAL visibility:public superTypes:[testing.ClassWithInternals]'
+      FUN name:start signature:/HelloServer.start|start(){}[0] visibility:public modality:OPEN <> ($this:<root>.HelloServer) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun start (): <unbound IrClassSymbolImpl> declared in testing.ClassWithInternals
+        $this: VALUE_PARAMETER name:<this> type:<root>.HelloServer
+        BLOCK_BODY
+          VAR name:test type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.HelloServer declared in <root>.HelloServer.start' type=<root>.HelloServer origin=null
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.HelloServer declared in <root>.HelloServer.start' type=<root>.HelloServer origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public open fun start (): <unbound IrClassSymbolImpl> declared in <root>.HelloServer' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.HelloServer' type=<root>.HelloServer origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:testing fileName:/2.kt
+    CLASS CLASS name:ClassWithInternals signature:testing/ClassWithInternals|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:testing.ClassWithInternals
+      CONSTRUCTOR signature:testing/ClassWithInternals.<init>|<init>(){}[0] visibility:public <> () returnType:testing.ClassWithInternals [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassWithInternals signature:testing/ClassWithInternals|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:some signature:testing/ClassWithInternals.some|{}some[0] visibility:protected modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:some signature:[ testing/ClassWithInternals.some|{}some[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:some type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-some> signature:testing/ClassWithInternals.some.<get-some>|<get-some>(){}[0] visibility:protected modality:FINAL <> ($this:testing.ClassWithInternals) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:some signature:testing/ClassWithInternals.some|{}some[0] visibility:protected modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:testing.ClassWithInternals
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected final fun <get-some> (): <unbound IrClassSymbolImpl> declared in testing.ClassWithInternals'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:some signature:[ testing/ClassWithInternals.some|{}some[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:some type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: testing.ClassWithInternals declared in testing.ClassWithInternals.<get-some>' type=testing.ClassWithInternals origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-some> signature:testing/ClassWithInternals.some.<set-some>|<set-some>(kotlin.Int){}[0] visibility:protected modality:FINAL <> ($this:testing.ClassWithInternals, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:some signature:testing/ClassWithInternals.some|{}some[0] visibility:protected modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:testing.ClassWithInternals
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:some signature:[ testing/ClassWithInternals.some|{}some[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:some type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: testing.ClassWithInternals declared in testing.ClassWithInternals.<set-some>' type=testing.ClassWithInternals origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in testing.ClassWithInternals.<set-some>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:someGetter signature:testing/ClassWithInternals.someGetter|{}someGetter[0] visibility:protected modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:someGetter signature:[ testing/ClassWithInternals.someGetter|{}someGetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:some type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN name:<get-someGetter> signature:testing/ClassWithInternals.someGetter.<get-someGetter>|<get-someGetter>(){}[0] visibility:protected modality:FINAL <> ($this:testing.ClassWithInternals) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:someGetter signature:testing/ClassWithInternals.someGetter|{}someGetter[0] visibility:protected modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:testing.ClassWithInternals
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected final fun <get-someGetter> (): <unbound IrClassSymbolImpl> declared in testing.ClassWithInternals'
+              CONST Int type=<unbound IrClassSymbolImpl> value=5
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-someGetter> signature:testing/ClassWithInternals.someGetter.<set-someGetter>|<set-someGetter>(kotlin.Int){}[0] visibility:protected modality:FINAL <> ($this:testing.ClassWithInternals, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:someGetter signature:testing/ClassWithInternals.someGetter|{}someGetter[0] visibility:protected modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:testing.ClassWithInternals
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:someGetter signature:[ testing/ClassWithInternals.someGetter|{}someGetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:some type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: testing.ClassWithInternals declared in testing.ClassWithInternals.<set-someGetter>' type=testing.ClassWithInternals origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in testing.ClassWithInternals.<set-someGetter>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:foo signature:testing/ClassWithInternals.foo|foo(){}[0] visibility:protected modality:FINAL <> ($this:testing.ClassWithInternals) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:testing.ClassWithInternals
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected final fun foo (): <unbound IrClassSymbolImpl> declared in testing.ClassWithInternals'
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:start signature:testing/ClassWithInternals.start|start(){}[0] visibility:public modality:ABSTRACT <> ($this:testing.ClassWithInternals) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:testing.ClassWithInternals

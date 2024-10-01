@@ -1,0 +1,45 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:t fileName:/kt1413.kt
+    CLASS INTERFACE name:I signature:t/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:t.I
+      FUN name:f signature:t/I.f|f(){}[0] visibility:public modality:ABSTRACT <> ($this:t.I) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:t.I
+    CLASS CLASS name:Test signature:t/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:t.Test
+      CONSTRUCTOR signature:t/Test.<init>|<init>(){}[0] visibility:public <> () returnType:t.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:t/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:t/Test.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:t.Test) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:t.Test
+        BLOCK_BODY
+          VAR name:i type:t.I [val]
+            BLOCK type=t.Test.foo.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[t.I]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:t.Test.foo.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:t.Test.foo.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[t.I]'
+                FUN name:f visibility:public modality:OPEN <> ($this:t.Test.foo.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public abstract fun f (): <unbound IrClassSymbolImpl> declared in t.I
+                  $this: VALUE_PARAMETER name:<this> type:t.Test.foo.<no name provided>
+                  BLOCK_BODY
+                    FUN LOCAL_FUNCTION name:local visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        CALL 'public final fun bar (): <unbound IrClassSymbolImpl> declared in t.Test' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR '<this>: t.Test declared in t.Test.foo' type=t.Test origin=null
+                    CALL 'local final fun local (): <unbound IrClassSymbolImpl> declared in t.Test.foo.<no name provided>.f' type=<unbound IrClassSymbolImpl> origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in t.Test.foo.<no name provided>' type=t.Test.foo.<no name provided> origin=OBJECT_LITERAL
+          CALL 'public abstract fun f (): <unbound IrClassSymbolImpl> declared in t.I' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val i: t.I [val] declared in t.Test.foo' type=t.I origin=null
+      FUN name:bar signature:t/Test.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:t.Test) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:t.Test
+        BLOCK_BODY
+    FUN name:box signature:t/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in t.Test' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in t.Test' type=t.Test origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in t'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

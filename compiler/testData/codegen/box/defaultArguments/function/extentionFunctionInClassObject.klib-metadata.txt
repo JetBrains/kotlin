@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun kotlin/Int.foo(a: kotlin/Int /* = ... */): kotlin/Int
+
+      public final fun test(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

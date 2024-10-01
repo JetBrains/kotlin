@@ -1,0 +1,39 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/1.kt
+    CLASS INTERFACE name:Test signature:/Test|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      PROPERTY name:test signature:/Test.test|{}test[0] visibility:public modality:OPEN [val]
+        FUN name:<get-test> signature:/Test.test.<get-test>|<get-test>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/Test.test|{}test[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/2.kt
+    CLASS INTERFACE name:Test2 signature:/Test2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
+      PROPERTY name:test signature:/Test2.test|{}test[0] visibility:public modality:OPEN [val]
+        FUN name:<get-test> signature:/Test2.test.<get-test>|<get-test>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/Test2.test|{}test[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.Test2'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-test>' type=<root>.Test2 origin=null
+    CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<root>.Test2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass
+      CONSTRUCTOR signature:/TestClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TestClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<root>.Test2]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null

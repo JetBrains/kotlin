@@ -1,0 +1,173 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[test.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[test.A]'
+      FUN name:box signature:/B.box|box(){}[0] visibility:public modality:FINAL <> ($this:<root>.B) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          VAR name:overriddenMethod type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.B.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="C.method"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val overriddenMethod: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.B.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          VAR name:superMethod type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.B.box'
+                    CALL 'protected open fun method (): <unbound IrClassSymbolImpl> declared in test.A' superQualifier='CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="A.method"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val superMethod: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.B.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          VAR name:overriddenPropertyGetter type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.B.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="C.property"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val overriddenPropertyGetter: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.B.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          VAR name:superPropertyGetter type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.B.box'
+                    CALL 'protected open fun <get-property> (): <unbound IrClassSymbolImpl> declared in test.A' superQualifier='CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="A.property"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val superPropertyGetter: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.B.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          VAR name:overriddenPropertySetter type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                    $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value=""
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val overriddenPropertySetter: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.B.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          VAR name:superPropertySetter type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'protected open fun <set-property> (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.A' superQualifier='CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=EQ
+                    $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+                    value: CONST String type=<unbound IrClassSymbolImpl> value=""
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val superPropertySetter: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.B.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="C.property;A.property;"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.B declared in <root>.B.box' type=<root>.B origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>.B'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.B]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.B]'
+      FUN name:method signature:/C.method|method(){}[0] visibility:protected modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected open fun method (): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CONST String type=<unbound IrClassSymbolImpl> value="C.method"
+      PROPERTY name:property signature:/C.property|{}property[0] visibility:protected modality:OPEN [var]
+        FUN name:<get-property> signature:/C.property.<get-property>|<get-property>(){}[0] visibility:protected modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:/C.property|{}property[0] visibility:protected modality:OPEN [var]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-property> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              CONST String type=<unbound IrClassSymbolImpl> value="C.property"
+        FUN name:<set-property> signature:/C.property.<set-property>|<set-property>(kotlin.String){}[0] visibility:protected modality:OPEN <> ($this:<root>.C, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:/C.property|{}property[0] visibility:protected modality:OPEN [var]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.<set-property>' type=<root>.C origin=null
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.C declared in <root>.C.<set-property>' type=<root>.C origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="C.property;"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+  FILE fqName:test fileName:/2.kt
+    CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:state signature:test/A.state|{}state[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:state signature:[ test/A.state|{}state[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:state type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-state> signature:test/A.state.<get-state>|<get-state>(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:state signature:test/A.state|{}state[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-state> (): <unbound IrClassSymbolImpl> declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:state signature:[ test/A.state|{}state[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:state type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.A declared in test.A.<get-state>' type=test.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-state> signature:test/A.state.<set-state>|<set-state>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:test.A, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:state signature:test/A.state|{}state[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:state signature:[ test/A.state|{}state[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:state type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: test.A declared in test.A.<set-state>' type=test.A origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in test.A.<set-state>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:method signature:test/A.method|method(){}[0] visibility:protected modality:OPEN <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected open fun method (): <unbound IrClassSymbolImpl> declared in test.A'
+            CONST String type=<unbound IrClassSymbolImpl> value="A.method"
+      PROPERTY name:property signature:test/A.property|{}property[0] visibility:protected modality:OPEN [var]
+        FUN name:<get-property> signature:test/A.property.<get-property>|<get-property>(){}[0] visibility:protected modality:OPEN <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:test/A.property|{}property[0] visibility:protected modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-property> (): <unbound IrClassSymbolImpl> declared in test.A'
+              CONST String type=<unbound IrClassSymbolImpl> value="A.property"
+        FUN name:<set-property> signature:test/A.property.<set-property>|<set-property>(kotlin.String){}[0] visibility:protected modality:OPEN <> ($this:test.A, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:test/A.property|{}property[0] visibility:protected modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            CALL 'public final fun <set-state> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: test.A declared in test.A.<set-property>' type=test.A origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-state> (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: test.A declared in test.A.<set-property>' type=test.A origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="A.property;"

@@ -1,0 +1,45 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/selfReferenceToInterfaceCompanionObjectInLambdaInSuperConstructorCall.kt
+    CLASS CLASS name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      CONSTRUCTOR signature:/Base.<init>|<init>(kotlin.Function0<kotlin.String>){}[0] visibility:public <> (fn:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.Base [primary]
+        VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:fn signature:/Base.fn|{}fn[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:fn signature:[ /Base.fn|{}fn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function0<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Base.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> signature:/Base.fn.<get-fn>|<get-fn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Base) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:fn signature:/Base.fn|{}fn[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-fn> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Base'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn signature:[ /Base.fn|{}fn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function0<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-fn>' type=<root>.Base origin=null
+    CLASS INTERFACE name:Host signature:/Host|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+      CLASS OBJECT name:Companion signature:/Host.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.Base]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.Companion
+        CONSTRUCTOR signature:/Host.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Host.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in <root>.Base'
+              fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.Host.Companion.<init>'
+                      CALL 'public final fun ok (): <unbound IrClassSymbolImpl> declared in <root>.Host.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Host.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Host.Companion
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Host.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.Base]'
+        FUN name:ok signature:/Host.Companion.ok|ok(){}[0] visibility:public modality:FINAL <> ($this:<root>.Host.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Host.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun ok (): <unbound IrClassSymbolImpl> declared in <root>.Host.Companion'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Host.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Host.Companion

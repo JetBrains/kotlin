@@ -1,0 +1,68 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/propertyInvokeInsidePCLALambda.kt
+    CLASS CLASS name:Controller signature:/Controller|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Controller<E of <root>.Controller>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /Controller|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Controller.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Controller<E of <root>.Controller> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Controller signature:/Controller|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:generate signature:/generate|generate(kotlin.Function1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E1> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller<E1 of <root>.generate>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:E1 index:0 variance: signature:[ /generate|generate(kotlin.Function1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller<E1 of <root>.generate>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller<E1 of <root>.generate>, <unbound IrClassSymbolImpl>> declared in <root>.generate' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller<E1 of <root>.generate>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Controller' type=<root>.Controller<E1 of <root>.generate> origin=null
+            <class: E>: E1 of <root>.generate
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(kotlin.String){}[0] visibility:public <> (r:<unbound IrClassSymbolImpl>) returnType:<root>.A [primary]
+        VALUE_PARAMETER name:r index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:r signature:/A.r|{}r[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:r signature:[ /A.r|{}r[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:r type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'r: <unbound IrClassSymbolImpl> declared in <root>.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-r> signature:/A.r.<get-r>|<get-r>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:r signature:/A.r|{}r[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-r> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r signature:[ /A.r|{}r[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:r type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-r>' type=<root>.A origin=null
+    FUN name:foo signature:/foo|foo(Controller<kotlin.String>){}[0] visibility:public modality:FINAL <> (c:<root>.Controller<<unbound IrClassSymbolImpl>>) returnType:<root>.A
+      VALUE_PARAMETER name:c index:0 type:<root>.Controller<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (c: <root>.Controller<<unbound IrClassSymbolImpl>>): <root>.A declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (r: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+            r: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:bar signature:/bar|bar(kotlin.Function1<A,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (propertyForInvoke:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:propertyForInvoke index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'public final fun generate <E1> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller<E1 of <root>.generate>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <E1>: <unbound IrClassSymbolImpl>
+          block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Controller<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Controller<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$generate type:<root>.Controller<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'propertyForInvoke: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> declared in <root>.bar' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                  1: CALL 'public final fun foo (c: <root>.Controller<<unbound IrClassSymbolImpl>>): <root>.A declared in <root>' type=<root>.A origin=null
+                    c: GET_VAR '$this$generate: <root>.Controller<<unbound IrClassSymbolImpl>> declared in <root>.bar.<anonymous>' type=<root>.Controller<<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        CALL 'public final fun bar (propertyForInvoke: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          propertyForInvoke: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$bar type:<root>.A
+              BLOCK_BODY
+                SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun <get-r> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '$this$bar: <root>.A declared in <root>.box.<anonymous>' type=<root>.A origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

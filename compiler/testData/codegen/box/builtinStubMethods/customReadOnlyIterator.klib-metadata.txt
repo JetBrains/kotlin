@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: MyIterator
+
+    public final class A : kotlin/collections/Collection<kotlin/Char> {
+
+      public constructor()
+
+      public open operator fun contains(element: kotlin/Char): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<kotlin/Char>): kotlin/Boolean
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): MyIterator
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final object MyIterator : kotlin/collections/Iterator<kotlin/Char> {
+
+      private constructor()
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): kotlin/Char
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

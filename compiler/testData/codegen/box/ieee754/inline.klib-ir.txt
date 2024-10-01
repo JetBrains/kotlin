@@ -1,0 +1,152 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inline.kt
+    FUN name:less signature:/less|less(kotlin.Comparable<kotlin.Double>;kotlin.Double){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun less (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=LT
+              $this: GET_VAR 'a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.less' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.less' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:equals signature:/equals|equals(kotlin.Comparable<kotlin.Double>;kotlin.Comparable<kotlin.Double>){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun equals (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.equals' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            arg1: GET_VAR 'b: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.equals' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:lessGeneric signature:/lessGeneric|lessGeneric(0:0;kotlin.Double){0§<kotlin.Comparable<kotlin.Double>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.lessGeneric, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /lessGeneric|lessGeneric(0:0;kotlin.Double){0§<kotlin.Comparable<kotlin.Double>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.lessGeneric
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun lessGeneric <T> (a: T of <root>.lessGeneric, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=LT
+              $this: GET_VAR 'a: T of <root>.lessGeneric declared in <root>.lessGeneric' type=T of <root>.lessGeneric origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.lessGeneric' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:equalsGeneric signature:/equalsGeneric|equalsGeneric(0:0;kotlin.Double){0§<kotlin.Comparable<kotlin.Double>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.equalsGeneric, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /equalsGeneric|equalsGeneric(0:0;kotlin.Double){0§<kotlin.Comparable<kotlin.Double>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.equalsGeneric
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun equalsGeneric <T> (a: T of <root>.equalsGeneric, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: T of <root>.equalsGeneric declared in <root>.equalsGeneric' type=T of <root>.equalsGeneric origin=null
+            arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.equalsGeneric' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:lessReified signature:/lessReified|lessReified(0:0;kotlin.Double){0§<kotlin.Comparable<kotlin.Double>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.lessReified, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /lessReified|lessReified(0:0;kotlin.Double){0§<kotlin.Comparable<kotlin.Double>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:true
+      VALUE_PARAMETER name:a index:0 type:T of <root>.lessReified
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun lessReified <T> (a: T of <root>.lessReified, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=LT
+              $this: GET_VAR 'a: T of <root>.lessReified declared in <root>.lessReified' type=T of <root>.lessReified origin=null
+              1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.lessReified' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:equalsReified signature:/equalsReified|equalsReified(0:0;0:0){0§<kotlin.Comparable<kotlin.Double>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.equalsReified, b:T of <root>.equalsReified) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /equalsReified|equalsReified(0:0;0:0){0§<kotlin.Comparable<kotlin.Double>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:true
+      VALUE_PARAMETER name:a index:0 type:T of <root>.equalsReified
+      VALUE_PARAMETER name:b index:1 type:T of <root>.equalsReified
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun equalsReified <T> (a: T of <root>.equalsReified, b: T of <root>.equalsReified): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: T of <root>.equalsReified declared in <root>.equalsReified' type=T of <root>.equalsReified origin=null
+            arg1: GET_VAR 'b: T of <root>.equalsReified declared in <root>.equalsReified' type=T of <root>.equalsReified origin=null
+    FUN name:less754 signature:/less754|less754(kotlin.Double;kotlin.Double){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun less754 (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+            arg0: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.less754' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.less754' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:equals754 signature:/equals754|equals754(kotlin.Double;kotlin.Double){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun equals754 (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.equals754' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.equals754' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun less (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun equals (a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, b: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun lessGeneric <T> (a: T of <root>.lessGeneric, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun equalsGeneric <T> (a: T of <root>.equalsGeneric, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun lessReified <T> (a: T of <root>.lessReified, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun equalsReified <T> (a: T of <root>.equalsReified, b: T of <root>.equalsReified): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun less754 (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun equals754 (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 8"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

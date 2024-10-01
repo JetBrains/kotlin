@@ -1,0 +1,348 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/invokeRecieverSmartcastK2.kt
+    FUN name:invoke signature:/invoke|invoke@kotlin.String(kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, unused:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:unused index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="String.invoke(String)"
+    FUN name:invoke signature:/invoke|invoke@kotlin.String(kotlin.Any){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, unused:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:unused index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="String.invoke(Any)"
+    FUN name:invoke signature:/invoke|invoke@kotlin.Any(kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, unused:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:unused index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="Any.invoke(String)"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun implicitArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: implicitArgumentCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun explicitArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: explicitArgumentCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun implicitReceiverCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: implicitReceiverCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun explicitReceiverCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: explicitReceiverCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun implicitInvokeExplicitRecieverArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: implicitInvokeExplicitRecieverArgumentCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun explicitInvokeImplicitRecieverArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: explicitInvokeImplicitRecieverArgumentCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun explicitInvokeExplicitRecieverArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    then: SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="FAIL: explicitInvokeExplicitRecieverArgumentCast(): "
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          CONST String type=<unbound IrClassSymbolImpl> value="\n"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:implicitArgumentCast signature:/implicitArgumentCast|implicitArgumentCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun implicitArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR name:result type:<unbound IrClassSymbolImpl> [val]
+              CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=VARIABLE_AS_FUNCTION
+                unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="Any.invoke(String)"
+                then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:explicitArgumentCast signature:/explicitArgumentCast|explicitArgumentCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun explicitArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR name:result type:<unbound IrClassSymbolImpl> [val]
+              CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+                unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="Any.invoke(String)"
+                then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:implicitReceiverCast signature:/implicitReceiverCast|implicitReceiverCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun implicitReceiverCast (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR name:result type:<unbound IrClassSymbolImpl> [val]
+              CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+                unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="String.invoke(String)"
+                then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:explicitReceiverCast signature:/explicitReceiverCast|explicitReceiverCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun explicitReceiverCast (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR name:result type:<unbound IrClassSymbolImpl> [val]
+              CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+                unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="String.invoke(String)"
+                then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitReceiverCast' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:implicitInvokeExplicitRecieverArgumentCast signature:/implicitInvokeExplicitRecieverArgumentCast|implicitInvokeExplicitRecieverArgumentCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitInvokeExplicitRecieverArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+          2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$with type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun implicitInvokeExplicitRecieverArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>'
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                    VAR name:result type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.implicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                          GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.implicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="Any.invoke(String)"
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.implicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:explicitInvokeImplicitRecieverArgumentCast signature:/explicitInvokeImplicitRecieverArgumentCast|explicitInvokeImplicitRecieverArgumentCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitInvokeImplicitRecieverArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+          2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$with type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun explicitInvokeImplicitRecieverArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>'
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                    VAR name:result type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.explicitInvokeImplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                          GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.explicitInvokeImplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitInvokeImplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="Any.invoke(String)"
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitInvokeImplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:explicitInvokeExplicitRecieverArgumentCast signature:/explicitInvokeExplicitRecieverArgumentCast|explicitInvokeExplicitRecieverArgumentCast(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          <2>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitInvokeExplicitRecieverArgumentCast' type=<unbound IrClassSymbolImpl> origin=null
+          2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$with type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun explicitInvokeExplicitRecieverArgumentCast (): <unbound IrClassSymbolImpl> declared in <root>'
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                    VAR name:result type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'public final fun invoke (unused: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.explicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        unused: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                          GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.explicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="Any.invoke(String)"
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.explicitInvokeExplicitRecieverArgumentCast.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null

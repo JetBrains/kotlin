@@ -1,0 +1,41 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:lib fileName:/lib.kt
+    CLASS INTERFACE name:Key signature:lib/Key|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.Key
+      PROPERTY name:s signature:lib/Key.s|{}s[0] visibility:public modality:OPEN [val]
+        FUN name:<get-s> signature:lib/Key.s.<get-s>|<get-s>(){}[0] visibility:public modality:OPEN <> ($this:lib.Key) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:lib/Key.s|{}s[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:lib.Key
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-s> (): <unbound IrClassSymbolImpl> declared in lib.Key'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:Internal signature:lib/Internal|null[0] modality:FINAL visibility:internal superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.Internal
+      CONSTRUCTOR signature:lib/Internal.<init>|<init>(){}[0] visibility:public <> () returnType:lib.Internal [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Internal signature:lib/Internal|null[0] modality:FINAL visibility:internal superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:lib/Internal.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[lib.Key]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.Internal.Companion
+        CONSTRUCTOR signature:lib/Internal.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:lib.Internal.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:lib/Internal.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[lib.Key]'
+
+// MODULE: box
+MODULE_FRAGMENT name:<box>
+  FILE fqName:app fileName:/box.kt
+    FUN name:foo signature:app/foo|foo(lib.Key){}[0] visibility:public modality:FINAL <> (key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in app'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in app.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:app/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in app'
+          CALL 'public final fun foo (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in app' type=<unbound IrClassSymbolImpl> origin=null
+            key: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>

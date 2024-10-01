@@ -1,0 +1,56 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/propertySetter.kt
+    CLASS INTERFACE name:T signature:/T|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.T
+      PROPERTY name:result signature:/T.result|{}result[0] visibility:public modality:ABSTRACT [var]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/T.result.<get-result>|<get-result>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.T) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/T.result|{}result[0] visibility:public modality:ABSTRACT [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.T
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/T.result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.T, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/T.result|{}result[0] visibility:public modality:ABSTRACT [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.T
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<root>.T]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<root>.T]'
+      PROPERTY name:result signature:/A.result|{}result[0] visibility:public modality:OPEN [var]
+        FUN name:<get-result> signature:/A.result.<get-result>|<get-result>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/A.result|{}result[0] visibility:public modality:OPEN [var]
+          overridden:
+            public abstract fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.T
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              CONST String type=<unbound IrClassSymbolImpl> value=""
+        FUN name:<set-result> signature:/A.result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.A, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/A.result|{}result[0] visibility:public modality:OPEN [var]
+          overridden:
+            public abstract fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.T
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A; <root>.T]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A; <root>.T]'
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.T; <root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.T; <root>.A]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

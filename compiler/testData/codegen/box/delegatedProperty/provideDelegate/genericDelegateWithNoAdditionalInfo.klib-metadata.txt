@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DelegateProvider
+
+    public abstract interface DelegateProvider<out T#0 /* T */> : kotlin/Any {
+
+      public abstract operator fun provideDelegate(receiver: kotlin/Any?, prop: kotlin/reflect/KProperty<*>): kotlin/Lazy<T#0>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* Value */ : kotlin/Any> delegate(): DelegateProvider<T#0>
+    }
+  }
+}

@@ -1,0 +1,115 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nestedWhenInResult.kt
+    CLASS ENUM_CLASS name:ABCD signature:/ABCD|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.ABCD>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ABCD
+      CONSTRUCTOR signature:/ABCD.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ABCD [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.ABCD
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:ABCD signature:/ABCD|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.ABCD>]'
+      ENUM_ENTRY name:A signature:/ABCD.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ABCD'
+      ENUM_ENTRY name:B signature:/ABCD.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ABCD'
+      ENUM_ENTRY name:C signature:/ABCD.C|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ABCD'
+      ENUM_ENTRY name:D signature:/ABCD.D|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ABCD'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/ABCD.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.ABCD>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/ABCD.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.ABCD
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/ABCD.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/ABCD.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.ABCD>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/ABCD.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:test signature:/test|test(ABCD;ABCD;kotlin.String){}[0] visibility:public modality:FINAL <> (x:<root>.ABCD, y:<root>.ABCD, ok:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.ABCD
+      VALUE_PARAMETER name:y index:1 type:<root>.ABCD
+      VALUE_PARAMETER name:ok index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (x: <root>.ABCD, y: <root>.ABCD, ok: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.ABCD [val]
+              GET_VAR 'x: <root>.ABCD declared in <root>.test' type=<root>.ABCD origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/ABCD.A|null[0]' type=<root>.ABCD
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/ABCD.B|null[0]' type=<root>.ABCD
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                  VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:<root>.ABCD [val]
+                    GET_VAR 'y: <root>.ABCD declared in <root>.test' type=<root>.ABCD origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                    BRANCH
+                      if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp1_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                            arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/ABCD.A|null[0]' type=<root>.ABCD
+                          then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp1_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                            arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/ABCD.B|null[0]' type=<root>.ABCD
+                      then: GET_VAR 'ok: <unbound IrClassSymbolImpl> declared in <root>.test' type=<unbound IrClassSymbolImpl> origin=null
+                    BRANCH
+                      if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp1_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                            arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/ABCD.C|null[0]' type=<root>.ABCD
+                          then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp1_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                            arg1: GET_ENUM 'ENUM_ENTRY name:D signature:/ABCD.D|null[0]' type=<root>.ABCD
+                      then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'y: <root>.ABCD declared in <root>.test' type=<root>.ABCD origin=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/ABCD.C|null[0]' type=<root>.ABCD
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_subject: <root>.ABCD [val] declared in <root>.test' type=<root>.ABCD origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:D signature:/ABCD.D|null[0]' type=<root>.ABCD
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'x: <root>.ABCD declared in <root>.test' type=<root>.ABCD origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun test (x: <root>.ABCD, y: <root>.ABCD, ok: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              x: GET_ENUM 'ENUM_ENTRY name:B signature:/ABCD.B|null[0]' type=<root>.ABCD
+              y: GET_ENUM 'ENUM_ENTRY name:A signature:/ABCD.A|null[0]' type=<root>.ABCD
+              ok: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CALL 'public final fun test (x: <root>.ABCD, y: <root>.ABCD, ok: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              x: GET_ENUM 'ENUM_ENTRY name:A signature:/ABCD.A|null[0]' type=<root>.ABCD
+              y: GET_ENUM 'ENUM_ENTRY name:B signature:/ABCD.B|null[0]' type=<root>.ABCD
+              ok: CONST String type=<unbound IrClassSymbolImpl> value="K"

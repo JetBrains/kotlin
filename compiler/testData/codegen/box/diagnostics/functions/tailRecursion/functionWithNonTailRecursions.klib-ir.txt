@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/functionWithNonTailRecursions.kt
+    FUN name:badTails signature:/badTails|badTails(kotlin.Int){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [tailrec]
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                  BRANCH
+                    if: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                      arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: CONST Int type=<unbound IrClassSymbolImpl> value=50
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                then: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                  arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  1: CALL 'public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                      $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  1: CALL 'public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                      $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          BRANCH
+            if: CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+              arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=50
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>'
+                CALL 'public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                    $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.badTails' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun badTails (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=1000000
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

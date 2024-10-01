@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: IFn
+    // class name: Test
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor(fn: IFn)
+
+      public final val fn: IFn
+        public final get
+    }
+
+    public abstract interface IFn : kotlin/Any {
+
+      public abstract operator fun invoke(): kotlin/String
+    }
+
+    public final object Test : Base {
+
+      private constructor()
+
+      public final fun ok(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

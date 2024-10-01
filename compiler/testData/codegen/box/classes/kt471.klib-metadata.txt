@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MNR
+    // class name: MyArrayList
+    // class name: MyNumber
+
+    public final class MNR : kotlin/Any {
+
+      public constructor(ref: MyNumber)
+
+      public final var ref: MyNumber
+        public final get
+        public final set
+    }
+
+    public final class MyArrayList<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun get(index: kotlin/Int): T#0
+
+      public final operator fun set(index: kotlin/Int, value: T#0): T#0?
+
+      private final var value17: T#0?
+        private final get
+        private final set
+
+      private final var value39: T#0?
+        private final get
+        private final set
+    }
+
+    public final class MyNumber : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public final operator fun inc(): MyNumber
+
+      public final val i: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): kotlin/Boolean
+
+      public final fun test2(): kotlin/Boolean
+
+      public final fun test3(): kotlin/Boolean
+
+      public final fun test4(): kotlin/Boolean
+
+      public final fun test5(): kotlin/Boolean
+
+      public final fun test6(): kotlin/Boolean
+
+      public final fun test7(): kotlin/Boolean
+
+      public final fun test8(): kotlin/Boolean
+    }
+  }
+}

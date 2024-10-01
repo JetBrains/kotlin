@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testForStringWithIndex(): kotlin/Int
+
+      public final fun testIntArrayForWithIndex(): kotlin/Int
+
+      public final fun testIntForEachSequenceWithIndex(): kotlin/Int
+
+      public final fun testIntForWithIndex(): kotlin/Int
+
+      public final fun testIntForWithIndexAndDestructor(): kotlin/Int
+
+      public final fun testIntForWithIndexAndDestructorNotUsed(): kotlin/Int
+
+      public final fun testIntForWithIndexNotUsed(): kotlin/Int
+
+      public final fun testIntForWithIndexPartiallyUsed(): kotlin/Int
+
+      public final fun testIntForWithIndexWithTemporary(): kotlin/Int
+
+      public final fun testIntSequenceWithIndex(): kotlin/Int
+
+      public final fun testIntWithIndexForEach(): kotlin/Int
+
+      public final fun testUIntArrayForWithIndex(): kotlin/Int
+    }
+  }
+}

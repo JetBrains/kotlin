@@ -1,0 +1,103 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+    // class name: B
+    // class name: B.Companion
+    // class name: C
+    // class name: C.Companion
+    // class name: OtherB
+
+    public final data class A : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final /* synthesized */ operator fun component1(): kotlin/String
+
+      public final /* synthesized */ fun copy(s: kotlin/String /* = ... */): A
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : C<A, kotlin/String> {
+
+      private constructor()
+
+      public open /* delegation */ fun foo(a: A): kotlin/String
+    }
+
+    public final data class B : kotlin/Any {
+
+      public constructor(a: A?)
+
+      public final /* synthesized */ operator fun component1(): A?
+
+      public final /* synthesized */ fun copy(a: A? /* = ... */): B
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: A?
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object B.Companion : C<B, OtherB> {
+
+      private constructor()
+
+      public open /* delegation */ fun foo(a: B): OtherB
+    }
+
+    public abstract interface C<T#0 /* A */ : kotlin/Any, T#1 /* B */ : kotlin/Any> : kotlin/Any {
+
+      public abstract fun foo(a: T#0): T#1
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object C.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final inline fun <reified T#2 /* A */ : kotlin/Any, reified T#3 /* B */ : kotlin/Any> inlinefun(crossinline fooParam: kotlin/Function1<T#2, T#3>): C<T#2, T#3>
+    }
+
+    public final class OtherB : kotlin/Any {
+
+      public constructor()
+
+      public final var a: kotlin/String?
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

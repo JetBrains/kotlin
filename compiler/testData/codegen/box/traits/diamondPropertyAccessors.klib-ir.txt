@@ -1,0 +1,61 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/diamondPropertyAccessors.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      PROPERTY name:bar signature:/A.bar|{}bar[0] visibility:public modality:OPEN [var]
+        FUN name:<get-bar> signature:/A.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/A.bar|{}bar[0] visibility:public modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        FUN name:<set-bar> signature:/A.bar.<set-bar>|<set-bar>(kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.A, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/A.bar|{}bar[0] visibility:public modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="Fail set"
+    CLASS INTERFACE name:B signature:/B|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CLASS INTERFACE name:C signature:/C|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      PROPERTY name:bar signature:/C.bar|{}bar[0] visibility:public modality:OPEN [var]
+        FUN name:<get-bar> signature:/C.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/C.bar|{}bar[0] visibility:public modality:OPEN [var]
+          overridden:
+            public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.A
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        FUN name:<set-bar> signature:/C.bar.<set-bar>|<set-bar>(kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.C, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/C.bar|{}bar[0] visibility:public modality:OPEN [var]
+          overridden:
+            public open fun <set-bar> (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+    CLASS INTERFACE name:D signature:/D|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.B; <root>.C]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+    CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.D]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl
+      CONSTRUCTOR signature:/Impl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Impl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.D]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Impl' type=<root>.Impl origin=null
+          1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Impl' type=<root>.Impl origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail get"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

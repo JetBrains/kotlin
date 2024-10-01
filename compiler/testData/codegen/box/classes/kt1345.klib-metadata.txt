@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Actor
+    // class name: Creator
+    // class name: Factory
+    // class name: MyFactory
+
+    public final class Actor : kotlin/Any {
+
+      public constructor(code: kotlin/String /* = ... */)
+
+      public final val code: kotlin/String
+        public final get
+    }
+
+    public abstract interface Creator<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun create(): T#0
+    }
+
+    public abstract interface Factory : Creator<Actor> {
+    }
+
+    public final class MyFactory : Factory {
+
+      public constructor()
+
+      public open fun create(): Actor
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

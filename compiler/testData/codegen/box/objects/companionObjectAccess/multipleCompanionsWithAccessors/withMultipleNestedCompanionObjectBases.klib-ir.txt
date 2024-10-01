@@ -1,0 +1,118 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:a fileName:/a.kt
+    CLASS CLASS name:A1 signature:a/A1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.A1
+      CONSTRUCTOR signature:a/A1.<init>|<init>(){}[0] visibility:public <> () returnType:a.A1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 signature:a/A1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:a/A1.Companion|null[0] modality:FINAL visibility:protected [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.A1.Companion
+        CONSTRUCTOR signature:a/A1.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:a.A1.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:a/A1.Companion|null[0] modality:FINAL visibility:protected [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:getO signature:a/A1.Companion.getO|getO(){}[0] visibility:public modality:FINAL <> ($this:a.A1.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:a.A1.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun getO (): <unbound IrClassSymbolImpl> declared in a.A1.Companion'
+              CONST String type=<unbound IrClassSymbolImpl> value="O"
+    CLASS CLASS name:A2 signature:a/A2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.A2
+      CONSTRUCTOR signature:a/A2.<init>|<init>(){}[0] visibility:public <> () returnType:a.A2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 signature:a/A2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:a/A2.Companion|null[0] modality:FINAL visibility:protected [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.A2.Companion
+        CONSTRUCTOR signature:a/A2.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:a.A2.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:a/A2.Companion|null[0] modality:FINAL visibility:protected [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:getK signature:a/A2.Companion.getK|getK(){}[0] visibility:public modality:FINAL <> ($this:a.A2.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:a.A2.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun getK (): <unbound IrClassSymbolImpl> declared in a.A2.Companion'
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+  FILE fqName:b fileName:/b.kt
+    CLASS CLASS name:B signature:b/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B
+      CONSTRUCTOR signature:b/B.<init>|<init>(){}[0] visibility:public <> () returnType:b.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:b/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:B1 signature:b/B.B1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B.B1
+        CONSTRUCTOR signature:b/B.B1.<init>|<init>(){}[0] visibility:public <> () returnType:b.B.B1 [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B1 signature:b/B.B1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS OBJECT name:Companion signature:b/B.B1.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[a.A1]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B.B1.Companion
+          CONSTRUCTOR signature:b/B.B1.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:b.B.B1.Companion [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.A1'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:b/B.B1.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[a.A1]'
+          PROPERTY name:vo signature:b/B.B1.Companion.vo|{}vo[0] visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:vo signature:[ b/B.B1.Companion.vo|{}vo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:vo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CALL 'public final fun getO (): <unbound IrClassSymbolImpl> declared in a.A1.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:a/A1.Companion|null[0] modality:FINAL visibility:protected [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=a.A1.Companion
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-vo> signature:b/B.B1.Companion.vo.<get-vo>|<get-vo>(){}[0] visibility:public modality:FINAL <> ($this:b.B.B1.Companion) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:vo signature:b/B.B1.Companion.vo|{}vo[0] visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:b.B.B1.Companion
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-vo> (): <unbound IrClassSymbolImpl> declared in b.B.B1.Companion'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vo signature:[ b/B.B1.Companion.vo|{}vo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:vo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: b.B.B1.Companion declared in b.B.B1.Companion.<get-vo>' type=b.B.B1.Companion origin=null
+        CLASS CLASS name:B2 signature:b/B.B1.B2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B.B1.B2
+          CONSTRUCTOR signature:b/B.B1.B2.<init>|<init>(){}[0] visibility:public <> () returnType:b.B.B1.B2 [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B2 signature:b/B.B1.B2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          CLASS OBJECT name:Companion signature:b/B.B1.B2.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[a.A2]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B.B1.B2.Companion
+            CONSTRUCTOR signature:b/B.B1.B2.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:b.B.B1.B2.Companion [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.A2'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:b/B.B1.B2.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[a.A2]'
+            PROPERTY name:vk signature:b/B.B1.B2.Companion.vk|{}vk[0] visibility:public modality:FINAL [val]
+              FIELD PROPERTY_BACKING_FIELD name:vk signature:[ b/B.B1.B2.Companion.vk|{}vk[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:vo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+                EXPRESSION_BODY
+                  CALL 'public final fun getK (): <unbound IrClassSymbolImpl> declared in a.A2.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:a/A2.Companion|null[0] modality:FINAL visibility:protected [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=a.A2.Companion
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-vk> signature:b/B.B1.B2.Companion.vk.<get-vk>|<get-vk>(){}[0] visibility:public modality:FINAL <> ($this:b.B.B1.B2.Companion) returnType:<unbound IrClassSymbolImpl>
+                correspondingProperty: PROPERTY name:vk signature:b/B.B1.B2.Companion.vk|{}vk[0] visibility:public modality:FINAL [val]
+                $this: VALUE_PARAMETER name:<this> type:b.B.B1.B2.Companion
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-vk> (): <unbound IrClassSymbolImpl> declared in b.B.B1.B2.Companion'
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vk signature:[ b/B.B1.B2.Companion.vk|{}vk[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:vo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: b.B.B1.B2.Companion declared in b.B.B1.B2.Companion.<get-vk>' type=b.B.B1.B2.Companion origin=null
+      CLASS OBJECT name:Companion signature:b/B.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B.Companion
+        CONSTRUCTOR signature:b/B.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:b.B.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:b/B.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:vok signature:b/B.Companion.vok|{}vok[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:vok signature:[ b/B.Companion.vok|{}vok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:vo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'public final fun <get-vo> (): <unbound IrClassSymbolImpl> declared in b.B.B1.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:b/B.B1.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[a.A1]' type=b.B.B1.Companion
+                1: CALL 'public final fun <get-vk> (): <unbound IrClassSymbolImpl> declared in b.B.B1.B2.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:b/B.B1.B2.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[a.A2]' type=b.B.B1.B2.Companion
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-vok> signature:b/B.Companion.vok.<get-vok>|<get-vok>(){}[0] visibility:public modality:FINAL <> ($this:b.B.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:vok signature:b/B.Companion.vok|{}vok[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:b.B.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-vok> (): <unbound IrClassSymbolImpl> declared in b.B.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vok signature:[ b/B.Companion.vok|{}vok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:vo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: b.B.Companion declared in b.B.Companion.<get-vok>' type=b.B.Companion origin=null
+  FILE fqName:<root> fileName:/withCompanionObjectBase.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-vok> (): <unbound IrClassSymbolImpl> declared in b.B.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:b/B.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=b.B.Companion

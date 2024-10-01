@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    internal final class A : B {
+
+      public /* secondary */ constructor()
+
+      public /* secondary */ constructor(x: kotlin/Int)
+
+      public /* secondary */ constructor(x1: kotlin/Int, x2: kotlin/Int)
+
+      public final var prop: kotlin/String
+        public final get
+        public final set
+    }
+
+    internal abstract class B : kotlin/Any {
+
+      protected /* secondary */ constructor(arg: kotlin/Int)
+
+      protected /* secondary */ constructor(arg1: kotlin/Int, arg2: kotlin/Int)
+
+      public final val parentProp: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var sideEffects: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

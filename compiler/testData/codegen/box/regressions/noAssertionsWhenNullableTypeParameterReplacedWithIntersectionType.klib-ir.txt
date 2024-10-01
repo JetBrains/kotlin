@@ -1,0 +1,61 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt
+    CLASS CLASS name:Recursive signature:/Recursive|null[0] modality:FINAL visibility:public superTypes:[<root>.Generic<<root>.PlaceHolder<T of <root>.Recursive>>; <root>.MainSupertype]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Recursive<T of <root>.Recursive>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Recursive|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false
+      CONSTRUCTOR signature:/Recursive.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Recursive<T of <root>.Recursive> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Recursive signature:/Recursive|null[0] modality:FINAL visibility:public superTypes:[<root>.Generic<<root>.PlaceHolder<T of <root>.Recursive>>; <root>.MainSupertype]'
+    CLASS CLASS name:Simple signature:/Simple|null[0] modality:OPEN visibility:public superTypes:[<root>.Generic<T of <root>.Simple>; <root>.MainSupertype]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Simple<T of <root>.Simple>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Simple|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Simple.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Simple<T of <root>.Simple> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Simple signature:/Simple|null[0] modality:OPEN visibility:public superTypes:[<root>.Generic<T of <root>.Simple>; <root>.MainSupertype]'
+    CLASS INTERFACE name:Generic signature:/Generic|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Generic<T of <root>.Generic>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Generic|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:PlaceHolder signature:/PlaceHolder|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Stub<T of <root>.PlaceHolder>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PlaceHolder<T of <root>.PlaceHolder>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /PlaceHolder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<root>.MainSupertype] reified:false
+    CLASS INTERFACE name:Stub signature:/Stub|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Stub<T of <root>.Stub>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Stub|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<root>.MainSupertype] reified:false
+    CLASS INTERFACE name:MainSupertype signature:/MainSupertype|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MainSupertype
+    CLASS INTERFACE name:SpecificStub signature:/SpecificStub|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Stub<T of <root>.SpecificStub>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SpecificStub<T of <root>.SpecificStub>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /SpecificStub|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<root>.SpecificSimple] reified:false
+    CLASS CLASS name:SpecificSimple signature:/SpecificSimple|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Simple<<root>.SpecificStub<*>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SpecificSimple
+      CONSTRUCTOR signature:/SpecificSimple.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SpecificSimple [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Simple'
+            <T>: <root>.SpecificStub<*>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SpecificSimple signature:/SpecificSimple|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Simple<<root>.SpecificStub<*>>]'
+    FUN name:takeElement signature:/takeElement|takeElement(Recursive<*>?;Simple<SpecificStub<*>>){}[0] visibility:public modality:FINAL <> (recursive:<root>.Recursive<*>?, simpleWithSpecific:<root>.Simple<<root>.SpecificStub<*>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:recursive index:0 type:<root>.Recursive<*>?
+      VALUE_PARAMETER name:simpleWithSpecific index:1 type:<root>.Simple<<root>.SpecificStub<*>>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun select <T> (x: T of <root>.select?, y: T of <root>.select): T of <root>.select declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: GET_VAR 'recursive: <root>.Recursive<*>? declared in <root>.takeElement' type=<root>.Recursive<*>? origin=null
+            y: GET_VAR 'simpleWithSpecific: <root>.Simple<<root>.SpecificStub<*>> declared in <root>.takeElement' type=<root>.Simple<<root>.SpecificStub<*>> origin=null
+    FUN name:select signature:/select|select(0:0?;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.select?, y:T of <root>.select) returnType:T of <root>.select
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /select|select(0:0?;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Recursive<T of <root>.Recursive>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.select?
+      VALUE_PARAMETER name:y index:1 type:T of <root>.select
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun select <T> (x: T of <root>.select?, y: T of <root>.select): T of <root>.select declared in <root>'
+          GET_VAR 'y: T of <root>.select declared in <root>.select' type=T of <root>.select origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun takeElement (recursive: <root>.Recursive<*>?, simpleWithSpecific: <root>.Simple<<root>.SpecificStub<*>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          recursive: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          simpleWithSpecific: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Simple' type=<root>.Simple<<root>.SpecificStub<*>> origin=null
+            <class: T>: <root>.SpecificStub<*>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

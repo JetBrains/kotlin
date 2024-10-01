@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> jaggedArray(x: kotlin/Function3<kotlin/Int, kotlin/Int, kotlin/Int, T#0>): kotlin/Array<kotlin/Array<kotlin/Array<T#0>>>
+    }
+  }
+}

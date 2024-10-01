@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Consumer
+
+    public abstract interface Consumer<in T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> buildConsumer(b: kotlin/Boolean, block: kotlin/Function1<Consumer<T#0>, kotlin/Unit>): T#0?
+
+      public final fun elvis(b: kotlin/Boolean): kotlin/String
+
+      public final fun expectConsumerString(x: Consumer<kotlin/String>): kotlin/Unit
+
+      public final fun <T#0 /* T */> materialize(): T#0
+    }
+  }
+}

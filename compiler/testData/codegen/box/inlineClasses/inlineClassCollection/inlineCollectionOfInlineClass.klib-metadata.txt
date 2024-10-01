@@ -1,0 +1,81 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Z
+    // class name: ZArray
+    // class name: ZArray.ZArrayIterator
+
+    public final value class Z : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class ZArray : kotlin/collections/Collection<Z> {
+
+      public constructor(storage: kotlin/IntArray)
+
+      public open operator fun contains(element: Z): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<Z>): kotlin/Boolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<Z>
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      public final val storage: kotlin/IntArray
+        public final get
+
+      // nested class: ZArrayIterator
+
+      // underlying property: storage
+
+      // underlying type: kotlin/IntArray
+    }
+
+    private final class ZArray.ZArrayIterator : kotlin/collections/Iterator<Z> {
+
+      public constructor(storage: kotlin/IntArray)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): Z
+
+      public final var index: kotlin/Int
+        public final get
+        public final set
+
+      public final val storage: kotlin/IntArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: C.A
+    // class name: C.D
+
+    public open class C<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: A
+
+      // nested class: D
+    }
+
+    public final inner class C.A<T#1 /* U */> : kotlin/Any {
+
+      public constructor(x: T#0?, y: T#1)
+
+      public final val x: T#0?
+        public final get
+
+      public final val y: T#1
+        public final get
+    }
+
+    public final class C.D : C<kotlin/Nothing> {
+
+      public constructor()
+
+      public final fun f(): C<kotlin/Nothing>.A<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

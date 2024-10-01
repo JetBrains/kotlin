@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun modID(a: kotlin/Int, b: kotlin/Double): kotlin/Double
+
+      public final fun sumIB(a: kotlin/Int, b: kotlin/Byte): kotlin/Int
+
+      public final fun sumID(a: kotlin/Int, b: kotlin/Double): kotlin/Double
+
+      public final fun sumIF(a: kotlin/Int, b: kotlin/Float): kotlin/Float
+
+      public final fun sumII(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+
+      public final fun sumIL(a: kotlin/Int, b: kotlin/Long): kotlin/Long
+
+      public final fun sumIS(a: kotlin/Int, b: kotlin/Short): kotlin/Int
+    }
+  }
+}

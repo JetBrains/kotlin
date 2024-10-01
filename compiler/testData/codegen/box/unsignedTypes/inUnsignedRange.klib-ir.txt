@@ -1,0 +1,289 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inUnsignedRange.kt
+    PROPERTY name:M1 signature:/M1|{}M1[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:M1 signature:[ /M1|{}M1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-M1> signature:/M1.<get-M1>|<get-M1>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:M1 signature:/M1|{}M1[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-M1> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:M1 signature:[ /M1|{}M1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:M2 signature:/M2|{}M2[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:M2 signature:[ /M2|{}M2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-M1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-M2> signature:/M2.<get-M2>|<get-M2>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:M2 signature:/M2|{}M2[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-M2> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:M2 signature:[ /M2|{}M2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:u_1_10 signature:/u_1_10|{}u_1_10[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:u_1_10 signature:[ /u_1_10|{}u_1_10[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-u_1_10> signature:/u_1_10.<get-u_1_10>|<get-u_1_10>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:u_1_10 signature:/u_1_10|{}u_1_10[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-u_1_10> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:u_1_10 signature:[ /u_1_10|{}u_1_10[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:ul_1_10 signature:/ul_1_10|{}ul_1_10[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:ul_1_10 signature:[ /ul_1_10|{}ul_1_10[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ul_1_10> signature:/ul_1_10.<get-ul_1_10>|<get-ul_1_10>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:ul_1_10 signature:/ul_1_10|{}ul_1_10[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ul_1_10> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ul_1_10 signature:[ /ul_1_10|{}ul_1_10[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:minUI_maxUI signature:/minUI_maxUI|{}minUI_maxUI[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:minUI_maxUI signature:[ /minUI_maxUI|{}minUI_maxUI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-minUI_maxUI> signature:/minUI_maxUI.<get-minUI_maxUI>|<get-minUI_maxUI>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:minUI_maxUI signature:/minUI_maxUI|{}minUI_maxUI[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-minUI_maxUI> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:minUI_maxUI signature:[ /minUI_maxUI|{}minUI_maxUI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:minUL_maxUL signature:/minUL_maxUL|{}minUL_maxUL[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:minUL_maxUL signature:[ /minUL_maxUL|{}minUL_maxUL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=-1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-minUL_maxUL> signature:/minUL_maxUL.<get-minUL_maxUL>|<get-minUL_maxUL>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:minUL_maxUL signature:/minUL_maxUL|{}minUL_maxUL[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-minUL_maxUL> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:minUL_maxUL signature:[ /minUL_maxUL|{}minUL_maxUL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:m1_m2 signature:/m1_m2|{}m1_m2[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:m1_m2 signature:[ /m1_m2|{}m1_m2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CALL 'public final fun <get-M1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CALL 'public final fun <get-M2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-m1_m2> signature:/m1_m2.<get-m1_m2>|<get-m1_m2>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:m1_m2 signature:/m1_m2|{}m1_m2[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:m1_m2 signature:[ /m1_m2|{}m1_m2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MaxUI signature:/MaxUI|{}MaxUI[0] visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:MaxUI signature:[ /MaxUI|{}MaxUI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=-1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MaxUI> signature:/MaxUI.<get-MaxUI>|<get-MaxUI>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MaxUI signature:/MaxUI|{}MaxUI[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MaxUI> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MaxUI signature:[ /MaxUI|{}MaxUI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MinUI signature:/MinUI|{}MinUI[0] visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:MinUI signature:[ /MinUI|{}MinUI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MinUI> signature:/MinUI.<get-MinUI>|<get-MinUI>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MinUI signature:/MinUI|{}MinUI[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MinUI> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MinUI signature:[ /MinUI|{}MinUI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MaxUL signature:/MaxUL|{}MaxUL[0] visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:MaxUL signature:[ /MaxUL|{}MaxUL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=-1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MaxUL> signature:/MaxUL.<get-MaxUL>|<get-MaxUL>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MaxUL signature:/MaxUL|{}MaxUL[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MaxUL> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MaxUL signature:[ /MaxUL|{}MaxUL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MinUL signature:/MinUL|{}MinUL[0] visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:MinUL signature:[ /MinUL|{}MinUL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MinUL> signature:/MinUL.<get-MinUL>|<get-MinUL>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MinUL signature:/MinUL|{}MinUL[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MinUL> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MinUL signature:[ /MinUL|{}MinUL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MaxUI type:kotlin.UInt visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-u_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-u_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-u_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-u_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-u_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-ul_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-ul_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-ul_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=5
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-ul_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=10
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-ul_1_10> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-minUI_maxUI> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-minUI_maxUI> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-minUI_maxUI> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-minUL_maxUL> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-minUL_maxUL> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-minUL_maxUL> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=-1
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+              $this: CALL 'public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Long type=<unbound IrClassSymbolImpl> value=10
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CALL 'public final fun <get-M1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'public final fun <get-M1> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'public final fun <get-m1_m2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CALL 'public final fun <get-M2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

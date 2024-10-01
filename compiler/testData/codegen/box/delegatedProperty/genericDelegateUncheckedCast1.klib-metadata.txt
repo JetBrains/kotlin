@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: Delegate
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      // nested class: B
+    }
+
+    public final inner class A.B : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ var prop: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+    }
+
+    public final class Delegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(inner: T#0)
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): T#0
+
+      public final operator fun setValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>, i: T#0): kotlin/Unit
+
+      public final var inner: T#0
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final inline fun asFailsWithCCE(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final val del: Delegate<kotlin/String>
+        public final get
+    }
+  }
+}

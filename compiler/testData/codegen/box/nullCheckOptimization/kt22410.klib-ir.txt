@@ -1,0 +1,70 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt22410.kt
+    PROPERTY name:func signature:/func|{}func[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:func signature:[ /func|{}func[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:func type:kotlin.Function1<kotlin.Any, kotlin.Unit> visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [static]
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.func'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-func> signature:/func.<get-func>|<get-func>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:func signature:/func|{}func[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-func> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:func signature:[ /func|{}func[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:func type:kotlin.Function1<kotlin.Any, kotlin.Unit> visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-func> signature:/func.<set-func>|<set-func>(kotlin.Function1<kotlin.Any,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:func signature:/func|{}func[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:func signature:[ /func|{}func[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:func type:kotlin.Function1<kotlin.Any, kotlin.Unit> visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.<set-func>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:testedEquals signature:/testedEquals|{}testedEquals[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:testedEquals signature:[ /testedEquals|{}testedEquals[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:func type:kotlin.Function1<kotlin.Any, kotlin.Unit> visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testedEquals> signature:/testedEquals.<get-testedEquals>|<get-testedEquals>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:testedEquals signature:/testedEquals|{}testedEquals[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-testedEquals> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testedEquals signature:[ /testedEquals|{}testedEquals[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:func type:kotlin.Function1<kotlin.Any, kotlin.Unit> visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testedEquals> signature:/testedEquals.<set-testedEquals>|<set-testedEquals>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:testedEquals signature:/testedEquals|{}testedEquals[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testedEquals signature:[ /testedEquals|{}testedEquals[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:func type:kotlin.Function1<kotlin.Any, kotlin.Unit> visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-testedEquals>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun defineFunc <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: CALL 'public final fun <get-func> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun <get-testedEquals> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+    FUN name:defineFunc signature:/defineFunc|defineFunc(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /defineFunc|defineFunc(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        CALL 'public final fun <set-func> (<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                VAR name:nullable type:T of <root>.defineFunc? [val]
+                  TYPE_OP type=T of <root>.defineFunc? origin=SAFE_CAST typeOperand=T of <root>.defineFunc
+                    GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.defineFunc.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val nullable: T of <root>.defineFunc? [val] declared in <root>.defineFunc.<anonymous>' type=T of <root>.defineFunc? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CALL 'public final fun <set-testedEquals> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                      <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=true

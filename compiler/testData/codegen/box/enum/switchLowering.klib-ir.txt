@@ -1,0 +1,244 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/switchLowering.kt
+    PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sb> signature:/sb.<get-sb>|<get-sb>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS ENUM_CLASS name:EnumA signature:/EnumA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumA>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EnumA
+      CONSTRUCTOR signature:/EnumA.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EnumA [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.EnumA
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EnumA signature:/EnumA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumA>]'
+      ENUM_ENTRY name:A signature:/EnumA.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumA'
+      ENUM_ENTRY name:B signature:/EnumA.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumA'
+      ENUM_ENTRY name:C signature:/EnumA.C|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumA'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/EnumA.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumA>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/EnumA.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.EnumA
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumA.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/EnumA.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumA>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumA.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:EnumB signature:/EnumB|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumB>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EnumB
+      CONSTRUCTOR signature:/EnumB.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EnumB [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.EnumB
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EnumB signature:/EnumB|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumB>]'
+      ENUM_ENTRY name:A signature:/EnumB.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumB'
+      ENUM_ENTRY name:B signature:/EnumB.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumB'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/EnumB.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumB>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/EnumB.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.EnumB
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumB.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/EnumB.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumB>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumB.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.E>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+      CONSTRUCTOR signature:/E.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.E [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.E
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.E>]'
+      ENUM_ENTRY name:ONE signature:/E.ONE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
+      ENUM_ENTRY name:TWO signature:/E.TWO|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
+      ENUM_ENTRY name:THREE signature:/E.THREE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.E>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.E
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.E>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:produceEntry signature:/produceEntry|produceEntry(){}[0] visibility:public modality:FINAL <> () returnType:<root>.EnumA
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun produceEntry (): <root>.EnumA declared in <root>'
+          GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+    FUN name:nullable signature:/nullable|nullable(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<root>.EnumA? [val]
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.EnumA? [val]
+              GET_VAR 'val x: <root>.EnumA? [val] declared in <root>.nullable' type=<root>.EnumA? origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.EnumA? [val] declared in <root>.nullable' type=<root>.EnumA? origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="ok"
+    FUN name:operatorOverloading signature:/operatorOverloading|operatorOverloading(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:contains visibility:local modality:FINAL <> ($receiver:<root>.E, other:<root>.E) returnType:<unbound IrClassSymbolImpl> [operator]
+          $receiver: VALUE_PARAMETER name:<this> type:<root>.E
+          VALUE_PARAMETER name:other index:0 type:<root>.E
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='local final fun contains (other: <root>.E): <unbound IrClassSymbolImpl> [operator] declared in <root>.operatorOverloading'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        VAR name:y type:<root>.E [val]
+          GET_ENUM 'ENUM_ENTRY name:ONE signature:/E.ONE|null[0]' type=<root>.E
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.E [val]
+              GET_VAR 'val y: <root>.E [val] declared in <root>.operatorOverloading' type=<root>.E origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'local final fun contains (other: <root>.E): <unbound IrClassSymbolImpl> [operator] declared in <root>.operatorOverloading' type=<unbound IrClassSymbolImpl> origin=IN
+                  $receiver: GET_ENUM 'ENUM_ENTRY name:ONE signature:/E.ONE|null[0]' type=<root>.E
+                  other: GET_VAR 'val tmp0_subject: <root>.E [val] declared in <root>.operatorOverloading' type=<root>.E origin=null
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="Should not reach here"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="ok"
+    FUN name:smoke1 signature:/smoke1|smoke1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.EnumA [val]
+              CALL 'public final fun produceEntry (): <root>.EnumA declared in <root>' type=<root>.EnumA origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.EnumA [val] declared in <root>.smoke1' type=<root>.EnumA origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/EnumA.B|null[0]' type=<root>.EnumA
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="error"
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.EnumA [val] declared in <root>.smoke1' type=<root>.EnumA origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="ok"
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.EnumA [val] declared in <root>.smoke1' type=<root>.EnumA origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/EnumA.C|null[0]' type=<root>.EnumA
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="error"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:smoke2 signature:/smoke2|smoke2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.EnumA [val]
+              CALL 'public final fun produceEntry (): <root>.EnumA declared in <root>' type=<root>.EnumA origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <root>.EnumA [val] declared in <root>.smoke2' type=<root>.EnumA origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/EnumA.B|null[0]' type=<root>.EnumA
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="error"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="ok"
+    FUN name:eA signature:/eA|eA(){}[0] visibility:public modality:FINAL <> () returnType:<root>.EnumA
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eA (): <root>.EnumA declared in <root>'
+          GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+    FUN name:eB signature:/eB|eB(){}[0] visibility:public modality:FINAL <> () returnType:<root>.EnumA
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eB (): <root>.EnumA declared in <root>'
+          GET_ENUM 'ENUM_ENTRY name:B signature:/EnumA.B|null[0]' type=<root>.EnumA
+    FUN name:nestedWhen signature:/nestedWhen|nestedWhen(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.EnumA [val]
+                CALL 'public final fun eA (): <root>.EnumA declared in <root>' type=<root>.EnumA origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                BRANCH
+                  if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.EnumA [val] declared in <root>.nestedWhen' type=<root>.EnumA origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+                      then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.EnumA [val] declared in <root>.nestedWhen' type=<root>.EnumA origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/EnumA.C|null[0]' type=<root>.EnumA
+                  then: BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                    VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:<root>.EnumA [val]
+                      CALL 'public final fun eB (): <root>.EnumA declared in <root>' type=<root>.EnumA origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp1_subject: <root>.EnumA [val] declared in <root>.nestedWhen' type=<root>.EnumA origin=null
+                          arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/EnumA.B|null[0]' type=<root>.EnumA
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="ok"
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="nope"
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST String type=<unbound IrClassSymbolImpl> value="nope"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun nullable (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun operatorOverloading (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun smoke1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun smoke2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun nestedWhen (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        ok\n        ok\n        ok\n        ok\n        ok\n\n    "
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

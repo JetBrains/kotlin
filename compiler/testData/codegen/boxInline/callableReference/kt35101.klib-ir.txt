@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:let2 signature:test/let2|let2@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> ($receiver:T of test.let2, block:<unbound IrClassSymbolImpl><T of test.let2, R of test.let2>) returnType:R of test.let2 [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/let2|let2@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ test/let2|let2@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of test.let2
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of test.let2, R of test.let2>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun let2 <T, R> (block: <unbound IrClassSymbolImpl><T of test.let2, R of test.let2>): R of test.let2 [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.let2 origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of test.let2, R of test.let2> declared in test.let2' type=<unbound IrClassSymbolImpl><T of test.let2, R of test.let2> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR '<this>: T of test.let2 declared in test.let2' type=T of test.let2 origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun let2 <T, R> (block: <unbound IrClassSymbolImpl><T of test.let2, R of test.let2>): R of test.let2 [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            <R>: <unbound IrClassSymbolImpl>
+            $receiver: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            block: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

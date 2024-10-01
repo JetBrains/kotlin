@@ -1,0 +1,81 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/overloadBinaryOperator.kt
+    CLASS CLASS name:ArrayWrapper signature:/ArrayWrapper|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayWrapper<T of <root>.ArrayWrapper>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ArrayWrapper|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ArrayWrapper.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ArrayWrapper<T of <root>.ArrayWrapper> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArrayWrapper signature:/ArrayWrapper|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:contents signature:/ArrayWrapper.contents|{}contents[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:contents signature:[ /ArrayWrapper.contents|{}contents[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:contents type:kotlin.collections.ArrayList<T of <root>.ArrayWrapper> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=null
+              <class: 1>: T of <root>.ArrayWrapper
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-contents> signature:/ArrayWrapper.contents.<get-contents>|<get-contents>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ArrayWrapper<T of <root>.ArrayWrapper>) returnType:<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper>
+          correspondingProperty: PROPERTY name:contents signature:/ArrayWrapper.contents|{}contents[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayWrapper<T of <root>.ArrayWrapper>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:contents signature:[ /ArrayWrapper.contents|{}contents[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:contents type:kotlin.collections.ArrayList<T of <root>.ArrayWrapper> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayWrapper<T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper.<get-contents>' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+      FUN name:add signature:/ArrayWrapper.add|add(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.ArrayWrapper<T of <root>.ArrayWrapper>, item:T of <root>.ArrayWrapper) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayWrapper<T of <root>.ArrayWrapper>
+        VALUE_PARAMETER name:item index:0 type:T of <root>.ArrayWrapper
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayWrapper<T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper.add' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+              1: GET_VAR 'item: T of <root>.ArrayWrapper declared in <root>.ArrayWrapper.add' type=T of <root>.ArrayWrapper origin=null
+      FUN name:plus signature:/ArrayWrapper.plus|plus(ArrayWrapper<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.ArrayWrapper<T of <root>.ArrayWrapper>, b:<root>.ArrayWrapper<T of <root>.ArrayWrapper>) returnType:<root>.ArrayWrapper<T of <root>.ArrayWrapper> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayWrapper<T of <root>.ArrayWrapper>
+        VALUE_PARAMETER name:b index:0 type:<root>.ArrayWrapper<T of <root>.ArrayWrapper>
+        BLOCK_BODY
+          VAR name:result type:<root>.ArrayWrapper<T of <root>.ArrayWrapper> [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ArrayWrapper' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+              <class: T>: T of <root>.ArrayWrapper
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=GET_PROPERTY
+                $this: GET_VAR 'val result: <root>.ArrayWrapper<T of <root>.ArrayWrapper> [val] declared in <root>.ArrayWrapper.plus' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+              1: CALL 'public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayWrapper<T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper.plus' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=GET_PROPERTY
+                $this: GET_VAR 'val result: <root>.ArrayWrapper<T of <root>.ArrayWrapper> [val] declared in <root>.ArrayWrapper.plus' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+              1: CALL 'public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> origin=GET_PROPERTY
+                $this: GET_VAR 'b: <root>.ArrayWrapper<T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper.plus' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun plus (b: <root>.ArrayWrapper<T of <root>.ArrayWrapper>): <root>.ArrayWrapper<T of <root>.ArrayWrapper> [operator] declared in <root>.ArrayWrapper'
+            GET_VAR 'val result: <root>.ArrayWrapper<T of <root>.ArrayWrapper> [val] declared in <root>.ArrayWrapper.plus' type=<root>.ArrayWrapper<T of <root>.ArrayWrapper> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:v1 type:<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ArrayWrapper' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+        VAR name:v2 type:<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ArrayWrapper' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun add (item: T of <root>.ArrayWrapper): <unbound IrClassSymbolImpl> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val v1: <root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+          item: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+        CALL 'public final fun add (item: T of <root>.ArrayWrapper): <unbound IrClassSymbolImpl> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val v2: <root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+          item: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+        VAR name:v3 type:<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun plus (b: <root>.ArrayWrapper<T of <root>.ArrayWrapper>): <root>.ArrayWrapper<T of <root>.ArrayWrapper> [operator] declared in <root>.ArrayWrapper' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=PLUS
+            $this: GET_VAR 'val v1: <root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+            b: GET_VAR 'val v2: <root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-contents> (): <unbound IrClassSymbolImpl><T of <root>.ArrayWrapper> declared in <root>.ArrayWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR 'val v3: <root>.ArrayWrapper<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayWrapper<<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

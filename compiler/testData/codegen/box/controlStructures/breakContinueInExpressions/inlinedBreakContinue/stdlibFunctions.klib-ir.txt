@@ -1,0 +1,45 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/stdlibFunctions.kt
+    FUN name:myForEach signature:/myForEach|myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.myForEach>, action:<unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /myForEach|myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.myForEach>
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><T of <root>.myForEach> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.myForEach> declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEach> [val] declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:element type:T of <root>.myForEach [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.myForEach origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEach> [val] declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                $this: GET_VAR 'action: <unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>> declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                1: GET_VAR 'val element: T of <root>.myForEach [val] declared in <root>.myForEach' type=T of <root>.myForEach origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value=""
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      <2>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                          $receiver: VALUE_PARAMETER name:$this$run type:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            BREAK label=null loop.label=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

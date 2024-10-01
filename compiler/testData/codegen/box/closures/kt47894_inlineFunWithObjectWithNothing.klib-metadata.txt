@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Kla6
+    // class name: Kla7
+
+    public abstract interface Kla6 : kotlin/Any {
+
+      public abstract fun fu32(): kotlin/Unit
+    }
+
+    public final class Kla7 : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun fu33(crossinline f: kotlin/Function1<kotlin/Int, kotlin/Any>): kotlin/Unit
+
+      public final inline fun fu34(crossinline f: kotlin/Function1<kotlin/Int, kotlin/Any>): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

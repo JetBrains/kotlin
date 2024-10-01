@@ -1,0 +1,96 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: L
+    // class name: Outer
+    // class name: Outer.Inner
+    // class name: Outer.Static
+    // class name: Rec
+
+    public open class L<T#0 /* LL */> : kotlin/Any {
+
+      public constructor(ll: T#0)
+
+      public final val ll: T#0
+        public final get
+    }
+
+    public final class Outer<T#0 /* OT */> : kotlin/Any {
+
+      public constructor(ot: T#0)
+
+      public final fun <T#1 /* FT */> bar(ft: T#1): Outer<T#1>
+
+      public final fun <T#1 /* II */> createI(ii: T#1): Outer<T#0>.Inner<T#1>
+
+      public final fun <T#1 /* SS */> createS(ss: T#1): Outer.Static<T#1>
+
+      public final fun <T#1 /* FT */> local1(ft: T#1): L<T#1>
+
+      public final val ot: T#0
+        public final get
+
+      // nested class: Static
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner<T#1 /* IT */> : kotlin/Any {
+
+      public constructor(it: T#1, oot: T#0)
+
+      public final fun <T#2 /* FT */> bar(fft: T#2): Outer<T#0>.Inner<T#2>
+
+      public final fun <T#2 /* FT */> local3(fft: T#2): L<T#2>
+
+      public final fun <T#2 /* FT */> local4(fft: T#2): L<T#2>
+
+      public final fun <T#2 /* PT */> readP(r: Rec<T#2>): L<T#2>
+
+      public final val it: T#1
+        public final get
+
+      public final val oot: T#0
+        public final get
+
+      public final val <T#2 /* PT */> Rec<T#2>.p: L<T#2>
+        public final /* non-default */ get
+    }
+
+    public final class Outer.Static<T#1 /* ST */> : kotlin/Any {
+
+      public constructor(st: T#1)
+
+      public final fun <T#2 /* FT */> bar(fft: T#2): Outer.Static<T#2>
+
+      public final fun <T#2 /* FT */> local2(ft: T#2): L<T#2>
+
+      public final val st: T#1
+        public final get
+    }
+
+    public final class Rec<T#0 /* T */> : kotlin/Any {
+
+      public constructor(rt: T#0)
+
+      public final val rt: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T1 */, T#1 /* R */> foo1(t1: T#0, bb: kotlin/Function1<T#0, T#1>): T#1
+
+      public final fun <T#0 /* T1 */, T#1 /* T2 */, T#2 /* R */> foo2(t1: T#0, t2: T#1, bb: kotlin/Function2<T#0, T#1, T#2>): T#2
+
+      public final fun <T#0 /* T1 */, T#1 /* T2 */, T#2 /* T3 */, T#3 /* R */> foo3(t1: T#0, t2: T#1, t3: T#2, bb: kotlin/Function3<T#0, T#1, T#2, T#3>): T#3
+
+      public final fun <T#0 /* T1 */, T#1 /* T2 */, T#2 /* T3 */, T#3 /* T4 */, T#4 /* R */> foo4(t1: T#0, t2: T#1, t3: T#2, t4: T#3, bb: kotlin/Function4<T#0, T#1, T#2, T#3, T#4>): T#4
+    }
+  }
+}

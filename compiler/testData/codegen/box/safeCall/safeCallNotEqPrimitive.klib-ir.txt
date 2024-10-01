@@ -1,0 +1,225 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/safeCallNotEqPrimitive.kt
+    FUN name:id signature:/id|id@kotlin.Long(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:drop2 signature:/drop2|drop2@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun drop2 (): <unbound IrClassSymbolImpl>? declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl>? origin=IF
+            BRANCH
+              if: CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.drop2' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.drop2' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.drop2' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:anyLength signature:/anyLength|anyLength@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun anyLength (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.anyLength' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:doSimple signature:/doSimple|doSimple(kotlin.String?){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doSimple (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                  GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.doSimple' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doSimple' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doSimple' type=<unbound IrClassSymbolImpl>? origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+    FUN name:doLongReceiver signature:/doLongReceiver|doLongReceiver(kotlin.Long){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doLongReceiver (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl> [val]
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.doLongReceiver' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl> [val] declared in <root>.doLongReceiver' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun id (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl> [val] declared in <root>.doLongReceiver' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CONST Long type=<unbound IrClassSymbolImpl> value=3
+    FUN name:doChain signature:/doChain|doChain(kotlin.String?){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doChain (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                  BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                      GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.doChain' type=<unbound IrClassSymbolImpl>? origin=null
+                    WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doChain' type=<unbound IrClassSymbolImpl>? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'public final fun drop2 (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                          $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doChain' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doChain' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doChain' type=<unbound IrClassSymbolImpl>? origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:doIf signature:/doIf|doIf(kotlin.String?){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doIf (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                      GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.doIf' type=<unbound IrClassSymbolImpl>? origin=null
+                    WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doIf' type=<unbound IrClassSymbolImpl>? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doIf' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: CONST String type=<unbound IrClassSymbolImpl> value="A"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="B"
+    FUN name:doCmpWithAny signature:/doCmpWithAny|doCmpWithAny(kotlin.String?){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doCmpWithAny (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                  GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.doCmpWithAny' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doCmpWithAny' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun anyLength (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.doCmpWithAny' type=<unbound IrClassSymbolImpl>? origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doSimple (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 1"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doSimple (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST String type=<unbound IrClassSymbolImpl> value="1"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 2"
+            BRANCH
+              if: CALL 'public final fun doSimple (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                s: CONST String type=<unbound IrClassSymbolImpl> value="123"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 3"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doLongReceiver (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  x: CONST Long type=<unbound IrClassSymbolImpl> value=2
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 4"
+            BRANCH
+              if: CALL 'public final fun doLongReceiver (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                x: CONST Long type=<unbound IrClassSymbolImpl> value=3
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 5"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doChain (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 6"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doChain (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST String type=<unbound IrClassSymbolImpl> value="1"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 7"
+            BRANCH
+              if: CALL 'public final fun doChain (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                s: CONST String type=<unbound IrClassSymbolImpl> value="123"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 7"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun doIf (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="A"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 8"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun doIf (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST String type=<unbound IrClassSymbolImpl> value="123"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 9"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun doIf (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 10"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doCmpWithAny (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 11"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun doCmpWithAny (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  s: CONST String type=<unbound IrClassSymbolImpl> value="1"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 12"
+            BRANCH
+              if: CALL 'public final fun doCmpWithAny (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                s: CONST String type=<unbound IrClassSymbolImpl> value="123"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="failed 13"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

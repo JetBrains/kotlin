@@ -1,0 +1,86 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/valueof.kt
+    CLASS ENUM_CLASS name:Color signature:/Color|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Color>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Color
+      CONSTRUCTOR signature:/Color.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Color [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Color
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Color signature:/Color|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Color>]'
+      ENUM_ENTRY name:RED signature:/Color.RED|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Color'
+      ENUM_ENTRY name:BLUE signature:/Color.BLUE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Color'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Color.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Color>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Color.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Color
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Color.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Color.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Color>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Color.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:throwsOnGreen signature:/throwsOnGreen|throwsOnGreen(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'public final fun valueOf (value: <unbound IrClassSymbolImpl>): <root>.Color declared in <root>.Color' type=<root>.Color origin=null
+                value: CONST String type=<unbound IrClassSymbolImpl> value="GREEN"
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun throwsOnGreen (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.throwsOnGreen
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun throwsOnGreen (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                    BRANCH
+                      if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                        BRANCH
+                          if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: CALL 'public final fun valueOf (value: <unbound IrClassSymbolImpl>): <root>.Color declared in <root>.Color' type=<root>.Color origin=null
+                                  value: CONST String type=<unbound IrClassSymbolImpl> value="RED"
+                                arg1: GET_ENUM 'ENUM_ENTRY name:RED signature:/Color.RED|null[0]' type=<root>.Color
+                              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: CALL 'public final fun valueOf (value: <unbound IrClassSymbolImpl>): <root>.Color declared in <root>.Color' type=<root>.Color origin=null
+                                  value: CONST String type=<unbound IrClassSymbolImpl> value="BLUE"
+                                arg1: GET_ENUM 'ENUM_ENTRY name:BLUE signature:/Color.BLUE|null[0]' type=<root>.Color
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                          then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Color origin=GET_ARRAY_ELEMENT
+                              $this: CALL 'public final fun values (): <unbound IrClassSymbolImpl><<root>.Color> declared in <root>.Color' type=<unbound IrClassSymbolImpl><<root>.Color> origin=null
+                              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                            arg1: GET_ENUM 'ENUM_ENTRY name:RED signature:/Color.RED|null[0]' type=<root>.Color
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                      then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Color origin=GET_ARRAY_ELEMENT
+                          $this: CALL 'public final fun values (): <unbound IrClassSymbolImpl><<root>.Color> declared in <root>.Color' type=<unbound IrClassSymbolImpl><<root>.Color> origin=null
+                          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        arg1: GET_ENUM 'ENUM_ENTRY name:BLUE signature:/Color.BLUE|null[0]' type=<root>.Color
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                  then: CALL 'public final fun throwsOnGreen (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

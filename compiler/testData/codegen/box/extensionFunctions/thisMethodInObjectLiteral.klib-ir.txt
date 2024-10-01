@@ -1,0 +1,51 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/thisMethodInObjectLiteral.kt
+    CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:self signature:/Test.self|self@0:0(){0§<kotlin.Any>}[0] visibility:private modality:FINAL <T> ($this:<root>.Test, $receiver:T of <root>.Test.self) returnType:<root>.Test.self.<no name provided><T of <root>.Test.self>
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /Test.self|self@0:0(){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Test.self
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun self <T> (): <root>.Test.self.<no name provided><T of <root>.Test.self> declared in <root>.Test'
+            BLOCK type=<root>.Test.self.<no name provided><T of <root>.Test.self> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.self.<no name provided><T of <root>.Test.self>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.Test.self.<no name provided><T of <root>.Test.self> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                FUN name:calc visibility:public modality:FINAL <> ($this:<root>.Test.self.<no name provided><T of <root>.Test.self>) returnType:T of <root>.Test.self
+                  $this: VALUE_PARAMETER name:<this> type:<root>.Test.self.<no name provided><T of <root>.Test.self>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public final fun calc (): T of <root>.Test.self declared in <root>.Test.self.<no name provided>'
+                      GET_VAR '<this>: T of <root>.Test.self declared in <root>.Test.self' type=T of <root>.Test.self origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test.self.<no name provided>' type=<root>.Test.self.<no name provided><T of <root>.Test.self> origin=OBJECT_LITERAL
+      FUN name:box signature:/Test.box|box(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun calc (): T of <root>.Test.self declared in <root>.Test.self.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'private final fun self <T> (): <root>.Test.self.<no name provided><T of <root>.Test.self> declared in <root>.Test' type=<root>.Test.self.<no name provided><<unbound IrClassSymbolImpl>> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.box' type=<root>.Test origin=null
+                  $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun box (): <unbound IrClassSymbolImpl> declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test' type=<root>.Test origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

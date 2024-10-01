@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/popSizes.kt
+    FUN name:foo signature:/foo|foo(kotlin.Long;kotlin.Int;kotlin.Double;kotlin.String){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>, z:<unbound IrClassSymbolImpl>, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:z index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:3 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TRY type=<unbound IrClassSymbolImpl>
+              try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>, z: <unbound IrClassSymbolImpl>, s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  x: CONST Long type=<unbound IrClassSymbolImpl> value=0
+                  y: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  z: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+                  s: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value=""
+                    1: CONTINUE label=null loop.label=null
+              finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>, z: <unbound IrClassSymbolImpl>, s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  x: CONST Long type=<unbound IrClassSymbolImpl> value=0
+                  y: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  z: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+                  s: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value=""
+                    1: BREAK label=null loop.label=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

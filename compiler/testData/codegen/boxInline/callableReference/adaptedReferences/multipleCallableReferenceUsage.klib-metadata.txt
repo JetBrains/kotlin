@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun calcOnePlusTwo(f: kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int
+
+      public final inline fun doIt(f: kotlin/Function0<kotlin/Int>): kotlin/Int
+
+      public final inline fun getFirstArg(a: kotlin/Int, vararg other: kotlin/Int /* kotlin/IntArray */): kotlin/Int
+
+      public final fun testCustomFunction(): kotlin/Boolean
+
+      public final fun testRuntimeFunctionCase1(): kotlin/Boolean
+
+      public final fun testRuntimeFunctionCase2(): kotlin/Boolean
+    }
+  }
+}

@@ -1,0 +1,151 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:calc signature:test/calc|calc(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun calc (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:test signature:test/test|test@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> [inline] declared in test'
+          GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Test signature:test/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Test
+      CONSTRUCTOR signature:test/Test.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String){}[0] visibility:public <> (p1:<unbound IrClassSymbolImpl>, p2:<unbound IrClassSymbolImpl>, p3:<unbound IrClassSymbolImpl>, p4:<unbound IrClassSymbolImpl>, p5:<unbound IrClassSymbolImpl>, p6:<unbound IrClassSymbolImpl>, p7:<unbound IrClassSymbolImpl>, p8:<unbound IrClassSymbolImpl>, p9:<unbound IrClassSymbolImpl>, p10:<unbound IrClassSymbolImpl>, p11:<unbound IrClassSymbolImpl>, p12:<unbound IrClassSymbolImpl>, p13:<unbound IrClassSymbolImpl>, p14:<unbound IrClassSymbolImpl>, p15:<unbound IrClassSymbolImpl>, p16:<unbound IrClassSymbolImpl>, p17:<unbound IrClassSymbolImpl>, p18:<unbound IrClassSymbolImpl>, p19:<unbound IrClassSymbolImpl>, p20:<unbound IrClassSymbolImpl>, p21:<unbound IrClassSymbolImpl>, p22:<unbound IrClassSymbolImpl>, p23:<unbound IrClassSymbolImpl>, p24:<unbound IrClassSymbolImpl>, p25:<unbound IrClassSymbolImpl>, p26:<unbound IrClassSymbolImpl>, p27:<unbound IrClassSymbolImpl>, p28:<unbound IrClassSymbolImpl>, p29:<unbound IrClassSymbolImpl>, p30:<unbound IrClassSymbolImpl>, p31:<unbound IrClassSymbolImpl>, p32:<unbound IrClassSymbolImpl>, p33:<unbound IrClassSymbolImpl>) returnType:test.Test [primary]
+        VALUE_PARAMETER name:p1 index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="1"
+        VALUE_PARAMETER name:p2 index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="2"
+        VALUE_PARAMETER name:p3 index:2 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="3"
+        VALUE_PARAMETER name:p4 index:3 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="4"
+        VALUE_PARAMETER name:p5 index:4 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="5"
+        VALUE_PARAMETER name:p6 index:5 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="6"
+        VALUE_PARAMETER name:p7 index:6 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="7"
+        VALUE_PARAMETER name:p8 index:7 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="8"
+        VALUE_PARAMETER name:p9 index:8 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="9"
+        VALUE_PARAMETER name:p10 index:9 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="10"
+        VALUE_PARAMETER name:p11 index:10 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="11"
+        VALUE_PARAMETER name:p12 index:11 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="12"
+        VALUE_PARAMETER name:p13 index:12 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="13"
+        VALUE_PARAMETER name:p14 index:13 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CALL 'public final fun test (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        VALUE_PARAMETER name:p15 index:14 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="15"
+        VALUE_PARAMETER name:p16 index:15 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="16"
+        VALUE_PARAMETER name:p17 index:16 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="17"
+        VALUE_PARAMETER name:p18 index:17 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="18"
+        VALUE_PARAMETER name:p19 index:18 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="19"
+        VALUE_PARAMETER name:p20 index:19 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="20"
+        VALUE_PARAMETER name:p21 index:20 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="21"
+        VALUE_PARAMETER name:p22 index:21 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="22"
+        VALUE_PARAMETER name:p23 index:22 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="23"
+        VALUE_PARAMETER name:p24 index:23 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="24"
+        VALUE_PARAMETER name:p25 index:24 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="25"
+        VALUE_PARAMETER name:p26 index:25 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="26"
+        VALUE_PARAMETER name:p27 index:26 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="27"
+        VALUE_PARAMETER name:p28 index:27 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="28"
+        VALUE_PARAMETER name:p29 index:28 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="29"
+        VALUE_PARAMETER name:p30 index:29 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="30"
+        VALUE_PARAMETER name:p31 index:30 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="31"
+        VALUE_PARAMETER name:p32 index:31 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="32"
+        VALUE_PARAMETER name:p33 index:32 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CALL 'public final fun test (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:test/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:p14 signature:test/Test.p14|{}p14[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:p14 signature:[ test/Test.p14|{}p14[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p14 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'p14: <unbound IrClassSymbolImpl> declared in test.Test.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p14> signature:test/Test.p14.<get-p14>|<get-p14>(){}[0] visibility:public modality:FINAL <> ($this:test.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:p14 signature:test/Test.p14|{}p14[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p14> (): <unbound IrClassSymbolImpl> declared in test.Test'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p14 signature:[ test/Test.p14|{}p14[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p14 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Test declared in test.Test.<get-p14>' type=test.Test origin=null
+      PROPERTY name:p33 signature:test/Test.p33|{}p33[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:p33 signature:[ test/Test.p33|{}p33[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p14 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'p33: <unbound IrClassSymbolImpl> declared in test.Test.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p33> signature:test/Test.p33.<get-p33>|<get-p33>(){}[0] visibility:public modality:FINAL <> ($this:test.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:p33 signature:test/Test.p33|{}p33[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p33> (): <unbound IrClassSymbolImpl> declared in test.Test'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p33 signature:[ test/Test.p33|{}p33[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p14 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Test declared in test.Test.<get-p33>' type=test.Test origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test type:test.Test [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>, p33: <unbound IrClassSymbolImpl>) [primary] declared in test.Test' type=test.Test origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-p14> (): <unbound IrClassSymbolImpl> declared in test.Test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val test: test.Test [val] declared in <root>.box' type=test.Test origin=null
+            1: CALL 'public final fun <get-p33> (): <unbound IrClassSymbolImpl> declared in test.Test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val test: test.Test [val] declared in <root>.box' type=test.Test origin=null

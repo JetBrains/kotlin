@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Run
+
+    public abstract interface Run : kotlin/Any {
+
+      public abstract fun run(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun i1(crossinline s: kotlin/Function0<kotlin/String>): Run
+    }
+  }
+}

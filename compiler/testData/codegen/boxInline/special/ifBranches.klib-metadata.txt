@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testIf(): kotlin/String
+
+      public final fun testIf2(): kotlin/String
+
+      public final fun testIfElse(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* T */> runIf(f: kotlin/Function1<T#0, T#0>, start: T#0, stop: T#0, secondStart: T#0): T#0
+
+      public final inline fun <T#0 /* T */> runIf2(f: kotlin/Function1<T#0, T#0>, start: T#0, stop: T#0, secondStart: T#0): T#0
+
+      public final inline fun <T#0 /* T */> runIfElse(f: kotlin/Function1<T#0, T#0>, start: T#0, stop: T#0, secondStart: T#0): T#0
+    }
+  }
+}

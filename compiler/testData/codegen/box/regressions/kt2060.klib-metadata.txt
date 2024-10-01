@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: HelloServer
+
+    public final class HelloServer : testing/ClassWithInternals {
+
+      public constructor()
+
+      public open fun start(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: testing
+
+    // class name: testing/ClassWithInternals
+
+    public abstract class testing/ClassWithInternals : kotlin/Any {
+
+      public constructor()
+
+      protected final fun foo(): kotlin/Int
+
+      public abstract fun start(): kotlin/Unit
+
+      protected final var some: kotlin/Int
+        protected final get
+        protected final set
+
+      protected final var someGetter: kotlin/Int
+        protected final /* non-default */ get
+        protected final set
+    }
+  }
+}

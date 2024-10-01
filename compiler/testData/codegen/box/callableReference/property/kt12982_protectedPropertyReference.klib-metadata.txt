@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final fun getX(): kotlin/reflect/KMutableProperty1<Foo, kotlin/Int>
+
+      protected final var x: kotlin/Int
+        protected final get
+        protected final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,51 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/companionPrivateFieldInsideLambda.kt
+    FUN name:eval signature:/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (fn:<unbound IrClassSymbolImpl><T of <root>.eval>) returnType:T of <root>.eval
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><T of <root>.eval>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.eval origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of <root>.eval> declared in <root>.eval' type=<unbound IrClassSymbolImpl><T of <root>.eval> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:My signature:/My|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.My
+      CONSTRUCTOR signature:/My.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.My [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:My signature:/My|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/My.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.My.Companion
+        CONSTRUCTOR signature:/My.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.My.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/My.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:my signature:/My.Companion.my|{}my[0] visibility:private modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:my signature:[ /My.Companion.my|{}my[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:my type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="O"
+          FUN name:<get-my> signature:/My.Companion.my.<get-my>|<get-my>(){}[0] visibility:private modality:FINAL <> ($this:<root>.My.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:my signature:/My.Companion.my|{}my[0] visibility:private modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.My.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-my> (): <unbound IrClassSymbolImpl> declared in <root>.My.Companion'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.My.Companion.<get-my>'
+                            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:my signature:[ /My.Companion.my|{}my[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:my type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                              receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/My.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.My.Companion
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        FUN name:getValue signature:/My.Companion.getValue|getValue(){}[0] visibility:public modality:FINAL <> ($this:<root>.My.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.My.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (): <unbound IrClassSymbolImpl> declared in <root>.My.Companion'
+              CALL 'private final fun <get-my> (): <unbound IrClassSymbolImpl> declared in <root>.My.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.My.Companion declared in <root>.My.Companion.getValue' type=<root>.My.Companion origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun getValue (): <unbound IrClassSymbolImpl> declared in <root>.My.Companion' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/My.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.My.Companion

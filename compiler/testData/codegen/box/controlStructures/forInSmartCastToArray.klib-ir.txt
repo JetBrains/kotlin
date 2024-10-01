@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/forInSmartCastToArray.kt
+    FUN name:f signature:/f|f(kotlin.Any?){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl><*>
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.f' type=<unbound IrClassSymbolImpl>? origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=FOR_LOOP_ITERATOR
+                    $this: TYPE_OP type=<unbound IrClassSymbolImpl><*> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl><*>
+                      GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.f' type=<unbound IrClassSymbolImpl>? origin=null
+                WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                  condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                    $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.f' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                    VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl>? [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=FOR_LOOP_NEXT
+                        $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.f' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl>? declared in <root>'
+                        GET_VAR 'val i: <unbound IrClassSymbolImpl>? [val] declared in <root>.f' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl>? declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'public final fun f (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              x: GET_VAR 'val a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null

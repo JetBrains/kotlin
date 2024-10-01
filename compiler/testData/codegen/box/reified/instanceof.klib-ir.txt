@@ -1,0 +1,26 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/instanceof.kt
+    FUN name:isinstance signature:/isinstance|isinstance(kotlin.Any?){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isinstance|isinstance(kotlin.Any?){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isinstance <T> (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=T of <root>.isinstance
+            GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.isinstance' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun isinstance <T> (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun isinstance <T> (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun isinstance <T> (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              x: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

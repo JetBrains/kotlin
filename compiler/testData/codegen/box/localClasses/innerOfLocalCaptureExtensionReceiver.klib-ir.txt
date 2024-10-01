@@ -1,0 +1,43 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/innerOfLocalCaptureExtensionReceiver.kt
+    FUN name:bar signature:/bar|bar@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CLASS CLASS name:Local modality:OPEN visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.bar.Local
+          CONSTRUCTOR visibility:public <> () returnType:<root>.bar.Local [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:OPEN visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          FUN name:result visibility:public modality:FINAL <> ($this:<root>.bar.Local) returnType:<unbound IrClassSymbolImpl>
+            $this: VALUE_PARAMETER name:<this> type:<root>.bar.Local
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun result (): <unbound IrClassSymbolImpl> declared in <root>.bar.Local'
+                GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+        CLASS CLASS name:Outer modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.bar.Outer
+          CONSTRUCTOR visibility:public <> () returnType:<root>.bar.Outer [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          CLASS CLASS name:Inner modality:FINAL visibility:local [inner] superTypes:[<root>.bar.Local]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.bar.Outer.Inner
+            CONSTRUCTOR visibility:public <> ($this:<root>.bar.Outer) returnType:<root>.bar.Outer.Inner [primary]
+              $outer: VALUE_PARAMETER name:<this> type:<root>.bar.Outer
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.bar.Local'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:local [inner] superTypes:[<root>.bar.Local]'
+            FUN name:outer visibility:public modality:FINAL <> ($this:<root>.bar.Outer.Inner) returnType:<root>.bar.Outer
+              $this: VALUE_PARAMETER name:<this> type:<root>.bar.Outer.Inner
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun outer (): <root>.bar.Outer declared in <root>.bar.Outer.Inner'
+                  GET_VAR '<this>: <root>.bar.Outer declared in <root>.bar.Outer' type=<root>.bar.Outer origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.bar.Outer.Inner' type=<root>.bar.Outer.Inner origin=null
+              $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.bar.Outer' type=<root>.bar.Outer origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:demo_long fileName:/kt757.kt
+    FUN name:inv signature:demo_long/inv|inv@kotlin.Long?(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun inv (): <unbound IrClassSymbolImpl> declared in demo_long'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in demo_long.inv' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:demo_long/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl>? [val]
+          CONST Long type=<unbound IrClassSymbolImpl> value=10
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun inv (): <unbound IrClassSymbolImpl> declared in demo_long' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in demo_long.box' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in demo_long'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in demo_long.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=11
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in demo_long.box' type=<unbound IrClassSymbolImpl> origin=null

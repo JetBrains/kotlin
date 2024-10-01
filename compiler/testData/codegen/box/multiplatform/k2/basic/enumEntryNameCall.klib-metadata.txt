@@ -1,0 +1,35 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base1
+    // class name: Base2
+
+    public final enum class Base1 : kotlin/Enum<Base1> {
+
+      private constructor()
+
+      O,
+
+      // has Enum.entries
+    }
+
+    public final enum class Base2 : kotlin/Enum<Base2> {
+
+      private constructor()
+
+      K,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun k(): kotlin/String
+    }
+  }
+}

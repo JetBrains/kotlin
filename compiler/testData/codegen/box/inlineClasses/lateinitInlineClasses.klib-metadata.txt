@@ -1,0 +1,111 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IC1
+    // class name: IC2
+    // class name: IC3
+    // class name: IC4
+    // class name: MyClass
+
+    public final value class IC1 : kotlin/Any {
+
+      public constructor(x: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/String
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class IC2<T#0 /* T */ : kotlin/Number> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class IC3<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: kotlin/Comparable<T#0>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Comparable<T#0>
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Comparable<T#0>
+    }
+
+    public final value class IC4 : kotlin/Any {
+
+      public constructor(x: IC1)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: IC1
+        public final get
+
+      // underlying property: x
+
+      // underlying type: IC1
+    }
+
+    public final class MyClass : kotlin/Any {
+
+      public constructor()
+
+      public final fun isInit(): kotlin/Boolean
+
+      public final lateinit var b: IC2<kotlin/Int>
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final inline fun <reified T#0 /* T */> assertThrows(block: kotlin/Function0<kotlin/Unit>): kotlin/Boolean
+
+      public final fun box(): kotlin/String
+
+      public final lateinit var a: IC1
+        public final get
+        public final set
+
+      public final lateinit var c: IC4
+        public final get
+        public final set
+    }
+  }
+}

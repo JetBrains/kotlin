@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Container
+
+    public final class test/Container<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun className(fqName: kotlin/String): kotlin/String
+
+      public final val <T#0 /* X1 */> T#0.notNull: kotlin/reflect/KType
+        public final /* non-default */ get
+
+      public final val <T#0 /* X2 */> T#0.nullable: kotlin/reflect/KType
+        public final /* non-default */ get
+    }
+  }
+}

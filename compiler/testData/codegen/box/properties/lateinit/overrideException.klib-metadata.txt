@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Intf
+
+    public final class A : Intf {
+
+      public constructor()
+
+      public final fun getMyStr(): kotlin/String
+
+      public open lateinit var str: kotlin/String
+        public open get
+        public open set
+    }
+
+    public abstract interface Intf : kotlin/Any {
+
+      public abstract val str: kotlin/String
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

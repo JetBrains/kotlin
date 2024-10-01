@@ -1,0 +1,36 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/importNestedClass.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:B signature:/A.B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.B
+        CONSTRUCTOR signature:/A.B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A.B [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/A.B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS CLASS name:C signature:/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.B.C
+          CONSTRUCTOR signature:/A.B.C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A.B.C [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/A.B.C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<root>.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+        VAR name:b type:<root>.A.B [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.B' type=<root>.A.B origin=null
+        VAR name:ab type:<root>.A.B [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.B' type=<root>.A.B origin=null
+        VAR name:c type:<root>.A.B.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.B.C' type=<root>.A.B.C origin=null
+        VAR name:bc type:<root>.A.B.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.B.C' type=<root>.A.B.C origin=null
+        VAR name:abc type:<root>.A.B.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.B.C' type=<root>.A.B.C origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

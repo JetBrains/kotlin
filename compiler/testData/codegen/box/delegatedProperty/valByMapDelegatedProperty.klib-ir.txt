@@ -1,0 +1,348 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/valByMapDelegatedProperty.kt
+    CLASS CLASS name:ValByMapExtensionsTest signature:/ValByMapExtensionsTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ValByMapExtensionsTest
+      CONSTRUCTOR signature:/ValByMapExtensionsTest.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ValByMapExtensionsTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ValByMapExtensionsTest signature:/ValByMapExtensionsTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:map signature:/ValByMapExtensionsTest.map|{}map[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:map signature:[ /ValByMapExtensionsTest.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="a"
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="all"
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="b"
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="c"
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="code"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> signature:/ValByMapExtensionsTest.map.<get-map>|<get-map>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:map signature:/ValByMapExtensionsTest.map|{}map[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /ValByMapExtensionsTest.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-map>' type=<root>.ValByMapExtensionsTest origin=null
+      PROPERTY name:genericMap signature:/ValByMapExtensionsTest.genericMap|{}genericMap[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:genericMap signature:[ /ValByMapExtensionsTest.genericMap|{}genericMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>?
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="i"
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="x"
+                  1: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-genericMap> signature:/ValByMapExtensionsTest.genericMap.<get-genericMap>|<get-genericMap>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>
+          correspondingProperty: PROPERTY name:genericMap signature:/ValByMapExtensionsTest.genericMap|{}genericMap[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-genericMap> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.ValByMapExtensionsTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericMap signature:[ /ValByMapExtensionsTest.genericMap|{}genericMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-genericMap>' type=<root>.ValByMapExtensionsTest origin=null
+      PROPERTY name:mmapOut signature:/ValByMapExtensionsTest.mmapOut|{}mmapOut[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:mmapOut signature:[ /ValByMapExtensionsTest.mmapOut|{}mmapOut[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="g"
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="out"
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="g1"
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="in"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mmapOut> signature:/ValByMapExtensionsTest.mmapOut.<get-mmapOut>|<get-mmapOut>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:mmapOut signature:/ValByMapExtensionsTest.mmapOut|{}mmapOut[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-mmapOut> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mmapOut signature:[ /ValByMapExtensionsTest.mmapOut|{}mmapOut[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-mmapOut>' type=<root>.ValByMapExtensionsTest origin=null
+      PROPERTY name:genericMmapOut signature:/ValByMapExtensionsTest.genericMmapOut|{}genericMmapOut[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:genericMmapOut signature:[ /ValByMapExtensionsTest.genericMmapOut|{}genericMmapOut[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-mmapOut> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-genericMmapOut> signature:/ValByMapExtensionsTest.genericMmapOut.<get-genericMmapOut>|<get-genericMmapOut>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?>
+          correspondingProperty: PROPERTY name:genericMmapOut signature:/ValByMapExtensionsTest.genericMmapOut|{}genericMmapOut[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-genericMmapOut> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> declared in <root>.ValByMapExtensionsTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericMmapOut signature:[ /ValByMapExtensionsTest.genericMmapOut|{}genericMmapOut[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> origin=null
+                receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-genericMmapOut>' type=<root>.ValByMapExtensionsTest origin=null
+      PROPERTY name:a signature:/ValByMapExtensionsTest.a|{}a[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:a$delegate signature:[ /ValByMapExtensionsTest.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-a> signature:/ValByMapExtensionsTest.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:a signature:/ValByMapExtensionsTest.a|{}a[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:a$delegate signature:[ /ValByMapExtensionsTest.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-a>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-a>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final a: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:b signature:/ValByMapExtensionsTest.b|{}b[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:b$delegate signature:[ /ValByMapExtensionsTest.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-b> signature:/ValByMapExtensionsTest.b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:b signature:/ValByMapExtensionsTest.b|{}b[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:b$delegate signature:[ /ValByMapExtensionsTest.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-b>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-b>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final b: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:c signature:/ValByMapExtensionsTest.c|{}c[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:c$delegate signature:[ /ValByMapExtensionsTest.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-c> signature:/ValByMapExtensionsTest.c.<get-c>|<get-c>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:c signature:/ValByMapExtensionsTest.c|{}c[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:c$delegate signature:[ /ValByMapExtensionsTest.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-c>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-c>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final c: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:d signature:/ValByMapExtensionsTest.d|{}d[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:d$delegate signature:[ /ValByMapExtensionsTest.d|{}d[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-d> signature:/ValByMapExtensionsTest.d.<get-d>|<get-d>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:d signature:/ValByMapExtensionsTest.d|{}d[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-d> (): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:d$delegate signature:[ /ValByMapExtensionsTest.d|{}d[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-d>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-d>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final d: <unbound IrClassSymbolImpl>? [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-d> (): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:e signature:/ValByMapExtensionsTest.e|{}e[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:e$delegate signature:[ /ValByMapExtensionsTest.e|{}e[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest.e$delegate'
+                      CONST String type=<unbound IrClassSymbolImpl> value="default"
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-e> signature:/ValByMapExtensionsTest.e.<get-e>|<get-e>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:e signature:/ValByMapExtensionsTest.e|{}e[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-e> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:e$delegate signature:[ /ValByMapExtensionsTest.e|{}e[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-e>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-e>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final e: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-e> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:f signature:/ValByMapExtensionsTest.f|{}f[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:f$delegate signature:[ /ValByMapExtensionsTest.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest.f$delegate'
+                      CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-f> signature:/ValByMapExtensionsTest.f.<get-f>|<get-f>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:f signature:/ValByMapExtensionsTest.f|{}f[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-f> (): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                <2>: <unbound IrClassSymbolImpl>?
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:f$delegate signature:[ /ValByMapExtensionsTest.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-f>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-f>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final f: <unbound IrClassSymbolImpl>? [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-f> (): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:g signature:/ValByMapExtensionsTest.g|{}g[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:g$delegate signature:[ /ValByMapExtensionsTest.g|{}g[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-mmapOut> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-g> signature:/ValByMapExtensionsTest.g.<get-g>|<get-g>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:g signature:/ValByMapExtensionsTest.g|{}g[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-g> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:g$delegate signature:[ /ValByMapExtensionsTest.g|{}g[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-g>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-g>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final g: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-g> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:g1 signature:/ValByMapExtensionsTest.g1|{}g1[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:g1$delegate signature:[ /ValByMapExtensionsTest.g1|{}g1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-genericMmapOut> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-g1> signature:/ValByMapExtensionsTest.g1.<get-g1>|<get-g1>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:g1 signature:/ValByMapExtensionsTest.g1|{}g1[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-g1> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:g1$delegate signature:[ /ValByMapExtensionsTest.g1|{}g1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-g1>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-g1>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final g1: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-g1> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:i signature:/ValByMapExtensionsTest.i|{}i[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:i$delegate signature:[ /ValByMapExtensionsTest.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-genericMap> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-i> signature:/ValByMapExtensionsTest.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:/ValByMapExtensionsTest.i|{}i[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:i$delegate signature:[ /ValByMapExtensionsTest.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-i>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-i>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final i: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:x signature:/ValByMapExtensionsTest.x|{}x[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:x$delegate signature:[ /ValByMapExtensionsTest.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-genericMap> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> signature:/ValByMapExtensionsTest.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/ValByMapExtensionsTest.x|{}x[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:x$delegate signature:[ /ValByMapExtensionsTest.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final] declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-x>' type=<root>.ValByMapExtensionsTest origin=null
+                1: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.<get-x>' type=<root>.ValByMapExtensionsTest origin=null
+                2: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ValByMapExtensionsTest' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ValByMapExtensionsTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN name:doTest signature:/ValByMapExtensionsTest.doTest|doTest(){}[0] visibility:public modality:FINAL <> ($this:<root>.ValByMapExtensionsTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ValByMapExtensionsTest
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="all"
+            2: CALL 'public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+            2: CALL 'public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="code"
+            2: CALL 'public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="default"
+            2: CALL 'public final fun <get-e> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            2: CALL 'public final fun <get-f> (): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="out"
+            2: CALL 'public final fun <get-g> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="in"
+            2: CALL 'public final fun <get-g1> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+            2: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                      CALL 'public final fun <get-d> (): <unbound IrClassSymbolImpl>? declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.ValByMapExtensionsTest declared in <root>.ValByMapExtensionsTest.doTest' type=<root>.ValByMapExtensionsTest origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun doTest (): <unbound IrClassSymbolImpl> declared in <root>.ValByMapExtensionsTest' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ValByMapExtensionsTest' type=<root>.ValByMapExtensionsTest origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

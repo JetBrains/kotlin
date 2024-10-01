@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Test
+    // class name: test/Test.Base
+    // class name: test/Test.Extender
+
+    public final class test/Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun run(): kotlin/String
+
+      // nested class: Base
+
+      // nested class: Extender
+    }
+
+    private abstract class test/Test.Base : kotlin/Any {
+
+      public constructor()
+
+      protected final inline fun doInline(block: kotlin/Function0<kotlin/String>): kotlin/String
+
+      protected final fun duplicate(s: kotlin/String): kotlin/String
+    }
+
+    private final class test/Test.Extender : test/Test.Base {
+
+      public constructor()
+
+      public final fun doSomething(): kotlin/String
+    }
+  }
+}

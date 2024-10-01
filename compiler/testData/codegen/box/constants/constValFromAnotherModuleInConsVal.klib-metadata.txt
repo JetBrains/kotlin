@@ -1,0 +1,64 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Typography
+
+    public final object Typography : kotlin/Any {
+
+      private constructor()
+
+      public final const val ellipsis: kotlin/Char /* = 'O' */
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: A.Companion
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: B
+    }
+
+    public final object A.B : kotlin/Any {
+
+      private constructor()
+
+      public final fun box(): kotlin/String
+    }
+
+    private final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun kotlin/String.orEllipsis(): kotlin/String
+
+      public final const val ellipsis: kotlin/String /* = "O" */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

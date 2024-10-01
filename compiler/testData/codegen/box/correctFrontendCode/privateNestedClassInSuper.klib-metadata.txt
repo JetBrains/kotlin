@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Derived
+    // class name: OtherClass
+    // class name: OtherClass.OtherClass
+
+    public final class Derived : OtherClass {
+
+      public constructor()
+    }
+
+    public open class OtherClass : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/String
+
+      // nested class: OtherClass
+    }
+
+    private final class OtherClass.OtherClass<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

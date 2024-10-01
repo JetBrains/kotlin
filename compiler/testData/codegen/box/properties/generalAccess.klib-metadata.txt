@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: As
+
+    // class name: As/A
+    // class name: As/B
+
+    public open class As/A : kotlin/Any {
+
+      public constructor(init: kotlin/String)
+
+      public open fun getExt(): kotlin/String
+
+      public open fun getPrivate(): kotlin/String
+
+      public final var backingField: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(s: kotlin/Int)
+
+      public final val kotlin/String.ext: kotlin/String
+        public final /* non-default */ get
+
+      public final val init: kotlin/String
+        public final get
+
+      public final val kotlin/Int.myInc: kotlin/Int
+        public final /* non-default */ get
+
+      private final val privateProperty: kotlin/String
+        private final get
+
+      public open val property: kotlin/String
+        public open get
+    }
+
+    public open class As/B : As/A {
+
+      public constructor(init: kotlin/String)
+
+      public final fun getOpenProperty(): kotlin/String
+
+      public final fun getWithBackingFieldProperty(): kotlin/String
+
+      public open val property: kotlin/String
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val kotlin/String.staticExt: kotlin/String
+        public final /* non-default */ get
+
+      public final val staticProperty: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}

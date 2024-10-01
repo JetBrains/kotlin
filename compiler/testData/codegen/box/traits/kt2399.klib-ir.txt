@@ -1,0 +1,111 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2399.kt
+    CLASS CLASS name:JsonObject signature:/JsonObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsonObject
+      CONSTRUCTOR signature:/JsonObject.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JsonObject [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsonObject signature:/JsonObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:JsonArray signature:/JsonArray|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsonArray
+      CONSTRUCTOR signature:/JsonArray.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JsonArray [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsonArray signature:/JsonArray|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:ProjectInfo signature:/ProjectInfo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProjectInfo
+      CONSTRUCTOR signature:/ProjectInfo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ProjectInfo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ProjectInfo signature:/ProjectInfo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:/ProjectInfo.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.ProjectInfo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProjectInfo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ProjectInfo'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS INTERFACE name:Parser signature:/Parser|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Parser<IN of <root>.Parser, OUT of <root>.Parser>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /Parser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:OUT index:1 variance:out signature:[ /Parser|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:OUT index:1 variance:out superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:parse signature:/Parser.parse|parse(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Parser<IN of <root>.Parser, OUT of <root>.Parser>, source:IN of <root>.Parser) returnType:OUT of <root>.Parser
+        $this: VALUE_PARAMETER name:<this> type:<root>.Parser<IN of <root>.Parser, OUT of <root>.Parser>
+        VALUE_PARAMETER name:source index:0 type:IN of <root>.Parser
+    CLASS INTERFACE name:MultiParser signature:/MultiParser|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MultiParser<IN of <root>.MultiParser, OUT of <root>.MultiParser>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /MultiParser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:OUT index:1 variance:out signature:[ /MultiParser|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:OUT index:1 variance:out superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:parse signature:/MultiParser.parse|parse(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MultiParser<IN of <root>.MultiParser, OUT of <root>.MultiParser>, source:IN of <root>.MultiParser) returnType:<unbound IrClassSymbolImpl><OUT of <root>.MultiParser>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MultiParser<IN of <root>.MultiParser, OUT of <root>.MultiParser>
+        VALUE_PARAMETER name:source index:0 type:IN of <root>.MultiParser
+    CLASS INTERFACE name:JsonParser signature:/JsonParser|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Parser<<root>.JsonObject, T of <root>.JsonParser>; <root>.MultiParser<<root>.JsonArray, T of <root>.JsonParser>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsonParser<T of <root>.JsonParser>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /JsonParser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:parse signature:/JsonParser.parse|parse(JsonArray){}[0] visibility:public modality:OPEN <> ($this:<root>.JsonParser<T of <root>.JsonParser>, source:<root>.JsonArray) returnType:<unbound IrClassSymbolImpl><T of <root>.JsonParser>
+        overridden:
+          public abstract fun parse (source: IN of <root>.MultiParser): <unbound IrClassSymbolImpl><OUT of <root>.MultiParser> declared in <root>.MultiParser
+        $this: VALUE_PARAMETER name:<this> type:<root>.JsonParser<T of <root>.JsonParser>
+        VALUE_PARAMETER name:source index:0 type:<root>.JsonArray
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun parse (source: <root>.JsonArray): <unbound IrClassSymbolImpl><T of <root>.JsonParser> declared in <root>.JsonParser'
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.JsonParser> origin=null
+              <class: 1>: T of <root>.JsonParser
+    CLASS CLASS name:ProjectInfoJsonParser signature:/ProjectInfoJsonParser|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.JsonParser<<root>.ProjectInfo>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProjectInfoJsonParser
+      CONSTRUCTOR signature:/ProjectInfoJsonParser.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ProjectInfoJsonParser [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ProjectInfoJsonParser signature:/ProjectInfoJsonParser|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.JsonParser<<root>.ProjectInfo>]'
+      FUN name:parse signature:/ProjectInfoJsonParser.parse|parse(JsonObject){}[0] visibility:public modality:OPEN <> ($this:<root>.ProjectInfoJsonParser, source:<root>.JsonObject) returnType:<root>.ProjectInfo
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProjectInfoJsonParser
+        VALUE_PARAMETER name:source index:0 type:<root>.JsonObject
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun parse (source: <root>.JsonObject): <root>.ProjectInfo declared in <root>.ProjectInfoJsonParser'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ProjectInfo' type=<root>.ProjectInfo origin=null
+    CLASS CLASS name:ProjectApiContext signature:/ProjectApiContext|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProjectApiContext
+      CONSTRUCTOR signature:/ProjectApiContext.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ProjectApiContext [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ProjectApiContext signature:/ProjectApiContext|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:projectInfoJsonParser signature:/ProjectApiContext.projectInfoJsonParser|{}projectInfoJsonParser[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:projectInfoJsonParser signature:[ /ProjectApiContext.projectInfoJsonParser|{}projectInfoJsonParser[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:projectInfoJsonParser type:<root>.ProjectInfoJsonParser visibility:private [final]] ] type:<root>.ProjectInfoJsonParser visibility:private [final]
+          EXPRESSION_BODY
+            BLOCK type=<root>.ProjectApiContext.projectInfoJsonParser.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ProjectInfoJsonParser]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProjectApiContext.projectInfoJsonParser.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.ProjectApiContext.projectInfoJsonParser.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ProjectInfoJsonParser'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ProjectInfoJsonParser]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ProjectApiContext.projectInfoJsonParser.<no name provided>' type=<root>.ProjectApiContext.projectInfoJsonParser.<no name provided> origin=OBJECT_LITERAL
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-projectInfoJsonParser> signature:/ProjectApiContext.projectInfoJsonParser.<get-projectInfoJsonParser>|<get-projectInfoJsonParser>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ProjectApiContext) returnType:<root>.ProjectInfoJsonParser
+          correspondingProperty: PROPERTY name:projectInfoJsonParser signature:/ProjectApiContext.projectInfoJsonParser|{}projectInfoJsonParser[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ProjectApiContext
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-projectInfoJsonParser> (): <root>.ProjectInfoJsonParser declared in <root>.ProjectApiContext'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:projectInfoJsonParser signature:[ /ProjectApiContext.projectInfoJsonParser|{}projectInfoJsonParser[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:projectInfoJsonParser type:<root>.ProjectInfoJsonParser visibility:private [final]] ] type:<root>.ProjectInfoJsonParser visibility:private [final]' type=<root>.ProjectInfoJsonParser origin=null
+                receiver: GET_VAR '<this>: <root>.ProjectApiContext declared in <root>.ProjectApiContext.<get-projectInfoJsonParser>' type=<root>.ProjectApiContext origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:context type:<root>.ProjectApiContext [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ProjectApiContext' type=<root>.ProjectApiContext origin=null
+        VAR name:array type:<unbound IrClassSymbolImpl><<root>.ProjectInfo> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.ProjectInfo> origin=null
+            $this: CALL 'public final fun <get-projectInfoJsonParser> (): <root>.ProjectInfoJsonParser declared in <root>.ProjectApiContext' type=<root>.ProjectInfoJsonParser origin=GET_PROPERTY
+              $this: GET_VAR 'val context: <root>.ProjectApiContext [val] declared in <root>.box' type=<root>.ProjectApiContext origin=null
+            1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JsonArray' type=<root>.JsonArray origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_VAR 'val array: <unbound IrClassSymbolImpl><<root>.ProjectInfo> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.ProjectInfo> origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyClass
+    // class name: MyInterface
+
+    public final value class MyClass : MyInterface {
+
+      public constructor(value: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public final fun foo(other: MyInterface): kotlin/Unit
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      private final val value: kotlin/Int
+        private final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Int
+    }
+
+    public abstract interface MyInterface : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun saveValue(a: kotlin/Any?): kotlin/Unit
+
+      public final var value: kotlin/Any?
+        public final get
+        public final set
+    }
+  }
+}

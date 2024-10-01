@@ -1,0 +1,40 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:castTo signature:test/castTo|castTo@0:0(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> ($receiver:T of test.castTo) returnType:R of test.castTo [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/castTo|castTo@0:0(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:R index:1 variance: signature:[ test/castTo|castTo@0:0(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:T of test.castTo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun castTo <T, R> (): R of test.castTo [inline] declared in test'
+          TYPE_OP type=R of test.castTo origin=CAST typeOperand=R of test.castTo
+            GET_VAR '<this>: T of test.castTo declared in test.castTo' type=T of test.castTo origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:case1 signature:/case1|case1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun case1 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun castTo <T, R> (): R of test.castTo [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>?
+            <R>: <unbound IrClassSymbolImpl>
+            $receiver: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun failNPE (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          s: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun case1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:failNPE signature:/failNPE|failNPE(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 's: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.failNPE' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.failNPE
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null

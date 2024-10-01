@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:runTest signature:/runTest|runTest(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (f:<unbound IrClassSymbolImpl><R of <root>.runTest>) returnType:R of <root>.runTest [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /runTest|runTest(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><R of <root>.runTest>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runTest <R> (f: <unbound IrClassSymbolImpl><R of <root>.runTest>): R of <root>.runTest [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.runTest origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><R of <root>.runTest> declared in <root>.runTest' type=<unbound IrClassSymbolImpl><R of <root>.runTest> origin=VARIABLE_AS_FUNCTION
+    FUN name:minByTest signature:/minByTest|minByTest(kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest>) returnType:R of <root>.minByTest [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /minByTest|minByTest(kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest>
+      BLOCK_BODY
+        VAR name:minValue type:R of <root>.minByTest [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.minByTest origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest> declared in <root>.minByTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:v type:R of <root>.minByTest [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.minByTest origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest> declared in <root>.minByTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun minByTest <R> (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest>): R of <root>.minByTest [inline] declared in <root>'
+          GET_VAR 'val v: R of <root>.minByTest [val] declared in <root>.minByTest' type=R of <root>.minByTest origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun runTest <R> (f: <unbound IrClassSymbolImpl><R of <root>.runTest>): R of <root>.runTest [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <R>: <unbound IrClassSymbolImpl>
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'public final fun minByTest <R> (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.minByTest>): R of <root>.minByTest [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      <R>: <unbound IrClassSymbolImpl>
+                      f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                          VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>'
+                              GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test1: "
+                GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

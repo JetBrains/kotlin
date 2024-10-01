@@ -1,0 +1,132 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt37604.kt
+    PROPERTY name:cInit signature:/cInit|{}cInit[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:cInit signature:[ /cInit|{}cInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-cInit> signature:/cInit.<get-cInit>|<get-cInit>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:cInit signature:/cInit|{}cInit[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-cInit> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cInit signature:[ /cInit|{}cInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-cInit> signature:/cInit.<set-cInit>|<set-cInit>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:cInit signature:/cInit|{}cInit[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cInit signature:[ /cInit|{}cInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-cInit>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:cWithDefaultInit signature:/cWithDefaultInit|{}cWithDefaultInit[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:cWithDefaultInit signature:[ /cWithDefaultInit|{}cWithDefaultInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-cWithDefaultInit> signature:/cWithDefaultInit.<get-cWithDefaultInit>|<get-cWithDefaultInit>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:cWithDefaultInit signature:/cWithDefaultInit|{}cWithDefaultInit[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-cWithDefaultInit> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cWithDefaultInit signature:[ /cWithDefaultInit|{}cWithDefaultInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-cWithDefaultInit> signature:/cWithDefaultInit.<set-cWithDefaultInit>|<set-cWithDefaultInit>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:cWithDefaultInit signature:/cWithDefaultInit|{}cWithDefaultInit[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cWithDefaultInit signature:[ /cWithDefaultInit|{}cWithDefaultInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-cWithDefaultInit>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:cWithVarargInit signature:/cWithVarargInit|{}cWithVarargInit[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:cWithVarargInit signature:[ /cWithVarargInit|{}cWithVarargInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-cWithVarargInit> signature:/cWithVarargInit.<get-cWithVarargInit>|<get-cWithVarargInit>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:cWithVarargInit signature:/cWithVarargInit|{}cWithVarargInit[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-cWithVarargInit> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cWithVarargInit signature:[ /cWithVarargInit|{}cWithVarargInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-cWithVarargInit> signature:/cWithVarargInit.<set-cWithVarargInit>|<set-cWithVarargInit>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:cWithVarargInit signature:/cWithVarargInit|{}cWithVarargInit[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cWithVarargInit signature:[ /cWithVarargInit|{}cWithVarargInit[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:cInit type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-cWithVarargInit>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:useUnit signature:/useUnit|useUnit(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (fn:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.useUnit' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'public final fun <set-cInit> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:CWithDefault signature:/CWithDefault|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CWithDefault
+      CONSTRUCTOR signature:/CWithDefault.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.CWithDefault [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CWithDefault signature:/CWithDefault|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'public final fun <set-cWithDefaultInit> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:CWithVararg signature:/CWithVararg|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CWithVararg
+      CONSTRUCTOR signature:/CWithVararg.<init>|<init>(kotlin.IntArray...){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.CWithVararg [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CWithVararg signature:/CWithVararg|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'public final fun <set-cWithVarargInit> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun useUnit (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          fn: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            FUNCTION_REFERENCE 'local final fun <init> (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> () [primary] declared in <root>.C
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-cInit> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="cInit"
+        CALL 'public final fun useUnit (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          fn: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CWithDefault' type=<root>.CWithDefault origin=null
+            FUNCTION_REFERENCE 'local final fun <init> (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CWithDefault
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-cWithDefaultInit> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="cWithDefaultInit"
+        CALL 'public final fun useUnit (fn: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          fn: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'public constructor <init> (vararg x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CWithVararg' type=<root>.CWithVararg origin=null
+            FUNCTION_REFERENCE 'local final fun <init> (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (vararg x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CWithVararg
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-cWithVarargInit> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="cWithVarargInit"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

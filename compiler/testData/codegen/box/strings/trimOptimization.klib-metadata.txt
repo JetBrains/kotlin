@@ -1,0 +1,58 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun trimIndentConstant(): kotlin/String
+
+      public final fun trimIndentInterpolated(arg: kotlin/Int): kotlin/String
+
+      public final fun trimIndentInterpolatedUsingConstant(): kotlin/String
+
+      public final fun trimIndentNotConstant(arg: kotlin/String): kotlin/String
+
+      public final fun trimIndentReliesOnNestedStringBuilderFlatteningAndConstantConcatenation(): kotlin/String
+
+      public final fun trimMarginConstant(): kotlin/String
+
+      public final fun trimMarginConstantCustomPrefix(): kotlin/String
+
+      public final fun trimMarginConstantCustomPrefixInterpolatedUsingConstant(): kotlin/String
+
+      public final fun trimMarginConstantWithNonConstantCustomPrefix(arg: kotlin/String): kotlin/String
+
+      public final fun trimMarginInterpolated(arg: kotlin/Int): kotlin/String
+
+      public final fun trimMarginInterpolatedUsingConstant(): kotlin/String
+
+      public final fun trimMarginNotConstant(arg: kotlin/String): kotlin/String
+
+      public final fun trimMarginNotConstantCustomPrefix(arg: kotlin/String): kotlin/String
+
+      public final fun trimMarginReliesOnNestedStringBuilderFlatteningAndConstantConcatenation(): kotlin/String
+
+      private final const val HAS_INDENT: kotlin/String /* = "Hello,\n        World" */
+        private final get
+
+      private final const val HAS_MARGIN: kotlin/String /* = "Hello,\n        |World" */
+        private final get
+
+      private final const val HELLO: kotlin/String /* = "Hello" */
+        private final get
+
+      private final const val OCTOTHORPE: kotlin/Char /* = '#' */
+        private final get
+
+      private final const val SPACES: kotlin/String /* = "    " */
+        private final get
+
+      private final const val WORLD: kotlin/String /* = "World" */
+        private final get
+    }
+  }
+}

@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unsignedLongRemainder.kt
+    PROPERTY name:ua signature:/ua|{}ua[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:ua signature:[ /ua|{}ua[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=1234
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ua> signature:/ua.<get-ua>|<get-ua>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:ua signature:/ua|{}ua[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ua> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ua signature:[ /ua|{}ua[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:ub signature:/ub|{}ub[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:ub signature:[ /ub|{}ub[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=5678
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ub> signature:/ub.<get-ub>|<get-ub>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:ub signature:/ub|{}ub[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ub> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ub signature:[ /ub|{}ub[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:uc signature:/uc|{}uc[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:uc signature:[ /uc|{}uc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=3456
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-uc> signature:/uc.<get-uc>|<get-uc>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:uc signature:/uc|{}uc[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-uc> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:uc signature:[ /uc|{}uc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:u signature:/u|{}u[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:u signature:[ /u|{}u[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+              $this: CALL 'public final fun <get-ua> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CALL 'public final fun <get-ub> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CALL 'public final fun <get-uc> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-u> signature:/u.<get-u>|<get-u>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:u signature:/u|{}u[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-u> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:u signature:[ /u|{}u[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ua type:kotlin.ULong visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:rem type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PERC
+            $this: CALL 'public final fun <get-u> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CALL 'public final fun <get-ub> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val rem: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'public final fun <get-uc> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val rem: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

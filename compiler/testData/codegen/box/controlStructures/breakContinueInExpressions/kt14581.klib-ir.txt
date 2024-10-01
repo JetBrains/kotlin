@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt14581.kt
+    FUN name:foo signature:/foo|foo(kotlin.String){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:y type:<unbound IrClassSymbolImpl> [var]
+        BLOCK type=<unbound IrClassSymbolImpl> origin=null
+          DO_WHILE label=null origin=DO_WHILE_LOOP
+            body: COMPOSITE type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var y: <unbound IrClassSymbolImpl> [var] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=EQ
+                GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var y: <unbound IrClassSymbolImpl> [var] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'public final fun bar (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+                  other: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var y: <unbound IrClassSymbolImpl> [var] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:bar signature:/bar|bar@kotlin.String(kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (other: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="OK"

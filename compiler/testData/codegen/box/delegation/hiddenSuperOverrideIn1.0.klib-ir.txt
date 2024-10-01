@@ -1,0 +1,56 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/hiddenSuperOverrideIn1.0.kt
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      FUN name:test signature:/Base.test|test(){}[0] visibility:public modality:OPEN <> ($this:<root>.Base) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Base'
+            CONST String type=<unbound IrClassSymbolImpl> value="base fail"
+    CLASS INTERFACE name:Base2 signature:/Base2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base2
+      FUN name:test signature:/Base2.test|test(){}[0] visibility:public modality:OPEN <> ($this:<root>.Base2) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base2
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Base2'
+            CONST String type=<unbound IrClassSymbolImpl> value="base 2fail"
+    CLASS CLASS name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Delegate
+      CONSTRUCTOR signature:/Delegate.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Delegate [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]'
+      FUN name:test signature:/Delegate.test|test(){}[0] visibility:public modality:OPEN <> ($this:<root>.Delegate) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Delegate'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+            $this: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Base2; <root>.Base]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Base2; <root>.Base]'
+                FIELD DELEGATE name:$$delegate_0 type:<root>.Delegate visibility:private [final]
+                  EXPRESSION_BODY
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Delegate' type=<root>.Delegate origin=null
+                FUN DELEGATED_MEMBER name:test visibility:public modality:OPEN <> ($this:<root>.box.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Base2
+                    public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Base
+                  $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>'
+                      CALL 'public open fun test (): <unbound IrClassSymbolImpl> declared in <root>.Delegate' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Delegate visibility:private [final] declared in <root>.box.<no name provided>' type=<root>.Delegate origin=null
+                          receiver: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.test' type=<root>.box.<no name provided> origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL

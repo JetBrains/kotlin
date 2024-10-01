@@ -1,0 +1,255 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/notEmptyListAny.kt
+    CLASS OBJECT name:NotEmptyList signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NotEmptyList
+      CONSTRUCTOR signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.<init>|<init>(){}[0] ] visibility:private <> () returnType:<root>.NotEmptyList [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:NotEmptyList signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FUN name:contains signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.contains|contains(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.NotEmptyList'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:indexOf signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.indexOf|indexOf(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun indexOf (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyList'
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:lastIndexOf signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.lastIndexOf|lastIndexOf(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun lastIndexOf (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyList'
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:remove signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.remove|remove(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun remove (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyList'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      PROPERTY name:size signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.size|{}size[0] ] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.size.<get-size>|<get-size>(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.size|{}size[0] ] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:containsAll signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.containsAll|containsAll(kotlin.collections.Collection<kotlin.Any>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyList'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.NotEmptyList.containsAll' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN name:isEmpty signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.isEmpty|isEmpty(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.get|get(kotlin.Int){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:add signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.add|add(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:addAll signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.addAll|addAll(kotlin.collections.Collection<kotlin.Any>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:addAll signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.addAll|addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, index:<unbound IrClassSymbolImpl>, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:elements index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:removeAll signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.removeAll|removeAll(kotlin.collections.Collection<kotlin.Any>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:retainAll signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.retainAll|retainAll(kotlin.collections.Collection<kotlin.Any>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:clear signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.clear|clear(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.set|set(kotlin.Int;kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, index:<unbound IrClassSymbolImpl>, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:add signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.add|add(kotlin.Int;kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, index:<unbound IrClassSymbolImpl>, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:removeAt signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.removeAt|removeAt(kotlin.Int){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:listIterator signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.listIterator|listIterator(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:listIterator signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.listIterator|listIterator(kotlin.Int){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:subList signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.subList|subList(kotlin.Int;kotlin.Int){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList, fromIndex:<unbound IrClassSymbolImpl>, toIndex:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        VALUE_PARAMETER name:fromIndex index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:toIndex index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList.iterator|iterator(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyList) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyList
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:n type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+            GET_OBJECT 'CLASS OBJECT name:NotEmptyList signature:[ File '/notEmptyListAny.kt' <- /NotEmptyList|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]' type=<root>.NotEmptyList
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value=""
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value=""
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 7"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Holder
+
+    public final class Holder : kotlin/Any {
+
+      public constructor()
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(h: Holder, doReturn: kotlin/Int): kotlin/String
+
+      public final fun test2(h: Holder, doReturn: kotlin/Int): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun doCall(block: kotlin/Function0<kotlin/Unit>, finallyBlock1: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

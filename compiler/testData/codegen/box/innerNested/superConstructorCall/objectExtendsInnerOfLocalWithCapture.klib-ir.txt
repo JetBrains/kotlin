@@ -1,0 +1,78 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/objectExtendsInnerOfLocalWithCapture.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Local
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.Local [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          CLASS CLASS name:Inner modality:OPEN visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Local.Inner
+            CONSTRUCTOR visibility:public <> ($this:<root>.box.Local, s:<unbound IrClassSymbolImpl>) returnType:<root>.box.Local.Inner [primary]
+              $outer: VALUE_PARAMETER name:<this> type:<root>.box.Local
+              VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:OPEN visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+            PROPERTY name:s visibility:public modality:FINAL [val]
+              FIELD PROPERTY_BACKING_FIELD name:s type:<unbound IrClassSymbolImpl> visibility:private [final]
+                EXPRESSION_BODY
+                  GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.box.Local.Inner.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.box.Local.Inner) returnType:<unbound IrClassSymbolImpl>
+                correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+                $this: VALUE_PARAMETER name:<this> type:<root>.box.Local.Inner
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.box.Local.Inner'
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: <root>.box.Local.Inner declared in <root>.box.Local.Inner.<get-s>' type=<root>.box.Local.Inner origin=null
+            FUN name:result visibility:public modality:OPEN <> ($this:<root>.box.Local.Inner) returnType:<unbound IrClassSymbolImpl>
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.Local.Inner
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local.Inner'
+                  CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+          PROPERTY name:realResult visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:realResult type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-realResult> visibility:public modality:FINAL <> ($this:<root>.box.Local) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:realResult visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.Local
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-realResult> (): <unbound IrClassSymbolImpl> declared in <root>.box.Local'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:realResult type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local.<get-realResult>' type=<root>.box.Local origin=null
+          PROPERTY name:obj visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:obj type:<root>.box.Local.obj.<no name provided> visibility:private [final]
+              EXPRESSION_BODY
+                BLOCK type=<root>.box.Local.obj.<no name provided> origin=OBJECT_LITERAL
+                  CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.box.Local.Inner]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Local.obj.<no name provided>
+                    CONSTRUCTOR visibility:public <> () returnType:<root>.box.Local.obj.<no name provided> [primary]
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.box.Local.Inner'
+                          $this: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local' type=<root>.box.Local origin=null
+                          s: CALL 'public final fun <get-realResult> (): <unbound IrClassSymbolImpl> declared in <root>.box.Local' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local' type=<root>.box.Local origin=null
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.box.Local.Inner]'
+                    FUN name:result visibility:public modality:OPEN <> ($this:<root>.box.Local.obj.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                      overridden:
+                        public open fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local.Inner
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.Local.obj.<no name provided>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public open fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local.obj.<no name provided>'
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.box.Local.obj.<no name provided> declared in <root>.box.Local.obj.<no name provided>.result' type=<root>.box.Local.obj.<no name provided> origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.Local.obj.<no name provided>' type=<root>.box.Local.obj.<no name provided> origin=OBJECT_LITERAL
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-obj> visibility:public modality:FINAL <> ($this:<root>.box.Local) returnType:<root>.box.Local.obj.<no name provided>
+              correspondingProperty: PROPERTY name:obj visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.Local
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-obj> (): <root>.box.Local.obj.<no name provided> declared in <root>.box.Local'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:obj type:<root>.box.Local.obj.<no name provided> visibility:private [final]' type=<root>.box.Local.obj.<no name provided> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local.<get-obj>' type=<root>.box.Local origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local.obj.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-obj> (): <root>.box.Local.obj.<no name provided> declared in <root>.box.Local' type=<root>.box.Local.obj.<no name provided> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.Local' type=<root>.box.Local origin=null

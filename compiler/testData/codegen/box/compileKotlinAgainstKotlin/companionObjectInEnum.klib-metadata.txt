@@ -1,0 +1,45 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: library
+
+    // class name: library/EnumClass
+    // class name: library/EnumClass.Companion
+
+    public final enum class library/EnumClass : kotlin/Enum<library/EnumClass> {
+
+      private constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    public final companion object library/EnumClass.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun entry(): library/EnumClass
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

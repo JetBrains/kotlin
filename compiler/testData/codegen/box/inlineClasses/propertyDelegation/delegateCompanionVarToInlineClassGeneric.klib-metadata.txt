@@ -1,0 +1,64 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+    // class name: Foo
+    // class name: Foo.Companion
+
+    public final value class Delegate<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(ignored: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public final operator fun getValue(thisRef: kotlin/Any?, prop: kotlin/Any?): kotlin/Int
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final operator fun setValue(thisRef: kotlin/Any?, prop: kotlin/Any?, newValue: kotlin/Int): kotlin/Unit
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ignored: T#0
+        public final get
+
+      // underlying property: ignored
+
+      // underlying type: T#0
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Foo.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final var a: kotlin/Int
+        public final get
+        public final set
+
+      public final /* delegated */ var d: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var setterInvoked: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

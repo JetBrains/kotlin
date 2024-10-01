@@ -1,0 +1,323 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/delegationToInTypeParameter.kt
+    CLASS INTERFACE name:Domain signature:/Domain|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Domain<T of <root>.Domain>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /Domain|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:foo signature:/Domain.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Domain<T of <root>.Domain>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Domain<T of <root>.Domain>
+    CLASS INTERFACE name:Bin signature:/Bin|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Domain<T of <root>.Bin>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bin<T of <root>.Bin, V of <root>.Bin>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /Bin|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:V index:1 variance:out signature:[ /Bin|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:DomainBin signature:/DomainBin|null[0] modality:FINAL visibility:public superTypes:[<root>.Bin<T of <root>.DomainBin, V of <root>.DomainBin>; <root>.Domain<T of <root>.DomainBin>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /DomainBin|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of <root>.DomainBin>] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /DomainBin|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Domain<T of <root>.DomainBin>] reified:false
+      TYPE_PARAMETER name:V index:2 variance:out signature:[ /DomainBin|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:V index:2 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/DomainBin.<init>|<init>(1:1){}[0] visibility:public <> (domain:D of <root>.DomainBin) returnType:<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin> [primary]
+        VALUE_PARAMETER name:domain index:0 type:D of <root>.DomainBin
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin signature:/DomainBin|null[0] modality:FINAL visibility:public superTypes:[<root>.Bin<T of <root>.DomainBin, V of <root>.DomainBin>; <root>.Domain<T of <root>.DomainBin>]'
+      PROPERTY name:domain signature:/DomainBin.domain|{}domain[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:domain signature:[ /DomainBin.domain|{}domain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'domain: D of <root>.DomainBin declared in <root>.DomainBin.<init>' type=D of <root>.DomainBin origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-domain> signature:/DomainBin.domain.<get-domain>|<get-domain>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin>) returnType:D of <root>.DomainBin
+          correspondingProperty: PROPERTY name:domain signature:/DomainBin.domain|{}domain[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-domain> (): D of <root>.DomainBin declared in <root>.DomainBin'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:domain signature:[ /DomainBin.domain|{}domain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin visibility:private [final]' type=D of <root>.DomainBin origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin> declared in <root>.DomainBin.<get-domain>' type=<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:domain signature:[ /DomainBin.domain|{}domain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin visibility:private [final]' type=D of <root>.DomainBin origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin> declared in <root>.DomainBin.foo' type=<root>.DomainBin<T of <root>.DomainBin, D of <root>.DomainBin, V of <root>.DomainBin> origin=null
+    CLASS CLASS name:DomainBin2 signature:/DomainBin2|null[0] modality:FINAL visibility:public superTypes:[<root>.Bin<T of <root>.DomainBin2, V of <root>.DomainBin2>; <root>.Domain<T of <root>.DomainBin2>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /DomainBin2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of <root>.DomainBin2>] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /DomainBin2|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Domain<T of <root>.DomainBin2>] reified:false
+      TYPE_PARAMETER name:V index:2 variance:out signature:[ /DomainBin2|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:V index:2 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:G index:3 variance: signature:[ /DomainBin2|null[0] <- Local[<TP>,3|TYPE_PARAMETER name:G index:3 variance: superTypes:[D of <root>.DomainBin2] reified:false] ] superTypes:[D of <root>.DomainBin2] reified:false
+      CONSTRUCTOR signature:/DomainBin2.<init>|<init>(1:3){}[0] visibility:public <> (domain:G of <root>.DomainBin2) returnType:<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2> [primary]
+        VALUE_PARAMETER name:domain index:0 type:G of <root>.DomainBin2
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin2 signature:/DomainBin2|null[0] modality:FINAL visibility:public superTypes:[<root>.Bin<T of <root>.DomainBin2, V of <root>.DomainBin2>; <root>.Domain<T of <root>.DomainBin2>]'
+      PROPERTY name:domain signature:/DomainBin2.domain|{}domain[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:domain signature:[ /DomainBin2.domain|{}domain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:G of <root>.DomainBin2 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'domain: G of <root>.DomainBin2 declared in <root>.DomainBin2.<init>' type=G of <root>.DomainBin2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-domain> signature:/DomainBin2.domain.<get-domain>|<get-domain>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2>) returnType:G of <root>.DomainBin2
+          correspondingProperty: PROPERTY name:domain signature:/DomainBin2.domain|{}domain[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-domain> (): G of <root>.DomainBin2 declared in <root>.DomainBin2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:domain signature:[ /DomainBin2.domain|{}domain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:G of <root>.DomainBin2 visibility:private [final]' type=G of <root>.DomainBin2 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2> declared in <root>.DomainBin2.<get-domain>' type=<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin2.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:domain signature:[ /DomainBin2.domain|{}domain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:G of <root>.DomainBin2 visibility:private [final]' type=G of <root>.DomainBin2 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2> declared in <root>.DomainBin2.foo' type=<root>.DomainBin2<T of <root>.DomainBin2, D of <root>.DomainBin2, V of <root>.DomainBin2, G of <root>.DomainBin2> origin=null
+    CLASS CLASS name:DomainBin3 signature:/DomainBin3|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin3<D of <root>.DomainBin3>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /DomainBin3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.Domain<<unbound IrClassSymbolImpl>>] reified:false
+      CONSTRUCTOR signature:/DomainBin3.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.DomainBin3) returnType:<root>.DomainBin3<D of <root>.DomainBin3> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin3
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin3 signature:/DomainBin3|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:a signature:/DomainBin3.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin3.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin3 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin3 declared in <root>.DomainBin3.<init>' type=D of <root>.DomainBin3 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin3.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin3<D of <root>.DomainBin3>) returnType:D of <root>.DomainBin3
+          correspondingProperty: PROPERTY name:a signature:/DomainBin3.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin3<D of <root>.DomainBin3>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin3 declared in <root>.DomainBin3'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin3.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin3 visibility:private [final]' type=D of <root>.DomainBin3 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin3<D of <root>.DomainBin3> declared in <root>.DomainBin3.<get-a>' type=<root>.DomainBin3<D of <root>.DomainBin3> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin3.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin3<D of <root>.DomainBin3>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin3<D of <root>.DomainBin3>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin3.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin3 visibility:private [final]' type=D of <root>.DomainBin3 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin3<D of <root>.DomainBin3> declared in <root>.DomainBin3.foo' type=<root>.DomainBin3<D of <root>.DomainBin3> origin=null
+    CLASS CLASS name:DomainBin4 signature:/DomainBin4|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<D of <root>.DomainBin4>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin4<D of <root>.DomainBin4>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /DomainBin4|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/DomainBin4.<init>|<init>(Domain<1:0>){}[0] visibility:public <> (a:<root>.Domain<D of <root>.DomainBin4>) returnType:<root>.DomainBin4<D of <root>.DomainBin4> [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.Domain<D of <root>.DomainBin4>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin4 signature:/DomainBin4|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<D of <root>.DomainBin4>]'
+      PROPERTY name:a signature:/DomainBin4.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin4.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:<root>.Domain<D of <root>.DomainBin4> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <root>.Domain<D of <root>.DomainBin4> declared in <root>.DomainBin4.<init>' type=<root>.Domain<D of <root>.DomainBin4> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin4.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin4<D of <root>.DomainBin4>) returnType:<root>.Domain<D of <root>.DomainBin4>
+          correspondingProperty: PROPERTY name:a signature:/DomainBin4.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin4<D of <root>.DomainBin4>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <root>.Domain<D of <root>.DomainBin4> declared in <root>.DomainBin4'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin4.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:<root>.Domain<D of <root>.DomainBin4> visibility:private [final]' type=<root>.Domain<D of <root>.DomainBin4> origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin4<D of <root>.DomainBin4> declared in <root>.DomainBin4.<get-a>' type=<root>.DomainBin4<D of <root>.DomainBin4> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin4.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin4<D of <root>.DomainBin4>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin4<D of <root>.DomainBin4>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin4.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:<root>.Domain<D of <root>.DomainBin4> visibility:private [final]' type=<root>.Domain<D of <root>.DomainBin4> origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin4<D of <root>.DomainBin4> declared in <root>.DomainBin4.foo' type=<root>.DomainBin4<D of <root>.DomainBin4> origin=null
+    CLASS CLASS name:DomainBin5 signature:/DomainBin5|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<D of <root>.DomainBin5>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin5<D of <root>.DomainBin5>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /DomainBin5|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/DomainBin5.<init>|<init>(Domain<1:0>){}[0] visibility:public <> (a:<root>.Domain<D of <root>.DomainBin5>) returnType:<root>.DomainBin5<D of <root>.DomainBin5> [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.Domain<D of <root>.DomainBin5>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin5 signature:/DomainBin5|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<D of <root>.DomainBin5>]'
+      PROPERTY name:a signature:/DomainBin5.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin5.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:<root>.Domain<D of <root>.DomainBin5> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <root>.Domain<D of <root>.DomainBin5> declared in <root>.DomainBin5.<init>' type=<root>.Domain<D of <root>.DomainBin5> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin5.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin5<D of <root>.DomainBin5>) returnType:<root>.Domain<D of <root>.DomainBin5>
+          correspondingProperty: PROPERTY name:a signature:/DomainBin5.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin5<D of <root>.DomainBin5>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <root>.Domain<D of <root>.DomainBin5> declared in <root>.DomainBin5'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin5.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:<root>.Domain<D of <root>.DomainBin5> visibility:private [final]' type=<root>.Domain<D of <root>.DomainBin5> origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin5<D of <root>.DomainBin5> declared in <root>.DomainBin5.<get-a>' type=<root>.DomainBin5<D of <root>.DomainBin5> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin5.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin5<D of <root>.DomainBin5>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin5<D of <root>.DomainBin5>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin5.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:<root>.Domain<D of <root>.DomainBin5> visibility:private [final]' type=<root>.Domain<D of <root>.DomainBin5> origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin5<D of <root>.DomainBin5> declared in <root>.DomainBin5.foo' type=<root>.DomainBin5<D of <root>.DomainBin5> origin=null
+    CLASS CLASS name:DomainBin6 signature:/DomainBin6|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin6<D of <root>.DomainBin6>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /DomainBin6|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.Domain<<unbound IrClassSymbolImpl>>] reified:false
+      CONSTRUCTOR signature:/DomainBin6.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.DomainBin6) returnType:<root>.DomainBin6<D of <root>.DomainBin6> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin6
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin6 signature:/DomainBin6|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:a signature:/DomainBin6.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin6.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin6 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin6 declared in <root>.DomainBin6.<init>' type=D of <root>.DomainBin6 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin6.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin6<D of <root>.DomainBin6>) returnType:D of <root>.DomainBin6
+          correspondingProperty: PROPERTY name:a signature:/DomainBin6.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin6<D of <root>.DomainBin6>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin6 declared in <root>.DomainBin6'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin6.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin6 visibility:private [final]' type=D of <root>.DomainBin6 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin6<D of <root>.DomainBin6> declared in <root>.DomainBin6.<get-a>' type=<root>.DomainBin6<D of <root>.DomainBin6> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin6.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin6<D of <root>.DomainBin6>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin6<D of <root>.DomainBin6>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin6.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin6 visibility:private [final]' type=D of <root>.DomainBin6 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin6<D of <root>.DomainBin6> declared in <root>.DomainBin6.foo' type=<root>.DomainBin6<D of <root>.DomainBin6> origin=null
+    CLASS CLASS name:DomainBin7 signature:/DomainBin7|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<D of <root>.DomainBin7>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin7<D of <root>.DomainBin7>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /DomainBin7|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.Domain<D of <root>.DomainBin7>] reified:false
+      CONSTRUCTOR signature:/DomainBin7.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.DomainBin7) returnType:<root>.DomainBin7<D of <root>.DomainBin7> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin7
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin7 signature:/DomainBin7|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<D of <root>.DomainBin7>]'
+      PROPERTY name:a signature:/DomainBin7.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin7.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin7 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin7 declared in <root>.DomainBin7.<init>' type=D of <root>.DomainBin7 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin7.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin7<D of <root>.DomainBin7>) returnType:D of <root>.DomainBin7
+          correspondingProperty: PROPERTY name:a signature:/DomainBin7.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin7<D of <root>.DomainBin7>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin7 declared in <root>.DomainBin7'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin7.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin7 visibility:private [final]' type=D of <root>.DomainBin7 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin7<D of <root>.DomainBin7> declared in <root>.DomainBin7.<get-a>' type=<root>.DomainBin7<D of <root>.DomainBin7> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin7.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin7<D of <root>.DomainBin7>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin7<D of <root>.DomainBin7>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin7.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin7 visibility:private [final]' type=D of <root>.DomainBin7 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin7<D of <root>.DomainBin7> declared in <root>.DomainBin7.foo' type=<root>.DomainBin7<D of <root>.DomainBin7> origin=null
+    CLASS CLASS name:DomainBin8 signature:/DomainBin8|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<A of <root>.DomainBin8>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /DomainBin8|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /DomainBin8|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Domain<A of <root>.DomainBin8>] reified:false
+      CONSTRUCTOR signature:/DomainBin8.<init>|<init>(1:1){}[0] visibility:public <> (a:D of <root>.DomainBin8) returnType:<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin8
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin8 signature:/DomainBin8|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<A of <root>.DomainBin8>]'
+      PROPERTY name:a signature:/DomainBin8.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin8.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin8 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin8 declared in <root>.DomainBin8.<init>' type=D of <root>.DomainBin8 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin8.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8>) returnType:D of <root>.DomainBin8
+          correspondingProperty: PROPERTY name:a signature:/DomainBin8.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin8 declared in <root>.DomainBin8'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin8.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin8 visibility:private [final]' type=D of <root>.DomainBin8 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8> declared in <root>.DomainBin8.<get-a>' type=<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin8.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin8.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin8 visibility:private [final]' type=D of <root>.DomainBin8 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8> declared in <root>.DomainBin8.foo' type=<root>.DomainBin8<A of <root>.DomainBin8, D of <root>.DomainBin8> origin=null
+    CLASS CLASS name:DomainBin9 signature:/DomainBin9|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<<root>.Domain<A of <root>.DomainBin9>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /DomainBin9|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /DomainBin9|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Domain<<root>.Domain<A of <root>.DomainBin9>>] reified:false
+      CONSTRUCTOR signature:/DomainBin9.<init>|<init>(1:1){}[0] visibility:public <> (a:D of <root>.DomainBin9) returnType:<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin9
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin9 signature:/DomainBin9|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<<root>.Domain<A of <root>.DomainBin9>>]'
+      PROPERTY name:a signature:/DomainBin9.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin9.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin9 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin9 declared in <root>.DomainBin9.<init>' type=D of <root>.DomainBin9 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin9.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9>) returnType:D of <root>.DomainBin9
+          correspondingProperty: PROPERTY name:a signature:/DomainBin9.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin9 declared in <root>.DomainBin9'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin9.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin9 visibility:private [final]' type=D of <root>.DomainBin9 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9> declared in <root>.DomainBin9.<get-a>' type=<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin9.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin9.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin9 visibility:private [final]' type=D of <root>.DomainBin9 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9> declared in <root>.DomainBin9.foo' type=<root>.DomainBin9<A of <root>.DomainBin9, D of <root>.DomainBin9> origin=null
+    CLASS CLASS name:DomainBin10 signature:/DomainBin10|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<A of <root>.DomainBin10>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /DomainBin10|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.Domain<D of <root>.DomainBin10>] reified:false
+      TYPE_PARAMETER name:A index:1 variance:in signature:[ /DomainBin10|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[D of <root>.DomainBin10] reified:false
+      CONSTRUCTOR signature:/DomainBin10.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.DomainBin10) returnType:<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin10
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin10 signature:/DomainBin10|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<A of <root>.DomainBin10>]'
+      PROPERTY name:a signature:/DomainBin10.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin10.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin10 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin10 declared in <root>.DomainBin10.<init>' type=D of <root>.DomainBin10 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin10.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10>) returnType:D of <root>.DomainBin10
+          correspondingProperty: PROPERTY name:a signature:/DomainBin10.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin10 declared in <root>.DomainBin10'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin10.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin10 visibility:private [final]' type=D of <root>.DomainBin10 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10> declared in <root>.DomainBin10.<get-a>' type=<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin10.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin10.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin10 visibility:private [final]' type=D of <root>.DomainBin10 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10> declared in <root>.DomainBin10.foo' type=<root>.DomainBin10<D of <root>.DomainBin10, A of <root>.DomainBin10> origin=null
+    CLASS CLASS name:DomainBin11 signature:/DomainBin11|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<A of <root>.DomainBin11>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /DomainBin11|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.Domain<*>] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /DomainBin11|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Domain<A of <root>.DomainBin11>] reified:false
+      CONSTRUCTOR signature:/DomainBin11.<init>|<init>(1:1){}[0] visibility:public <> (a:D of <root>.DomainBin11) returnType:<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.DomainBin11
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DomainBin11 signature:/DomainBin11|null[0] modality:FINAL visibility:public superTypes:[<root>.Domain<A of <root>.DomainBin11>]'
+      PROPERTY name:a signature:/DomainBin11.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin11.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin11 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.DomainBin11 declared in <root>.DomainBin11.<init>' type=D of <root>.DomainBin11 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/DomainBin11.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11>) returnType:D of <root>.DomainBin11
+          correspondingProperty: PROPERTY name:a signature:/DomainBin11.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.DomainBin11 declared in <root>.DomainBin11'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin11.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin11 visibility:private [final]' type=D of <root>.DomainBin11 origin=null
+                receiver: GET_VAR '<this>: <root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11> declared in <root>.DomainBin11.<get-a>' type=<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/DomainBin11.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain
+        $this: VALUE_PARAMETER name:<this> type:<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11>
+        BLOCK_BODY
+          CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Domain' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /DomainBin11.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:domain type:D of <root>.DomainBin visibility:private [final]] ] type:D of <root>.DomainBin11 visibility:private [final]' type=D of <root>.DomainBin11 origin=null
+              receiver: GET_VAR '<this>: <root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11> declared in <root>.DomainBin11.foo' type=<root>.DomainBin11<A of <root>.DomainBin11, D of <root>.DomainBin11> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

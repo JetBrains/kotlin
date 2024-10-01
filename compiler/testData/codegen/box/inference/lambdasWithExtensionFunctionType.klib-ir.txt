@@ -1,0 +1,539 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/lambdasWithExtensionFunctionType.kt
+    CLASS INTERFACE name:Stroke signature:/Stroke|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Stroke
+    CLASS INTERFACE name:Fill signature:/Fill|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fill
+    CLASS CLASS name:Rectangle signature:/Rectangle|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Rectangle
+      CONSTRUCTOR signature:/Rectangle.<init>|<init>(kotlin.Int;kotlin.Int){}[0] visibility:public <> (width:<unbound IrClassSymbolImpl>, height:<unbound IrClassSymbolImpl>) returnType:<root>.Rectangle [primary]
+        VALUE_PARAMETER name:width index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:height index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Rectangle signature:/Rectangle|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:width signature:/Rectangle.width|{}width[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'width: <unbound IrClassSymbolImpl> declared in <root>.Rectangle.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-width> signature:/Rectangle.width.<get-width>|<get-width>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Rectangle) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:width signature:/Rectangle.width|{}width[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-width> (): <unbound IrClassSymbolImpl> declared in <root>.Rectangle'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.<get-width>' type=<root>.Rectangle origin=null
+      PROPERTY name:height signature:/Rectangle.height|{}height[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'height: <unbound IrClassSymbolImpl> declared in <root>.Rectangle.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-height> signature:/Rectangle.height.<get-height>|<get-height>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Rectangle) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:height signature:/Rectangle.height|{}height[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-height> (): <unbound IrClassSymbolImpl> declared in <root>.Rectangle'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.<get-height>' type=<root>.Rectangle origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/Rectangle.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.Rectangle) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.component1' type=<root>.Rectangle origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component2 signature:/Rectangle.component2|component2(){}[0] visibility:public modality:FINAL <> ($this:<root>.Rectangle) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component2 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.component2' type=<root>.Rectangle origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/Rectangle.copy|copy(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Rectangle, width:<unbound IrClassSymbolImpl>, height:<unbound IrClassSymbolImpl>) returnType:<root>.Rectangle
+        $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+        VALUE_PARAMETER name:width index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.copy' type=<root>.Rectangle origin=null
+        VALUE_PARAMETER name:height index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.copy' type=<root>.Rectangle origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (width: <unbound IrClassSymbolImpl>, height: <unbound IrClassSymbolImpl>): <root>.Rectangle declared in <root>.Rectangle'
+            CONSTRUCTOR_CALL 'public constructor <init> (width: <unbound IrClassSymbolImpl>, height: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Rectangle' type=<root>.Rectangle origin=null
+              width: GET_VAR 'width: <unbound IrClassSymbolImpl> declared in <root>.Rectangle.copy' type=<unbound IrClassSymbolImpl> origin=null
+              height: GET_VAR 'height: <unbound IrClassSymbolImpl> declared in <root>.Rectangle.copy' type=<unbound IrClassSymbolImpl> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/Rectangle.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Rectangle) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Rectangle'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Rectangle("
+              CONST String type=<unbound IrClassSymbolImpl> value="width="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.toString' type=<root>.Rectangle origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=", "
+              CONST String type=<unbound IrClassSymbolImpl> value="height="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.toString' type=<root>.Rectangle origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/Rectangle.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Rectangle) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+        BLOCK_BODY
+          VAR name:result type:<unbound IrClassSymbolImpl> [var]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.hashCode' type=<root>.Rectangle origin=null
+          SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Rectangle.hashCode' type=<unbound IrClassSymbolImpl> origin=EQ
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Rectangle.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=31
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.hashCode' type=<root>.Rectangle origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Rectangle'
+            GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Rectangle.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/Rectangle.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Rectangle, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Rectangle
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.equals' type=<root>.Rectangle origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Rectangle.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Rectangle
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Rectangle.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Rectangle [val]
+            TYPE_OP type=<root>.Rectangle origin=CAST typeOperand=<root>.Rectangle
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Rectangle.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.equals' type=<root>.Rectangle origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:width signature:[ /Rectangle.width|{}width[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Rectangle [val] declared in <root>.Rectangle.equals' type=<root>.Rectangle origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.Rectangle declared in <root>.Rectangle.equals' type=<root>.Rectangle origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:height signature:[ /Rectangle.height|{}height[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Rectangle [val] declared in <root>.Rectangle.equals' type=<root>.Rectangle origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Rectangle'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:Ellipse signature:/Ellipse|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ellipse
+      CONSTRUCTOR signature:/Ellipse.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Ellipse [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Ellipse signature:/Ellipse|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Circle signature:/Circle|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.Ellipse]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Circle
+      CONSTRUCTOR signature:/Circle.<init>|<init>(kotlin.Int){}[0] visibility:public <> (radius:<unbound IrClassSymbolImpl>) returnType:<root>.Circle [primary]
+        VALUE_PARAMETER name:radius index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Ellipse'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Circle signature:/Circle|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.Ellipse]'
+      PROPERTY name:radius signature:/Circle.radius|{}radius[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'radius: <unbound IrClassSymbolImpl> declared in <root>.Circle.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-radius> signature:/Circle.radius.<get-radius>|<get-radius>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Circle) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:radius signature:/Circle.radius|{}radius[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-radius> (): <unbound IrClassSymbolImpl> declared in <root>.Circle'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.<get-radius>' type=<root>.Circle origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/Circle.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.Circle) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.Circle'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.component1' type=<root>.Circle origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/Circle.copy|copy(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Circle, radius:<unbound IrClassSymbolImpl>) returnType:<root>.Circle
+        $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+        VALUE_PARAMETER name:radius index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.copy' type=<root>.Circle origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (radius: <unbound IrClassSymbolImpl>): <root>.Circle declared in <root>.Circle'
+            CONSTRUCTOR_CALL 'public constructor <init> (radius: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Circle' type=<root>.Circle origin=null
+              radius: GET_VAR 'radius: <unbound IrClassSymbolImpl> declared in <root>.Circle.copy' type=<unbound IrClassSymbolImpl> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/Circle.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Circle) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Circle'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Circle("
+              CONST String type=<unbound IrClassSymbolImpl> value="radius="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.toString' type=<root>.Circle origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/Circle.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Circle) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Circle'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.hashCode' type=<root>.Circle origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/Circle.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Circle, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.equals' type=<root>.Circle origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Circle.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Circle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Circle
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Circle.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Circle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Circle [val]
+            TYPE_OP type=<root>.Circle origin=CAST typeOperand=<root>.Circle
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Circle.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.Circle declared in <root>.Circle.equals' type=<root>.Circle origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:radius signature:[ /Circle.radius|{}radius[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:width type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Circle [val] declared in <root>.Circle.equals' type=<root>.Circle origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Circle'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Circle'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS INTERFACE name:Canvas signature:/Canvas|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Canvas
+      FUN name:rect signature:/Canvas.rect|rect(Rectangle;Fill){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Canvas, rectangle:<root>.Rectangle, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+        VALUE_PARAMETER name:rectangle index:0 type:<root>.Rectangle
+        VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+      FUN name:rect signature:/Canvas.rect|rect(Rectangle;Stroke;Fill?){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Canvas, rectangle:<root>.Rectangle, stroke:<root>.Stroke, fill:<root>.Fill?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+        VALUE_PARAMETER name:rectangle index:0 type:<root>.Rectangle
+        VALUE_PARAMETER name:stroke index:1 type:<root>.Stroke
+        VALUE_PARAMETER name:fill index:2 type:<root>.Fill?
+      FUN name:rect signature:/Canvas.rect|rect(Rectangle;kotlin.Double;Fill){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Canvas, rectangle:<root>.Rectangle, radius:<unbound IrClassSymbolImpl>, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+        VALUE_PARAMETER name:rectangle index:0 type:<root>.Rectangle
+        VALUE_PARAMETER name:radius index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:fill index:2 type:<root>.Fill
+      FUN name:rect signature:/Canvas.rect|rect(Rectangle;kotlin.Double;Stroke;Fill?){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Canvas, rectangle:<root>.Rectangle, radius:<unbound IrClassSymbolImpl>, stroke:<root>.Stroke, fill:<root>.Fill?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+        VALUE_PARAMETER name:rectangle index:0 type:<root>.Rectangle
+        VALUE_PARAMETER name:radius index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:stroke index:2 type:<root>.Stroke
+        VALUE_PARAMETER name:fill index:3 type:<root>.Fill?
+      FUN name:circle signature:/Canvas.circle|circle(Circle;Fill){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Canvas, circle:<root>.Circle, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+        VALUE_PARAMETER name:circle index:0 type:<root>.Circle
+        VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+      FUN name:circle signature:/Canvas.circle|circle(Circle;Stroke;Fill?){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Canvas, circle:<root>.Circle, stroke:<root>.Stroke, fill:<root>.Fill?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+        VALUE_PARAMETER name:circle index:0 type:<root>.Circle
+        VALUE_PARAMETER name:stroke index:1 type:<root>.Stroke
+        VALUE_PARAMETER name:fill index:2 type:<root>.Fill?
+    FUN name:test1 signature:/test1|test1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:rect type:<root>.Rectangle [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (width: <unbound IrClassSymbolImpl>, height: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Rectangle' type=<root>.Rectangle origin=null
+            width: CONST Int type=<unbound IrClassSymbolImpl> value=100
+            height: CONST Int type=<unbound IrClassSymbolImpl> value=100
+        VAR name:circle type:<root>.Circle [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (radius: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Circle' type=<root>.Circle origin=null
+            radius: CONST Int type=<unbound IrClassSymbolImpl> value=100
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+          $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>> varargElementType=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, <unused var>:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, fill: <root>.Fill): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test1.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test1' type=<root>.Rectangle origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test1.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, <unused var>:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, radius: <unbound IrClassSymbolImpl>, fill: <root>.Fill): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test1.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test1' type=<root>.Rectangle origin=null
+                      radius: CONST Double type=<unbound IrClassSymbolImpl> value=10.0
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test1.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test1.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test1' type=<root>.Rectangle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test1.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test1.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, radius: <unbound IrClassSymbolImpl>, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test1.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test1' type=<root>.Rectangle origin=null
+                      radius: CONST Double type=<unbound IrClassSymbolImpl> value=10.0
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test1.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test1.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, <unused var>:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, fill: <root>.Fill): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test1.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test1' type=<root>.Circle origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test1.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test1.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test1' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test1.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test1.<anonymous>' type=<root>.Fill origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'public final fun check (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  block: GET_VAR 'it: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> declared in <root>.test1.<anonymous>' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:test2 signature:/test2|test2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:rect type:<root>.Rectangle [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (width: <unbound IrClassSymbolImpl>, height: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Rectangle' type=<root>.Rectangle origin=null
+            width: CONST Int type=<unbound IrClassSymbolImpl> value=100
+            height: CONST Int type=<unbound IrClassSymbolImpl> value=100
+        VAR name:circle type:<root>.Circle [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (radius: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Circle' type=<root>.Circle origin=null
+            radius: CONST Int type=<unbound IrClassSymbolImpl> value=100
+        VAR name:l type:<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out @[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>> varargElementType=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, <unused var>:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, fill: <root>.Fill): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test2' type=<root>.Rectangle origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, <unused var>:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, radius: <unbound IrClassSymbolImpl>, fill: <root>.Fill): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test2' type=<root>.Rectangle origin=null
+                      radius: CONST Double type=<unbound IrClassSymbolImpl> value=10.0
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test2' type=<root>.Rectangle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun rect (rectangle: <root>.Rectangle, radius: <unbound IrClassSymbolImpl>, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      rectangle: GET_VAR 'val rect: <root>.Rectangle [val] declared in <root>.test2' type=<root>.Rectangle origin=null
+                      radius: CONST Double type=<unbound IrClassSymbolImpl> value=10.0
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, <unused var>:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, fill: <root>.Fill): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Canvas, stroke:<root>.Stroke, fill:<root>.Fill) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$listOf type:<root>.Canvas
+                  VALUE_PARAMETER name:stroke index:0 type:<root>.Stroke
+                  VALUE_PARAMETER name:fill index:1 type:<root>.Fill
+                  BLOCK_BODY
+                    CALL 'public abstract fun circle (circle: <root>.Circle, stroke: <root>.Stroke, fill: <root>.Fill?): <unbound IrClassSymbolImpl> declared in <root>.Canvas' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$listOf: <root>.Canvas declared in <root>.test2.<anonymous>' type=<root>.Canvas origin=null
+                      circle: GET_VAR 'val circle: <root>.Circle [val] declared in <root>.test2' type=<root>.Circle origin=null
+                      stroke: GET_VAR 'stroke: <root>.Stroke declared in <root>.test2.<anonymous>' type=<root>.Stroke origin=null
+                      fill: GET_VAR 'fill: <root>.Fill declared in <root>.test2.<anonymous>' type=<root>.Fill origin=null
+    FUN name:check signature:/check|check(kotlin.Function3<Canvas,Stroke,Fill,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Canvas, <root>.Stroke, <root>.Fill, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

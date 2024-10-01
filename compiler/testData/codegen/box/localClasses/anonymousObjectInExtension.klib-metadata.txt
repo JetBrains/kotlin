@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: WithCompanion
+    // class name: WithCompanion.Companion
+
+    public open class WithCompanion : kotlin/Any {
+
+      public constructor(a: WithCompanion.Companion)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object WithCompanion.Companion : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun WithCompanion.test(): kotlin/String
+    }
+  }
+}

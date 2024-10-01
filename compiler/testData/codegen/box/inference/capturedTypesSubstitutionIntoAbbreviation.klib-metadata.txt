@@ -1,0 +1,185 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Tag
+    // class name: Tag2
+    // class name: Tag3
+    // class name: Tag4
+    // class name: Tag5
+    // class name: Tag6
+    // class name: Tag7
+    // class name: Tag8
+
+    public final data class Tag<T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */): Tag<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+        public final get
+    }
+
+    public final data class Tag2<T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */): Tag2<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+        public final get
+    }
+
+    public final data class Tag3<in T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */): Tag3<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+        public final get
+    }
+
+    public final data class Tag4<in T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */): Tag4<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+        public final get
+    }
+
+    public final data class Tag5<T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */ /* = ... */): Tag5<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */
+        public final get
+    }
+
+    public final data class Tag6<out T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */): Tag6<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+        public final get
+    }
+
+    public final data class Tag7<out T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */): Tag7<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+        public final get
+    }
+
+    public final data class Tag8<out T#0 /* L */> : kotlin/Any {
+
+      public constructor(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */
+
+      public final /* synthesized */ fun copy(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */ /* = ... */): Tag8<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getTag(): Tag<*>
+
+      public final fun getTag2(): Tag2<*>
+
+      public final fun getTag3(): Tag3<*>
+
+      public final fun getTag4(): Tag4<*>
+
+      public final fun getTag5(): Tag5<*>
+
+      public final fun getTag6(): Tag6<*>
+
+      public final fun getTag7(): Tag7<*>
+
+      public final fun getTag8(): Tag8<*>
+
+      public typealias Action<T#0 /* K */> = kotlin/Function1<T#0, kotlin/Unit> /* = kotlin/Function1<T#0, kotlin/Unit> */
+
+      public typealias Action2<T#0 /* K */> = kotlin/Function1<T#0, T#0> /* = kotlin/Function1<T#0, T#0> */
+    }
+  }
+}

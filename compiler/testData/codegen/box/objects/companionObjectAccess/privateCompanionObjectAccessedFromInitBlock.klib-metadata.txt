@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Companion
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      public final val test: kotlin/String
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    private final companion object Outer.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val result: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

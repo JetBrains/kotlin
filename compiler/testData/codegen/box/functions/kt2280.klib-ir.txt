@@ -1,0 +1,20 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2280.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:rmrf visibility:local modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                  arg0: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.box.rmrf' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                then: CALL 'local final fun rmrf (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  i: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                    $this: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.box.rmrf' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'local final fun rmrf (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          i: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

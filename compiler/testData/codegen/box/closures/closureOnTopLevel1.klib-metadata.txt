@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(lambda: kotlin/Function0<T#0>): T#0
+
+      public final fun f(): kotlin/String
+
+      public final val getter: kotlin/String
+        public final /* non-default */ get
+
+      public final val obj: kotlin/Function0<kotlin/String>
+        public final get
+
+      public final val p: kotlin/String
+        public final get
+    }
+  }
+}

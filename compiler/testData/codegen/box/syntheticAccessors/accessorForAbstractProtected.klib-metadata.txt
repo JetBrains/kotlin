@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public abstract class B : a/A {
+
+      public constructor()
+
+      public final fun g(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+    }
+  }
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+
+    public abstract class a/A : kotlin/Any {
+
+      public constructor()
+
+      protected abstract fun f(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,74 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Container
+    // class name: ContainerImpl
+
+    public final class A : ContainerImpl, kotlin/collections/MutableList<kotlin/String> {
+
+      public constructor()
+
+      public open fun add(element: kotlin/String): kotlin/Boolean
+
+      public open fun add(index: kotlin/Int, element: kotlin/String): kotlin/Unit
+
+      public open fun addAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open fun addAll(index: kotlin/Int, elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open fun clear(): kotlin/Unit
+
+      public open operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open operator fun get(index: kotlin/Int): kotlin/String
+
+      public open fun indexOf(element: kotlin/String): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/MutableIterator<kotlin/String>
+
+      public open fun lastIndexOf(element: kotlin/String): kotlin/Int
+
+      public open fun listIterator(): kotlin/collections/MutableListIterator<kotlin/String>
+
+      public open fun listIterator(index: kotlin/Int): kotlin/collections/MutableListIterator<kotlin/String>
+
+      public open fun remove(element: kotlin/String): kotlin/Boolean
+
+      public open fun removeAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open fun retainAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open operator fun set(index: kotlin/Int, element: kotlin/String): kotlin/String
+
+      public open fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/MutableList<kotlin/String>
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public abstract interface Container : kotlin/Any {
+
+      public abstract fun removeAt(x: kotlin/Int): kotlin/String
+    }
+
+    public open class ContainerImpl : Container {
+
+      public constructor()
+
+      public open fun removeAt(x: kotlin/Int): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,233 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt
+    CLASS CLASS name:InlinedComparable signature:/InlinedComparable|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl><<root>.InlinedComparable<T of <root>.InlinedComparable>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /InlinedComparable|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/InlinedComparable.<init>|<init>(1:0){}[0] visibility:public <> (x:T of <root>.InlinedComparable) returnType:<root>.InlinedComparable<T of <root>.InlinedComparable> [primary]
+        VALUE_PARAMETER name:x index:0 type:T of <root>.InlinedComparable
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InlinedComparable signature:/InlinedComparable|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl><<root>.InlinedComparable<T of <root>.InlinedComparable>>]'
+      PROPERTY name:x signature:/InlinedComparable.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedComparable.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedComparable visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: T of <root>.InlinedComparable declared in <root>.InlinedComparable.<init>' type=T of <root>.InlinedComparable origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/InlinedComparable.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.InlinedComparable<T of <root>.InlinedComparable>) returnType:T of <root>.InlinedComparable
+          correspondingProperty: PROPERTY name:x signature:/InlinedComparable.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.InlinedComparable declared in <root>.InlinedComparable'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedComparable.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedComparable visibility:private [final]' type=T of <root>.InlinedComparable origin=null
+                receiver: GET_VAR '<this>: <root>.InlinedComparable<T of <root>.InlinedComparable> declared in <root>.InlinedComparable.<get-x>' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+      FUN name:compareTo signature:/InlinedComparable.compareTo|compareTo(InlinedComparable<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedComparable<T of <root>.InlinedComparable>, other:<root>.InlinedComparable<T of <root>.InlinedComparable>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+        VALUE_PARAMETER name:other index:0 type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareTo (other: <root>.InlinedComparable<T of <root>.InlinedComparable>): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedComparable'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-x> (): T of <root>.InlinedComparable declared in <root>.InlinedComparable' type=T of <root>.InlinedComparable origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.InlinedComparable<T of <root>.InlinedComparable> declared in <root>.InlinedComparable.compareTo' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+              1: CALL 'public final fun <get-x> (): T of <root>.InlinedComparable declared in <root>.InlinedComparable' type=T of <root>.InlinedComparable origin=GET_PROPERTY
+                $this: GET_VAR 'other: <root>.InlinedComparable<T of <root>.InlinedComparable> declared in <root>.InlinedComparable.compareTo' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/InlinedComparable.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedComparable<T of <root>.InlinedComparable>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.InlinedComparable'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="InlinedComparable("
+              CONST String type=<unbound IrClassSymbolImpl> value="x="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedComparable.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedComparable visibility:private [final]' type=T of <root>.InlinedComparable origin=null
+                receiver: GET_VAR '<this>: <root>.InlinedComparable<T of <root>.InlinedComparable> declared in <root>.InlinedComparable.toString' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/InlinedComparable.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedComparable<T of <root>.InlinedComparable>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.InlinedComparable'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedComparable.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedComparable visibility:private [final]' type=T of <root>.InlinedComparable origin=null
+                receiver: GET_VAR '<this>: <root>.InlinedComparable<T of <root>.InlinedComparable> declared in <root>.InlinedComparable.hashCode' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/InlinedComparable.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedComparable<T of <root>.InlinedComparable>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedComparable<T of <root>.InlinedComparable>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.InlinedComparable<T of <root>.InlinedComparable>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.InlinedComparable.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedComparable'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.InlinedComparable<T of <root>.InlinedComparable> [val]
+            TYPE_OP type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=CAST typeOperand=<root>.InlinedComparable<T of <root>.InlinedComparable>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.InlinedComparable.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedComparable.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedComparable visibility:private [final]' type=T of <root>.InlinedComparable origin=null
+                    receiver: GET_VAR '<this>: <root>.InlinedComparable<T of <root>.InlinedComparable> declared in <root>.InlinedComparable.equals' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedComparable.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedComparable visibility:private [final]' type=T of <root>.InlinedComparable origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.InlinedComparable<T of <root>.InlinedComparable> [val] declared in <root>.InlinedComparable.equals' type=<root>.InlinedComparable<T of <root>.InlinedComparable> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedComparable'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedComparable'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:generic signature:/generic|generic(kotlin.Comparable<0:0>;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (c:<unbound IrClassSymbolImpl><T of <root>.generic>, element:T of <root>.generic) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /generic|generic(kotlin.Comparable<0:0>;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><T of <root>.generic>
+      VALUE_PARAMETER name:element index:1 type:T of <root>.generic
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun generic <T> (c: <unbound IrClassSymbolImpl><T of <root>.generic>, element: T of <root>.generic): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'c: <unbound IrClassSymbolImpl><T of <root>.generic> declared in <root>.generic' type=<unbound IrClassSymbolImpl><T of <root>.generic> origin=null
+            1: GET_VAR 'element: T of <root>.generic declared in <root>.generic' type=T of <root>.generic origin=null
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base<T of <root>.Base>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Base|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:foo signature:/Base.foo|foo@Base<1:0>(Base<1:0>;1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Base<T of <root>.Base>, $receiver:<root>.Base<T of <root>.Base>, a:<root>.Base<T of <root>.Base>, b:T of <root>.Base) returnType:<root>.Base<T of <root>.Base>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
+        VALUE_PARAMETER name:a index:0 type:<root>.Base<T of <root>.Base>
+        VALUE_PARAMETER name:b index:1 type:T of <root>.Base
+    CLASS CLASS name:InlinedBase signature:/InlinedBase|null[0] modality:FINAL visibility:public [value] superTypes:[<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /InlinedBase|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/InlinedBase.<init>|<init>(1:0){}[0] visibility:public <> (x:T of <root>.InlinedBase) returnType:<root>.InlinedBase<T of <root>.InlinedBase> [primary]
+        VALUE_PARAMETER name:x index:0 type:T of <root>.InlinedBase
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InlinedBase signature:/InlinedBase|null[0] modality:FINAL visibility:public [value] superTypes:[<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>]'
+      PROPERTY name:x signature:/InlinedBase.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedBase.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedBase visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: T of <root>.InlinedBase declared in <root>.InlinedBase.<init>' type=T of <root>.InlinedBase origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/InlinedBase.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.InlinedBase<T of <root>.InlinedBase>) returnType:T of <root>.InlinedBase
+          correspondingProperty: PROPERTY name:x signature:/InlinedBase.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.InlinedBase declared in <root>.InlinedBase'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedBase.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedBase visibility:private [final]' type=T of <root>.InlinedBase origin=null
+                receiver: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.<get-x>' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+      FUN name:foo signature:/InlinedBase.foo|foo@Base<InlinedBase<1:0>>(Base<InlinedBase<1:0>>;InlinedBase<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedBase<T of <root>.InlinedBase>, $receiver:<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>, a:<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>, b:<root>.InlinedBase<T of <root>.InlinedBase>) returnType:<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>
+        overridden:
+          public abstract fun foo (a: <root>.Base<T of <root>.Base>, b: T of <root>.Base): <root>.Base<T of <root>.Base> declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>
+        VALUE_PARAMETER name:a index:0 type:<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>
+        VALUE_PARAMETER name:b index:1 type:<root>.InlinedBase<T of <root>.InlinedBase>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>, b: <root>.InlinedBase<T of <root>.InlinedBase>): <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> declared in <root>.InlinedBase'
+            WHEN type=<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> origin=IF
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.InlinedBase<*>
+                  GET_VAR 'a: <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> declared in <root>.InlinedBase.foo' type=<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> origin=null
+                then: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.InlinedBase) [primary] declared in <root>.InlinedBase' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+                  <class: T>: T of <root>.InlinedBase
+                  x: TYPE_OP type=T of <root>.InlinedBase origin=CAST typeOperand=T of <root>.InlinedBase
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'public final fun <get-x> (): T of <root>.InlinedBase declared in <root>.InlinedBase' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: TYPE_OP type=<root>.InlinedBase<*> origin=IMPLICIT_CAST typeOperand=<root>.InlinedBase<*>
+                          GET_VAR 'a: <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> declared in <root>.InlinedBase.foo' type=<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> origin=null
+                      1: CALL 'public final fun <get-x> (): T of <root>.InlinedBase declared in <root>.InlinedBase' type=T of <root>.InlinedBase origin=GET_PROPERTY
+                        $this: GET_VAR 'b: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.foo' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR '<this>: <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> declared in <root>.InlinedBase.foo' type=<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> origin=null
+      FUN name:double signature:/InlinedBase.double|double(){}[0] visibility:public modality:FINAL <> ($this:<root>.InlinedBase<T of <root>.InlinedBase>) returnType:<root>.InlinedBase<T of <root>.InlinedBase>
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun double (): <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase'
+            TYPE_OP type=<root>.InlinedBase<T of <root>.InlinedBase> origin=CAST typeOperand=<root>.InlinedBase<T of <root>.InlinedBase>
+              CALL 'public open fun foo (a: <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>>, b: <root>.InlinedBase<T of <root>.InlinedBase>): <root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> declared in <root>.InlinedBase' type=<root>.Base<<root>.InlinedBase<T of <root>.InlinedBase>> origin=null
+                $this: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.double' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+                $receiver: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.double' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+                a: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.double' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+                b: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.double' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/InlinedBase.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedBase<T of <root>.InlinedBase>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.InlinedBase'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="InlinedBase("
+              CONST String type=<unbound IrClassSymbolImpl> value="x="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedBase.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedBase visibility:private [final]' type=T of <root>.InlinedBase origin=null
+                receiver: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.toString' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/InlinedBase.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedBase<T of <root>.InlinedBase>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.InlinedBase'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedBase.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedBase visibility:private [final]' type=T of <root>.InlinedBase origin=null
+                receiver: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.hashCode' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/InlinedBase.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.InlinedBase<T of <root>.InlinedBase>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.InlinedBase<T of <root>.InlinedBase>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.InlinedBase<T of <root>.InlinedBase>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.InlinedBase.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedBase'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.InlinedBase<T of <root>.InlinedBase> [val]
+            TYPE_OP type=<root>.InlinedBase<T of <root>.InlinedBase> origin=CAST typeOperand=<root>.InlinedBase<T of <root>.InlinedBase>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.InlinedBase.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedBase.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedBase visibility:private [final]' type=T of <root>.InlinedBase origin=null
+                    receiver: GET_VAR '<this>: <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase.equals' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /InlinedBase.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.InlinedComparable visibility:private [final]] ] type:T of <root>.InlinedBase visibility:private [final]' type=T of <root>.InlinedBase origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.InlinedBase<T of <root>.InlinedBase> [val] declared in <root>.InlinedBase.equals' type=<root>.InlinedBase<T of <root>.InlinedBase> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedBase'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.InlinedBase'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<root>.InlinedComparable<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.InlinedComparable) [primary] declared in <root>.InlinedComparable' type=<root>.InlinedComparable<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun generic <T> (c: <unbound IrClassSymbolImpl><T of <root>.generic>, element: T of <root>.generic): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <root>.InlinedComparable<<unbound IrClassSymbolImpl>>
+                  c: GET_VAR 'val a: <root>.InlinedComparable<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.InlinedComparable<<unbound IrClassSymbolImpl>> origin=null
+                  element: GET_VAR 'val a: <root>.InlinedComparable<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.InlinedComparable<<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 1"
+        VAR name:b type:<root>.InlinedBase<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.InlinedBase) [primary] declared in <root>.InlinedBase' type=<root>.InlinedBase<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-x> (): T of <root>.InlinedBase declared in <root>.InlinedBase' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun double (): <root>.InlinedBase<T of <root>.InlinedBase> declared in <root>.InlinedBase' type=<root>.InlinedBase<<unbound IrClassSymbolImpl>> origin=null
+                    $this: GET_VAR 'val b: <root>.InlinedBase<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.InlinedBase<<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

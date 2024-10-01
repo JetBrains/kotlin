@@ -1,0 +1,92 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    PROPERTY name:a signature:/a|{}a[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a signature:[ /a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[Nested(a = TypeAnnotation(str = "IntAnno"))] <unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> () returnType:@[Nested(a = TypeAnnotation(str = "IntAnno"))] <unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:a signature:/a|{}a[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): @[Nested(a = TypeAnnotation(str = "IntAnno"))] <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[Nested(a = TypeAnnotation(str = "IntAnno"))] <unbound IrClassSymbolImpl> visibility:private [final,static]' type=@[Nested(a = TypeAnnotation(str = "IntAnno"))] <unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:b signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[NestedArray(a = [TypeAnnotation(str = "Element1Anno"), TypeAnnotation(str = "Element2Anno")] type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> varargElementType=<root>.TypeAnnotation)] <unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> signature:/b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> () returnType:@[NestedArray(a = [TypeAnnotation(str = "Element1Anno"), TypeAnnotation(str = "Element2Anno")] type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> varargElementType=<root>.TypeAnnotation)] <unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): @[NestedArray(a = [TypeAnnotation(str = "Element1Anno"), TypeAnnotation(str = "Element2Anno")] type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> varargElementType=<root>.TypeAnnotation)] <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:@[NestedArray(a = [TypeAnnotation(str = "Element1Anno"), TypeAnnotation(str = "Element2Anno")] type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> varargElementType=<root>.TypeAnnotation)] <unbound IrClassSymbolImpl> visibility:private [final,static]' type=@[NestedArray(a = [TypeAnnotation(str = "Element1Anno"), TypeAnnotation(str = "Element2Anno")] type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> varargElementType=<root>.TypeAnnotation)] <unbound IrClassSymbolImpl> origin=null
+    CLASS ANNOTATION_CLASS name:TypeAnnotation signature:/TypeAnnotation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeAnnotation
+      CONSTRUCTOR signature:/TypeAnnotation.<init>|<init>(kotlin.String){}[0] visibility:public <> (str:<unbound IrClassSymbolImpl>) returnType:<root>.TypeAnnotation [primary]
+        VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:TypeAnnotation signature:/TypeAnnotation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:str signature:/TypeAnnotation.str|{}str[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:str signature:[ /TypeAnnotation.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'str: <unbound IrClassSymbolImpl> declared in <root>.TypeAnnotation.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> signature:/TypeAnnotation.str.<get-str>|<get-str>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TypeAnnotation) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:str signature:/TypeAnnotation.str|{}str[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TypeAnnotation
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-str> (): <unbound IrClassSymbolImpl> declared in <root>.TypeAnnotation'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:str signature:[ /TypeAnnotation.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TypeAnnotation declared in <root>.TypeAnnotation.<get-str>' type=<root>.TypeAnnotation origin=null
+    CLASS ANNOTATION_CLASS name:Nested signature:/Nested|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Nested
+      CONSTRUCTOR signature:/Nested.<init>|<init>(TypeAnnotation){}[0] visibility:public <> (a:<root>.TypeAnnotation) returnType:<root>.Nested [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.TypeAnnotation
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Nested signature:/Nested|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/Nested.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /Nested.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<root>.TypeAnnotation visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <root>.TypeAnnotation declared in <root>.Nested.<init>' type=<root>.TypeAnnotation origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/Nested.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Nested) returnType:<root>.TypeAnnotation
+          correspondingProperty: PROPERTY name:a signature:/Nested.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Nested
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <root>.TypeAnnotation declared in <root>.Nested'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /Nested.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<root>.TypeAnnotation visibility:private [final]' type=<root>.TypeAnnotation origin=null
+                receiver: GET_VAR '<this>: <root>.Nested declared in <root>.Nested.<get-a>' type=<root>.Nested origin=null
+    CLASS ANNOTATION_CLASS name:NestedArray signature:/NestedArray|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NestedArray
+      CONSTRUCTOR signature:/NestedArray.<init>|<init>(kotlin.Array<TypeAnnotation>){}[0] visibility:public <> (a:<unbound IrClassSymbolImpl><<root>.TypeAnnotation>) returnType:<root>.NestedArray [primary]
+        VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl><<root>.TypeAnnotation>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:NestedArray signature:/NestedArray|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/NestedArray.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /NestedArray.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.TypeAnnotation> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <unbound IrClassSymbolImpl><<root>.TypeAnnotation> declared in <root>.NestedArray.<init>' type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/NestedArray.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.NestedArray) returnType:<unbound IrClassSymbolImpl><<root>.TypeAnnotation>
+          correspondingProperty: PROPERTY name:a signature:/NestedArray.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.NestedArray
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <unbound IrClassSymbolImpl><<root>.TypeAnnotation> declared in <root>.NestedArray'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /NestedArray.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.TypeAnnotation> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.TypeAnnotation> origin=null
+                receiver: GET_VAR '<this>: <root>.NestedArray declared in <root>.NestedArray.<get-a>' type=<root>.NestedArray origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,220 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/functionExpressionWithThisReference.kt
+    FUN name:thisRef1 signature:/thisRef1|thisRef1@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun thisRef1 (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): <unbound IrClassSymbolImpl> declared in <root>.thisRef1'
+                  GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.thisRef1' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:thisRef2 signature:/thisRef2|thisRef2@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun thisRef2 (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): <unbound IrClassSymbolImpl> declared in <root>.thisRef2'
+                  GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.thisRef2' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:genericThisRef1 signature:/genericThisRef1|genericThisRef1@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.genericThisRef1) returnType:<unbound IrClassSymbolImpl><T of <root>.genericThisRef1>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /genericThisRef1|genericThisRef1@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.genericThisRef1
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun genericThisRef1 <T> (): <unbound IrClassSymbolImpl><T of <root>.genericThisRef1> declared in <root>'
+          FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.genericThisRef1> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.genericThisRef1
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): T of <root>.genericThisRef1 declared in <root>.genericThisRef1'
+                  GET_VAR '<this>: T of <root>.genericThisRef1 declared in <root>.genericThisRef1' type=T of <root>.genericThisRef1 origin=null
+    FUN name:genericThisRef2 signature:/genericThisRef2|genericThisRef2@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.genericThisRef2) returnType:<unbound IrClassSymbolImpl><T of <root>.genericThisRef2>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /genericThisRef2|genericThisRef2@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.genericThisRef2
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun genericThisRef2 <T> (): <unbound IrClassSymbolImpl><T of <root>.genericThisRef2> declared in <root>'
+          FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.genericThisRef2> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.genericThisRef2
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): T of <root>.genericThisRef2 declared in <root>.genericThisRef2'
+                  GET_VAR '<this>: T of <root>.genericThisRef2 declared in <root>.genericThisRef2' type=T of <root>.genericThisRef2 origin=null
+    PROPERTY name:valThisRef1 signature:/valThisRef1|@kotlin.Int{}valThisRef1[0] visibility:public modality:FINAL [val]
+      FUN name:<get-valThisRef1> signature:/valThisRef1.<get-valThisRef1>|<get-valThisRef1>@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:valThisRef1 signature:/valThisRef1|@kotlin.Int{}valThisRef1[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-valThisRef1> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ANONYMOUS_FUNCTION
+              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): <unbound IrClassSymbolImpl> declared in <root>.<get-valThisRef1>'
+                    GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.<get-valThisRef1>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:valThisRef2 signature:/valThisRef2|@kotlin.Int{}valThisRef2[0] visibility:public modality:FINAL [val]
+      FUN name:<get-valThisRef2> signature:/valThisRef2.<get-valThisRef2>|<get-valThisRef2>@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:valThisRef2 signature:/valThisRef2|@kotlin.Int{}valThisRef2[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-valThisRef2> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ANONYMOUS_FUNCTION
+              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): <unbound IrClassSymbolImpl> declared in <root>.<get-valThisRef2>'
+                    GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.<get-valThisRef2>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:valGenericThisRef1 signature:/valGenericThisRef1|@0:0{0§<kotlin.Any?>}valGenericThisRef1[0] visibility:public modality:FINAL [val]
+      FUN name:<get-valGenericThisRef1> signature:/valGenericThisRef1.<get-valGenericThisRef1>|<get-valGenericThisRef1>@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-valGenericThisRef1>) returnType:<unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef1>>
+        correspondingProperty: PROPERTY name:valGenericThisRef1 signature:/valGenericThisRef1|@0:0{0§<kotlin.Any?>}valGenericThisRef1[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /valGenericThisRef1|@0:0{0§<kotlin.Any?>}valGenericThisRef1[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-valGenericThisRef1>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-valGenericThisRef1> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef1>> declared in <root>'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef1>> origin=ANONYMOUS_FUNCTION
+              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-valGenericThisRef1>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): T of <root>.<get-valGenericThisRef1> declared in <root>.<get-valGenericThisRef1>'
+                    GET_VAR '<this>: T of <root>.<get-valGenericThisRef1> declared in <root>.<get-valGenericThisRef1>' type=T of <root>.<get-valGenericThisRef1> origin=null
+    PROPERTY name:valGenericThisRef2 signature:/valGenericThisRef2|@0:0{0§<kotlin.Any?>}valGenericThisRef2[0] visibility:public modality:FINAL [val]
+      FUN name:<get-valGenericThisRef2> signature:/valGenericThisRef2.<get-valGenericThisRef2>|<get-valGenericThisRef2>@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-valGenericThisRef2>) returnType:<unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef2>>
+        correspondingProperty: PROPERTY name:valGenericThisRef2 signature:/valGenericThisRef2|@0:0{0§<kotlin.Any?>}valGenericThisRef2[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /valGenericThisRef2|@0:0{0§<kotlin.Any?>}valGenericThisRef2[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-valGenericThisRef2>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-valGenericThisRef2> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef2>> declared in <root>'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef2>> origin=ANONYMOUS_FUNCTION
+              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-valGenericThisRef2>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): T of <root>.<get-valGenericThisRef2> declared in <root>.<get-valGenericThisRef2>'
+                    GET_VAR '<this>: T of <root>.<get-valGenericThisRef2> declared in <root>.<get-valGenericThisRef2>' type=T of <root>.<get-valGenericThisRef2> origin=null
+    PROPERTY name:withLabel1 signature:/withLabel1|@0:0{0§<kotlin.Any?>}withLabel1[0] visibility:public modality:FINAL [val]
+      FUN name:<get-withLabel1> signature:/withLabel1.<get-withLabel1>|<get-withLabel1>@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-withLabel1>) returnType:<unbound IrClassSymbolImpl><T of <root>.<get-withLabel1>>
+        correspondingProperty: PROPERTY name:withLabel1 signature:/withLabel1|@0:0{0§<kotlin.Any?>}withLabel1[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /withLabel1|@0:0{0§<kotlin.Any?>}withLabel1[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-withLabel1>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-withLabel1> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-withLabel1>> declared in <root>'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.<get-withLabel1>> origin=ANONYMOUS_FUNCTION
+              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-withLabel1>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): T of <root>.<get-withLabel1> declared in <root>.<get-withLabel1>'
+                    GET_VAR '<this>: T of <root>.<get-withLabel1> declared in <root>.<get-withLabel1>' type=T of <root>.<get-withLabel1> origin=null
+    PROPERTY name:withLabel2 signature:/withLabel2|@0:0{0§<kotlin.Any?>}withLabel2[0] visibility:public modality:FINAL [val]
+      FUN name:<get-withLabel2> signature:/withLabel2.<get-withLabel2>|<get-withLabel2>@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-withLabel2>) returnType:<unbound IrClassSymbolImpl><T of <root>.<get-withLabel2>>
+        correspondingProperty: PROPERTY name:withLabel2 signature:/withLabel2|@0:0{0§<kotlin.Any?>}withLabel2[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /withLabel2|@0:0{0§<kotlin.Any?>}withLabel2[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-withLabel2>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-withLabel2> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-withLabel2>> declared in <root>'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.<get-withLabel2>> origin=ANONYMOUS_FUNCTION
+              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-withLabel2>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <no name provided> (): T of <root>.<get-withLabel2> declared in <root>.<get-withLabel2>'
+                    GET_VAR '<this>: T of <root>.<get-withLabel2> declared in <root>.<get-withLabel2>' type=T of <root>.<get-withLabel2> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun thisRef1 (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 1 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun thisRef2 (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 2 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun genericThisRef1 <T> (): <unbound IrClassSymbolImpl><T of <root>.genericThisRef1> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 3 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun genericThisRef2 <T> (): <unbound IrClassSymbolImpl><T of <root>.genericThisRef2> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 4 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun <get-valThisRef1> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=5
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 5 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun <get-valThisRef2> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=6
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 6 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun <get-valGenericThisRef1> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef1>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=7
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=7
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 7 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun <get-valGenericThisRef2> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-valGenericThisRef2>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=8
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=8
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 8 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun <get-withLabel1> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-withLabel1>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 9 failed"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: CALL 'public final fun <get-withLabel2> <T> (): <unbound IrClassSymbolImpl><T of <root>.<get-withLabel2>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Test 10 failed"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,245 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.id(): T#0
+
+      public final const val byteVal: kotlin/Byte /* = 2.toByte() */
+        public final get
+
+      public final const val convert1: kotlin/Char /* = '\u0001' */
+        public final get
+
+      public final const val convert2: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val convert3: kotlin/Long /* = 1L */
+        public final get
+
+      public final const val convert4: kotlin/Float /* = 1.0f */
+        public final get
+
+      public final const val convert5: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val div1: kotlin/Double /* = 0.5 */
+        public final get
+
+      public final const val div2: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val div3: kotlin/Double /* = 1.5 */
+        public final get
+
+      public final const val div4: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val div5: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val div6: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val div7: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val div8: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val doubleVal: kotlin/Double /* = 2.0 */
+        public final get
+
+      public final const val equals1: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val equals2: kotlin/Boolean /* = true */
+        public final get
+
+      public final const val equals3: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val equals4: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val floatVal: kotlin/Float /* = 2.0f */
+        public final get
+
+      public final const val fourVal: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val funCompareTo1: kotlin/Int /* = -1 */
+        public final get
+
+      public final const val funCompareTo2: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val funCompareTo3: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val funCompareTo4: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val funCompareTo5: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val funCompareTo6: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val funCompareTo7: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val funCompareTo8: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val intVal: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val longVal: kotlin/Long /* = 2L */
+        public final get
+
+      public final const val minus1: kotlin/Double /* = -1.0 */
+        public final get
+
+      public final const val minus2: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val minus3: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val minus4: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val minus5: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val minus6: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val minus7: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val minus8: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val minusOneVal: kotlin/Double /* = -1.0 */
+        public final get
+
+      public final const val oneAndAHalf: kotlin/Double /* = 1.5 */
+        public final get
+
+      public final const val oneVal: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val plus1: kotlin/Double /* = 3.0 */
+        public final get
+
+      public final const val plus2: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val plus3: kotlin/Double /* = 5.0 */
+        public final get
+
+      public final const val plus4: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val plus5: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val plus6: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val plus7: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val plus8: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val rem1: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val rem2: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val rem3: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val rem4: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val rem5: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val rem6: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val rem7: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val rem8: kotlin/Double /* = 0.0 */
+        public final get
+
+      public final const val shortVal: kotlin/Short /* = 2.toShort() */
+        public final get
+
+      public final const val singCompareTo1: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val singCompareTo2: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val singCompareTo3: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val singCompareTo4: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val threeVal: kotlin/Double /* = 3.0 */
+        public final get
+
+      public final const val times1: kotlin/Double /* = 2.0 */
+        public final get
+
+      public final const val times2: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val times3: kotlin/Double /* = 6.0 */
+        public final get
+
+      public final const val times4: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val times5: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val times6: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val times7: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val times8: kotlin/Double /* = 4.0 */
+        public final get
+
+      public final const val twoVal: kotlin/Double /* = 2.0 */
+        public final get
+
+      public final const val unaryMinus1: kotlin/Double /* = -1.0 */
+        public final get
+
+      public final const val unaryMinus2: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val unaryPlus1: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val unaryPlus2: kotlin/Double /* = -1.0 */
+        public final get
+    }
+  }
+}

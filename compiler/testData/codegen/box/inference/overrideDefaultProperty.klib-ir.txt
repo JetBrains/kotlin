@@ -1,0 +1,339 @@
+// MODULE: InterfaceModule
+MODULE_FRAGMENT name:<InterfaceModule>
+  FILE fqName:<root> fileName:/MyInterface.kt
+    CLASS INTERFACE name:MyInterface signature:/MyInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyInterface
+      PROPERTY name:test signature:/MyInterface.test|{}test[0] visibility:public modality:OPEN [val]
+        FUN name:<get-test> signature:/MyInterface.test.<get-test>|<get-test>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyInterface) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/MyInterface.test|{}test[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyInterface
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.MyInterface'
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+    CLASS INTERFACE name:MyInterface2 signature:/MyInterface2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyInterface]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyInterface2
+
+// MODULE: OpenClassModule
+MODULE_FRAGMENT name:<OpenClassModule>
+  FILE fqName:<root> fileName:/MyOpenClass.kt
+    CLASS CLASS name:MyOpenClass signature:/MyOpenClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyOpenClass
+      CONSTRUCTOR signature:/MyOpenClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyOpenClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyOpenClass signature:/MyOpenClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyOpenClass2 signature:/MyOpenClass2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyOpenClass2
+      CONSTRUCTOR signature:/MyOpenClass2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyOpenClass2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyOpenClass2 signature:/MyOpenClass2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyOpenClass3 signature:/MyOpenClass3|null[0] modality:OPEN visibility:public superTypes:[<root>.MyOpenClass]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyOpenClass3
+      CONSTRUCTOR signature:/MyOpenClass3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyOpenClass3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyOpenClass'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyOpenClass3 signature:/MyOpenClass3|null[0] modality:OPEN visibility:public superTypes:[<root>.MyOpenClass]'
+
+// MODULE: OpenClassWithOverrideModule
+MODULE_FRAGMENT name:<OpenClassWithOverrideModule>
+  FILE fqName:<root> fileName:/MyOpenClassWithOverrideModule.kt
+    CLASS CLASS name:MyOpenClassWithOverride signature:/MyOpenClassWithOverride|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyOpenClassWithOverride
+      CONSTRUCTOR signature:/MyOpenClassWithOverride.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyOpenClassWithOverride [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyOpenClassWithOverride signature:/MyOpenClassWithOverride|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:test signature:/MyOpenClassWithOverride.test|{}test[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:test signature:[ /MyOpenClassWithOverride.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MyOpenClassWithOverride declared in <root>.MyOpenClassWithOverride' type=<root>.MyOpenClassWithOverride origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> signature:/MyOpenClassWithOverride.test.<get-test>|<get-test>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyOpenClassWithOverride) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/MyOpenClassWithOverride.test|{}test[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyOpenClassWithOverride
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.MyOpenClassWithOverride'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test signature:[ /MyOpenClassWithOverride.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyOpenClassWithOverride declared in <root>.MyOpenClassWithOverride.<get-test>' type=<root>.MyOpenClassWithOverride origin=null
+    CLASS CLASS name:MyOpenClassWithOverride2 signature:/MyOpenClassWithOverride2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>; <root>.MyOpenClassWithOverride]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyOpenClassWithOverride2
+      CONSTRUCTOR signature:/MyOpenClassWithOverride2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyOpenClassWithOverride2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyOpenClassWithOverride'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyOpenClassWithOverride2 signature:/MyOpenClassWithOverride2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>; <root>.MyOpenClassWithOverride]'
+    CLASS CLASS name:MyOpenClassWithOverride3 signature:/MyOpenClassWithOverride3|null[0] modality:OPEN visibility:public superTypes:[<root>.MyOpenClassWithOverride2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyOpenClassWithOverride3
+      CONSTRUCTOR signature:/MyOpenClassWithOverride3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyOpenClassWithOverride3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyOpenClassWithOverride2'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyOpenClassWithOverride3 signature:/MyOpenClassWithOverride3|null[0] modality:OPEN visibility:public superTypes:[<root>.MyOpenClassWithOverride2]'
+      PROPERTY name:test signature:/MyOpenClassWithOverride3.test|{}test[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:test signature:[ /MyOpenClassWithOverride3.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:MyOpenClassWithOverride2 signature:/MyOpenClassWithOverride2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>; <root>.MyOpenClassWithOverride]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MyOpenClassWithOverride3 declared in <root>.MyOpenClassWithOverride3' type=<root>.MyOpenClassWithOverride3 origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> signature:/MyOpenClassWithOverride3.test.<get-test>|<get-test>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyOpenClassWithOverride3) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/MyOpenClassWithOverride3.test|{}test[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyOpenClassWithOverride3
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.MyOpenClassWithOverride3'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test signature:[ /MyOpenClassWithOverride3.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyOpenClassWithOverride3 declared in <root>.MyOpenClassWithOverride3.<get-test>' type=<root>.MyOpenClassWithOverride3 origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/classes.kt
+    CLASS CLASS name:MyFinalClass signature:/MyFinalClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClass
+      CONSTRUCTOR signature:/MyFinalClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClass signature:/MyFinalClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClass2 signature:/MyFinalClass2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClass2
+      CONSTRUCTOR signature:/MyFinalClass2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClass2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClass2 signature:/MyFinalClass2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClass3 signature:/MyFinalClass3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClass3
+      CONSTRUCTOR signature:/MyFinalClass3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClass3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClass3 signature:/MyFinalClass3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClassI signature:/MyFinalClassI|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClassI
+      CONSTRUCTOR signature:/MyFinalClassI.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClassI [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClassI signature:/MyFinalClassI|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClassWithOverride signature:/MyFinalClassWithOverride|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClassWithOverride
+      CONSTRUCTOR signature:/MyFinalClassWithOverride.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClassWithOverride [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClassWithOverride signature:/MyFinalClassWithOverride|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClassWithOverride2 signature:/MyFinalClassWithOverride2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClassWithOverride2
+      CONSTRUCTOR signature:/MyFinalClassWithOverride2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClassWithOverride2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClassWithOverride2 signature:/MyFinalClassWithOverride2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClassWithOverride3 signature:/MyFinalClassWithOverride3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClassWithOverride3
+      CONSTRUCTOR signature:/MyFinalClassWithOverride3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClassWithOverride3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClassWithOverride3 signature:/MyFinalClassWithOverride3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyFinalClassWithOverrideI signature:/MyFinalClassWithOverrideI|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFinalClassWithOverrideI
+      CONSTRUCTOR signature:/MyFinalClassWithOverrideI.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyFinalClassWithOverrideI [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyFinalClassWithOverrideI signature:/MyFinalClassWithOverrideI|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl>]'
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:asInterface signature:/asInterface|asInterface(MyInterface){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.asInterface' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:asInterface2 signature:/asInterface2|asInterface2(MyInterface2){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun asInterface2 (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.asInterface2' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass' type=<root>.MyFinalClass origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyOpenClass as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass' type=<root>.MyFinalClass origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyOpenClass property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass2' type=<root>.MyFinalClass2 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClass2 as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface2 (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass2' type=<root>.MyFinalClass2 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClass2 as Interface2 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass2' type=<root>.MyFinalClass2 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClass2 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass3' type=<root>.MyFinalClass3 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClass3 as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClass3' type=<root>.MyFinalClass3 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClass3 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassI' type=<root>.MyFinalClassI origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassI as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassI' type=<root>.MyFinalClassI origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassI property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride' type=<root>.MyFinalClassWithOverride origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride' type=<root>.MyFinalClassWithOverride origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride2' type=<root>.MyFinalClassWithOverride2 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride2 as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface2 (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride2' type=<root>.MyFinalClassWithOverride2 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride2 as Interface2 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride2' type=<root>.MyFinalClassWithOverride2 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride2 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride3' type=<root>.MyFinalClassWithOverride3 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride3 as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface2 (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride3' type=<root>.MyFinalClassWithOverride3 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride3 as Interface2 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverride3' type=<root>.MyFinalClassWithOverride3 origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverride3 property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun asInterface (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverrideI' type=<root>.MyFinalClassWithOverrideI origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverrideI as Interface property"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyFinalClassWithOverrideI' type=<root>.MyFinalClassWithOverrideI origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail MyFinalClassWithOverrideI property"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

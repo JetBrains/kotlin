@@ -1,0 +1,76 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun n_ub_ub(x: kotlin/UByte, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun n_ub_ui(x: kotlin/UByte, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun n_ub_ul(x: kotlin/UByte, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun n_ub_us(x: kotlin/UByte, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun n_ui_ub(x: kotlin/UInt, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun n_ui_ui(x: kotlin/UInt, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun n_ui_ul(x: kotlin/UInt, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun n_ui_us(x: kotlin/UInt, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun n_ul_ub(x: kotlin/ULong, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun n_ul_ui(x: kotlin/ULong, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun n_ul_ul(x: kotlin/ULong, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun n_ul_us(x: kotlin/ULong, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun n_us_ub(x: kotlin/UShort, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun n_us_ui(x: kotlin/UShort, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun n_us_ul(x: kotlin/UShort, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun n_us_us(x: kotlin/UShort, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun ub_ub(x: kotlin/UByte, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun ub_ui(x: kotlin/UByte, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun ub_ul(x: kotlin/UByte, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun ub_us(x: kotlin/UByte, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun ui_ub(x: kotlin/UInt, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun ui_ui(x: kotlin/UInt, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun ui_ul(x: kotlin/UInt, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun ui_us(x: kotlin/UInt, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun ul_ub(x: kotlin/ULong, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun ul_ui(x: kotlin/ULong, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun ul_ul(x: kotlin/ULong, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun ul_us(x: kotlin/ULong, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+
+      public final fun us_ub(x: kotlin/UShort, a: kotlin/UByte, b: kotlin/UByte): kotlin/Boolean
+
+      public final fun us_ui(x: kotlin/UShort, a: kotlin/UInt, b: kotlin/UInt): kotlin/Boolean
+
+      public final fun us_ul(x: kotlin/UShort, a: kotlin/ULong, b: kotlin/ULong): kotlin/Boolean
+
+      public final fun us_us(x: kotlin/UShort, a: kotlin/UShort, b: kotlin/UShort): kotlin/Boolean
+    }
+  }
+}

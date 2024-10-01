@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt51157.kt
+    CLASS INTERFACE name:ByteArrayParser signature:/ByteArrayParser|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.GenericParser<<unbound IrClassSymbolImpl>, Output of <root>.ByteArrayParser>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ByteArrayParser<Output of <root>.ByteArrayParser>
+      TYPE_PARAMETER name:Output index:0 variance: signature:[ /ByteArrayParser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Output index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:repExactly signature:/ByteArrayParser.repExactly|repExactly(kotlin.UInt){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteArrayParser<Output of <root>.ByteArrayParser>, n:<unbound IrClassSymbolImpl>) returnType:<root>.ByteArrayParser<<unbound IrClassSymbolImpl><Output of <root>.ByteArrayParser>>
+        overridden:
+          public open fun repExactly (n: <unbound IrClassSymbolImpl>): <root>.GenericParser<Input of <root>.GenericParser, <unbound IrClassSymbolImpl><Output of <root>.GenericParser>> declared in <root>.GenericParser
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteArrayParser<Output of <root>.ByteArrayParser>
+        VALUE_PARAMETER name:n index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun repExactly (n: <unbound IrClassSymbolImpl>): <root>.ByteArrayParser<<unbound IrClassSymbolImpl><Output of <root>.ByteArrayParser>> declared in <root>.ByteArrayParser'
+            TYPE_OP type=<root>.ByteArrayParser<<unbound IrClassSymbolImpl><Output of <root>.ByteArrayParser>> origin=CAST typeOperand=<root>.ByteArrayParser<<unbound IrClassSymbolImpl><Output of <root>.ByteArrayParser>>
+              CALL 'public open fun repExactly (n: <unbound IrClassSymbolImpl>): <root>.GenericParser<Input of <root>.GenericParser, <unbound IrClassSymbolImpl><Output of <root>.GenericParser>> declared in <root>.GenericParser' superQualifier='CLASS INTERFACE name:GenericParser signature:/GenericParser|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.GenericParser<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><Output of <root>.ByteArrayParser>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteArrayParser<Output of <root>.ByteArrayParser> declared in <root>.ByteArrayParser.repExactly' type=<root>.ByteArrayParser<Output of <root>.ByteArrayParser> origin=null
+                n: GET_VAR 'n: <unbound IrClassSymbolImpl> declared in <root>.ByteArrayParser.repExactly' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:GenericParser signature:/GenericParser|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericParser<Input of <root>.GenericParser, Output of <root>.GenericParser>
+      TYPE_PARAMETER name:Input index:0 variance: signature:[ /GenericParser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Output index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:Output index:1 variance: signature:[ /GenericParser|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:Output index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:repExactly signature:/GenericParser.repExactly|repExactly(kotlin.UInt){}[0] visibility:public modality:OPEN <> ($this:<root>.GenericParser<Input of <root>.GenericParser, Output of <root>.GenericParser>, n:<unbound IrClassSymbolImpl>) returnType:<root>.GenericParser<Input of <root>.GenericParser, <unbound IrClassSymbolImpl><Output of <root>.GenericParser>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericParser<Input of <root>.GenericParser, Output of <root>.GenericParser>
+        VALUE_PARAMETER name:n index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:parser type:<root>.box.<no name provided> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ByteArrayParser<<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ByteArrayParser<<unbound IrClassSymbolImpl>>]'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/protectedVarWithPrivateSet.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A<T of <root>.A> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/A.value|{}value[0] visibility:protected modality:FINAL [delegated,var]
+        FIELD PROPERTY_DELEGATE name:value$delegate signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:value$delegate type:kotlin.properties.ReadWriteProperty<kotlin.Any?, T of <root>.A> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, T of <root>.A> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, T of <root>.A> origin=null
+              <1>: T of <root>.A
+              $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-value> signature:/A.value.<get-value>|<get-value>(){}[0] visibility:protected modality:FINAL <> ($this:<root>.A<T of <root>.A>) returnType:T of <root>.A
+          correspondingProperty: PROPERTY name:value signature:/A.value|{}value[0] visibility:protected modality:FINAL [delegated,var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected final fun <get-value> (): T of <root>.A declared in <root>.A'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.A origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:value$delegate signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:value$delegate type:kotlin.properties.ReadWriteProperty<kotlin.Any?, T of <root>.A> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, T of <root>.A> visibility:private [final] declared in <root>.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, T of <root>.A> origin=null
+                  receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<get-value>' type=<root>.A<T of <root>.A> origin=null
+                1: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<get-value>' type=<root>.A<T of <root>.A> origin=null
+                2: PROPERTY_REFERENCE 'protected final value: T of <root>.A [delegated,var] declared in <root>.A' field=null getter='protected final fun <get-value> (): T of <root>.A declared in <root>.A' setter='private final fun <set-value> (<set-?>: T of <root>.A): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A<*>, T of <root>.A> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<set-value> signature:/A.value.<set-value>|<set-value>(1:0){}[0] visibility:private modality:FINAL <> ($this:<root>.A<T of <root>.A>, <set-?>:T of <root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/A.value|{}value[0] visibility:protected modality:FINAL [delegated,var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+          VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <set-value> (<set-?>: T of <root>.A): <unbound IrClassSymbolImpl> declared in <root>.A'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:value$delegate signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:value$delegate type:kotlin.properties.ReadWriteProperty<kotlin.Any?, T of <root>.A> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, T of <root>.A> visibility:private [final] declared in <root>.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, T of <root>.A> origin=null
+                  receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<set-value>' type=<root>.A<T of <root>.A> origin=null
+                1: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<set-value>' type=<root>.A<T of <root>.A> origin=null
+                2: PROPERTY_REFERENCE 'protected final value: T of <root>.A [delegated,var] declared in <root>.A' field=null getter='protected final fun <get-value> (): T of <root>.A declared in <root>.A' setter='private final fun <set-value> (<set-?>: T of <root>.A): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A<*>, T of <root>.A> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                3: GET_VAR '<set-?>: T of <root>.A declared in <root>.A.<set-value>' type=T of <root>.A origin=null
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+            <T>: <unbound IrClassSymbolImpl>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A<<unbound IrClassSymbolImpl>>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

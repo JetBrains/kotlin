@@ -1,0 +1,99 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt16713.kt
+    CLASS CLASS name:MyQueue signature:/MyQueue|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyQueue
+      CONSTRUCTOR signature:/MyQueue.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyQueue [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyQueue signature:/MyQueue|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:poll signature:/MyQueue.poll|poll(){}[0] visibility:public modality:FINAL <> ($this:<root>.MyQueue) returnType:<unbound IrClassSymbolImpl>?
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyQueue
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll (): <unbound IrClassSymbolImpl>? declared in <root>.MyQueue'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:delayedQueue signature:/A.delayedQueue|{}delayedQueue[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:delayedQueue signature:[ /A.delayedQueue|{}delayedQueue[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:delayedQueue type:<root>.MyQueue visibility:private [final]] ] type:<root>.MyQueue visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyQueue' type=<root>.MyQueue origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-delayedQueue> signature:/A.delayedQueue.<get-delayedQueue>|<get-delayedQueue>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.MyQueue
+          correspondingProperty: PROPERTY name:delayedQueue signature:/A.delayedQueue|{}delayedQueue[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-delayedQueue> (): <root>.MyQueue declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delayedQueue signature:[ /A.delayedQueue|{}delayedQueue[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:delayedQueue type:<root>.MyQueue visibility:private [final]] ] type:<root>.MyQueue visibility:private [final]' type=<root>.MyQueue origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-delayedQueue>' type=<root>.A origin=null
+      FUN name:next signature:/A.next|next(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          WHILE label=null origin=WHILE_LOOP
+            condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                    CALL 'public final fun poll (): <unbound IrClassSymbolImpl>? declared in <root>.MyQueue' type=<unbound IrClassSymbolImpl>? origin=null
+                      $this: CALL 'public final fun <get-delayedQueue> (): <root>.MyQueue declared in <root>.A' type=<root>.MyQueue origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.A declared in <root>.A.next' type=<root>.A origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.A.next' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: BREAK label=null loop.label=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.A.next' type=<unbound IrClassSymbolImpl>? origin=null
+          WHILE label=null origin=WHILE_LOOP
+            condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun unblock (p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.A declared in <root>.A.next' type=<root>.A origin=null
+                p: BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                  VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                    CALL 'public final fun poll (): <unbound IrClassSymbolImpl>? declared in <root>.MyQueue' type=<unbound IrClassSymbolImpl>? origin=null
+                      $this: CALL 'public final fun <get-delayedQueue> (): <root>.MyQueue declared in <root>.A' type=<root>.MyQueue origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.A declared in <root>.A.next' type=<root>.A origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.A.next' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: BREAK label=null loop.label=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.A.next' type=<unbound IrClassSymbolImpl>? origin=null
+          WHILE label=null origin=WHILE_LOOP
+            condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun unblock (p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.A declared in <root>.A.next' type=<root>.A origin=null
+                p: BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                  VAR IR_TEMPORARY_VARIABLE name:tmp2_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                    CALL 'public final fun poll (): <unbound IrClassSymbolImpl>? declared in <root>.MyQueue' type=<unbound IrClassSymbolImpl>? origin=null
+                      $this: CALL 'public final fun <get-delayedQueue> (): <root>.MyQueue declared in <root>.A' type=<root>.MyQueue origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.A declared in <root>.A.next' type=<root>.A origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp2_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.A.next' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: BREAK label=null loop.label=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: GET_VAR 'val tmp2_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.A.next' type=<unbound IrClassSymbolImpl>? origin=null
+      FUN name:unblock signature:/A.unblock|unblock(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.A, p:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun next (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

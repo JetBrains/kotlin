@@ -1,0 +1,51 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: InlineDouble3
+    // class name: IteratorImpl
+
+    public final value class InlineDouble3 : kotlin/Any {
+
+      public constructor(values: kotlin/DoubleArray)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final operator fun iterator(): kotlin/collections/DoubleIterator
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val values: kotlin/DoubleArray
+        public final get
+
+      // underlying property: values
+
+      // underlying type: kotlin/DoubleArray
+    }
+
+    private final class IteratorImpl : kotlin/collections/DoubleIterator {
+
+      public constructor(values: kotlin/DoubleArray)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open fun nextDouble(): kotlin/Double
+
+      private final var index: kotlin/Int
+        private final get
+        private final set
+
+      private final val values: kotlin/DoubleArray
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Nexus
+
+    public final object Nexus : kotlin/Any {
+
+      private constructor()
+
+      public final suspend fun initialize1(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final suspend fun test(): kotlin/Unit
+    }
+  }
+}

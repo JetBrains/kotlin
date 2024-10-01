@@ -1,0 +1,132 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nestedBigArityFunCalls.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
+      CONSTRUCTOR signature:/O.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.O [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+    TYPEALIAS name:F signature:/F|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, T of <root>.F, <unbound IrClassSymbolImpl>>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /F|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:test signature:/test|test(kotlin.Function25<A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,kotlin.Function25<A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,kotlin.String,kotlin.String>,kotlin.String>){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (f: <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> declared in <root>.test' type=<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            2: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            3: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            4: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            5: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            6: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            7: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            8: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            9: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            10: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            11: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            12: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            13: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            14: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            15: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            16: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            17: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            18: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            19: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            20: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            21: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            22: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            23: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            24: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+            25: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:2 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:3 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:4 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:5 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:6 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:7 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:8 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:9 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:10 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:11 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:12 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:13 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:14 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:15 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:16 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:17 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:18 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:19 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:20 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:21 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:22 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:23 type:<root>.A
+                VALUE_PARAMETER name:s index:24 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (<unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.test'
+                    GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.test.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun test (f: <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, <unused var>:<root>.A, f:<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:0 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:2 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:3 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:4 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:5 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:6 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:7 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:8 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:9 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:10 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:11 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:12 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:13 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:14 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:15 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:16 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:17 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:18 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:19 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:20 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:21 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:22 type:<root>.A
+                VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:23 type:<root>.A
+                VALUE_PARAMETER name:f index:24 type:<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (<unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, <unused var>: <root>.A, f: <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                      1: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      2: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      3: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      4: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      5: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      6: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      7: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      8: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      9: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      10: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      11: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      12: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      13: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      14: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      15: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      16: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      17: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      18: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      19: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      20: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      21: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      22: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      23: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      24: GET_OBJECT 'CLASS OBJECT name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.O
+                      25: CONST String type=<unbound IrClassSymbolImpl> value="OK"

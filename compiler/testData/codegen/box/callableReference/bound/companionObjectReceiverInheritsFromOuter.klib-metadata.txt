@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun instance(): kotlin/Boolean
+
+      public final val instanceProp: kotlin/Boolean /* = ... */
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : A {
+
+      private constructor()
+
+      public final fun companion(): kotlin/Boolean
+
+      public final val companionProp: kotlin/Boolean /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun call(f: kotlin/Function0<kotlin/Boolean>): kotlin/Boolean
+
+      public final inline fun callContext(f: @kotlin/ContextFunctionTypeParams(count = 1) kotlin/Function1<A, kotlin/Boolean>, receiver: A): kotlin/Boolean
+
+      public final inline fun callExtension(f: @kotlin/ExtensionFunctionType kotlin/Function1<A, kotlin/Boolean>, receiver: A): kotlin/Boolean
+
+      public final inline fun callParameter(f: kotlin/Function1<A, kotlin/Boolean>, parameter: A): kotlin/Boolean
+
+      public final fun A.Companion.companionExt(): kotlin/Boolean
+
+      public final fun A.ext(): kotlin/Boolean
+
+      public final val A.Companion.companionExtProp: kotlin/Boolean
+        public final /* non-default */ get
+
+      public final val A.extProp: kotlin/Boolean
+        public final /* non-default */ get
+    }
+  }
+}

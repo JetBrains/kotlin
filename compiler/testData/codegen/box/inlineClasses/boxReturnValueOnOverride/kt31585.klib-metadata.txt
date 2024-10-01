@@ -1,0 +1,71 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FieldValue
+    // class name: RequestFields
+    // class name: RequestInputParameters
+
+    public final value class FieldValue : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/String
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/String
+    }
+
+    public final enum class RequestFields : kotlin/Enum<RequestFields> {
+
+      private constructor()
+
+      ENUM_ONE,
+
+      // has Enum.entries
+    }
+
+    public final class RequestInputParameters : kotlin/collections/Map<RequestFields, FieldValue> {
+
+      public constructor(backingMap: kotlin/collections/Map<RequestFields, FieldValue>)
+
+      public open /* delegation */ fun containsKey(key: RequestFields): kotlin/Boolean
+
+      public open /* delegation */ fun containsValue(value: FieldValue): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(key: RequestFields): FieldValue?
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      private final val backingMap: kotlin/collections/Map<RequestFields, FieldValue>
+        private final get
+
+      public open /* delegation */ val entries: kotlin/collections/Set<kotlin/collections/Map.Entry<RequestFields, FieldValue>>
+        public open get
+
+      public open /* delegation */ val keys: kotlin/collections/Set<RequestFields>
+        public open get
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+
+      public open /* delegation */ val values: kotlin/collections/Collection<FieldValue>
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

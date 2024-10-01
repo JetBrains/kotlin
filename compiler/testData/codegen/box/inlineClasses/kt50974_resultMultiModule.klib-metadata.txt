@@ -1,0 +1,37 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: UseCaseWithParameter
+    // class name: WhateverUseCase
+
+    public abstract interface UseCaseWithParameter<T#0 /* P */, T#1 /* R */> : kotlin/Any {
+
+      public abstract operator fun invoke(param: T#0): kotlin/Result<T#1>
+    }
+
+    public final class WhateverUseCase : UseCaseWithParameter<kotlin/Result<kotlin/Int>, kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun invoke(param: kotlin/Result<kotlin/Int>): kotlin/Result<kotlin/Int>
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,293 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:doCall signature:test/doCall|doCall(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (block:<unbound IrClassSymbolImpl><R of test.doCall>) returnType:R of test.doCall [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ test/doCall|doCall(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><R of test.doCall>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doCall <R> (block: <unbound IrClassSymbolImpl><R of test.doCall>): R of test.doCall [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.doCall origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><R of test.doCall> declared in test.doCall' type=<unbound IrClassSymbolImpl><R of test.doCall> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    CLASS ENUM_CLASS name:Kind signature:/Kind|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Kind>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Kind
+      CONSTRUCTOR signature:/Kind.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Kind [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Kind
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Kind signature:/Kind|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Kind>]'
+      ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Kind'
+      ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Kind'
+      ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Kind'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Kind.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Kind>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Kind.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Kind
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Kind.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Kind.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Kind>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Kind.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS CLASS name:Internal signature:/Internal|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Internal
+      CONSTRUCTOR signature:/Internal.<init>|<init>(kotlin.String){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Internal [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Internal signature:/Internal|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/Internal.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Internal.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.Internal.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Internal.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Internal) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/Internal.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Internal
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Internal'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Internal.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Internal declared in <root>.Internal.<get-value>' type=<root>.Internal origin=null
+    CLASS CLASS name:External signature:/External|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.External
+      CONSTRUCTOR signature:/External.<init>|<init>(kotlin.String){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.External [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:External signature:/External|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/External.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /External.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.External.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/External.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.External) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/External.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.External
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.External'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /External.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.External declared in <root>.External.<get-value>' type=<root>.External origin=null
+    CLASS CLASS name:Global signature:/Global|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Global
+      CONSTRUCTOR signature:/Global.<init>|<init>(kotlin.String){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Global [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Global signature:/Global|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/Global.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Global.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.Global.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Global.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Global) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/Global.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Global
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Global.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Global declared in <root>.Global.<get-value>' type=<root>.Global origin=null
+    FUN name:test1 signature:/test1|test1(Kind;Kind){}[0] visibility:public modality:FINAL <> (intKind:<root>.Kind, extKind:<root>.Kind) returnType:<root>.Global
+      VALUE_PARAMETER name:intKind index:0 type:<root>.Kind
+      VALUE_PARAMETER name:extKind index:1 type:<root>.Kind
+      BLOCK_BODY
+        VAR name:externalResult type:<root>.External [var]
+          CALL 'public final fun doCall <R> (block: <unbound IrClassSymbolImpl><R of test.doCall>): R of test.doCall [inline] declared in test' type=<root>.External origin=null
+            <R>: <root>.External
+            block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.External> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.External
+                BLOCK_BODY
+                  VAR name:internalResult type:<root>.Internal [val]
+                    CALL 'public final fun doCall <R> (block: <unbound IrClassSymbolImpl><R of test.doCall>): R of test.doCall [inline] declared in test' type=<root>.Internal origin=null
+                      <R>: <root>.Internal
+                      block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Internal> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Internal
+                          BLOCK_BODY
+                            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                              BRANCH
+                                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                  arg0: GET_VAR 'intKind: <root>.Kind declared in <root>.test1' type=<root>.Kind origin=null
+                                  arg1: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+                                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>'
+                                    CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Global' type=<root>.Global origin=null
+                                      value: CONST String type=<unbound IrClassSymbolImpl> value="internal -> global"
+                              BRANCH
+                                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                  arg0: GET_VAR 'intKind: <root>.Kind declared in <root>.test1' type=<root>.Kind origin=null
+                                  arg1: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+                                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.External declared in <root>.test1'
+                                    CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.External' type=<root>.External origin=null
+                                      value: CONST String type=<unbound IrClassSymbolImpl> value="internal -> external"
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.Internal declared in <root>.test1.<anonymous>'
+                              CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Internal' type=<root>.Internal origin=null
+                                value: CONST String type=<unbound IrClassSymbolImpl> value="internal -> local"
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'extKind: <root>.Kind declared in <root>.test1' type=<root>.Kind origin=null
+                            arg1: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+                          then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'extKind: <root>.Kind declared in <root>.test1' type=<root>.Kind origin=null
+                            arg1: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>'
+                          CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Global' type=<root>.Global origin=null
+                            value: CONST String type=<unbound IrClassSymbolImpl> value="external -> global"
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.External declared in <root>.test1'
+                    CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.External' type=<root>.External origin=null
+                      value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Internal' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val internalResult: <root>.Internal [val] declared in <root>.test1.<anonymous>' type=<root>.Internal origin=null
+                        1: CONST String type=<unbound IrClassSymbolImpl> value=": external -> local"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Global' type=<root>.Global origin=null
+            value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.External' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'var externalResult: <root>.External [var] declared in <root>.test1' type=<root>.External origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value=": exit"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test1 type:<unbound IrClassSymbolImpl> [var]
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> local: external -> local: exit"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test1: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> external: exit"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test2: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> global"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test3: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="external -> global"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test4: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> external: exit"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test5: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> global"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test6: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:LOCAL signature:/Kind.LOCAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="external -> global"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test7: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:EXTERNAL signature:/Kind.EXTERNAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> external: exit"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test8: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Global' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun test1 (intKind: <root>.Kind, extKind: <root>.Kind): <root>.Global declared in <root>' type=<root>.Global origin=null
+              intKind: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+              extKind: GET_ENUM 'ENUM_ENTRY name:GLOBAL signature:/Kind.GLOBAL|null[0]' type=<root>.Kind
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="internal -> global"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test9: "
+                GET_VAR 'var test1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

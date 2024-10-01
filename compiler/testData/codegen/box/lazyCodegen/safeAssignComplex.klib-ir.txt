@@ -1,0 +1,158 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/safeAssignComplex.kt
+    PROPERTY name:holder signature:/holder|{}holder[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-holder> signature:/holder.<get-holder>|<get-holder>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:holder signature:/holder|{}holder[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-holder> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-holder> signature:/holder.<set-holder>|<set-holder>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:holder signature:/holder|{}holder[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:holder signature:[ /holder|{}holder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-holder>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:mainShape signature:/mainShape|{}mainShape[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:mainShape signature:[ /mainShape|{}mainShape[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<root>.Shape? visibility:private [static]
+        EXPRESSION_BODY
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mainShape> signature:/mainShape.<get-mainShape>|<get-mainShape>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Shape?
+        correspondingProperty: PROPERTY name:mainShape signature:/mainShape|{}mainShape[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-mainShape> (): <root>.Shape? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mainShape signature:[ /mainShape|{}mainShape[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<root>.Shape? visibility:private [static]' type=<root>.Shape? origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-mainShape> signature:/mainShape.<set-mainShape>|<set-mainShape>(Shape?){}[0] visibility:public modality:FINAL <> (<set-?>:<root>.Shape?) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:mainShape signature:/mainShape|{}mainShape[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<root>.Shape?
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mainShape signature:[ /mainShape|{}mainShape[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<root>.Shape? visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <root>.Shape? declared in <root>.<set-mainShape>' type=<root>.Shape? origin=null
+    FUN name:getShape signature:/getShape|getShape(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Shape?
+      BLOCK_BODY
+        CALL 'public final fun <set-holder> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: CALL 'public final fun <get-holder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CONST String type=<unbound IrClassSymbolImpl> value="getShape1()"
+        CALL 'public final fun <set-mainShape> (<set-?>: <root>.Shape?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Shape' type=<root>.Shape origin=null
+            result: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getShape (): <root>.Shape? declared in <root>'
+          CALL 'public final fun <get-mainShape> (): <root>.Shape? declared in <root>' type=<root>.Shape? origin=GET_PROPERTY
+    FUN name:getOK signature:/getOK|getOK(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun <set-holder> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: CALL 'public final fun <get-holder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CONST String type=<unbound IrClassSymbolImpl> value="->OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getOK (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:Shape signature:/Shape|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Shape
+      CONSTRUCTOR signature:/Shape.<init>|<init>(kotlin.String){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:<root>.Shape [primary]
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Shape signature:/Shape|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:result signature:/Shape.result|{}result[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ /Shape.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'result: <unbound IrClassSymbolImpl> declared in <root>.Shape.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/Shape.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Shape) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/Shape.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Shape
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.Shape'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /Shape.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.<get-result>' type=<root>.Shape origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/Shape.result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Shape, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/Shape.result|{}result[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Shape
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /Shape.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.<set-result>' type=<root>.Shape origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Shape.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:innerShape signature:/Shape.innerShape|{}innerShape[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:innerShape signature:[ /Shape.innerShape|{}innerShape[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<root>.Shape? visibility:private
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-innerShape> signature:/Shape.innerShape.<get-innerShape>|<get-innerShape>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Shape) returnType:<root>.Shape?
+          correspondingProperty: PROPERTY name:innerShape signature:/Shape.innerShape|{}innerShape[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Shape
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-innerShape> (): <root>.Shape? declared in <root>.Shape'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:innerShape signature:[ /Shape.innerShape|{}innerShape[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<root>.Shape? visibility:private' type=<root>.Shape? origin=null
+                receiver: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.<get-innerShape>' type=<root>.Shape origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-innerShape> signature:/Shape.innerShape.<set-innerShape>|<set-innerShape>(Shape?){}[0] visibility:public modality:FINAL <> ($this:<root>.Shape, <set-?>:<root>.Shape?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:innerShape signature:/Shape.innerShape|{}innerShape[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Shape
+          VALUE_PARAMETER name:<set-?> index:0 type:<root>.Shape?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:innerShape signature:[ /Shape.innerShape|{}innerShape[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:holder type:kotlin.String visibility:private [static]] ] type:<root>.Shape? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.<set-innerShape>' type=<root>.Shape origin=null
+              value: GET_VAR '<set-?>: <root>.Shape? declared in <root>.Shape.<set-innerShape>' type=<root>.Shape? origin=null
+      FUN name:getShape2 signature:/Shape.getShape2|getShape2(){}[0] visibility:public modality:FINAL <> ($this:<root>.Shape) returnType:<root>.Shape?
+        $this: VALUE_PARAMETER name:<this> type:<root>.Shape
+        BLOCK_BODY
+          CALL 'public final fun <set-holder> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'public final fun <get-holder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: CONST String type=<unbound IrClassSymbolImpl> value="->getShape2()"
+          CALL 'public final fun <set-innerShape> (<set-?>: <root>.Shape?): <unbound IrClassSymbolImpl> declared in <root>.Shape' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.getShape2' type=<root>.Shape origin=null
+            <set-?>: CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Shape' type=<root>.Shape origin=null
+              result: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.Shape' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.getShape2' type=<root>.Shape origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getShape2 (): <root>.Shape? declared in <root>.Shape'
+            CALL 'public final fun <get-innerShape> (): <root>.Shape? declared in <root>.Shape' type=<root>.Shape? origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Shape declared in <root>.Shape.getShape2' type=<root>.Shape origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<root>.Shape? [val]
+              BLOCK type=<root>.Shape? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.Shape? [val]
+                  CALL 'public final fun getShape (): <root>.Shape? declared in <root>' type=<root>.Shape? origin=null
+                WHEN type=<root>.Shape? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <root>.Shape? [val] declared in <root>.box' type=<root>.Shape? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun getShape2 (): <root>.Shape? declared in <root>.Shape' type=<root>.Shape? origin=null
+                      $this: GET_VAR 'val tmp0_safe_receiver: <root>.Shape? [val] declared in <root>.box' type=<root>.Shape? origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_safe_receiver: <root>.Shape? [val] declared in <root>.box' type=<root>.Shape? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Shape' type=<unbound IrClassSymbolImpl> origin=EQ
+                  $this: GET_VAR 'val tmp1_safe_receiver: <root>.Shape? [val] declared in <root>.box' type=<root>.Shape? origin=null
+                  <set-?>: CALL 'public final fun getOK (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-holder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="getShape1()->getShape2()->OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail "
+                CALL 'public final fun <get-holder> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.Shape' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Shape origin=EXCLEXCL
+              <T0>: <root>.Shape
+              arg0: CALL 'public final fun <get-innerShape> (): <root>.Shape? declared in <root>.Shape' type=<root>.Shape? origin=GET_PROPERTY
+                $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Shape origin=EXCLEXCL
+                  <T0>: <root>.Shape
+                  arg0: CALL 'public final fun <get-mainShape> (): <root>.Shape? declared in <root>' type=<root>.Shape? origin=GET_PROPERTY

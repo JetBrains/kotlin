@@ -1,0 +1,76 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NStr
+    // class name: Str
+    // class name: Z
+
+    public final value class NStr : kotlin/Any {
+
+      public constructor(string: kotlin/String?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: kotlin/String?
+        public final get
+
+      // underlying property: string
+
+      // underlying type: kotlin/String?
+    }
+
+    public final value class Str : kotlin/Any {
+
+      public constructor(string: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: kotlin/String
+        public final get
+
+      // underlying property: string
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class Z : kotlin/Any {
+
+      public constructor(int: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val int: kotlin/Int
+        public final get
+
+      // underlying property: int
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun fooNStr(x: NStr): NStr
+
+      public final fun fooStr(x: Str): Str
+
+      public final fun fooZ(x: Z): Z
+    }
+  }
+}

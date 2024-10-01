@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+    // class name: Base
+    // class name: Base.A
+    // class name: Containter
+    // class name: Containter.C
+    // class name: Containter.D
+
+    public final class B : Base {
+
+      public constructor()
+    }
+
+    public sealed class Base : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: A
+
+      // sealed subclass: B
+
+      // sealed subclass: Base.A
+
+      // sealed subclass: Containter.C
+
+      // sealed subclass: Containter.D
+    }
+
+    public final class Base.A : Base {
+
+      public constructor()
+    }
+
+    public final class Containter : kotlin/Any {
+
+      public constructor()
+
+      public final val d: Containter.D
+        public final get
+
+      // nested class: C
+
+      // nested class: D
+    }
+
+    public final class Containter.C : Base {
+
+      public constructor()
+    }
+
+    public final inner class Containter.D : Base {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getValue(base: Base): kotlin/Int
+    }
+  }
+}

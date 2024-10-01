@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Child
+    // class name: I
+    // class name: Outer
+    // class name: Outer.Inner
+
+    public open class Child : I<kotlin/String> {
+
+      public constructor()
+
+      public open fun foo(t: kotlin/String, inner: Outer.Inner): kotlin/String
+    }
+
+    public abstract interface I<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun foo(t: T#0, inner: Outer.Inner): kotlin/String
+    }
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final class Outer.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

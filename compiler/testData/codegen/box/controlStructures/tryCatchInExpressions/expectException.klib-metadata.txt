@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun fails(block: kotlin/Function0<kotlin/Unit>): kotlin/Throwable?
+
+      public final inline fun throwIt(msg: kotlin/String): kotlin/Unit
+    }
+  }
+}

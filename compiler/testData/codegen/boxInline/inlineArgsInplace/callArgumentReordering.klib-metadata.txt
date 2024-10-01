@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @kotlin/internal/InlineOnly
+      public final inline fun foo(s1: kotlin/String, s2: kotlin/String): kotlin/String
+
+      public final var s: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

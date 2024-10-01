@@ -1,0 +1,58 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/A
+    // class name: foo/B
+
+    public final class foo/A : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final operator fun plus(other: foo/A): foo/A
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    public final class foo/B : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final var a: foo/A
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun assertEquals(first: kotlin/Any?, second: kotlin/Any?): kotlin/Unit
+
+      public final fun bar(): foo/B
+
+      public final fun box(): kotlin/String
+
+      public final fun getArray(): kotlin/Array<foo/A>
+
+      public final fun getArrayIndex(): kotlin/Int
+
+      public final val _array: kotlin/Array<foo/A>
+        public final get
+
+      public final val _functionResult: foo/B
+        public final get
+
+      public final val _property: foo/B
+        public final get
+
+      public final val foo: foo/B
+        public final /* non-default */ get
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,36 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FooUnsigned
+
+    public final class FooUnsigned : kotlin/Any {
+
+      public /* secondary */ constructor(@kotlin/internal/ImplicitIntegerCoercion y: kotlin/String)
+
+      public /* secondary */ constructor(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/UInt /* = Unsigned^ */)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public typealias Signed = kotlin/Int /* = kotlin/Int */
+
+      public typealias Unsigned = kotlin/UInt /* = kotlin/UInt */
+    }
+  }
+
+  library fragment {
+    // package name: kotlin.internal
+
+    // class name: kotlin/internal/ImplicitIntegerCoercion
+
+    public final annotation class kotlin/internal/ImplicitIntegerCoercion : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}

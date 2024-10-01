@@ -1,0 +1,80 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/classCanNotBeCastedToVoid.kt
+    CLASS CLASS name:ASTNode signature:/ASTNode|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ASTNode
+      CONSTRUCTOR signature:/ASTNode.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ASTNode [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ASTNode signature:/ASTNode|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Wrap signature:/Wrap|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Wrap
+      CONSTRUCTOR signature:/Wrap.<init>|<init>(kotlin.String){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>) returnType:<root>.Wrap [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Wrap signature:/Wrap|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:message signature:/Wrap.message|{}message[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:message signature:[ /Wrap.message|{}message[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.Wrap.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-message> signature:/Wrap.message.<get-message>|<get-message>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Wrap) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:message signature:/Wrap.message|{}message[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Wrap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-message> (): <unbound IrClassSymbolImpl> declared in <root>.Wrap'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:message signature:[ /Wrap.message|{}message[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Wrap declared in <root>.Wrap.<get-message>' type=<root>.Wrap origin=null
+    TYPEALIAS name:WrappingStrategy signature:/WrappingStrategy|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl><@[<unbound>(1 = "childElement")] <root>.ASTNode, <root>.Wrap?>
+    FUN name:getWrappingStrategy signature:/getWrappingStrategy|getWrappingStrategy(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><@[<unbound>(1 = "childElement")] <root>.ASTNode, <root>.Wrap?>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getWrappingStrategy (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "childElement")] <root>.ASTNode, <root>.Wrap?> declared in <root>'
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.ASTNode, <root>.Wrap> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (childElement:<root>.ASTNode) returnType:<root>.Wrap
+              VALUE_PARAMETER name:childElement index:0 type:<root>.ASTNode
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <root>.Wrap
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Wrap' type=<root>.Wrap origin=null
+                    message: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Wrap, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.Wrap) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<root>.Wrap
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (childElement: <root>.ASTNode): <root>.Wrap declared in <root>.getWrappingStrategy'
+                          GET_VAR 'it: <root>.Wrap declared in <root>.getWrappingStrategy.<anonymous>.<anonymous>' type=<root>.Wrap origin=null
+    FUN name:getWrapAfterAnnotation signature:/getWrapAfterAnnotation|getWrapAfterAnnotation(ASTNode){}[0] visibility:public modality:FINAL <> (childElement:<root>.ASTNode) returnType:<root>.Wrap?
+      VALUE_PARAMETER name:childElement index:0 type:<root>.ASTNode
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getWrapAfterAnnotation (childElement: <root>.ASTNode): <root>.Wrap? declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Wrap' type=<root>.Wrap origin=null
+            message: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.Wrap? [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Wrap? origin=INVOKE
+                    $this: CALL 'public final fun getWrappingStrategy (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "childElement")] <root>.ASTNode, <root>.Wrap?> declared in <root>' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "childElement")] <root>.ASTNode, <root>.Wrap?> origin=null
+                    1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ASTNode' type=<root>.ASTNode origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <root>.Wrap? [val] declared in <root>.box' type=<root>.Wrap? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun <get-message> (): <unbound IrClassSymbolImpl> declared in <root>.Wrap' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val tmp0_safe_receiver: <root>.Wrap? [val] declared in <root>.box' type=<root>.Wrap? origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null

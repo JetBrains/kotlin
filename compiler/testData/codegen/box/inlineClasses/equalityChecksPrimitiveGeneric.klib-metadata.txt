@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final value class A<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualAnyLeft(s: A<T#0>, t: kotlin/Any?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualAnyNullableLeft(s: A<T#0>?, t: kotlin/Any?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualAnyNullableRight(s: kotlin/Any?, t: A<T#0>?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualAnyRight(s: kotlin/Any?, t: A<T#0>): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualNullableUnboxedLeft(s: A<T#0>, t: A<T#0>?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualNullableUnboxedRight(s: A<T#0>?, t: A<T#0>): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualSame(s: A<T#0>, t: A<T#0>): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isEqualSameNullable(s: A<T#0>?, t: A<T#0>?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isNullLeft(s: A<T#0>?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isNullRight(s: A<T#0>?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isNullVacuousLeft(s: A<T#0>): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Int> isNullVacuousRight(s: A<T#0>): kotlin/Boolean
+    }
+  }
+}

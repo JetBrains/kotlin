@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    public abstract interface A : kotlin/Any {
+
+      public abstract suspend fun foo(k: kotlin/String /* = ... */): kotlin/String
+    }
+
+    public final class B : A {
+
+      public constructor(o: kotlin/String)
+
+      public open suspend fun foo(k: kotlin/String): kotlin/String
+
+      public final val o: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun runs(f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      private final const val K: kotlin/String /* = "K" */
+        private final get
+    }
+  }
+}

@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final var field: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(v: kotlin/Int)
+
+      public final var result: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* R */> doCall(p: kotlin/Function0<T#0>): kotlin/Unit
+    }
+  }
+}

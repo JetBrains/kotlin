@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final infix fun <T#0 /* T */> kotlin/collections/ArrayList<T#0>.add3(el: T#0): kotlin/Boolean
+
+      public final fun test(list: kotlin/collections/ArrayList<kotlin/Int>): kotlin/Unit
+    }
+
+    package {
+
+      public final infix fun <T#0 /* T */> kotlin/collections/ArrayList<T#0>.add2(el: T#0): kotlin/Boolean
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

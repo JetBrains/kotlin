@@ -1,0 +1,110 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/primitiveReceiver.kt
+    FUN name:foo signature:/foo|foo@kotlin.Boolean(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:foo signature:/foo|foo@kotlin.Byte(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=2
+    FUN name:foo signature:/foo|foo@kotlin.Short(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=3
+    FUN name:foo signature:/foo|foo@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=4
+    FUN name:foo signature:/foo|foo@kotlin.Long(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=5
+    FUN name:foo signature:/foo|foo@kotlin.Char(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=6
+    FUN name:foo signature:/foo|foo@kotlin.Float(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=7
+    FUN name:foo signature:/foo|foo@kotlin.Double(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=8
+    FUN name:testRef signature:/testRef|testRef(kotlin.String;kotlin.Function0<kotlin.Int>;kotlin.Int){}[0] visibility:public modality:FINAL <> (name:<unbound IrClassSymbolImpl>, f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:expected index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:actual type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.testRef' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val actual: <unbound IrClassSymbolImpl> [val] declared in <root>.testRef' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.testRef' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.testRef' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=": "
+                  GET_VAR 'val actual: <unbound IrClassSymbolImpl> [val] declared in <root>.testRef' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                  GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.testRef' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Boolean"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Byte"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Short"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Int"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Long"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CONST Long type=<unbound IrClassSymbolImpl> value=1
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Char"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CONST Char type=<unbound IrClassSymbolImpl> value='1'
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=6
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Float"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=7
+        CALL 'public final fun testRef (name: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, expected: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          name: CONST String type=<unbound IrClassSymbolImpl> value="Double"
+          f: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $receiver: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+          expected: CONST Int type=<unbound IrClassSymbolImpl> value=8
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

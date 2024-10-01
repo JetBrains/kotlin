@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/enumEntries.kt
+    CLASS ENUM_CLASS name:MyEnum signature:/MyEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.MyEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
+      CONSTRUCTOR signature:/MyEnum.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.MyEnum [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.MyEnum
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum signature:/MyEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.MyEnum>]'
+      ENUM_ENTRY name:OK signature:/MyEnum.OK|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+      ENUM_ENTRY name:NOPE signature:/MyEnum.NOPE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/MyEnum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.MyEnum>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/MyEnum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.MyEnum
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/MyEnum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.MyEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        VAR name:entries type:<unbound IrClassSymbolImpl><<root>.MyEnum> [val]
+          CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl><<root>.MyEnum> declared in <root>.MyEnum' type=<unbound IrClassSymbolImpl><<root>.MyEnum> origin=GET_PROPERTY
+        VAR name:entry type:<root>.MyEnum [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.MyEnum origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val entries: <unbound IrClassSymbolImpl><<root>.MyEnum> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.MyEnum> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val entry: <root>.MyEnum [val] declared in <root>.box' type=<root>.MyEnum origin=null

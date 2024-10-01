@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    package {
+
+      public final fun kotlin/Int.baz(): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Unit
+    }
+  }
+}

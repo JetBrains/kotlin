@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: a
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: b
+
+    // class name: b/B
+    // class name: b/BB
+
+    public open class b/B : kotlin/Any {
+
+      public constructor()
+
+      public final var OK: kotlin/String
+        public final get
+        protected final /* non-default */ set(value: kotlin/String)
+    }
+
+    public final class b/BB : b/B {
+
+      public constructor()
+
+      public final fun ok(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,40 @@
+library {
+  // module name: <actual>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final data class C : kotlin/Any {
+
+      public constructor(arg: kotlin/Any?)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Any?
+
+      public final /* synthesized */ fun copy(arg: kotlin/Any? /* = ... */): C
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val arg: kotlin/Any?
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f(arg: kotlin/Int): kotlin/Int
+
+      public final var p: kotlin/String
+        public final get
+        public final set
+
+      public typealias T = C /* = C */
+    }
+  }
+}

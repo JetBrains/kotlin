@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Composed
+    // class name: Composed.Companion
+
+    public final value class Composed<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      private /* secondary */ constructor(s1: kotlin/String, s2: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final companion object Composed.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun p1(s: kotlin/String): Composed<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

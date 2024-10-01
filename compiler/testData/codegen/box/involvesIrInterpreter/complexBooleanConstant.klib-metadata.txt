@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final const val BOOL: kotlin/Boolean /* = true */
+        public final get
+
+      public final const val BOOL_AND: kotlin/Boolean /* = true */
+        public final get
+
+      public final const val BOOL_AND_OR: kotlin/Boolean /* = true */
+        public final get
+
+      public final const val BOOL_OR: kotlin/Boolean /* = false */
+        public final get
+    }
+  }
+}

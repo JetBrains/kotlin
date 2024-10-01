@@ -1,0 +1,28 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/useCorrectToString.kt
+    CLASS OBJECT name:Obj signature:/Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Obj
+      CONSTRUCTOR signature:/Obj.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Obj [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Obj signature:/Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:/Obj.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Obj) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Obj
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Obj'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:toString signature:/Obj.toString|toString@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($this:<root>.Obj, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Obj
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Obj'
+            CONST String type=<unbound IrClassSymbolImpl> value="Not OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CONST String type=<unbound IrClassSymbolImpl> value=""
+            1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              GET_OBJECT 'CLASS OBJECT name:Obj signature:/Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Obj

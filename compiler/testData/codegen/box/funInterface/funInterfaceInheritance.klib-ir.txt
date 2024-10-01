@@ -1,0 +1,77 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceInheritance.kt
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      FUN name:doStuff signature:/Base.doStuff|doStuff(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Base) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+    CLASS INTERFACE name:Proxy signature:/Proxy|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<root>.I]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Proxy
+      FUN name:doStuff signature:/Proxy.doStuff|doStuff(){}[0] visibility:public modality:OPEN <> ($this:<root>.Proxy) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Proxy
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun doStuff (): <unbound IrClassSymbolImpl> declared in <root>.Proxy'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public abstract fun doStuffInt (): <unbound IrClassSymbolImpl> declared in <root>.Proxy' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.Proxy declared in <root>.Proxy.doStuff' type=<root>.Proxy origin=null
+      FUN name:doStuffInt signature:/Proxy.doStuffInt|doStuffInt(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Proxy) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Proxy
+    FUN name:runBase signature:/runBase|runBase(Base){}[0] visibility:public modality:FINAL <> (b:<root>.Base) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<root>.Base
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runBase (b: <root>.Base): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun doStuff (): <unbound IrClassSymbolImpl> declared in <root>.Base' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'b: <root>.Base declared in <root>.runBase' type=<root>.Base origin=null
+    FUN name:runI signature:/runI|runI(I){}[0] visibility:public modality:FINAL <> (i:<root>.I) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<root>.I
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runI (i: <root>.I): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'i: <root>.I declared in <root>.runI' type=<root>.I origin=null
+    FUN name:runProxy signature:/runProxy|runProxy(Proxy){}[0] visibility:public modality:FINAL <> (p:<root>.Proxy) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p index:0 type:<root>.Proxy
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runProxy (p: <root>.Proxy): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun doStuff (): <unbound IrClassSymbolImpl> declared in <root>.Proxy' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'p: <root>.Proxy declared in <root>.runProxy' type=<root>.Proxy origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runI (i: <root>.I): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  i: TYPE_OP type=<root>.I origin=SAM_CONVERSION typeOperand=<root>.I
+                    FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                            CONST String type=<unbound IrClassSymbolImpl> value="i"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="i"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runProxy (p: <root>.Proxy): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p: TYPE_OP type=<root>.Proxy origin=SAM_CONVERSION typeOperand=<root>.Proxy
+                    FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                            CONST Int type=<unbound IrClassSymbolImpl> value=10
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="10"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun runBase (b: <root>.Base): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: TYPE_OP type=<root>.Base origin=SAM_CONVERSION typeOperand=<root>.Base
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,40 @@
+// MODULE: a
+library {
+  // module name: <a>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final val foo: kotlin/collections/List<kotlin/String>? /* = Foo^<T#0>? */
+        public final get
+    }
+
+    package {
+
+      public typealias Foo<T#0 /* T */> = kotlin/collections/List<kotlin/String> /* = kotlin/collections/List<kotlin/String> */
+    }
+  }
+}
+
+// MODULE: b
+library {
+  // module name: <b>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val bar: kotlin/collections/List<kotlin/String>? /* = Foo^<kotlin/Int>? */
+        public final get
+    }
+  }
+}

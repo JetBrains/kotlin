@@ -1,0 +1,53 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: StrangeArray
+    // class name: StrangeIntArray
+
+    public final class StrangeArray<T#0 /* T */> : kotlin/Any {
+
+      public constructor(size: kotlin/Int, defaultValue: T#0)
+
+      public final operator fun get(index: kotlin/Int): T#0
+
+      public final operator fun set(index: kotlin/Int, v: T#0): kotlin/Unit
+
+      private final var defaultValue: T#0
+        private final get
+        private final set
+    }
+
+    public final class StrangeIntArray : kotlin/Any {
+
+      public constructor(size: kotlin/Int)
+
+      public final operator fun get(index: kotlin/Int): kotlin/Int
+
+      public final operator fun set(index: kotlin/Int, v: kotlin/Int): kotlin/Unit
+
+      private final var defaultValue: kotlin/Int
+        private final get
+        private final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun t1(): kotlin/Unit
+
+      public final fun t2(): kotlin/Unit
+
+      public final fun t3(): kotlin/Unit
+
+      public final fun t4(): kotlin/Unit
+
+      public final fun t5(): kotlin/Unit
+
+      public final fun t6(): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/supertypeDepth.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.FirstOwner<<root>.Holder<<root>.A>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.FirstOwner<<root>.Holder<<root>.A>>]'
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.SecondOwner<<root>.Holder<<root>.B>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.SecondOwner<<root>.Holder<<root>.B>>]'
+    CLASS INTERFACE name:FirstOwner signature:/FirstOwner|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.SecondOwner<T of <root>.FirstOwner>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirstOwner<T of <root>.FirstOwner>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /FirstOwner|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.StubElement<*>] reified:false] ] superTypes:[<root>.StubElement<*>] reified:false
+    CLASS INTERFACE name:SecondOwner signature:/SecondOwner|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SecondOwner<T of <root>.SecondOwner>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /SecondOwner|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.StubElement<*>] reified:false] ] superTypes:[<root>.StubElement<*>] reified:false
+    CLASS INTERFACE name:StubElement signature:/StubElement|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StubElement<T of <root>.StubElement>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /StubElement|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.StubElement<*>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:Holder signature:/Holder|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.StubElement<T of <root>.Holder>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Holder<T of <root>.Holder>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Holder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.StubElement<*>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:test signature:/test|test(A?;B){}[0] visibility:public modality:FINAL <> (a:<root>.A?, b:<root>.B) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<root>.A?
+      VALUE_PARAMETER name:b index:1 type:<root>.B
+      BLOCK_BODY
+        VAR name:c type:<root>.SecondOwner<out <root>.Holder<out <root>.SecondOwner<*>>> [val]
+          BLOCK type=<root>.SecondOwner<out <root>.Holder<out <root>.SecondOwner<*>>> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<root>.A? [val]
+              GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+            WHEN type=<root>.SecondOwner<out <root>.Holder<out <root>.SecondOwner<*>>> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_elvis_lhs: <root>.A? [val] declared in <root>.test' type=<root>.A? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp0_elvis_lhs: <root>.A? [val] declared in <root>.test' type=<root>.A? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (a: <root>.A?, b: <root>.B): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          a: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          b: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

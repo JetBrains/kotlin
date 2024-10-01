@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/callableReferenceAsSecondArgumentOfDelegate.kt
+    CLASS CLASS name:TransformedConfigPropertyString signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<root>.SampleClass, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TransformedConfigPropertyString
+      CONSTRUCTOR signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.<init>|<init>(kotlin.String;kotlin.Function1<kotlin.String,kotlin.text.Regex>){}[0] ] visibility:public <> (defaultValue:<unbound IrClassSymbolImpl>, transform:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<root>.TransformedConfigPropertyString [primary]
+        VALUE_PARAMETER name:defaultValue index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:transform index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TransformedConfigPropertyString signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<root>.SampleClass, <unbound IrClassSymbolImpl>>]'
+      PROPERTY name:transform signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.transform|{}transform[0] ] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:transform signature:[ [ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.transform|{}transform[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:transform type:kotlin.Function1<kotlin.String, kotlin.text.Regex> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'transform: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.TransformedConfigPropertyString.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-transform> signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.transform.<get-transform>|<get-transform>(){}[0] ] visibility:private modality:FINAL <> ($this:<root>.TransformedConfigPropertyString) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:transform signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.transform|{}transform[0] ] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TransformedConfigPropertyString
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-transform> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.TransformedConfigPropertyString'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:transform signature:[ [ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.transform|{}transform[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:transform type:kotlin.Function1<kotlin.String, kotlin.text.Regex> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.TransformedConfigPropertyString declared in <root>.TransformedConfigPropertyString.<get-transform>' type=<root>.TransformedConfigPropertyString origin=null
+      FUN name:getValue signature:[ File '/callableReferenceAsSecondArgumentOfDelegate.kt' <- /TransformedConfigPropertyString.getValue|getValue(SampleClass;kotlin.reflect.KProperty<*>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.TransformedConfigPropertyString, thisRef:<root>.SampleClass, property:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.TransformedConfigPropertyString
+        VALUE_PARAMETER name:thisRef index:0 type:<root>.SampleClass
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getValue (thisRef: <root>.SampleClass, property: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [operator] declared in <root>.TransformedConfigPropertyString'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: CALL 'private final fun <get-transform> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.TransformedConfigPropertyString' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.TransformedConfigPropertyString declared in <root>.TransformedConfigPropertyString.getValue' type=<root>.TransformedConfigPropertyString origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="string"
+    CLASS CLASS name:SampleClass signature:/SampleClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SampleClass
+      CONSTRUCTOR signature:/SampleClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SampleClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SampleClass signature:/SampleClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:ignoreStringsRegex signature:/SampleClass.ignoreStringsRegex|{}ignoreStringsRegex[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:ignoreStringsRegex$delegate signature:[ /SampleClass.ignoreStringsRegex|{}ignoreStringsRegex[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:transform type:kotlin.Function1<kotlin.String, kotlin.text.Regex> visibility:private [final]] ] type:<root>.TransformedConfigPropertyString visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> (defaultValue: <unbound IrClassSymbolImpl>, transform: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) [primary] declared in <root>.TransformedConfigPropertyString' type=<root>.TransformedConfigPropertyString origin=null
+              defaultValue: CONST String type=<unbound IrClassSymbolImpl> value="$^"
+              transform: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-ignoreStringsRegex> signature:/SampleClass.ignoreStringsRegex.<get-ignoreStringsRegex>|<get-ignoreStringsRegex>(){}[0] visibility:public modality:FINAL <> ($this:<root>.SampleClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:ignoreStringsRegex signature:/SampleClass.ignoreStringsRegex|{}ignoreStringsRegex[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SampleClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ignoreStringsRegex> (): <unbound IrClassSymbolImpl> declared in <root>.SampleClass'
+              CALL 'public open fun getValue (thisRef: <root>.SampleClass, property: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [operator] declared in <root>.TransformedConfigPropertyString' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:ignoreStringsRegex$delegate signature:[ /SampleClass.ignoreStringsRegex|{}ignoreStringsRegex[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:transform type:kotlin.Function1<kotlin.String, kotlin.text.Regex> visibility:private [final]] ] type:<root>.TransformedConfigPropertyString visibility:private [final] declared in <root>.SampleClass' type=<root>.TransformedConfigPropertyString origin=null
+                  receiver: GET_VAR '<this>: <root>.SampleClass declared in <root>.SampleClass.<get-ignoreStringsRegex>' type=<root>.SampleClass origin=null
+                thisRef: GET_VAR '<this>: <root>.SampleClass declared in <root>.SampleClass.<get-ignoreStringsRegex>' type=<root>.SampleClass origin=null
+                property: PROPERTY_REFERENCE 'public final ignoreStringsRegex: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.SampleClass' field=null getter='public final fun <get-ignoreStringsRegex> (): <unbound IrClassSymbolImpl> declared in <root>.SampleClass' setter=null type=<unbound IrClassSymbolImpl><<root>.SampleClass, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun <get-ignoreStringsRegex> (): <unbound IrClassSymbolImpl> declared in <root>.SampleClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SampleClass' type=<root>.SampleClass origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

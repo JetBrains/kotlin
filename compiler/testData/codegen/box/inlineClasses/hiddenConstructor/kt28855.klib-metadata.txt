@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0, vararg ys: kotlin/UInt /* kotlin/UIntArray */)
+
+      public final val x: T#0
+        public final get
+
+      public final val y0: kotlin/UInt
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

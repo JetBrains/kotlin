@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final value class A : kotlin/Any {
+
+      public constructor(x: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/String
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isNotEqualAnyLeft(s: A, t: kotlin/Any?): kotlin/Boolean
+
+      public final fun isNotEqualAnyNullableLeft(s: A?, t: kotlin/Any?): kotlin/Boolean
+
+      public final fun isNotEqualAnyNullableRight(s: kotlin/Any?, t: A?): kotlin/Boolean
+
+      public final fun isNotEqualAnyRight(s: kotlin/Any?, t: A): kotlin/Boolean
+
+      public final fun isNotEqualNullableUnboxedLeft(s: A, t: A?): kotlin/Boolean
+
+      public final fun isNotEqualNullableUnboxedRight(s: A?, t: A): kotlin/Boolean
+
+      public final fun isNotEqualSame(s: A, t: A): kotlin/Boolean
+
+      public final fun isNotEqualSameNullable(s: A?, t: A?): kotlin/Boolean
+
+      public final fun isNotNullLeft(s: A?): kotlin/Boolean
+
+      public final fun isNotNullRight(s: A?): kotlin/Boolean
+
+      public final fun isNotNullVacuousLeft(s: A): kotlin/Boolean
+
+      public final fun isNotNullVacuousRight(s: A): kotlin/Boolean
+    }
+  }
+}

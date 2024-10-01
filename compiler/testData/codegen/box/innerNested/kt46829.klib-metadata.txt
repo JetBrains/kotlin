@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inner
+    // class name: Outer
+
+    public final class Inner<T#0 /* T */, T#1 /* V */> : kotlin/Any {
+
+      public constructor(key: T#0, value: T#1)
+
+      public final val key: T#0
+        public final get
+
+      public final var value: T#1
+        public final get
+        public final set
+    }
+
+    public final class Outer<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final var <T#1 /* V */> Inner<T#0, T#1>.prop: T#1
+        public final /* non-default */ get
+        public final /* non-default */ set(value: T#1)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

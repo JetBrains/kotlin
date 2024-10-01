@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt7972.kt
+    FUN name:addAnything signature:/addAnything|addAnything@kotlin.collections.List<0:0>(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> ($receiver:<unbound IrClassSymbolImpl><E of <root>.addAnything>, element:E of <root>.addAnything) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /addAnything|addAnything@kotlin.collections.List<0:0>(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><E of <root>.addAnything>
+      VALUE_PARAMETER name:element index:0 type:E of <root>.addAnything
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl><E of <root>.addAnything>
+              GET_VAR '<this>: <unbound IrClassSymbolImpl><E of <root>.addAnything> declared in <root>.addAnything' type=<unbound IrClassSymbolImpl><E of <root>.addAnything> origin=null
+            then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl><E of <root>.addAnything> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl><E of <root>.addAnything>
+                    GET_VAR '<this>: <unbound IrClassSymbolImpl><E of <root>.addAnything> declared in <root>.addAnything' type=<unbound IrClassSymbolImpl><E of <root>.addAnything> origin=null
+                  1: GET_VAR 'element: E of <root>.addAnything declared in <root>.addAnything' type=E of <root>.addAnything origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:list type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun addAnything <E> (element: E of <root>.addAnything): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <E>: <unbound IrClassSymbolImpl><*>
+          $receiver: GET_VAR 'val list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          element: CONST String type=<unbound IrClassSymbolImpl> value="string"
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR name:x type:<unbound IrClassSymbolImpl> [val]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: GET_VAR 'val list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL: "
+                GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"

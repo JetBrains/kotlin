@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> kotlin/collections/Iterable<T#0>.myForEach(action: kotlin/Function1<T#0, kotlin/Unit>): kotlin/Unit
+
+      public final inline fun <T#0 /* T */> kotlin/collections/Iterable<T#0>.myForEachWithBreak(dealBreaker: T#0, action: kotlin/Function1<T#0, kotlin/Unit>): kotlin/Unit
+
+      public final inline fun <T#0 /* T */> kotlin/collections/Iterable<T#0>.myForEachWithContinue(skipper: T#0, action: kotlin/Function1<T#0, kotlin/Unit>): kotlin/Unit
+
+      private final fun testMyForEach(): kotlin/Unit
+
+      private final fun testMyForEachWithBreak(): kotlin/Unit
+
+      private final fun testMyForEachWithContinue(): kotlin/Unit
+    }
+  }
+}

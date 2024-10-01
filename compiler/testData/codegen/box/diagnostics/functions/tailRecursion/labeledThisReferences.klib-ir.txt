@@ -1,0 +1,59 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/labeledThisReferences.kt
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:C signature:/B.C|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B.C
+        CONSTRUCTOR signature:/B.C.<init>|<init>(){}[0] visibility:public <> ($this:<root>.B) returnType:<root>.B.C [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.B
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/B.C|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:h signature:/B.C.h|h(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.B.C, counter:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [tailrec]
+          $this: VALUE_PARAMETER name:<this> type:<root>.B.C
+          VALUE_PARAMETER name:counter index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                  arg0: GET_VAR 'counter: <unbound IrClassSymbolImpl> declared in <root>.B.C.h' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun h (counter: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.B.C' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: <root>.B.C declared in <root>.B.C.h' type=<root>.B.C origin=null
+                    counter: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                      $this: GET_VAR 'counter: <unbound IrClassSymbolImpl> declared in <root>.B.C.h' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        FUN name:h2 signature:/B.C.h2|h2(kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.B.C, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [tailrec]
+          $this: VALUE_PARAMETER name:<this> type:<root>.B.C
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            CALL 'public final fun h2 (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.B' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.B declared in <root>.B' type=<root>.B origin=null
+              x: CONST String type=<unbound IrClassSymbolImpl> value="no recursion"
+      FUN name:makeC signature:/B.makeC|makeC(){}[0] visibility:public modality:FINAL <> ($this:<root>.B) returnType:<root>.B.C
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun makeC (): <root>.B.C declared in <root>.B'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B.C' type=<root>.B.C origin=null
+              $outer: GET_VAR '<this>: <root>.B declared in <root>.B.makeC' type=<root>.B origin=null
+      FUN name:h2 signature:/B.h2|h2(kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.B, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun h (counter: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.B.C' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun makeC (): <root>.B.C declared in <root>.B' type=<root>.B.C origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+          counter: CONST Int type=<unbound IrClassSymbolImpl> value=1000000
+        CALL 'public final fun h2 (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.B.C' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun makeC (): <root>.B.C declared in <root>.B' type=<root>.B.C origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+          x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

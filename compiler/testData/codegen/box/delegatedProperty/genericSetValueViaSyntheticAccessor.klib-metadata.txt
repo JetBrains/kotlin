@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: C.Inner
+
+    public final class C : pvar/PVar<kotlin/Long> {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final inner class C.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ var x: kotlin/Long
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Long)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: pvar
+
+    // class name: pvar/PVar
+
+    public open class pvar/PVar<T#0 /* T */> : kotlin/Any {
+
+      public constructor(value: T#0)
+
+      protected final operator fun getValue(thisRef: kotlin/Any?, prop: kotlin/Any?): T#0
+
+      protected final operator fun setValue(thisRef: kotlin/Any?, prop: kotlin/Any?, newValue: T#0): kotlin/Unit
+
+      private final var value: T#0
+        private final get
+        private final set
+    }
+  }
+}

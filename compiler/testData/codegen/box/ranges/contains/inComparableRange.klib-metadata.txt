@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ComparablePair
+
+    public final class ComparablePair<T#0 /* T */ : kotlin/Comparable<T#0>> : kotlin/Comparable<ComparablePair<T#0>> {
+
+      public constructor(first: T#0, second: T#0)
+
+      public open operator fun compareTo(other: ComparablePair<T#0>): kotlin/Int
+
+      public final val first: T#0
+        public final get
+
+      public final val second: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(x: kotlin/Double, left: kotlin/Double, right: kotlin/Double): kotlin/Boolean
+
+      public final fun check(x: kotlin/Float, left: kotlin/Float, right: kotlin/Float): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : kotlin/Comparable<T#0>> genericRangeTo(start: T#0, endInclusive: T#0): kotlin/ranges/ClosedRange<T#0>
+
+      public final operator fun kotlin/Double.rangeTo(other: kotlin/Double): kotlin/ranges/ClosedRange<kotlin/Double>
+
+      public final operator fun kotlin/Float.rangeTo(other: kotlin/Float): kotlin/ranges/ClosedFloatingPointRange<kotlin/Float>
+    }
+  }
+}

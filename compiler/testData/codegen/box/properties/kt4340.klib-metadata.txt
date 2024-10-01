@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(p: kotlin/Int): kotlin/Int
+
+      public final fun test2(p: kotlin/Int, s: kotlin/Int): kotlin/Int
+
+      public final var result: kotlin/Int
+        public final get
+        public final set
+
+      private final var kotlin/Int.times: kotlin/Int
+        private final /* non-default */ get
+        private final /* non-default */ set(s: kotlin/Int)
+
+      private final val kotlin/Int.times3: kotlin/Int
+        private final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

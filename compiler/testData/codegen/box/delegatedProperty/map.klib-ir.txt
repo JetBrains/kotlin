@@ -1,0 +1,84 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/map.kt
+    CLASS CLASS name:User signature:/User|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.User
+      CONSTRUCTOR signature:/User.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlin.Any?>){}[0] visibility:public <> (map:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>) returnType:<root>.User [primary]
+        VALUE_PARAMETER name:map index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:User signature:/User|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:map signature:/User.map|{}map[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:map signature:[ /User.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.Any?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'map: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.User.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> signature:/User.map.<get-map>|<get-map>(){}[0] visibility:public modality:FINAL <> ($this:<root>.User) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>
+          correspondingProperty: PROPERTY name:map signature:/User.map|{}map[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.User
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.User'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /User.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.Any?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                receiver: GET_VAR '<this>: <root>.User declared in <root>.User.<get-map>' type=<root>.User origin=null
+      PROPERTY name:name signature:/User.name|{}name[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:name$delegate signature:[ /User.name|{}name[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.Any?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.User' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.User declared in <root>.User' type=<root>.User origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-name> signature:/User.name.<get-name>|<get-name>(){}[0] visibility:public modality:FINAL <> ($this:<root>.User) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:name signature:/User.name|{}name[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.User
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-name> (): <unbound IrClassSymbolImpl> declared in <root>.User'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:name$delegate signature:[ /User.name|{}name[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.Any?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final] declared in <root>.User' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.User declared in <root>.User.<get-name>' type=<root>.User origin=null
+                1: GET_VAR '<this>: <root>.User declared in <root>.User.<get-name>' type=<root>.User origin=null
+                2: PROPERTY_REFERENCE 'public final name: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.User' field=null getter='public final fun <get-name> (): <unbound IrClassSymbolImpl> declared in <root>.User' setter=null type=<unbound IrClassSymbolImpl><<root>.User, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:age signature:/User.age|{}age[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:age$delegate signature:[ /User.age|{}age[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.Any?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-map> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.User' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.User declared in <root>.User' type=<root>.User origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-age> signature:/User.age.<get-age>|<get-age>(){}[0] visibility:public modality:FINAL <> ($this:<root>.User) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:age signature:/User.age|{}age[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.User
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-age> (): <unbound IrClassSymbolImpl> declared in <root>.User'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:age$delegate signature:[ /User.age|{}age[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, kotlin.Any?> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> visibility:private [final] declared in <root>.User' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.User declared in <root>.User.<get-age>' type=<root>.User origin=null
+                1: GET_VAR '<this>: <root>.User declared in <root>.User.<get-age>' type=<root>.User origin=null
+                2: PROPERTY_REFERENCE 'public final age: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.User' field=null getter='public final fun <get-age> (): <unbound IrClassSymbolImpl> declared in <root>.User' setter=null type=<unbound IrClassSymbolImpl><<root>.User, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:user type:<root>.User [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (map: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>) [primary] declared in <root>.User' type=<root>.User origin=null
+            map: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><*>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl><*>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><*>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><*>>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="name"
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="John Doe"
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="age"
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=25
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="John Doe"
+          2: CALL 'public final fun <get-name> (): <unbound IrClassSymbolImpl> declared in <root>.User' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val user: <root>.User [val] declared in <root>.box' type=<root>.User origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=25
+          2: CALL 'public final fun <get-age> (): <unbound IrClassSymbolImpl> declared in <root>.User' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val user: <root>.User [val] declared in <root>.box' type=<root>.User origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

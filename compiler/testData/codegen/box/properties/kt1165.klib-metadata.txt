@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: PhysicalVirtualFile
+    // class name: VirtualFile
+
+    public final class PhysicalVirtualFile : VirtualFile {
+
+      public constructor()
+
+      public open val size: kotlin/Long
+        public open /* non-default */ get
+    }
+
+    public abstract class VirtualFile : kotlin/Any {
+
+      public constructor()
+
+      public abstract val size: kotlin/Long
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

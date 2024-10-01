@@ -1,0 +1,70 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt9711_2.kt
+    CLASS ENUM_CLASS name:IssueState signature:/IssueState|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.IssueState>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IssueState
+      CONSTRUCTOR signature:/IssueState.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.IssueState [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.IssueState
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:IssueState signature:/IssueState|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.IssueState>]'
+      ENUM_ENTRY name:FIXED signature:/IssueState.FIXED|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.IssueState.FIXED'
+        class: CLASS ENUM_ENTRY name:FIXED signature:/IssueState.FIXED.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.IssueState]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IssueState.FIXED
+          CONSTRUCTOR signature:/IssueState.FIXED.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.IssueState.FIXED [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.IssueState'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIXED signature:/IssueState.FIXED.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.IssueState]'
+          FUN name:ToString signature:/IssueState.FIXED.<EEC>.ToString|ToString(){}[0] visibility:public modality:OPEN <> ($this:<root>.IssueState.FIXED) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              public open fun ToString (): <unbound IrClassSymbolImpl> declared in <root>.IssueState
+            $this: VALUE_PARAMETER name:<this> type:<root>.IssueState.FIXED
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun ToString (): <unbound IrClassSymbolImpl> declared in <root>.IssueState.FIXED'
+                CALL 'public final fun <get-k> (): <unbound IrClassSymbolImpl> declared in <root>.IssueState.FIXED.D' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.IssueState.FIXED.D' type=<root>.IssueState.FIXED.D origin=null
+                    $outer: GET_VAR '<this>: <root>.IssueState.FIXED declared in <root>.IssueState.FIXED.ToString' type=<root>.IssueState.FIXED origin=null
+          FUN name:s signature:/IssueState.FIXED.<EEC>.s|s(){}[0] visibility:public modality:FINAL <> ($this:<root>.IssueState.FIXED) returnType:<unbound IrClassSymbolImpl>
+            $this: VALUE_PARAMETER name:<this> type:<root>.IssueState.FIXED
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun s (): <unbound IrClassSymbolImpl> declared in <root>.IssueState.FIXED'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          CLASS CLASS name:D modality:FINAL visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IssueState.FIXED.D
+            CONSTRUCTOR visibility:public <> ($this:<root>.IssueState.FIXED) returnType:<root>.IssueState.FIXED.D [primary]
+              $outer: VALUE_PARAMETER name:<this> type:<root>.IssueState.FIXED
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+            PROPERTY name:k visibility:public modality:FINAL [val]
+              FIELD PROPERTY_BACKING_FIELD name:k type:<unbound IrClassSymbolImpl> visibility:private [final]
+                EXPRESSION_BODY
+                  CALL 'public final fun s (): <unbound IrClassSymbolImpl> declared in <root>.IssueState.FIXED' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: <root>.IssueState.FIXED declared in <root>.IssueState.FIXED' type=<root>.IssueState.FIXED origin=null
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-k> visibility:public modality:FINAL <> ($this:<root>.IssueState.FIXED.D) returnType:<unbound IrClassSymbolImpl>
+                correspondingProperty: PROPERTY name:k visibility:public modality:FINAL [val]
+                $this: VALUE_PARAMETER name:<this> type:<root>.IssueState.FIXED.D
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-k> (): <unbound IrClassSymbolImpl> declared in <root>.IssueState.FIXED.D'
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: <root>.IssueState.FIXED.D declared in <root>.IssueState.FIXED.D.<get-k>' type=<root>.IssueState.FIXED.D origin=null
+      FUN name:ToString signature:/IssueState.ToString|ToString(){}[0] visibility:public modality:OPEN <> ($this:<root>.IssueState) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.IssueState
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun ToString (): <unbound IrClassSymbolImpl> declared in <root>.IssueState'
+            CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/IssueState.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.IssueState>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/IssueState.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.IssueState
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/IssueState.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/IssueState.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.IssueState>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/IssueState.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun ToString (): <unbound IrClassSymbolImpl> declared in <root>.IssueState' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:FIXED signature:/IssueState.FIXED|null[0]' type=<root>.IssueState

@@ -1,0 +1,16 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal final fun <get-x> (): <unbound IrClassSymbolImpl> declared in a' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+  FILE fqName:a fileName:/2.kt
+    PROPERTY name:x signature:a/x|{}x[0] visibility:internal modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x signature:[ a/x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:a/x.<get-x>|<get-x>(){}[0] visibility:internal modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:x signature:a/x|{}x[0] visibility:internal modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='internal final fun <get-x> (): <unbound IrClassSymbolImpl> declared in a'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ a/x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null

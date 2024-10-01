@@ -1,0 +1,122 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/deepInnerClassInEnumEntryClass2.kt
+    CLASS ENUM_CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.A
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]'
+      ENUM_ENTRY name:X signature:/A.X|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.X'
+        class: CLASS ENUM_ENTRY name:X signature:/A.X.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.A]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.X
+          CONSTRUCTOR signature:/A.X.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.X [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X signature:/A.X.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.A]'
+          PROPERTY name:k signature:/A.X.<EEC>.k|{}k[0] visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:k signature:[ /A.X.<EEC>.k|{}k[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="K"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-k> signature:/A.X.<EEC>.k.<get-k>|<get-k>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.X) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:k signature:/A.X.<EEC>.k|{}k[0] visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.A.X
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-k> (): <unbound IrClassSymbolImpl> declared in <root>.A.X'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k signature:[ /A.X.<EEC>.k|{}k[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.A.X declared in <root>.A.X.<get-k>' type=<root>.A.X origin=null
+          PROPERTY name:anonObject signature:/A.X.<EEC>.anonObject|{}anonObject[0] visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:anonObject signature:[ /A.X.<EEC>.anonObject|{}anonObject[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]] ] type:<root>.A.X.anonObject.<no name provided> visibility:private [final]
+              EXPRESSION_BODY
+                BLOCK type=<root>.A.X.anonObject.<no name provided> origin=OBJECT_LITERAL
+                  CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.X.anonObject.<no name provided>
+                    CONSTRUCTOR visibility:public <> () returnType:<root>.A.X.anonObject.<no name provided> [primary]
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                    CLASS CLASS name:Inner modality:FINAL visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.X.anonObject.<no name provided>.Inner
+                      CONSTRUCTOR visibility:public <> ($this:<root>.A.X.anonObject.<no name provided>) returnType:<root>.A.X.anonObject.<no name provided>.Inner [primary]
+                        $outer: VALUE_PARAMETER name:<this> type:<root>.A.X.anonObject.<no name provided>
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+                      PROPERTY name:x visibility:public modality:FINAL [val]
+                        FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]
+                          EXPRESSION_BODY
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                              $this: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                              1: CALL 'public final fun <get-k> (): <unbound IrClassSymbolImpl> declared in <root>.A.X' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.A.X declared in <root>.A.X' type=<root>.A.X origin=null
+                        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A.X.anonObject.<no name provided>.Inner) returnType:<unbound IrClassSymbolImpl>
+                          correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+                          $this: VALUE_PARAMETER name:<this> type:<root>.A.X.anonObject.<no name provided>.Inner
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A.X.anonObject.<no name provided>.Inner'
+                              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                                receiver: GET_VAR '<this>: <root>.A.X.anonObject.<no name provided>.Inner declared in <root>.A.X.anonObject.<no name provided>.Inner.<get-x>' type=<root>.A.X.anonObject.<no name provided>.Inner origin=null
+                    PROPERTY name:innerX visibility:public modality:FINAL [val]
+                      FIELD PROPERTY_BACKING_FIELD name:innerX type:<unbound IrClassSymbolImpl> visibility:private [final]
+                        EXPRESSION_BODY
+                          CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A.X.anonObject.<no name provided>.Inner' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.X.anonObject.<no name provided>.Inner' type=<root>.A.X.anonObject.<no name provided>.Inner origin=null
+                              $outer: GET_VAR '<this>: <root>.A.X.anonObject.<no name provided> declared in <root>.A.X.anonObject.<no name provided>' type=<root>.A.X.anonObject.<no name provided> origin=null
+                      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-innerX> visibility:public modality:FINAL <> ($this:<root>.A.X.anonObject.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                        correspondingProperty: PROPERTY name:innerX visibility:public modality:FINAL [val]
+                        $this: VALUE_PARAMETER name:<this> type:<root>.A.X.anonObject.<no name provided>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-innerX> (): <unbound IrClassSymbolImpl> declared in <root>.A.X.anonObject.<no name provided>'
+                            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:innerX type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                              receiver: GET_VAR '<this>: <root>.A.X.anonObject.<no name provided> declared in <root>.A.X.anonObject.<no name provided>.<get-innerX>' type=<root>.A.X.anonObject.<no name provided> origin=null
+                    FUN name:toString visibility:public modality:OPEN <> ($this:<root>.A.X.anonObject.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                      overridden:
+                        UNBOUND IrSimpleFunctionSymbolImpl
+                      $this: VALUE_PARAMETER name:<this> type:<root>.A.X.anonObject.<no name provided>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.A.X.anonObject.<no name provided>'
+                          CALL 'public final fun <get-innerX> (): <unbound IrClassSymbolImpl> declared in <root>.A.X.anonObject.<no name provided>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.A.X.anonObject.<no name provided> declared in <root>.A.X.anonObject.<no name provided>.toString' type=<root>.A.X.anonObject.<no name provided> origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.X.anonObject.<no name provided>' type=<root>.A.X.anonObject.<no name provided> origin=OBJECT_LITERAL
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonObject> signature:/A.X.<EEC>.anonObject.<get-anonObject>|<get-anonObject>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.X) returnType:<root>.A.X.anonObject.<no name provided>
+              correspondingProperty: PROPERTY name:anonObject signature:/A.X.<EEC>.anonObject|{}anonObject[0] visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.A.X
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-anonObject> (): <root>.A.X.anonObject.<no name provided> declared in <root>.A.X'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonObject signature:[ /A.X.<EEC>.anonObject|{}anonObject[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]] ] type:<root>.A.X.anonObject.<no name provided> visibility:private [final]' type=<root>.A.X.anonObject.<no name provided> origin=null
+                    receiver: GET_VAR '<this>: <root>.A.X declared in <root>.A.X.<get-anonObject>' type=<root>.A.X origin=null
+          PROPERTY name:test signature:/A.X.<EEC>.test|{}test[0] visibility:public modality:OPEN [val]
+            FIELD PROPERTY_BACKING_FIELD name:test signature:[ /A.X.<EEC>.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.A.X.anonObject.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-anonObject> (): <root>.A.X.anonObject.<no name provided> declared in <root>.A.X' type=<root>.A.X.anonObject.<no name provided> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.A.X declared in <root>.A.X' type=<root>.A.X origin=null
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> signature:/A.X.<EEC>.test.<get-test>|<get-test>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A.X) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:test signature:/A.X.<EEC>.test|{}test[0] visibility:public modality:OPEN [val]
+              overridden:
+                public abstract fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.A
+              $this: VALUE_PARAMETER name:<this> type:<root>.A.X
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.A.X'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test signature:[ /A.X.<EEC>.test|{}test[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.A.X declared in <root>.A.X.<get-test>' type=<root>.A.X origin=null
+      PROPERTY name:test signature:/A.test|{}test[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> signature:/A.test.<get-test>|<get-test>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test signature:/A.test|{}test[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/A.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/A.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.A
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/A.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun <get-test> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:X signature:/A.X|null[0]' type=<root>.A

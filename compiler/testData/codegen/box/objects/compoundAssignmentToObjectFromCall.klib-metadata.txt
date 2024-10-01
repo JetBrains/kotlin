@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor(p: kotlin/String)
+
+      public final var pp: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun <T#0 /* T */, T#1 /* R */> T#0.bar(f: kotlin/Function1<T#0, T#1>): T#1
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> T#0.foo(f: kotlin/Function1<T#0, T#1>): T#1
+
+      public final operator fun A.plusAssign(s: kotlin/String): kotlin/Unit
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

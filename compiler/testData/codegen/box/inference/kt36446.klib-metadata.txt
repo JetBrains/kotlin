@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ArgumentBuilder
+    // class name: ArgumentDefinition
+    // class name: ArgumentReference
+    // class name: ConversionBuilder
+    // class name: DefinitionBuilder
+    // class name: Transaction
+
+    public final class ArgumentBuilder<T#0 /* Value */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun defaultInt(default: kotlin/Int): kotlin/Unit
+    }
+
+    public abstract interface ArgumentDefinition<T#0 /* Value */> : kotlin/Any {
+
+      public abstract operator fun provideDelegate(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): ArgumentReference<T#0>
+    }
+
+    public abstract interface ArgumentReference<out T#0 /* Value */> : kotlin/Any {
+
+      public abstract operator fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+    }
+
+    public final class ConversionBuilder<T#0 /* Value */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#1 /* ArgumentValue */> argument(configure: @kotlin/ExtensionFunctionType kotlin/Function1<ArgumentBuilder<T#1>, kotlin/Unit>): ArgumentDefinition<T#1>
+    }
+
+    public final class DefinitionBuilder<T#0 /* Transaction */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#1 /* Value */> conversion(configure: @kotlin/ExtensionFunctionType kotlin/Function1<ConversionBuilder<T#1>, kotlin/Unit>): kotlin/Unit
+    }
+
+    public abstract interface Transaction : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* Transaction */> definition(configure: @kotlin/ExtensionFunctionType kotlin/Function1<DefinitionBuilder<T#0>, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

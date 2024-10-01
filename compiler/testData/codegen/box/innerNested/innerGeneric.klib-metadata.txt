@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Inner
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner<T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0)
+
+      public final fun box(): T#0
+
+      public final val t: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

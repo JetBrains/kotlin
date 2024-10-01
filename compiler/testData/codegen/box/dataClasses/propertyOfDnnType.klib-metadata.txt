@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Some
+
+    public final data class Some<T#0 /* T */> : kotlin/Any {
+
+      // requires language version 1.7.0 (level=ERROR)
+      public constructor(data: T#0 & Any)
+
+      // requires language version 1.7.0 (level=ERROR)
+      public final /* synthesized */ operator fun component1(): T#0 & Any
+
+      // requires language version 1.7.0 (level=ERROR)
+      public final /* synthesized */ fun copy(data: T#0 & Any /* = ... */): Some<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // requires language version 1.7.0 (level=ERROR)
+      public final val data: T#0 & Any
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

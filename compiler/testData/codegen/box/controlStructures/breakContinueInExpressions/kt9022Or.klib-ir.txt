@@ -1,0 +1,23 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt9022Or.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:cycle type:<unbound IrClassSymbolImpl> [var]
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: BREAK label=null loop.label=null
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"

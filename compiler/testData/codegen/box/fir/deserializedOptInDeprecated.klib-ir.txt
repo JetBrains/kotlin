@@ -1,0 +1,36 @@
+// MODULE: sub
+MODULE_FRAGMENT name:<sub>
+  FILE fqName:foo fileName:/sub.kt
+    CLASS CLASS name:Base signature:foo/Base|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.Base
+      CONSTRUCTOR signature:foo/Base.<init>|<init>(){}[0] visibility:public <> () returnType:foo.Base [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:foo/Base|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS ANNOTATION_CLASS name:My signature:foo/Base.My|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        annotations:
+          <unbound>(1 = <null>, 2 = <null>)
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.Base.My
+        CONSTRUCTOR signature:foo/Base.My.<init>|<init>(){}[0] visibility:public <> () returnType:foo.Base.My [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:My signature:foo/Base.My|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:foo/Base.test|test(){}[0] visibility:public modality:FINAL <> ($this:foo.Base) returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          My
+          <unbound>(1 = "Yes", 2 = <null>, 3 = <null>)
+        $this: VALUE_PARAMETER name:<this> type:foo.Base
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in foo.Base'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+
+// MODULE: dep
+MODULE_FRAGMENT name:<dep>
+  FILE fqName:some fileName:/box.kt
+    FUN name:box signature:some/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in some'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null

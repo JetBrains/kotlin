@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Container
+    // class name: TestClass
+
+    public final class Container : kotlin/Any {
+
+      public constructor()
+
+      public final var id: kotlin/Int?
+        public final get
+        public final set
+    }
+
+    public final class TestClass : kotlin/Any {
+
+      public constructor()
+
+      private final fun createContainer(id: kotlin/Int): Container
+
+      public final fun createContainers1(from: kotlin/Int /* = ... */, to: kotlin/Int /* = ... */): kotlin/collections/List<Container>
+
+      public final fun createContainers2(from: kotlin/Int /* = ... */, to: kotlin/Int /* = ... */): kotlin/collections/List<Container>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public final class Foo<T#0 /* K11 */, T#1 /* K22 */> : kotlin/Any {
+
+      public constructor(key: T#0)
+
+      public final fun emit1(key: T#0): kotlin/Unit
+
+      public final fun emit2(key: T#1): kotlin/Unit
+
+      public final fun get(): T#0
+
+      public final val key: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* K1 */, T#1 /* K2 */> build(builder: @kotlin/ExtensionFunctionType kotlin/Function1<Foo<T#0, T#1>, kotlin/Unit>): kotlin/Unit
+
+      public final fun run(x: kotlin/Int): kotlin/Unit
+    }
+  }
+}

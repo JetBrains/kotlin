@@ -1,0 +1,65 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/floatCompanionObject.kt
+    FUN name:assertEquals signature:/assertEquals|assertEquals(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (a:T of <root>.assertEquals, b:T of <root>.assertEquals) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /assertEquals|assertEquals(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.assertEquals
+      VALUE_PARAMETER name:b index:1 type:T of <root>.assertEquals
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'a: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+                arg1: GET_VAR 'b: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'a: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                  GET_VAR 'b: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+    FUN name:MAX signature:/MAX|MAX@kotlin.Float.Companion(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun MAX (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+    FUN name:MIN signature:/MIN|MIN@kotlin.Float.Companion(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun MIN (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Float type=<unbound IrClassSymbolImpl> value=-Infinity
+    FUN name:test signature:/test|test(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (o:T of <root>.test) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /test|test(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:o index:0 type:T of <root>.test
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (a: T of <root>.assertEquals, b: T of <root>.assertEquals): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          a: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+            arg0: GET_VAR 'o: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            arg1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          b: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (a: T of <root>.assertEquals, b: T of <root>.assertEquals): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=DIV
+            $this: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+            1: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+          b: CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+        CALL 'public final fun assertEquals <T> (a: T of <root>.assertEquals, b: T of <root>.assertEquals): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          a: CONST Float type=<unbound IrClassSymbolImpl> value=-Infinity
+          b: CALL 'public final fun MIN (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun assertEquals <T> (a: T of <root>.assertEquals, b: T of <root>.assertEquals): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          a: CONST Float type=<unbound IrClassSymbolImpl> value=Infinity
+          b: CALL 'public final fun MAX (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun test <T> (o: T of <root>.test): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          o: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun test <T> (o: T of <root>.test): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          o: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Base
+    // class name: Delegate
+    // class name: Derived
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ var prop: Derived
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: Derived)
+    }
+
+    public open class Base : kotlin/Any {
+
+      public constructor(a: kotlin/String /* = ... */)
+
+      public open val a: kotlin/String
+        public open get
+    }
+
+    public final class Delegate : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): Derived
+
+      public final operator fun setValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>, i: Base): kotlin/Unit
+
+      public final var inner: Derived
+        public final get
+        public final set
+    }
+
+    public final class Derived : Base {
+
+      public constructor(a: kotlin/String /* = ... */)
+
+      public open val a: kotlin/String
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

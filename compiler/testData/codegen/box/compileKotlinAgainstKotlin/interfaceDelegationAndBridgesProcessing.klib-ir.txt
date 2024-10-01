@@ -1,0 +1,51 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:test fileName:/A.kt
+    CLASS INTERFACE name:CodeBlock signature:test/CodeBlock|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.CodeBlock
+      FUN name:foo signature:test/CodeBlock.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:test.CodeBlock) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.CodeBlock
+    CLASS INTERFACE name:CompositeCodeBlock signature:test/CompositeCodeBlock|null[0] modality:ABSTRACT visibility:public superTypes:[test.CodeBlock]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.CompositeCodeBlock
+      FUN name:foo signature:test/CompositeCodeBlock.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:test.CompositeCodeBlock) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in test.CodeBlock
+        $this: VALUE_PARAMETER name:<this> type:test.CompositeCodeBlock
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in test.CompositeCodeBlock'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS INTERFACE name:ForLoopBody signature:test/ForLoopBody|null[0] modality:ABSTRACT visibility:public superTypes:[test.CodeBlock]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.ForLoopBody
+    CLASS CLASS name:CodeBlockBase signature:test/CodeBlockBase|null[0] modality:ABSTRACT visibility:public superTypes:[test.CompositeCodeBlock]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.CodeBlockBase
+      CONSTRUCTOR signature:test/CodeBlockBase.<init>|<init>(){}[0] visibility:public <> () returnType:test.CodeBlockBase [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CodeBlockBase signature:test/CodeBlockBase|null[0] modality:ABSTRACT visibility:public superTypes:[test.CompositeCodeBlock]'
+    CLASS CLASS name:LineSeparatedCodeBlock signature:test/LineSeparatedCodeBlock|null[0] modality:ABSTRACT visibility:public superTypes:[test.CodeBlockBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.LineSeparatedCodeBlock
+      CONSTRUCTOR signature:test/LineSeparatedCodeBlock.<init>|<init>(){}[0] visibility:public <> () returnType:test.LineSeparatedCodeBlock [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.CodeBlockBase'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LineSeparatedCodeBlock signature:test/LineSeparatedCodeBlock|null[0] modality:ABSTRACT visibility:public superTypes:[test.CodeBlockBase]'
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/B.kt
+    CLASS CLASS name:KotlinCodeBlock signature:/KotlinCodeBlock|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinCodeBlock
+      CONSTRUCTOR signature:/KotlinCodeBlock.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.KotlinCodeBlock [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinCodeBlock signature:/KotlinCodeBlock|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:KotlinForLoopBody signature:/KotlinForLoopBody|null[0] modality:FINAL visibility:public superTypes:[<root>.KotlinCodeBlock; <unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinForLoopBody
+      CONSTRUCTOR signature:/KotlinForLoopBody.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.KotlinForLoopBody [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.KotlinCodeBlock'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinForLoopBody signature:/KotlinForLoopBody|null[0] modality:FINAL visibility:public superTypes:[<root>.KotlinCodeBlock; <unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.KotlinForLoopBody' type=<root>.KotlinForLoopBody origin=null

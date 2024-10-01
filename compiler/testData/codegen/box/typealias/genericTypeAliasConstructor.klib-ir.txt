@@ -1,0 +1,34 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericTypeAliasConstructor.kt
+    CLASS CLASS name:Cell signature:/Cell|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell<T of <root>.Cell>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Cell|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Cell.<init>|<init>(1:0){}[0] visibility:public <> (x:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary]
+        VALUE_PARAMETER name:x index:0 type:T of <root>.Cell
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell signature:/Cell|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/Cell.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Cell.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Cell visibility:private [final]] ] type:T of <root>.Cell visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: T of <root>.Cell declared in <root>.Cell.<init>' type=T of <root>.Cell origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Cell.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:T of <root>.Cell
+          correspondingProperty: PROPERTY name:x signature:/Cell.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Cell<T of <root>.Cell>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.Cell declared in <root>.Cell'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Cell.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Cell visibility:private [final]] ] type:T of <root>.Cell visibility:private [final]' type=T of <root>.Cell origin=null
+                receiver: GET_VAR '<this>: <root>.Cell<T of <root>.Cell> declared in <root>.Cell.<get-x>' type=<root>.Cell<T of <root>.Cell> origin=null
+    TYPEALIAS name:StringCell signature:/StringCell|null[0] visibility:public expandedType:<root>.Cell<<unbound IrClassSymbolImpl>>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-x> (): T of <root>.Cell declared in <root>.Cell' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Cell) [primary] declared in <root>.Cell' type=<root>.Cell<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CALL 'public final fun <get-x> (): T of <root>.Cell declared in <root>.Cell' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Cell) [primary] declared in <root>.Cell' type=<root>.Cell<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST String type=<unbound IrClassSymbolImpl> value="K"

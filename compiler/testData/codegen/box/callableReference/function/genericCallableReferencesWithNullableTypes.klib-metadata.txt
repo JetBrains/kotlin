@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Pair
+
+    public final data class Pair<T#0 /* A */, T#1 /* B */> : kotlin/Any {
+
+      public constructor(a: T#0, b: T#1)
+
+      public final /* synthesized */ operator fun component1(): T#0
+
+      public final /* synthesized */ operator fun component2(): T#1
+
+      public final /* synthesized */ fun copy(a: T#0 /* = ... */, b: T#1 /* = ... */): Pair<T#0, T#1>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: T#0
+        public final get
+
+      public final val b: T#1
+        public final get
+    }
+
+    package {
+
+      public final inline fun <reified T#0 /* T */, reified T#1 /* R */> bar(x: T#0, y: T#1, f: kotlin/Function1<T#0, T#1>, tType: kotlin/String, rType: kotlin/String): Pair<T#0, T#1?>
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */, T#1 /* R */> foo(x: T#0): T#1
+    }
+  }
+}

@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Singleton
+    // class name: Some
+    // class name: Some.Companion
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun bar(): kotlin/String
+
+      public final fun foo(): kotlin/String
+    }
+
+    public final object Singleton : Base {
+
+      private constructor()
+
+      public open fun bar(): kotlin/String
+    }
+
+    public final class Some : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Some.Companion : Base {
+
+      private constructor()
+
+      public open fun bar(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: A.C
+
+    public sealed class A : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: B
+
+      // nested class: C
+
+      // sealed subclass: A.B
+
+      // sealed subclass: A.C
+    }
+
+    public final object A.B : A {
+
+      private constructor()
+    }
+
+    public final class A.C : A {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

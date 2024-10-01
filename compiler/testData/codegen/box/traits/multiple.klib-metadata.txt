@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AL
+    // class name: ALE
+    // class name: SmartArrayList
+    // class name: SmartArrayList2
+
+    public abstract interface AL : kotlin/Any {
+
+      public open fun get(index: kotlin/Int): kotlin/Any?
+    }
+
+    public abstract interface ALE<T#0 /* T */> : AL {
+
+      public open fun getOrNull(index: kotlin/Int, value: T#0): T#0
+    }
+
+    public open class SmartArrayList : ALE<kotlin/String> {
+
+      public constructor()
+    }
+
+    public final class SmartArrayList2 : SmartArrayList, AL {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

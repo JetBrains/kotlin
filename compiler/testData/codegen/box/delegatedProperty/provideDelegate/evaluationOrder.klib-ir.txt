@@ -1,0 +1,89 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/evaluationOrder.kt
+    PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-log> signature:/log.<get-log>|<get-log>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-log> signature:/log.<set-log>|<set-log>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:log signature:/log|{}log[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:log signature:[ /log|{}log[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-log>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:testO signature:/testO|{}testO[0] visibility:public modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:testO$delegate signature:[ /testO|{}testO[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun provideDelegate (host: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun runLogged <T> (entry: <unbound IrClassSymbolImpl>, action: <unbound IrClassSymbolImpl><T of <root>.runLogged>): T of <root>.runLogged [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              entry: CONST String type=<unbound IrClassSymbolImpl> value="O;"
+              action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.testO$delegate'
+                      CONST String type=<unbound IrClassSymbolImpl> value="O"
+            host: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            p: PROPERTY_REFERENCE 'public final testO: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>' field=null getter='public final fun <get-testO> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> signature:/testO.<get-testO>|<get-testO>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:testO signature:/testO|{}testO[0] visibility:public modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-testO> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CALL 'public final fun getValue (receiver: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testO$delegate signature:[ /testO|{}testO[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:log type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              p: PROPERTY_REFERENCE 'public final testO: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>' field=null getter='public final fun <get-testO> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:runLogged signature:/runLogged|runLogged(kotlin.String;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (entry:<unbound IrClassSymbolImpl>, action:<unbound IrClassSymbolImpl><T of <root>.runLogged>) returnType:T of <root>.runLogged [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /runLogged|runLogged(kotlin.String;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:entry index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:action index:1 type:<unbound IrClassSymbolImpl><T of <root>.runLogged>
+      BLOCK_BODY
+        CALL 'public final fun <set-log> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: CALL 'public final fun <get-log> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: GET_VAR 'entry: <unbound IrClassSymbolImpl> declared in <root>.runLogged' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runLogged <T> (entry: <unbound IrClassSymbolImpl>, action: <unbound IrClassSymbolImpl><T of <root>.runLogged>): T of <root>.runLogged [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.runLogged origin=INVOKE
+            $this: GET_VAR 'action: <unbound IrClassSymbolImpl><T of <root>.runLogged> declared in <root>.runLogged' type=<unbound IrClassSymbolImpl><T of <root>.runLogged> origin=VARIABLE_AS_FUNCTION
+    FUN name:provideDelegate signature:/provideDelegate|provideDelegate@kotlin.String(kotlin.Any?;kotlin.Any){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, host:<unbound IrClassSymbolImpl>?, p:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:host index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDelegate (host: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          CALL 'public final fun runLogged <T> (entry: <unbound IrClassSymbolImpl>, action: <unbound IrClassSymbolImpl><T of <root>.runLogged>): T of <root>.runLogged [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            entry: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="tdf("
+              GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.provideDelegate' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=");"
+            action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.provideDelegate'
+                    GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.provideDelegate' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:getValue signature:/getValue|getValue@kotlin.String(kotlin.Any?;kotlin.Any){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, receiver:<unbound IrClassSymbolImpl>?, p:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:receiver index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (receiver: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          CALL 'public final fun runLogged <T> (entry: <unbound IrClassSymbolImpl>, action: <unbound IrClassSymbolImpl><T of <root>.runLogged>): T of <root>.runLogged [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            entry: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="get("
+              GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.getValue' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=");"
+            action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.getValue'
+                    GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.getValue' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

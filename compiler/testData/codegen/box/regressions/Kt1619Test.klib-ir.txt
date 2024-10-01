@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:regressions fileName:/Kt1619Test.kt
+    CLASS CLASS name:Kt1619Test signature:regressions/Kt1619Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:regressions.Kt1619Test
+      CONSTRUCTOR signature:regressions/Kt1619Test.<init>|<init>(){}[0] visibility:public <> () returnType:regressions.Kt1619Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Kt1619Test signature:regressions/Kt1619Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:doSomething signature:regressions/Kt1619Test.doSomething|doSomething(kotlin.collections.List<kotlin.String?>){}[0] visibility:public modality:FINAL <> ($this:regressions.Kt1619Test, list:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:regressions.Kt1619Test
+        VALUE_PARAMETER name:list index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun doSomething (list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in regressions.Kt1619Test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in regressions.Kt1619Test.doSomething' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+      FUN name:testCollectionNotNullCanBeUsedForNullables signature:regressions/Kt1619Test.testCollectionNotNullCanBeUsedForNullables|testCollectionNotNullCanBeUsedForNullables(){}[0] visibility:public modality:FINAL <> ($this:regressions.Kt1619Test) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:regressions.Kt1619Test
+        BLOCK_BODY
+          VAR name:list type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="foo"
+                CONST String type=<unbound IrClassSymbolImpl> value="bar"
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun testCollectionNotNullCanBeUsedForNullables (): <unbound IrClassSymbolImpl> declared in regressions.Kt1619Test'
+            CALL 'public final fun doSomething (list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in regressions.Kt1619Test' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: regressions.Kt1619Test declared in regressions.Kt1619Test.testCollectionNotNullCanBeUsedForNullables' type=regressions.Kt1619Test origin=null
+              list: GET_VAR 'val list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in regressions.Kt1619Test.testCollectionNotNullCanBeUsedForNullables' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:regressions/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in regressions'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun testCollectionNotNullCanBeUsedForNullables (): <unbound IrClassSymbolImpl> declared in regressions.Kt1619Test' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in regressions.Kt1619Test' type=regressions.Kt1619Test origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

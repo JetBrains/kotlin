@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: I
+    // class name: Proxy
+
+    public abstract fun interface Base : kotlin/Any {
+
+      public abstract fun doStuff(): kotlin/String
+    }
+
+    public abstract fun interface I : Base {
+    }
+
+    public abstract fun interface Proxy : I {
+
+      public open fun doStuff(): kotlin/String
+
+      public abstract fun doStuffInt(): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun runBase(b: Base): kotlin/String
+
+      public final fun runI(i: I): kotlin/String
+
+      public final fun runProxy(p: Proxy): kotlin/String
+    }
+  }
+}

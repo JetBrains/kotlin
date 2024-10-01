@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/Container
+
+    public final class test/C<T#0 /* X */, T#1 /* Y */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#2 /* X */> createIrrelevantX(): kotlin/reflect/KTypeParameter
+
+      public final fun createX(): kotlin/reflect/KTypeParameter
+
+      public final fun createXFromOtherFunction(): kotlin/reflect/KTypeParameter
+
+      public final fun createY(): kotlin/reflect/KTypeParameter
+
+      public final val x1: kotlin/reflect/KTypeParameter
+        public final get
+
+      public final val x2: kotlin/reflect/KTypeParameter
+        public final get
+
+      public final val xFun: kotlin/reflect/KTypeParameter
+        public final get
+
+      public final val y: kotlin/reflect/KTypeParameter
+        public final get
+    }
+
+    public final class test/Container<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val isJS: kotlin/Boolean
+        public final get
+    }
+  }
+}

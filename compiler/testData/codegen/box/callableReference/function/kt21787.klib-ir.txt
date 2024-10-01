@@ -1,0 +1,114 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt21787.kt
+    CLASS CLASS name:Container signature:/Container|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Container
+      CONSTRUCTOR signature:/Container.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Container [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Container signature:/Container|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:id signature:/Container.id|{}id[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Container.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int? visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> signature:/Container.id.<get-id>|<get-id>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Container) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:id signature:/Container.id|{}id[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Container
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-id> (): <unbound IrClassSymbolImpl>? declared in <root>.Container'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Container.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int? visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.Container declared in <root>.Container.<get-id>' type=<root>.Container origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-id> signature:/Container.id.<set-id>|<set-id>(kotlin.Int?){}[0] visibility:public modality:FINAL <> ($this:<root>.Container, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:id signature:/Container.id|{}id[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Container
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Container.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int? visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Container declared in <root>.Container.<set-id>' type=<root>.Container origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.Container.<set-id>' type=<unbound IrClassSymbolImpl>? origin=null
+    CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass
+      CONSTRUCTOR signature:/TestClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TestClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:createContainer signature:/TestClass.createContainer|createContainer(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.TestClass, id:<unbound IrClassSymbolImpl>) returnType:<root>.Container
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        VALUE_PARAMETER name:id index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          VAR name:q type:<root>.Container [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Container' type=<root>.Container origin=null
+          CALL 'public final fun <set-id> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.Container' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR 'val q: <root>.Container [val] declared in <root>.TestClass.createContainer' type=<root>.Container origin=null
+            <set-?>: GET_VAR 'id: <unbound IrClassSymbolImpl> declared in <root>.TestClass.createContainer' type=<unbound IrClassSymbolImpl> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun createContainer (id: <unbound IrClassSymbolImpl>): <root>.Container declared in <root>.TestClass'
+            GET_VAR 'val q: <root>.Container [val] declared in <root>.TestClass.createContainer' type=<root>.Container origin=null
+      FUN name:createContainers1 signature:/TestClass.createContainers1|createContainers1(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass, from:<unbound IrClassSymbolImpl>, to:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<root>.Container>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        VALUE_PARAMETER name:from index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VALUE_PARAMETER name:to index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=100
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun createContainers1 (from: <unbound IrClassSymbolImpl>, to: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<root>.Container> declared in <root>.TestClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Container> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <root>.Container
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: GET_VAR 'from: <unbound IrClassSymbolImpl> declared in <root>.TestClass.createContainers1' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 'to: <unbound IrClassSymbolImpl> declared in <root>.TestClass.createContainers1' type=<unbound IrClassSymbolImpl> origin=null
+              1: FUNCTION_REFERENCE 'private final fun createContainer (id: <unbound IrClassSymbolImpl>): <root>.Container declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Container> origin=null reflectionTarget=<same>
+                $this: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.createContainers1' type=<root>.TestClass origin=null
+      FUN name:createContainers2 signature:/TestClass.createContainers2|createContainers2(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass, from:<unbound IrClassSymbolImpl>, to:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<root>.Container>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        VALUE_PARAMETER name:from index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VALUE_PARAMETER name:to index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=100
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun createContainers2 (from: <unbound IrClassSymbolImpl>, to: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<root>.Container> declared in <root>.TestClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Container> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <root>.Container
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: GET_VAR 'from: <unbound IrClassSymbolImpl> declared in <root>.TestClass.createContainers2' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 'to: <unbound IrClassSymbolImpl> declared in <root>.TestClass.createContainers2' type=<unbound IrClassSymbolImpl> origin=null
+              1: FUNCTION_REFERENCE 'private final fun createContainer (id: <unbound IrClassSymbolImpl>): <root>.Container declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Container> origin=null reflectionTarget=<same>
+                $this: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.createContainers2' type=<root>.TestClass origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:testClass type:<root>.TestClass [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null
+        VAR name:containers1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun createContainers1 (from: <unbound IrClassSymbolImpl>, to: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<root>.Container> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<root>.Container> origin=null
+              $this: GET_VAR 'val testClass: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val containers1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=101
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 1: "
+                GET_VAR 'val containers1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:containers2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun createContainers2 (from: <unbound IrClassSymbolImpl>, to: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<root>.Container> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<root>.Container> origin=null
+              $this: GET_VAR 'val testClass: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val containers2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=101
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 2: "
+                GET_VAR 'val containers2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

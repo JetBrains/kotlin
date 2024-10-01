@@ -1,0 +1,86 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:kt606 fileName:/kt606.kt
+    PROPERTY name:result signature:kt606/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ kt606/result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:config type:@[ExtensionFunctionType] kotlin.Function1<kt606.ChannelPipeline, kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:kt606/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:kt606/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in kt606'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ kt606/result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:config type:@[ExtensionFunctionType] kotlin.Function1<kt606.ChannelPipeline, kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:kt606/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:kt606/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ kt606/result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:config type:@[ExtensionFunctionType] kotlin.Function1<kt606.ChannelPipeline, kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in kt606.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:StandardPipelineFactory signature:kt606/StandardPipelineFactory|null[0] modality:FINAL visibility:public superTypes:[kt606.ChannelPipelineFactory]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kt606.StandardPipelineFactory
+      CONSTRUCTOR signature:kt606/StandardPipelineFactory.<init>|<init>(kotlin.Function1<kt606.ChannelPipeline,kotlin.Unit>){}[0] visibility:public <> (config:@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>>) returnType:kt606.StandardPipelineFactory [primary]
+        VALUE_PARAMETER name:config index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StandardPipelineFactory signature:kt606/StandardPipelineFactory|null[0] modality:FINAL visibility:public superTypes:[kt606.ChannelPipelineFactory]'
+      PROPERTY name:config signature:kt606/StandardPipelineFactory.config|{}config[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:config signature:[ kt606/StandardPipelineFactory.config|{}config[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:config type:@[ExtensionFunctionType] kotlin.Function1<kt606.ChannelPipeline, kotlin.Unit> visibility:private [final]] ] type:@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'config: @[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> declared in kt606.StandardPipelineFactory.<init>' type=@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-config> signature:kt606/StandardPipelineFactory.config.<get-config>|<get-config>(){}[0] visibility:public modality:FINAL <> ($this:kt606.StandardPipelineFactory) returnType:@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:config signature:kt606/StandardPipelineFactory.config|{}config[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:kt606.StandardPipelineFactory
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-config> (): @[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> declared in kt606.StandardPipelineFactory'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:config signature:[ kt606/StandardPipelineFactory.config|{}config[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:config type:@[ExtensionFunctionType] kotlin.Function1<kt606.ChannelPipeline, kotlin.Unit> visibility:private [final]] ] type:@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> visibility:private [final]' type=@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: kt606.StandardPipelineFactory declared in kt606.StandardPipelineFactory.<get-config>' type=kt606.StandardPipelineFactory origin=null
+      FUN name:getPipeline signature:kt606/StandardPipelineFactory.getPipeline|getPipeline(){}[0] visibility:public modality:OPEN <> ($this:kt606.StandardPipelineFactory) returnType:kt606.ChannelPipeline
+        overridden:
+          public abstract fun getPipeline (): kt606.ChannelPipeline declared in kt606.ChannelPipelineFactory
+        $this: VALUE_PARAMETER name:<this> type:kt606.StandardPipelineFactory
+        BLOCK_BODY
+          VAR name:pipeline type:kt606.ChannelPipeline [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kt606.DefaultChannelPipeline' type=kt606.DefaultChannelPipeline origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'public final fun <get-config> (): @[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> declared in kt606.StandardPipelineFactory' type=@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: kt606.StandardPipelineFactory declared in kt606.StandardPipelineFactory.getPipeline' type=kt606.StandardPipelineFactory origin=null
+            1: GET_VAR 'val pipeline: kt606.ChannelPipeline [val] declared in kt606.StandardPipelineFactory.getPipeline' type=kt606.ChannelPipeline origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getPipeline (): kt606.ChannelPipeline declared in kt606.StandardPipelineFactory'
+            GET_VAR 'val pipeline: kt606.ChannelPipeline [val] declared in kt606.StandardPipelineFactory.getPipeline' type=kt606.ChannelPipeline origin=null
+    CLASS INTERFACE name:ChannelPipeline signature:kt606/ChannelPipeline|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kt606.ChannelPipeline
+      FUN name:print signature:kt606/ChannelPipeline.print|print(kotlin.Any){}[0] visibility:public modality:ABSTRACT <> ($this:kt606.ChannelPipeline, any:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:kt606.ChannelPipeline
+        VALUE_PARAMETER name:any index:0 type:<unbound IrClassSymbolImpl>
+    CLASS CLASS name:DefaultChannelPipeline signature:kt606/DefaultChannelPipeline|null[0] modality:FINAL visibility:public superTypes:[kt606.ChannelPipeline]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kt606.DefaultChannelPipeline
+      CONSTRUCTOR signature:kt606/DefaultChannelPipeline.<init>|<init>(){}[0] visibility:public <> () returnType:kt606.DefaultChannelPipeline [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefaultChannelPipeline signature:kt606/DefaultChannelPipeline|null[0] modality:FINAL visibility:public superTypes:[kt606.ChannelPipeline]'
+      FUN name:print signature:kt606/DefaultChannelPipeline.print|print(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:kt606.DefaultChannelPipeline, any:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun print (any: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kt606.ChannelPipeline
+        $this: VALUE_PARAMETER name:<this> type:kt606.DefaultChannelPipeline
+        VALUE_PARAMETER name:any index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kt606' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'any: <unbound IrClassSymbolImpl> declared in kt606.DefaultChannelPipeline.print' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:ChannelPipelineFactory signature:kt606/ChannelPipelineFactory|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kt606.ChannelPipelineFactory
+      FUN name:getPipeline signature:kt606/ChannelPipelineFactory.getPipeline|getPipeline(){}[0] visibility:public modality:ABSTRACT <> ($this:kt606.ChannelPipelineFactory) returnType:kt606.ChannelPipeline
+        $this: VALUE_PARAMETER name:<this> type:kt606.ChannelPipelineFactory
+    FUN name:box signature:kt606/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public open fun getPipeline (): kt606.ChannelPipeline declared in kt606.StandardPipelineFactory' type=kt606.ChannelPipeline origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (config: @[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>>) [primary] declared in kt606.StandardPipelineFactory' type=kt606.StandardPipelineFactory origin=null
+              config: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><kt606.ChannelPipeline, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kt606.ChannelPipeline) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$StandardPipelineFactory type:kt606.ChannelPipeline
+                  BLOCK_BODY
+                    CALL 'public abstract fun print (any: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kt606.ChannelPipeline' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$StandardPipelineFactory: kt606.ChannelPipeline declared in kt606.box.<anonymous>' type=kt606.ChannelPipeline origin=null
+                      any: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in kt606'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in kt606' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

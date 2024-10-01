@@ -1,0 +1,47 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/withReturn.kt
+    FUN name:problematic signature:/problematic|problematic(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun problematic (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                  CALL 'public final fun toNullable (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                    $receiver: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.problematic' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.problematic' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun id (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.problematic' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.problematic' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun problematic (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST String type=<unbound IrClassSymbolImpl> value="fail"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.problematic' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:toNullable signature:/toNullable|toNullable@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun toNullable (): <unbound IrClassSymbolImpl>? declared in <root>'
+          GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.toNullable' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun problematic (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="OK"

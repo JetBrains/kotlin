@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Test
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor(fn: kotlin/Function0<Test>)
+
+      public final val fn: kotlin/Function0<Test>
+        public final get
+    }
+
+    public final enum class Test : kotlin/Enum<Test> {
+
+      private constructor(ok: kotlin/String)
+
+      public abstract val base: Base
+        public abstract get
+
+      public final val ok: kotlin/String
+        public final get
+
+      TEST,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

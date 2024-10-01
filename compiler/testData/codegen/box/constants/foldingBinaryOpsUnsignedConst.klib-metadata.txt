@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final const val a: kotlin/String /* = "INT 2415919103" */
+        public final get
+
+      public final const val aa: kotlin/String /* = "INT 2415919103" */
+        public final get
+
+      public final const val b: kotlin/String /* = "BYTE 2303" */
+        public final get
+
+      public final const val bb: kotlin/String /* = "BYTE 2303" */
+        public final get
+
+      public final const val c: kotlin/String /* = "LONG 281474976710655" */
+        public final get
+
+      public final const val cc: kotlin/String /* = "LONG 281474976710655" */
+        public final get
+
+      public final const val ubyte: kotlin/UInt /* = 2303u */
+        public final get
+
+      public final const val uint: kotlin/UInt /* = 2415919103u */
+        public final get
+
+      public final const val ulong: kotlin/ULong /* = 281474976710655uL */
+        public final get
+    }
+  }
+}

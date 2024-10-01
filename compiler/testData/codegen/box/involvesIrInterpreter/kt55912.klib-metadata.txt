@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Entity
+    // class name: Record
+
+    public final annotation class Entity : kotlin/Annotation {
+
+      public constructor(foreignKeys: kotlin/Array<kotlin/String>)
+
+      public final val foreignKeys: kotlin/Array<kotlin/String>
+        public final get
+    }
+
+    @Entity(foreignKeys = ["id"])
+    public final class Record : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

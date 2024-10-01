@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D
+    // class name: Outer
+    // class name: Outer.Friend
+    // class name: Outer.Inner
+
+    public final class D : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class Outer<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Friend
+
+      // nested class: Friend
+
+      // nested class: Inner
+    }
+
+    public final companion object Outer.Friend : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final inner class Outer.Inner<T#1 /* S */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* R */> kType(): kotlin/reflect/KType
+    }
+  }
+}

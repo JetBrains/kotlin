@@ -1,0 +1,127 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AllCollection
+
+    public final class AllCollection<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun addAll1(vararg values: T#0 /* kotlin/Array<out T#0> */): kotlin/String
+
+      public final fun addAll1(values: kotlin/collections/Iterable<out T#0>): kotlin/String
+
+      public final fun addAll10(values: T#0): kotlin/String
+
+      public final fun addAll10(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll11(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll11(values: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll12(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll12(values: kotlin/collections/Collection<T#0>): kotlin/String
+
+      public final fun addAll13(vararg values: kotlin/Any /* kotlin/Array<out kotlin/Any> */): kotlin/String
+
+      public final fun addAll13(values: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll14(vararg values: T#0 /* kotlin/Array<out T#0> */): kotlin/String
+
+      public final fun addAll14(values: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll15(vararg values: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll15(values: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll16(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll16(values: kotlin/collections/Collection<kotlin/String>, values2: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll17(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll17(values: kotlin/collections/Collection<T#0>, values2: kotlin/collections/Collection<T#0>): kotlin/String
+
+      public final fun addAll18(vararg values: kotlin/Any /* kotlin/Array<out kotlin/Any> */): kotlin/String
+
+      public final fun addAll18(values: kotlin/collections/Collection<kotlin/String>, values2: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll19(vararg values: T#0 /* kotlin/Array<out T#0> */): kotlin/String
+
+      public final fun addAll19(values: kotlin/collections/Collection<kotlin/String>, values2: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll2(values: kotlin/Any): kotlin/String
+
+      public final fun addAll2(vararg values: kotlin/Any /* kotlin/Array<out kotlin/Any> */): kotlin/String
+
+      public final fun addAll20(vararg values: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll20(values: kotlin/collections/Collection<kotlin/String>, values2: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll21(vararg values: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll21(values: kotlin/collections/Collection<kotlin/String>, values2: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll22(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll22(values: kotlin/Any, values2: kotlin/Any): kotlin/String
+
+      public final fun addAll23(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll23(values: T#0, values2: T#0): kotlin/String
+
+      public final fun addAll24(values: kotlin/collections/Collection<T#0>, vararg values2: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll24(values: kotlin/collections/Collection<kotlin/String>, values2: kotlin/collections/Collection<kotlin/String>): kotlin/String
+
+      public final fun addAll25(values: kotlin/Any, values2: kotlin/Any): kotlin/String
+
+      public final fun addAll25(values: kotlin/collections/Collection<kotlin/String>, vararg values2: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun addAll26(values: T#0, values2: T#0): kotlin/String
+
+      public final fun addAll26(values: kotlin/collections/Collection<kotlin/String>, vararg values2: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+
+      public final fun <T#1 /* K */, T#2 /* T */> addAll28(values: T#1, vararg values2: T#2 /* kotlin/Array<out T#2> */): kotlin/String
+
+      public final fun <T#1 /* K */, T#2 /* T */> addAll28(vararg values: T#2 /* kotlin/Array<out T#2> */, values2: T#1): kotlin/String
+
+      public final fun addAll3(values: T#0): kotlin/String
+
+      public final fun addAll3(vararg values: T#0 /* kotlin/Array<out T#0> */): kotlin/String
+
+      public final fun addAll4(vararg values: T#0 /* kotlin/Array<out T#0> */): kotlin/String
+
+      public final fun addAll4(values: kotlin/collections/Collection<T#0>): kotlin/String
+
+      public final fun addAll5(vararg values: kotlin/Any /* kotlin/Array<out kotlin/Any> */): kotlin/String
+
+      public final fun addAll5(values: kotlin/collections/Collection<T#0>): kotlin/String
+
+      public final fun addAll6(vararg values: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll6(values: kotlin/collections/Collection<T#0>): kotlin/String
+
+      public final fun addAll7(values: T#0): kotlin/String
+
+      public final fun addAll7(vararg values: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll8(values: kotlin/Any): kotlin/String
+
+      public final fun addAll8(vararg values: kotlin/collections/Collection<T#0> /* kotlin/Array<out kotlin/collections/Collection<T#0>> */): kotlin/String
+
+      public final fun addAll9(values: kotlin/Any): kotlin/String
+
+      public final fun addAll9(vararg values: kotlin/collections/Collection<kotlin/String> /* kotlin/Array<out kotlin/collections/Collection<kotlin/String>> */): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

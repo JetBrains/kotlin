@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MPair
+
+    public final class MPair<out T#0 /* A */> : kotlin/Any {
+
+      public constructor(first: T#0)
+
+      public open operator fun equals(o: kotlin/Any?): kotlin/Boolean
+
+      public final val first: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

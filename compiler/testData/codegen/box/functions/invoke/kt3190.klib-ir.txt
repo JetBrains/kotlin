@@ -1,0 +1,113 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3190.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test type:<root>.Cached<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (generate: <unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>) [primary] declared in <root>.Cached' type=<root>.Cached<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <class: K>: <unbound IrClassSymbolImpl>
+            <class: V>: <unbound IrClassSymbolImpl>
+            generate: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public open fun invoke (p1: K of <root>.Cached): V of <root>.Cached [operator] declared in <root>.Cached' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val test: <root>.Cached<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Cached<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                  p1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+    CLASS CLASS name:Cached signature:/Cached|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cached<K of <root>.Cached, V of <root>.Cached>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /Cached|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /Cached|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Cached.<init>|<init>(kotlin.Function1<1:0,1:1>){}[0] visibility:public <> (generate:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>) returnType:<root>.Cached<K of <root>.Cached, V of <root>.Cached> [primary]
+        VALUE_PARAMETER name:generate index:0 type:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cached signature:/Cached|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>]'
+      PROPERTY name:generate signature:/Cached.generate|{}generate[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:generate signature:[ /Cached.generate|{}generate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:generate type:kotlin.Function1<K of <root>.Cached, V of <root>.Cached> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'generate: <unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached.<init>' type=<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-generate> signature:/Cached.generate.<get-generate>|<get-generate>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Cached<K of <root>.Cached, V of <root>.Cached>) returnType:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>
+          correspondingProperty: PROPERTY name:generate signature:/Cached.generate|{}generate[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Cached<K of <root>.Cached, V of <root>.Cached>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-generate> (): <unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:generate signature:[ /Cached.generate|{}generate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:generate type:kotlin.Function1<K of <root>.Cached, V of <root>.Cached> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> visibility:private [final]' type=<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> origin=null
+                receiver: GET_VAR '<this>: <root>.Cached<K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached.<get-generate>' type=<root>.Cached<K of <root>.Cached, V of <root>.Cached> origin=null
+      PROPERTY name:store signature:/Cached.store|{}store[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:store signature:[ /Cached.store|{}store[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:generate type:kotlin.Function1<K of <root>.Cached, V of <root>.Cached> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> origin=null
+              <class: 1>: K of <root>.Cached
+              <class: 2>: V of <root>.Cached
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-store> signature:/Cached.store.<get-store>|<get-store>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Cached<K of <root>.Cached, V of <root>.Cached>) returnType:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached>
+          correspondingProperty: PROPERTY name:store signature:/Cached.store|{}store[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Cached<K of <root>.Cached, V of <root>.Cached>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-store> (): <unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:store signature:[ /Cached.store|{}store[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:generate type:kotlin.Function1<K of <root>.Cached, V of <root>.Cached> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> visibility:private [final]' type=<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> origin=null
+                receiver: GET_VAR '<this>: <root>.Cached<K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached.<get-store>' type=<root>.Cached<K of <root>.Cached, V of <root>.Cached> origin=null
+      FUN name:invoke signature:/Cached.invoke|invoke(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Cached<K of <root>.Cached, V of <root>.Cached>, p1:K of <root>.Cached) returnType:V of <root>.Cached [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Cached<K of <root>.Cached, V of <root>.Cached>
+        VALUE_PARAMETER name:p1 index:0 type:K of <root>.Cached
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun invoke (p1: K of <root>.Cached): V of <root>.Cached [operator] declared in <root>.Cached'
+            CALL 'public final fun getOrPut <K, V> (key: K of <root>.getOrPut, defaultValue: <unbound IrClassSymbolImpl><V of <root>.getOrPut>): V of <root>.getOrPut declared in <root>' type=V of <root>.Cached origin=null
+              <K>: K of <root>.Cached
+              <V>: V of <root>.Cached
+              $receiver: CALL 'public final fun <get-store> (): <unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached' type=<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Cached<K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached.invoke' type=<root>.Cached<K of <root>.Cached, V of <root>.Cached> origin=null
+              key: GET_VAR 'p1: K of <root>.Cached declared in <root>.Cached.invoke' type=K of <root>.Cached origin=null
+              defaultValue: FUN_EXPR type=<unbound IrClassSymbolImpl><V of <root>.Cached> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:V of <root>.Cached
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): V of <root>.Cached declared in <root>.Cached.invoke'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=V of <root>.Cached origin=INVOKE
+                        $this: CALL 'private final fun <get-generate> (): <unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached' type=<unbound IrClassSymbolImpl><K of <root>.Cached, V of <root>.Cached> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.Cached<K of <root>.Cached, V of <root>.Cached> declared in <root>.Cached.invoke' type=<root>.Cached<K of <root>.Cached, V of <root>.Cached> origin=null
+                        1: GET_VAR 'p1: K of <root>.Cached declared in <root>.Cached.invoke' type=K of <root>.Cached origin=null
+    FUN name:getOrPut signature:/getOrPut|getOrPut@kotlin.collections.MutableMap<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <K, V> ($receiver:<unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut>, key:K of <root>.getOrPut, defaultValue:<unbound IrClassSymbolImpl><V of <root>.getOrPut>) returnType:V of <root>.getOrPut
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /getOrPut|getOrPut@kotlin.collections.MutableMap<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /getOrPut|getOrPut@kotlin.collections.MutableMap<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut>
+      VALUE_PARAMETER name:key index:0 type:K of <root>.getOrPut
+      VALUE_PARAMETER name:defaultValue index:1 type:<unbound IrClassSymbolImpl><V of <root>.getOrPut>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut> declared in <root>.getOrPut' type=<unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut> origin=null
+              1: GET_VAR 'key: K of <root>.getOrPut declared in <root>.getOrPut' type=K of <root>.getOrPut origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun getOrPut <K, V> (key: K of <root>.getOrPut, defaultValue: <unbound IrClassSymbolImpl><V of <root>.getOrPut>): V of <root>.getOrPut declared in <root>'
+                TYPE_OP type=V of <root>.getOrPut origin=CAST typeOperand=V of <root>.getOrPut
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=V of <root>.getOrPut? origin=null
+                    $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut> declared in <root>.getOrPut' type=<unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut> origin=null
+                    1: GET_VAR 'key: K of <root>.getOrPut declared in <root>.getOrPut' type=K of <root>.getOrPut origin=null
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              VAR name:answer type:V of <root>.getOrPut [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=V of <root>.getOrPut origin=INVOKE
+                  $this: GET_VAR 'defaultValue: <unbound IrClassSymbolImpl><V of <root>.getOrPut> declared in <root>.getOrPut' type=<unbound IrClassSymbolImpl><V of <root>.getOrPut> origin=VARIABLE_AS_FUNCTION
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=V of <root>.getOrPut? origin=null
+                  $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut> declared in <root>.getOrPut' type=<unbound IrClassSymbolImpl><K of <root>.getOrPut, V of <root>.getOrPut> origin=null
+                  1: GET_VAR 'key: K of <root>.getOrPut declared in <root>.getOrPut' type=K of <root>.getOrPut origin=null
+                  2: GET_VAR 'val answer: V of <root>.getOrPut [val] declared in <root>.getOrPut' type=V of <root>.getOrPut origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun getOrPut <K, V> (key: K of <root>.getOrPut, defaultValue: <unbound IrClassSymbolImpl><V of <root>.getOrPut>): V of <root>.getOrPut declared in <root>'
+                GET_VAR 'val answer: V of <root>.getOrPut [val] declared in <root>.getOrPut' type=V of <root>.getOrPut origin=null

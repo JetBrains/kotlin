@@ -1,0 +1,92 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: En
+    // class name: Z1
+    // class name: Z2
+    // class name: ZN
+
+    public final enum class En : kotlin/Enum<En> {
+
+      private constructor()
+
+      N,
+
+      A,
+
+      B,
+
+      C,
+
+      // has Enum.entries
+    }
+
+    public final value class Z1 : kotlin/Any {
+
+      public constructor(x: En)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: En
+        public final get
+
+      // underlying property: x
+
+      // underlying type: En
+    }
+
+    public final value class Z2 : kotlin/Any {
+
+      public constructor(z: Z1)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val z: Z1
+        public final get
+
+      // underlying property: z
+
+      // underlying type: Z1
+    }
+
+    public final value class ZN : kotlin/Any {
+
+      public constructor(z: Z1?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val z: Z1?
+        public final get
+
+      // underlying property: z
+
+      // underlying type: Z1?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun wrap1(x: En): Z1?
+
+      public final fun wrap2(x: En): Z2?
+
+      public final fun wrapN(x: En): ZN?
+    }
+  }
+}

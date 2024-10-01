@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DelegateTest
+    // class name: FooDelegate
+    // class name: FooTrait
+
+    public final class DelegateTest : FooTrait {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+
+      public open /* delegation */ val propertyTest: kotlin/String
+        public open get
+    }
+
+    public final class FooDelegate : FooTrait {
+
+      public constructor()
+
+      public open val propertyTest: kotlin/String /* = ... */
+        public open get
+    }
+
+    public abstract interface FooTrait : kotlin/Any {
+
+      public abstract val propertyTest: kotlin/String
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

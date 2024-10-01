@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/primitives.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CONST Char type=<unbound IrClassSymbolImpl> value='z'
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CONST Double type=<unbound IrClassSymbolImpl> value=3.14
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CONST Float type=<unbound IrClassSymbolImpl> value=2.72
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CONST Long type=<unbound IrClassSymbolImpl> value=42
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Value
+
+    public final class Value : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkBooleanArray(): kotlin/Boolean
+
+      public final fun checkByteArray(): kotlin/Boolean
+
+      public final fun checkCharArray(): kotlin/Boolean
+
+      public final fun checkDoubleArray(): kotlin/Boolean
+
+      public final fun checkFloatArray(): kotlin/Boolean
+
+      public final fun checkIntArray(): kotlin/Boolean
+
+      public final fun checkIntArrayMethodCallBound(): kotlin/Boolean
+
+      public final fun checkIntArrayMinusArbitraryConstant(): kotlin/Boolean
+
+      public final fun checkLongArray(): kotlin/Boolean
+
+      public final fun checkObjectArray(): kotlin/Boolean
+
+      public final fun checkReversedIntArray(): kotlin/Boolean
+
+      public final fun checkShortArray(): kotlin/Boolean
+
+      public final fun checkWithArrayUpdate(): kotlin/Boolean
+    }
+  }
+}

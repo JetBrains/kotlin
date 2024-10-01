@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* A */ : kotlin/Double, T#1 /* B */ : T#0> f(a: kotlin/Double, b: T#1): kotlin/Boolean
+    }
+  }
+}

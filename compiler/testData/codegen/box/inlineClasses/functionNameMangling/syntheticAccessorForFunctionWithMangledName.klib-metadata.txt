@@ -1,0 +1,53 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Inner
+    // class name: S
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      private final fun foo(s: S): kotlin/String
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner : kotlin/Any {
+
+      public constructor(string: kotlin/String)
+
+      public final fun bar(): kotlin/String
+
+      public final val string: kotlin/String
+        public final get
+    }
+
+    public final value class S : kotlin/Any {
+
+      public constructor(string: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: kotlin/String
+        public final get
+
+      // underlying property: string
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

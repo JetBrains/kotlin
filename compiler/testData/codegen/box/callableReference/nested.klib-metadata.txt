@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f1(): kotlin/Unit
+
+      public final fun kotlin/String.f2(): kotlin/Unit
+
+      public final fun problematic(s: kotlin/String): kotlin/String
+
+      public final inline fun kotlin/String.takeRef(ref: kotlin/Function0<kotlin/Unit>): kotlin/String
+    }
+  }
+}

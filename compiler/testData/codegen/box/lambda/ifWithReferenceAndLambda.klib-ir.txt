@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/ifWithReferenceAndLambda.kt
+    CLASS CLASS name:MethodReferenceNPE signature:/MethodReferenceNPE|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MethodReferenceNPE
+      CONSTRUCTOR signature:/MethodReferenceNPE.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MethodReferenceNPE [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MethodReferenceNPE signature:/MethodReferenceNPE|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:singleRef signature:/MethodReferenceNPE.singleRef|{}singleRef[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:singleRef signature:[ /MethodReferenceNPE.singleRef|{}singleRef[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:singleRef type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MethodReferenceNPE.singleRef'
+                      WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IF
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.MethodReferenceNPE.singleRef.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                          then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.MethodReferenceNPE.singleRef.<anonymous>'
+                                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            FUNCTION_REFERENCE 'private final fun myMethod (): <unbound IrClassSymbolImpl> declared in <root>.MethodReferenceNPE' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                              $this: GET_VAR '<this>: <root>.MethodReferenceNPE declared in <root>.MethodReferenceNPE' type=<root>.MethodReferenceNPE origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-singleRef> signature:/MethodReferenceNPE.singleRef.<get-singleRef>|<get-singleRef>(){}[0] visibility:private modality:FINAL <> ($this:<root>.MethodReferenceNPE) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:singleRef signature:/MethodReferenceNPE.singleRef|{}singleRef[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MethodReferenceNPE
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-singleRef> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MethodReferenceNPE'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:singleRef signature:[ /MethodReferenceNPE.singleRef|{}singleRef[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:singleRef type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.MethodReferenceNPE declared in <root>.MethodReferenceNPE.<get-singleRef>' type=<root>.MethodReferenceNPE origin=null
+      FUN name:myMethod signature:/MethodReferenceNPE.myMethod|myMethod(){}[0] visibility:private modality:FINAL <> ($this:<root>.MethodReferenceNPE) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MethodReferenceNPE
+        BLOCK_BODY
+      FUN name:run signature:/MethodReferenceNPE.run|run(){}[0] visibility:public modality:FINAL <> ($this:<root>.MethodReferenceNPE) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MethodReferenceNPE
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'private final fun <get-singleRef> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MethodReferenceNPE' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.MethodReferenceNPE declared in <root>.MethodReferenceNPE.run' type=<root>.MethodReferenceNPE origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun run (): <unbound IrClassSymbolImpl> declared in <root>.MethodReferenceNPE' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MethodReferenceNPE' type=<root>.MethodReferenceNPE origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

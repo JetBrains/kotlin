@@ -1,0 +1,92 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/topDownCompletionWithThreeBuilderInferenceCalls.kt
+    CLASS CLASS name:A1 signature:/A1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A1<T of <root>.A1>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A1|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A1<T of <root>.A1> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 signature:/A1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:builder1 signature:/A1.builder1|builder1(kotlin.Function1<A2<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <BT1> ($this:<root>.A1<T of <root>.A1>, configure:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A2<BT1 of <root>.A1.builder1>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:BT1 index:0 variance: signature:[ /A1.builder1|builder1(kotlin.Function1<A2<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.A1<T of <root>.A1>
+        VALUE_PARAMETER name:configure index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A2<BT1 of <root>.A1.builder1>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+    CLASS CLASS name:A2 signature:/A2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2<A2_BT1 of <root>.A2>
+      TYPE_PARAMETER name:A2_BT1 index:0 variance: signature:[ /A2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A2<A2_BT1 of <root>.A2> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 signature:/A2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:builder2 signature:/A2.builder2|builder2(kotlin.Function1<A3<1:0,0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <BT2> ($this:<root>.A2<A2_BT1 of <root>.A2>, configure:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A3<A2_BT1 of <root>.A2, BT2 of <root>.A2.builder2>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:BT2 index:0 variance: signature:[ /A2.builder2|builder2(kotlin.Function1<A3<1:0,0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.A2<A2_BT1 of <root>.A2>
+        VALUE_PARAMETER name:configure index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A3<A2_BT1 of <root>.A2, BT2 of <root>.A2.builder2>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+    CLASS CLASS name:A3 signature:/A3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A3<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3>
+      TYPE_PARAMETER name:A3_BT1 index:0 variance: signature:[ /A3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:A3_BT2 index:1 variance: signature:[ /A3|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:A3_BT2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A3<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A3 signature:/A3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:builder3 signature:/A3.builder3|builder3(kotlin.Function1<A4<1:0,1:1,0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <BT3> ($this:<root>.A3<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3>, configure:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A4<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3, BT3 of <root>.A3.builder3>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:BT3 index:0 variance: signature:[ /A3.builder3|builder3(kotlin.Function1<A4<1:0,1:1,0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.A3<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3>
+        VALUE_PARAMETER name:configure index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A4<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3, BT3 of <root>.A3.builder3>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+    CLASS CLASS name:A4 signature:/A4|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A4<A3_BT1 of <root>.A4, A3_BT2 of <root>.A4, A3_BT3 of <root>.A4>
+      TYPE_PARAMETER name:A3_BT1 index:0 variance: signature:[ /A4|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:A3_BT2 index:1 variance: signature:[ /A4|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:A3_BT2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:A3_BT3 index:2 variance: signature:[ /A4|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:A3_BT3 index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A4.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A4<A3_BT1 of <root>.A4, A3_BT2 of <root>.A4, A3_BT3 of <root>.A4> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A4 signature:/A4|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:resolver signature:/A4.resolver|resolver(1:2){}[0] visibility:public modality:FINAL <> ($this:<root>.A4<A3_BT1 of <root>.A4, A3_BT2 of <root>.A4, A3_BT3 of <root>.A4>, x:A3_BT3 of <root>.A4) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A4<A3_BT1 of <root>.A4, A3_BT2 of <root>.A4, A3_BT3 of <root>.A4>
+        VALUE_PARAMETER name:x index:0 type:A3_BT3 of <root>.A4
+        BLOCK_BODY
+    FUN name:foo signature:/foo|foo(A1<kotlin.String>){}[0] visibility:public modality:FINAL <> (x:<root>.A1<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.A1<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'public final fun builder1 <BT1> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A2<BT1 of <root>.A1.builder1>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.A1' type=<unbound IrClassSymbolImpl> origin=null
+          <BT1>: <unbound IrClassSymbolImpl>
+          $this: GET_VAR 'x: <root>.A1<<unbound IrClassSymbolImpl>> declared in <root>.foo' type=<root>.A1<<unbound IrClassSymbolImpl>> origin=null
+          configure: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A2<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A2<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$builder1 type:<root>.A2<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'public final fun builder2 <BT2> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A3<A2_BT1 of <root>.A2, BT2 of <root>.A2.builder2>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.A2' type=<unbound IrClassSymbolImpl> origin=null
+                  <BT2>: <unbound IrClassSymbolImpl>
+                  $this: GET_VAR '$this$builder1: <root>.A2<<unbound IrClassSymbolImpl>> declared in <root>.foo.<anonymous>' type=<root>.A2<<unbound IrClassSymbolImpl>> origin=null
+                  configure: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A3<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A3<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                      $receiver: VALUE_PARAMETER name:$this$builder2 type:<root>.A3<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                      BLOCK_BODY
+                        CALL 'public final fun builder3 <BT3> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A4<A3_BT1 of <root>.A3, A3_BT2 of <root>.A3, BT3 of <root>.A3.builder3>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.A3' type=<unbound IrClassSymbolImpl> origin=null
+                          <BT3>: <unbound IrClassSymbolImpl>
+                          $this: GET_VAR '$this$builder2: <root>.A3<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.foo.<anonymous>.<anonymous>' type=<root>.A3<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                          configure: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A4<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A4<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                              $receiver: VALUE_PARAMETER name:$this$builder3 type:<root>.A4<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                              BLOCK_BODY
+                                CALL 'public final fun resolver (x: A3_BT3 of <root>.A4): <unbound IrClassSymbolImpl> declared in <root>.A4' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR '$this$builder3: <root>.A4<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.foo.<anonymous>.<anonymous>.<anonymous>' type=<root>.A4<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                                  x: CONST String type=<unbound IrClassSymbolImpl> value=""
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun foo (x: <root>.A1<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A1' type=<root>.A1<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

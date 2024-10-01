@@ -1,0 +1,79 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/A.B
+    // class name: test/A.B.C
+    // class name: test/A.B.D
+    // class name: test/C
+    // class name: test/Obj
+    // class name: test/Obj.CInObj
+    // class name: test/Obj.CInObj.Tt
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/Unit
+
+      // nested class: B
+    }
+
+    private final class test/A.B : kotlin/Any {
+
+      public constructor()
+
+      // nested class: C
+
+      // nested class: D
+    }
+
+    public final object test/A.B.C : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final class test/A.B.D : kotlin/Any {
+
+      public constructor()
+    }
+
+    private final enum class test/C : kotlin/Enum<test/C> {
+
+      private constructor()
+
+      E1,
+
+      // has Enum.entries
+    }
+
+    private final object test/Obj : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): kotlin/Unit
+
+      // nested class: CInObj
+    }
+
+    private final class test/Obj.CInObj : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Tt
+    }
+
+    public final class test/Obj.CInObj.Tt : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

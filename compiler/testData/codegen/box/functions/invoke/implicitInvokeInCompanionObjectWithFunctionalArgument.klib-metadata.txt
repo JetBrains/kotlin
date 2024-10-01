@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestClass
+    // class name: TestClass.Companion
+
+    public final class TestClass : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object TestClass.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final operator inline fun <T#0 /* T */> invoke(task: kotlin/Function0<T#0>): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

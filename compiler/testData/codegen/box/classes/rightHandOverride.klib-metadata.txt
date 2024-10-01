@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D
+    // class name: Left
+    // class name: Right
+
+    public final class D : Left, Right {
+
+      public constructor()
+
+      public open fun f(): kotlin/Int
+    }
+
+    public abstract interface Left : kotlin/Any {
+    }
+
+    public open class Right : kotlin/Any {
+
+      public constructor()
+
+      public open fun f(): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

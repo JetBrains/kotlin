@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Color
+    // class name: Direction
+
+    public final enum class Color : kotlin/Enum<Color> {
+
+      private constructor(rgb: kotlin/Int)
+
+      public final val rgb: kotlin/Int
+        public final get
+
+      RED,
+
+      GREEN,
+
+      BLUE,
+
+      // has Enum.entries
+    }
+
+    public final enum class Direction : kotlin/Enum<Direction> {
+
+      private constructor()
+
+      NORTH,
+
+      SOUTH,
+
+      WEST,
+
+      EAST,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun bar(c: Color): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(d: Direction): kotlin/Int
+    }
+  }
+}

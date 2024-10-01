@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ULong
+
+    public final value class ULong : kotlin/Any {
+
+      public constructor(l: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val l: kotlin/Long
+        public final get
+
+      // underlying property: l
+
+      // underlying type: kotlin/Long
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Boolean
+
+      public final fun labeled(): ULong?
+
+      public final fun nonLocal(): ULong?
+    }
+  }
+}

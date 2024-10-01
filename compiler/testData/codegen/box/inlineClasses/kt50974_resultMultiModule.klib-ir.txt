@@ -1,0 +1,71 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS CLASS name:WhateverUseCase signature:/WhateverUseCase|null[0] modality:FINAL visibility:public superTypes:[<root>.UseCaseWithParameter<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WhateverUseCase
+      CONSTRUCTOR signature:/WhateverUseCase.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.WhateverUseCase [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WhateverUseCase signature:/WhateverUseCase|null[0] modality:FINAL visibility:public superTypes:[<root>.UseCaseWithParameter<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>]'
+      FUN name:invoke signature:/WhateverUseCase.invoke|invoke(kotlin.Result<kotlin.Int>){}[0] visibility:public modality:OPEN <> ($this:<root>.WhateverUseCase, param:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          public abstract fun invoke (param: P of <root>.UseCaseWithParameter): <unbound IrClassSymbolImpl><R of <root>.UseCaseWithParameter> [operator] declared in <root>.UseCaseWithParameter
+        $this: VALUE_PARAMETER name:<this> type:<root>.WhateverUseCase
+        VALUE_PARAMETER name:param index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun invoke (param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.WhateverUseCase'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: GET_VAR 'param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.WhateverUseCase.invoke' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun invoke (param: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.WhateverUseCase'
+                      WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IF
+                        BRANCH
+                          if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.WhateverUseCase.invoke.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                            1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.WhateverUseCase.invoke.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:UseCaseWithParameter signature:/UseCaseWithParameter|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.UseCaseWithParameter<P of <root>.UseCaseWithParameter, R of <root>.UseCaseWithParameter>
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /UseCaseWithParameter|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /UseCaseWithParameter|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:invoke signature:/UseCaseWithParameter.invoke|invoke(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.UseCaseWithParameter<P of <root>.UseCaseWithParameter, R of <root>.UseCaseWithParameter>, param:P of <root>.UseCaseWithParameter) returnType:<unbound IrClassSymbolImpl><R of <root>.UseCaseWithParameter> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.UseCaseWithParameter<P of <root>.UseCaseWithParameter, R of <root>.UseCaseWithParameter>
+        VALUE_PARAMETER name:param index:0 type:P of <root>.UseCaseWithParameter
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:useCase type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $this: GET_VAR 'val useCase: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=VARIABLE_AS_FUNCTION
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                    1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"

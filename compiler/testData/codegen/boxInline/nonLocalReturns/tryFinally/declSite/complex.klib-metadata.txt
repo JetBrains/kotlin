@@ -1,0 +1,78 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: External
+    // class name: Global
+    // class name: Holder
+    // class name: Internal
+    // class name: Kind
+
+    public final class External : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+    }
+
+    public final class Global : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+    }
+
+    public final class Holder : kotlin/Any {
+
+      public constructor()
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class Internal : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+    }
+
+    public final enum class Kind : kotlin/Enum<Kind> {
+
+      private constructor()
+
+      LOCAL,
+
+      EXTERNAL,
+
+      GLOBAL,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(intKind: Kind, extKind: Kind, holder: Holder): Global
+
+      public final val FINALLY_CHAIN: kotlin/String /* = ... */
+        public final get
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* R */> doCall(block: kotlin/Function0<T#0>, finallyLambda: kotlin/Function0<kotlin/Unit>): T#0
+    }
+  }
+}

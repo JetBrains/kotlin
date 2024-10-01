@@ -1,0 +1,142 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/objectCaptureOuterConstructorProperty.kt
+    CLASS INTERFACE name:Stream signature:/Stream|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Stream<T of <root>.Stream>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Stream|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:iterator signature:/Stream.iterator|iterator(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Stream<T of <root>.Stream>) returnType:<unbound IrClassSymbolImpl><T of <root>.Stream>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Stream<T of <root>.Stream>
+    CLASS CLASS name:ZippingStream signature:/ZippingStream|null[0] modality:FINAL visibility:public superTypes:[<root>.Stream<<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+      TYPE_PARAMETER name:T1 index:0 variance: signature:[ /ZippingStream|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T2 index:1 variance: signature:[ /ZippingStream|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ZippingStream.<init>|<init>(Stream<1:0>;Stream<1:1>){}[0] visibility:public <> (stream1:<root>.Stream<T1 of <root>.ZippingStream>, stream2:<root>.Stream<T2 of <root>.ZippingStream>) returnType:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> [primary]
+        VALUE_PARAMETER name:stream1 index:0 type:<root>.Stream<T1 of <root>.ZippingStream>
+        VALUE_PARAMETER name:stream2 index:1 type:<root>.Stream<T2 of <root>.ZippingStream>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZippingStream signature:/ZippingStream|null[0] modality:FINAL visibility:public superTypes:[<root>.Stream<<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>>]'
+      PROPERTY name:stream1 signature:/ZippingStream.stream1|{}stream1[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:stream1 signature:[ /ZippingStream.stream1|{}stream1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:stream1 type:<root>.Stream<T1 of <root>.ZippingStream> visibility:private [final]] ] type:<root>.Stream<T1 of <root>.ZippingStream> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'stream1: <root>.Stream<T1 of <root>.ZippingStream> declared in <root>.ZippingStream.<init>' type=<root>.Stream<T1 of <root>.ZippingStream> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stream1> signature:/ZippingStream.stream1.<get-stream1>|<get-stream1>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>) returnType:<root>.Stream<T1 of <root>.ZippingStream>
+          correspondingProperty: PROPERTY name:stream1 signature:/ZippingStream.stream1|{}stream1[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-stream1> (): <root>.Stream<T1 of <root>.ZippingStream> declared in <root>.ZippingStream'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stream1 signature:[ /ZippingStream.stream1|{}stream1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:stream1 type:<root>.Stream<T1 of <root>.ZippingStream> visibility:private [final]] ] type:<root>.Stream<T1 of <root>.ZippingStream> visibility:private [final]' type=<root>.Stream<T1 of <root>.ZippingStream> origin=null
+                receiver: GET_VAR '<this>: <root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.<get-stream1>' type=<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+      PROPERTY name:stream2 signature:/ZippingStream.stream2|{}stream2[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:stream2 signature:[ /ZippingStream.stream2|{}stream2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:stream1 type:<root>.Stream<T1 of <root>.ZippingStream> visibility:private [final]] ] type:<root>.Stream<T2 of <root>.ZippingStream> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'stream2: <root>.Stream<T2 of <root>.ZippingStream> declared in <root>.ZippingStream.<init>' type=<root>.Stream<T2 of <root>.ZippingStream> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stream2> signature:/ZippingStream.stream2.<get-stream2>|<get-stream2>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>) returnType:<root>.Stream<T2 of <root>.ZippingStream>
+          correspondingProperty: PROPERTY name:stream2 signature:/ZippingStream.stream2|{}stream2[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-stream2> (): <root>.Stream<T2 of <root>.ZippingStream> declared in <root>.ZippingStream'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stream2 signature:[ /ZippingStream.stream2|{}stream2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:stream1 type:<root>.Stream<T1 of <root>.ZippingStream> visibility:private [final]] ] type:<root>.Stream<T2 of <root>.ZippingStream> visibility:private [final]' type=<root>.Stream<T2 of <root>.ZippingStream> origin=null
+                receiver: GET_VAR '<this>: <root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.<get-stream2>' type=<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+      FUN name:iterator signature:/ZippingStream.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>>
+        overridden:
+          public abstract fun iterator (): <unbound IrClassSymbolImpl><T of <root>.Stream> declared in <root>.Stream
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>> declared in <root>.ZippingStream'
+            BLOCK type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      <1>: <unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>>]'
+                PROPERTY name:iterator1 visibility:public modality:FINAL [val]
+                  FIELD PROPERTY_BACKING_FIELD name:iterator1 type:<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> visibility:private [final]
+                    EXPRESSION_BODY
+                      CALL 'public abstract fun iterator (): <unbound IrClassSymbolImpl><T of <root>.Stream> declared in <root>.Stream' type=<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> origin=null
+                        $this: CALL 'public final fun <get-stream1> (): <root>.Stream<T1 of <root>.ZippingStream> declared in <root>.ZippingStream' type=<root>.Stream<T1 of <root>.ZippingStream> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator' type=<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-iterator1> visibility:public modality:FINAL <> ($this:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>) returnType:<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream>
+                    correspondingProperty: PROPERTY name:iterator1 visibility:public modality:FINAL [val]
+                    $this: VALUE_PARAMETER name:<this> type:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-iterator1> (): <unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>'
+                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iterator1 type:<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> visibility:private [final]' type=<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> origin=null
+                          receiver: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.<get-iterator1>' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                PROPERTY name:iterator2 visibility:public modality:FINAL [val]
+                  FIELD PROPERTY_BACKING_FIELD name:iterator2 type:<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> visibility:private [final]
+                    EXPRESSION_BODY
+                      CALL 'public abstract fun iterator (): <unbound IrClassSymbolImpl><T of <root>.Stream> declared in <root>.Stream' type=<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> origin=null
+                        $this: CALL 'public final fun <get-stream2> (): <root>.Stream<T2 of <root>.ZippingStream> declared in <root>.ZippingStream' type=<root>.Stream<T2 of <root>.ZippingStream> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator' type=<root>.ZippingStream<T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-iterator2> visibility:public modality:FINAL <> ($this:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>) returnType:<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream>
+                    correspondingProperty: PROPERTY name:iterator2 visibility:public modality:FINAL [val]
+                    $this: VALUE_PARAMETER name:<this> type:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-iterator2> (): <unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>'
+                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iterator2 type:<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> visibility:private [final]' type=<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> origin=null
+                          receiver: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.<get-iterator2>' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                FUN name:computeNext visibility:protected modality:OPEN <> ($this:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>
+                  BLOCK_BODY
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                          BRANCH
+                            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: CALL 'public final fun <get-iterator1> (): <unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>' type=<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.computeNext' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                            then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: CALL 'public final fun <get-iterator2> (): <unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>' type=<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.computeNext' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                        then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.computeNext' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                              <1>: T1 of <root>.ZippingStream
+                              <2>: T2 of <root>.ZippingStream
+                              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T1 of <root>.ZippingStream origin=null
+                                $this: CALL 'public final fun <get-iterator1> (): <unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>' type=<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream> origin=GET_PROPERTY
+                                  $this: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.computeNext' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T2 of <root>.ZippingStream origin=null
+                                $this: CALL 'public final fun <get-iterator2> (): <unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>' type=<unbound IrClassSymbolImpl><T2 of <root>.ZippingStream> origin=GET_PROPERTY
+                                  $this: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.computeNext' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR '<this>: <root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> declared in <root>.ZippingStream.iterator.<no name provided>.computeNext' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZippingStream.iterator.<no name provided>' type=<root>.ZippingStream.iterator.<no name provided><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream> origin=OBJECT_LITERAL
+    CLASS OBJECT name:EmptyStream signature:/EmptyStream|null[0] modality:FINAL visibility:public superTypes:[<root>.Stream<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyStream
+      CONSTRUCTOR signature:/EmptyStream.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EmptyStream [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:EmptyStream signature:/EmptyStream|null[0] modality:FINAL visibility:public superTypes:[<root>.Stream<<unbound IrClassSymbolImpl>>]'
+      FUN name:iterator signature:/EmptyStream.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.EmptyStream) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          public abstract fun iterator (): <unbound IrClassSymbolImpl><T of <root>.Stream> declared in <root>.Stream
+        $this: VALUE_PARAMETER name:<this> type:<root>.EmptyStream
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.EmptyStream'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T1 of <root>.ZippingStream, T2 of <root>.ZippingStream>> declared in <root>.ZippingStream' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (stream1: <root>.Stream<T1 of <root>.ZippingStream>, stream2: <root>.Stream<T2 of <root>.ZippingStream>) [primary] declared in <root>.ZippingStream' type=<root>.ZippingStream<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <class: T1>: <unbound IrClassSymbolImpl>
+                <class: T2>: <unbound IrClassSymbolImpl>
+                stream1: GET_OBJECT 'CLASS OBJECT name:EmptyStream signature:/EmptyStream|null[0] modality:FINAL visibility:public superTypes:[<root>.Stream<<unbound IrClassSymbolImpl>>]' type=<root>.EmptyStream
+                stream2: GET_OBJECT 'CLASS OBJECT name:EmptyStream signature:/EmptyStream|null[0] modality:FINAL visibility:public superTypes:[<root>.Stream<<unbound IrClassSymbolImpl>>]' type=<root>.EmptyStream
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

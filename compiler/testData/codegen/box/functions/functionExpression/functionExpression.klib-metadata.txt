@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final annotation class A : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> fooT1(): kotlin/Function1<T#0, kotlin/String>
+
+      public final val foo1: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Any, kotlin/String>
+        public final get
+
+      public final val foo2: @kotlin/ExtensionFunctionType kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>
+        public final get
+    }
+  }
+}

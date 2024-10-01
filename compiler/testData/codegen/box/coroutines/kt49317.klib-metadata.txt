@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: builders
+
+    package {
+
+      public final suspend fun foo(a: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = ... */): kotlin/Unit
+    }
+  }
+
+  library fragment {
+    // package name: other
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(): kotlin/Unit
+    }
+  }
+}

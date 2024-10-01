@@ -1,0 +1,58 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/Class.kt
+    CLASS ANNOTATION_CLASS name:Ann signature:/Ann|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ann
+      CONSTRUCTOR signature:/Ann.<init>|<init>(kotlin.String){}[0] visibility:public <> (p:<unbound IrClassSymbolImpl>) returnType:<root>.Ann [primary]
+        VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ann signature:/Ann|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:p signature:/Ann.p|{}p[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:p signature:[ /Ann.p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'p: <unbound IrClassSymbolImpl> declared in <root>.Ann.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> signature:/Ann.p.<get-p>|<get-p>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Ann) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:p signature:/Ann.p|{}p[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Ann
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> (): <unbound IrClassSymbolImpl> declared in <root>.Ann'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p signature:[ /Ann.p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Ann declared in <root>.Ann.<get-p>' type=<root>.Ann origin=null
+    CLASS CLASS name:Class signature:/Class|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Class
+      CONSTRUCTOR signature:/Class.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Class [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Class signature:/Class|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Obj signature:/Class.Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Class.Obj
+        CONSTRUCTOR signature:/Class.Obj.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Class.Obj [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Obj signature:/Class.Obj|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:Const signature:/Class.Obj.Const|{}Const[0] visibility:public modality:FINAL [const,val]
+          FIELD PROPERTY_BACKING_FIELD name:Const signature:[ /Class.Obj.Const|{}Const[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="const"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-Const> signature:/Class.Obj.Const.<get-Const>|<get-Const>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Class.Obj) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:Const signature:/Class.Obj.Const|{}Const[0] visibility:public modality:FINAL [const,val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Class.Obj
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-Const> (): <unbound IrClassSymbolImpl> declared in <root>.Class.Obj'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:Const signature:[ /Class.Obj.Const|{}Const[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Class.Obj declared in <root>.Class.Obj.<get-Const>' type=<root>.Class.Obj origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:f signature:/f|f(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = "const+")
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun f (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/boxConstValOfUnsignedType.kt
+    PROPERTY name:maxUByte signature:/maxUByte|{}maxUByte[0] visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:maxUByte signature:[ /maxUByte|{}maxUByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:maxUByte type:kotlin.UByte visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Byte type=<unbound IrClassSymbolImpl> value=-1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-maxUByte> signature:/maxUByte.<get-maxUByte>|<get-maxUByte>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:maxUByte signature:/maxUByte|{}maxUByte[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-maxUByte> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:maxUByte signature:[ /maxUByte|{}maxUByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:maxUByte type:kotlin.UByte visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:custom signature:/custom|custom(kotlin.Any){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun custom (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Custom: "
+            GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.custom' type=<unbound IrClassSymbolImpl> origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value=", isUByte: "
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.custom' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun custom (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: CONST Byte type=<unbound IrClassSymbolImpl> value=-1
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Custom: 255, isUByte: true"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,86 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/superCallFromMultipleSubclasses.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:/A.test|test(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.A, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A'
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.A.test' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+      FUN name:test signature:/B.test|test(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.B, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.B'
+            CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      PROPERTY name:doTest signature:/B.doTest|{}doTest[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:doTest signature:[ /B.doTest|{}doTest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:doTest type:kotlin.Function0<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.B.doTest'
+                    CALL 'public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A' superQualifier='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_OBJECT 'CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.B
+                      s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-doTest> signature:/B.doTest.<get-doTest>|<get-doTest>(){}[0] visibility:public modality:FINAL <> ($this:<root>.B) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:doTest signature:/B.doTest|{}doTest[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.B
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-doTest> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doTest signature:[ /B.doTest|{}doTest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:doTest type:kotlin.Function0<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-doTest>' type=<root>.B origin=null
+    CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+      FUN name:test signature:/C.test|test(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.C, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      PROPERTY name:doTest signature:/C.doTest|{}doTest[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:doTest signature:[ /C.doTest|{}doTest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:doTest type:kotlin.Function0<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.C.doTest'
+                    CALL 'public open fun test (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A' superQualifier='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_OBJECT 'CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.C
+                      s: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-doTest> signature:/C.doTest.<get-doTest>|<get-doTest>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:doTest signature:/C.doTest|{}doTest[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-doTest> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doTest signature:[ /C.doTest|{}doTest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:doTest type:kotlin.Function0<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-doTest>' type=<root>.C origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: CALL 'public final fun <get-doTest> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.B' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.B
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: CALL 'public final fun <get-doTest> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.C

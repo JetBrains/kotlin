@@ -1,0 +1,24 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/classNamedAsOldPackageFacade.kt
+    CLASS CLASS name:TestPackage signature:test/TestPackage|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.TestPackage
+      CONSTRUCTOR signature:test/TestPackage.<init>|<init>(){}[0] visibility:public <> () returnType:test.TestPackage [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestPackage signature:test/TestPackage|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:OK signature:test/TestPackage.OK|{}OK[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:OK signature:[ test/TestPackage.OK|{}OK[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:OK type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-OK> signature:test/TestPackage.OK.<get-OK>|<get-OK>(){}[0] visibility:public modality:FINAL <> ($this:test.TestPackage) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:OK signature:test/TestPackage.OK|{}OK[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.TestPackage
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-OK> (): <unbound IrClassSymbolImpl> declared in test.TestPackage'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:OK signature:[ test/TestPackage.OK|{}OK[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:OK type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.TestPackage declared in test.TestPackage.<get-OK>' type=test.TestPackage origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'public final fun <get-OK> (): <unbound IrClassSymbolImpl> declared in test.TestPackage' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.TestPackage' type=test.TestPackage origin=null

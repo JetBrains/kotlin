@@ -1,0 +1,71 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AnotherInterface
+    // class name: Base
+    // class name: Derived
+    // class name: DerivedInterface
+    // class name: Interface
+
+    public abstract interface AnotherInterface : kotlin/Any {
+    }
+
+    public open class Base : kotlin/Any {
+
+      public constructor()
+
+      public open fun baseFun(): kotlin/String
+
+      public open fun unambiguous(): kotlin/String
+
+      public open val baseProp: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public final class Derived : Base, Interface {
+
+      public constructor()
+
+      public open fun baseFun(): kotlin/String
+
+      public final fun callsBaseFun(): kotlin/String
+
+      public final fun callsInterfaceFun(): kotlin/String
+
+      public final fun callsUnambiguousFun(): kotlin/String
+
+      public final fun getsBaseProp(): kotlin/String
+
+      public open fun interfaceFun(): kotlin/String
+
+      public open fun unambiguous(): kotlin/String
+
+      public open val baseProp: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface DerivedInterface : Interface, AnotherInterface {
+
+      public open fun callsFunFromSuperInterface(): kotlin/String
+
+      public open fun interfaceFun(): kotlin/String
+
+      public open fun unambiguous(): kotlin/String
+    }
+
+    public abstract interface Interface : kotlin/Any {
+
+      public open fun interfaceFun(): kotlin/String
+
+      public abstract fun unambiguous(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

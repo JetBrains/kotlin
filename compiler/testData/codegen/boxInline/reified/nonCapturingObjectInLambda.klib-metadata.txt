@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* A */> kotlin/Any?.complicatedCast(): T#0
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* R */> myRun(g: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

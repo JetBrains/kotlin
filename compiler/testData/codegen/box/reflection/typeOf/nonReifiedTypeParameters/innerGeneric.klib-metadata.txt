@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/C.D
+    // class name: test/Container
+
+    public final class test/C<T#0 /* X */> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: D
+    }
+
+    public final inner class test/C.D<T#1 /* Y */ : T#0> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#2 /* Z */ : T#1> createZ(): kotlin/reflect/KTypeParameter
+    }
+
+    public final class test/Container<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

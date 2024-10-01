@@ -1,0 +1,1171 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/intrinsics.kt
+    annotations:
+      <unbound>(1 = ["INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+    FUN name:getAndAddFieldLocal signature:/getAndAddFieldLocal|getAndAddFieldLocal@kotlin.reflect.KMutableProperty0<kotlin.Short>(kotlin.Short){}[0] visibility:internal modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, delta:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [external]
+      annotations:
+        <unbound>(1 = "GET_AND_ADD_FIELD")
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:delta index:0 type:<unbound IrClassSymbolImpl>
+    FUN name:getAndAddFieldLocal signature:/getAndAddFieldLocal|getAndAddFieldLocal@kotlin.reflect.KMutableProperty0<kotlin.Int>(kotlin.Int){}[0] visibility:internal modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [external]
+      annotations:
+        <unbound>(1 = "GET_AND_ADD_FIELD")
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:newValue index:0 type:<unbound IrClassSymbolImpl>
+    FUN name:getAndAddFieldLocal signature:/getAndAddFieldLocal|getAndAddFieldLocal@kotlin.reflect.KMutableProperty0<kotlin.Long>(kotlin.Long){}[0] visibility:internal modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [external]
+      annotations:
+        <unbound>(1 = "GET_AND_ADD_FIELD")
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:newValue index:0 type:<unbound IrClassSymbolImpl>
+    FUN name:getAndAddFieldLocal signature:/getAndAddFieldLocal|getAndAddFieldLocal@kotlin.reflect.KMutableProperty0<kotlin.Byte>(kotlin.Byte){}[0] visibility:internal modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [external]
+      annotations:
+        <unbound>(1 = "GET_AND_ADD_FIELD")
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:newValue index:0 type:<unbound IrClassSymbolImpl>
+    CLASS INTERFACE name:Wrapper signature:/Wrapper|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Wrapper<T of <root>.Wrapper>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Wrapper|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:get signature:/Wrapper.get|get(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Wrapper<T of <root>.Wrapper>) returnType:T of <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper<T of <root>.Wrapper>
+      FUN name:set signature:/Wrapper.set|set(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Wrapper<T of <root>.Wrapper>, new:T of <root>.Wrapper) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper<T of <root>.Wrapper>
+        VALUE_PARAMETER name:new index:0 type:T of <root>.Wrapper
+      FUN name:compareAndSwap signature:/Wrapper.compareAndSwap|compareAndSwap(1:0;1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Wrapper<T of <root>.Wrapper>, expected:T of <root>.Wrapper, new:T of <root>.Wrapper) returnType:T of <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper<T of <root>.Wrapper>
+        VALUE_PARAMETER name:expected index:0 type:T of <root>.Wrapper
+        VALUE_PARAMETER name:new index:1 type:T of <root>.Wrapper
+      FUN name:compareAndSet signature:/Wrapper.compareAndSet|compareAndSet(1:0;1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Wrapper<T of <root>.Wrapper>, expected:T of <root>.Wrapper, new:T of <root>.Wrapper) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper<T of <root>.Wrapper>
+        VALUE_PARAMETER name:expected index:0 type:T of <root>.Wrapper
+        VALUE_PARAMETER name:new index:1 type:T of <root>.Wrapper
+      FUN name:getAndSet signature:/Wrapper.getAndSet|getAndSet(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Wrapper<T of <root>.Wrapper>, expected:T of <root>.Wrapper) returnType:T of <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper<T of <root>.Wrapper>
+        VALUE_PARAMETER name:expected index:0 type:T of <root>.Wrapper
+    CLASS INTERFACE name:IncWrapper signature:/IncWrapper|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Wrapper<T of <root>.IncWrapper>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IncWrapper<T of <root>.IncWrapper>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /IncWrapper|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:getAndAdd signature:/IncWrapper.getAndAdd|getAndAdd(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IncWrapper<T of <root>.IncWrapper>, expected:T of <root>.IncWrapper) returnType:T of <root>.IncWrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.IncWrapper<T of <root>.IncWrapper>
+        VALUE_PARAMETER name:expected index:0 type:T of <root>.IncWrapper
+    CLASS INTERFACE name:RefWrapper signature:/RefWrapper|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Wrapper<T of <root>.RefWrapper>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RefWrapper<T of <root>.RefWrapper>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /RefWrapper|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:IntWrapper signature:/IntWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntWrapper
+      CONSTRUCTOR signature:/IntWrapper.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.IntWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IntWrapper signature:/IntWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:x signature:/IntWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /IntWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/IntWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/IntWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /IntWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.<get-x>' type=<root>.IntWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/IntWrapper.x.<set-x>|<set-x>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.IntWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/IntWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /IntWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.<set-x>' type=<root>.IntWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/IntWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.IntWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.IntWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.get' type=<root>.IntWrapper origin=null
+      FUN name:set signature:/IntWrapper.set|set(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.IntWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.IntWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.set' type=<root>.IntWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSwap signature:/IntWrapper.compareAndSwap|compareAndSwap(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.IntWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.IntWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.compareAndSwap' type=<root>.IntWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSet signature:/IntWrapper.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.IntWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.IntWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.compareAndSet' type=<root>.IntWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndSet signature:/IntWrapper.getAndSet|getAndSet(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.IntWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.IntWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.getAndSet' type=<root>.IntWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.getAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndAdd signature:/IntWrapper.getAndAdd|getAndAdd(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.IntWrapper, delta:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+        VALUE_PARAMETER name:delta index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndAdd (delta: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+            CALL 'internal final fun getAndAddFieldLocal (newValue: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [external] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.IntWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.getAndAdd' type=<root>.IntWrapper origin=null
+              newValue: GET_VAR 'delta: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.getAndAdd' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:LongWrapper signature:/LongWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LongWrapper
+      CONSTRUCTOR signature:/LongWrapper.<init>|<init>(kotlin.Long){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.LongWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LongWrapper signature:/LongWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:x signature:/LongWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /LongWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/LongWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.LongWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/LongWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /LongWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.<get-x>' type=<root>.LongWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/LongWrapper.x.<set-x>|<set-x>(kotlin.Long){}[0] visibility:public modality:FINAL <> ($this:<root>.LongWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/LongWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /LongWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.<set-x>' type=<root>.LongWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/LongWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.LongWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.LongWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.get' type=<root>.LongWrapper origin=null
+      FUN name:set signature:/LongWrapper.set|set(kotlin.Long){}[0] visibility:public modality:OPEN <> ($this:<root>.LongWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.LongWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.set' type=<root>.LongWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSwap signature:/LongWrapper.compareAndSwap|compareAndSwap(kotlin.Long;kotlin.Long){}[0] visibility:public modality:OPEN <> ($this:<root>.LongWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.LongWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.compareAndSwap' type=<root>.LongWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSet signature:/LongWrapper.compareAndSet|compareAndSet(kotlin.Long;kotlin.Long){}[0] visibility:public modality:OPEN <> ($this:<root>.LongWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.LongWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.compareAndSet' type=<root>.LongWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndSet signature:/LongWrapper.getAndSet|getAndSet(kotlin.Long){}[0] visibility:public modality:OPEN <> ($this:<root>.LongWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.LongWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.getAndSet' type=<root>.LongWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.getAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndAdd signature:/LongWrapper.getAndAdd|getAndAdd(kotlin.Long){}[0] visibility:public modality:OPEN <> ($this:<root>.LongWrapper, delta:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.LongWrapper
+        VALUE_PARAMETER name:delta index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndAdd (delta: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper'
+            CALL 'internal final fun getAndAddFieldLocal (newValue: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [external] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.LongWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.LongWrapper declared in <root>.LongWrapper.getAndAdd' type=<root>.LongWrapper origin=null
+              newValue: GET_VAR 'delta: <unbound IrClassSymbolImpl> declared in <root>.LongWrapper.getAndAdd' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:ShortWrapper signature:/ShortWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ShortWrapper
+      CONSTRUCTOR signature:/ShortWrapper.<init>|<init>(kotlin.Short){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.ShortWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ShortWrapper signature:/ShortWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:x signature:/ShortWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /ShortWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/ShortWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ShortWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/ShortWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /ShortWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.<get-x>' type=<root>.ShortWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/ShortWrapper.x.<set-x>|<set-x>(kotlin.Short){}[0] visibility:public modality:FINAL <> ($this:<root>.ShortWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/ShortWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /ShortWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.<set-x>' type=<root>.ShortWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/ShortWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.ShortWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ShortWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.get' type=<root>.ShortWrapper origin=null
+      FUN name:set signature:/ShortWrapper.set|set(kotlin.Short){}[0] visibility:public modality:OPEN <> ($this:<root>.ShortWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ShortWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.set' type=<root>.ShortWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSwap signature:/ShortWrapper.compareAndSwap|compareAndSwap(kotlin.Short;kotlin.Short){}[0] visibility:public modality:OPEN <> ($this:<root>.ShortWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ShortWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.compareAndSwap' type=<root>.ShortWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSet signature:/ShortWrapper.compareAndSet|compareAndSet(kotlin.Short;kotlin.Short){}[0] visibility:public modality:OPEN <> ($this:<root>.ShortWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ShortWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.compareAndSet' type=<root>.ShortWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndSet signature:/ShortWrapper.getAndSet|getAndSet(kotlin.Short){}[0] visibility:public modality:OPEN <> ($this:<root>.ShortWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ShortWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.getAndSet' type=<root>.ShortWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.getAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndAdd signature:/ShortWrapper.getAndAdd|getAndAdd(kotlin.Short){}[0] visibility:public modality:OPEN <> ($this:<root>.ShortWrapper, delta:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.ShortWrapper
+        VALUE_PARAMETER name:delta index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndAdd (delta: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper'
+            CALL 'internal final fun getAndAddFieldLocal (delta: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [external] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ShortWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ShortWrapper declared in <root>.ShortWrapper.getAndAdd' type=<root>.ShortWrapper origin=null
+              delta: GET_VAR 'delta: <unbound IrClassSymbolImpl> declared in <root>.ShortWrapper.getAndAdd' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:ByteWrapper signature:/ByteWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ByteWrapper
+      CONSTRUCTOR signature:/ByteWrapper.<init>|<init>(kotlin.Byte){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.ByteWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ByteWrapper signature:/ByteWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.IncWrapper<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:x signature:/ByteWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /ByteWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/ByteWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ByteWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/ByteWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /ByteWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.<get-x>' type=<root>.ByteWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/ByteWrapper.x.<set-x>|<set-x>(kotlin.Byte){}[0] visibility:public modality:FINAL <> ($this:<root>.ByteWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/ByteWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /ByteWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.<set-x>' type=<root>.ByteWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/ByteWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ByteWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.get' type=<root>.ByteWrapper origin=null
+      FUN name:set signature:/ByteWrapper.set|set(kotlin.Byte){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ByteWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.set' type=<root>.ByteWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSwap signature:/ByteWrapper.compareAndSwap|compareAndSwap(kotlin.Byte;kotlin.Byte){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ByteWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.compareAndSwap' type=<root>.ByteWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSet signature:/ByteWrapper.compareAndSet|compareAndSet(kotlin.Byte;kotlin.Byte){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ByteWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.compareAndSet' type=<root>.ByteWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndSet signature:/ByteWrapper.getAndSet|getAndSet(kotlin.Byte){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ByteWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.getAndSet' type=<root>.ByteWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.getAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndAdd signature:/ByteWrapper.getAndAdd|getAndAdd(kotlin.Byte){}[0] visibility:public modality:OPEN <> ($this:<root>.ByteWrapper, delta:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteWrapper
+        VALUE_PARAMETER name:delta index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndAdd (delta: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper'
+            CALL 'internal final fun getAndAddFieldLocal (newValue: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [external] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.ByteWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteWrapper declared in <root>.ByteWrapper.getAndAdd' type=<root>.ByteWrapper origin=null
+              newValue: GET_VAR 'delta: <unbound IrClassSymbolImpl> declared in <root>.ByteWrapper.getAndAdd' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:BooleanWrapper signature:/BooleanWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.Wrapper<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BooleanWrapper
+      CONSTRUCTOR signature:/BooleanWrapper.<init>|<init>(kotlin.Boolean){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.BooleanWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BooleanWrapper signature:/BooleanWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.Wrapper<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:x signature:/BooleanWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /BooleanWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/BooleanWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BooleanWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/BooleanWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /BooleanWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.<get-x>' type=<root>.BooleanWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/BooleanWrapper.x.<set-x>|<set-x>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> ($this:<root>.BooleanWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/BooleanWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /BooleanWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.<set-x>' type=<root>.BooleanWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/BooleanWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.BooleanWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun get (): T of <root>.Wrapper declared in <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.BooleanWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.get' type=<root>.BooleanWrapper origin=null
+      FUN name:set signature:/BooleanWrapper.set|set(kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.BooleanWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun set (new: T of <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.BooleanWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.set' type=<root>.BooleanWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSwap signature:/BooleanWrapper.compareAndSwap|compareAndSwap(kotlin.Boolean;kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.BooleanWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun compareAndSwap (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.BooleanWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.compareAndSwap' type=<root>.BooleanWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSet signature:/BooleanWrapper.compareAndSet|compareAndSet(kotlin.Boolean;kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.BooleanWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun compareAndSet (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.BooleanWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.compareAndSet' type=<root>.BooleanWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndSet signature:/BooleanWrapper.getAndSet|getAndSet(kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.BooleanWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getAndSet (expected: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper
+        $this: VALUE_PARAMETER name:<this> type:<root>.BooleanWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.BooleanWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.BooleanWrapper declared in <root>.BooleanWrapper.getAndSet' type=<root>.BooleanWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.BooleanWrapper.getAndSet' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:StringWrapper signature:/StringWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.RefWrapper<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringWrapper
+      CONSTRUCTOR signature:/StringWrapper.<init>|<init>(kotlin.String){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.StringWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringWrapper signature:/StringWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.RefWrapper<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:x signature:/StringWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /StringWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/StringWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.StringWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/StringWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /StringWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.<get-x>' type=<root>.StringWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/StringWrapper.x.<set-x>|<set-x>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.StringWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/StringWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /StringWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.<set-x>' type=<root>.StringWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/StringWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.StringWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.StringWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.get' type=<root>.StringWrapper origin=null
+      FUN name:set signature:/StringWrapper.set|set(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.StringWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.set' type=<root>.StringWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSwap signature:/StringWrapper.compareAndSwap|compareAndSwap(kotlin.String;kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.StringWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.compareAndSwap' type=<root>.StringWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.compareAndSwap' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:compareAndSet signature:/StringWrapper.compareAndSet|compareAndSet(kotlin.String;kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringWrapper, expected:<unbound IrClassSymbolImpl>, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+        VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:new index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: <unbound IrClassSymbolImpl>, new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.StringWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.compareAndSet' type=<root>.StringWrapper origin=null
+              1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.compareAndSet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getAndSet signature:/StringWrapper.getAndSet|getAndSet(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringWrapper, new:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+        VALUE_PARAMETER name:new index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [var] declared in <root>.StringWrapper' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' setter='public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.getAndSet' type=<root>.StringWrapper origin=null
+              1: GET_VAR 'new: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.getAndSet' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:GenericWrapper signature:/GenericWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.RefWrapper<T of <root>.GenericWrapper>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GenericWrapper|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/GenericWrapper.<init>|<init>(1:0){}[0] visibility:public <> (x:T of <root>.GenericWrapper) returnType:<root>.GenericWrapper<T of <root>.GenericWrapper> [primary]
+        VALUE_PARAMETER name:x index:0 type:T of <root>.GenericWrapper
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GenericWrapper signature:/GenericWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.RefWrapper<T of <root>.GenericWrapper>]'
+      PROPERTY name:x signature:/GenericWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /GenericWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:T of <root>.GenericWrapper visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: T of <root>.GenericWrapper declared in <root>.GenericWrapper.<init>' type=T of <root>.GenericWrapper origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/GenericWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>) returnType:T of <root>.GenericWrapper
+          correspondingProperty: PROPERTY name:x signature:/GenericWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.GenericWrapper declared in <root>.GenericWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /GenericWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:T of <root>.GenericWrapper visibility:private' type=T of <root>.GenericWrapper origin=null
+                receiver: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.<get-x>' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/GenericWrapper.x.<set-x>|<set-x>(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>, <set-?>:T of <root>.GenericWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/GenericWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+          VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.GenericWrapper
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /GenericWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:T of <root>.GenericWrapper visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.<set-x>' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+              value: GET_VAR '<set-?>: T of <root>.GenericWrapper declared in <root>.GenericWrapper.<set-x>' type=T of <root>.GenericWrapper origin=null
+      FUN name:get signature:/GenericWrapper.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>) returnType:T of <root>.GenericWrapper
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): T of <root>.GenericWrapper declared in <root>.GenericWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.GenericWrapper origin=null
+              <1>: T of <root>.GenericWrapper
+              $receiver: PROPERTY_REFERENCE 'public final x: T of <root>.GenericWrapper [var] declared in <root>.GenericWrapper' field=null getter='public final fun <get-x> (): T of <root>.GenericWrapper declared in <root>.GenericWrapper' setter='public final fun <set-x> (<set-?>: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper' type=<unbound IrClassSymbolImpl><T of <root>.GenericWrapper> origin=null
+                $this: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.get' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+      FUN name:set signature:/GenericWrapper.set|set(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>, new:T of <root>.GenericWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+        VALUE_PARAMETER name:new index:0 type:T of <root>.GenericWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun set (new: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: T of <root>.GenericWrapper
+              $receiver: PROPERTY_REFERENCE 'public final x: T of <root>.GenericWrapper [var] declared in <root>.GenericWrapper' field=null getter='public final fun <get-x> (): T of <root>.GenericWrapper declared in <root>.GenericWrapper' setter='public final fun <set-x> (<set-?>: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper' type=<unbound IrClassSymbolImpl><T of <root>.GenericWrapper> origin=null
+                $this: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.set' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+              1: GET_VAR 'new: T of <root>.GenericWrapper declared in <root>.GenericWrapper.set' type=T of <root>.GenericWrapper origin=null
+      FUN name:compareAndSwap signature:/GenericWrapper.compareAndSwap|compareAndSwap(1:0;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>, expected:T of <root>.GenericWrapper, new:T of <root>.GenericWrapper) returnType:T of <root>.GenericWrapper
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+        VALUE_PARAMETER name:expected index:0 type:T of <root>.GenericWrapper
+        VALUE_PARAMETER name:new index:1 type:T of <root>.GenericWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSwap (expected: T of <root>.GenericWrapper, new: T of <root>.GenericWrapper): T of <root>.GenericWrapper declared in <root>.GenericWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.GenericWrapper origin=null
+              <1>: T of <root>.GenericWrapper
+              $receiver: PROPERTY_REFERENCE 'public final x: T of <root>.GenericWrapper [var] declared in <root>.GenericWrapper' field=null getter='public final fun <get-x> (): T of <root>.GenericWrapper declared in <root>.GenericWrapper' setter='public final fun <set-x> (<set-?>: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper' type=<unbound IrClassSymbolImpl><T of <root>.GenericWrapper> origin=null
+                $this: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.compareAndSwap' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+              1: GET_VAR 'expected: T of <root>.GenericWrapper declared in <root>.GenericWrapper.compareAndSwap' type=T of <root>.GenericWrapper origin=null
+              2: GET_VAR 'new: T of <root>.GenericWrapper declared in <root>.GenericWrapper.compareAndSwap' type=T of <root>.GenericWrapper origin=null
+      FUN name:compareAndSet signature:/GenericWrapper.compareAndSet|compareAndSet(1:0;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>, expected:T of <root>.GenericWrapper, new:T of <root>.GenericWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+        VALUE_PARAMETER name:expected index:0 type:T of <root>.GenericWrapper
+        VALUE_PARAMETER name:new index:1 type:T of <root>.GenericWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareAndSet (expected: T of <root>.GenericWrapper, new: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: T of <root>.GenericWrapper
+              $receiver: PROPERTY_REFERENCE 'public final x: T of <root>.GenericWrapper [var] declared in <root>.GenericWrapper' field=null getter='public final fun <get-x> (): T of <root>.GenericWrapper declared in <root>.GenericWrapper' setter='public final fun <set-x> (<set-?>: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper' type=<unbound IrClassSymbolImpl><T of <root>.GenericWrapper> origin=null
+                $this: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.compareAndSet' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+              1: GET_VAR 'expected: T of <root>.GenericWrapper declared in <root>.GenericWrapper.compareAndSet' type=T of <root>.GenericWrapper origin=null
+              2: GET_VAR 'new: T of <root>.GenericWrapper declared in <root>.GenericWrapper.compareAndSet' type=T of <root>.GenericWrapper origin=null
+      FUN name:getAndSet signature:/GenericWrapper.getAndSet|getAndSet(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.GenericWrapper<T of <root>.GenericWrapper>, new:T of <root>.GenericWrapper) returnType:T of <root>.GenericWrapper
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericWrapper<T of <root>.GenericWrapper>
+        VALUE_PARAMETER name:new index:0 type:T of <root>.GenericWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getAndSet (new: T of <root>.GenericWrapper): T of <root>.GenericWrapper declared in <root>.GenericWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.GenericWrapper origin=null
+              <1>: T of <root>.GenericWrapper
+              $receiver: PROPERTY_REFERENCE 'public final x: T of <root>.GenericWrapper [var] declared in <root>.GenericWrapper' field=null getter='public final fun <get-x> (): T of <root>.GenericWrapper declared in <root>.GenericWrapper' setter='public final fun <set-x> (<set-?>: T of <root>.GenericWrapper): <unbound IrClassSymbolImpl> declared in <root>.GenericWrapper' type=<unbound IrClassSymbolImpl><T of <root>.GenericWrapper> origin=null
+                $this: GET_VAR '<this>: <root>.GenericWrapper<T of <root>.GenericWrapper> declared in <root>.GenericWrapper.getAndSet' type=<root>.GenericWrapper<T of <root>.GenericWrapper> origin=null
+              1: GET_VAR 'new: T of <root>.GenericWrapper declared in <root>.GenericWrapper.getAndSet' type=T of <root>.GenericWrapper origin=null
+    FUN name:testFail signature:/testFail|testFail(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Nothing>){}[0] visibility:public modality:FINAL <> (block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, onSuccess:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:onSuccess index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.testFail' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'onSuccess: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.testFail' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          CATCH parameter=val ignored: <unbound IrClassSymbolImpl> [val] declared in <root>.testFail
+            VAR CATCH_PARAMETER name:ignored type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:test signature:/test|test(0:0;0:0;0:0;kotlin.Function1<0:0,Wrapper<0:0>>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (one:T of <root>.test, two:T of <root>.test, three:T of <root>.test, wrap:<unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>) returnType:<unbound IrClassSymbolImpl>?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /test|test(0:0;0:0;0:0;kotlin.Function1<0:0,Wrapper<0:0>>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:one index:0 type:T of <root>.test
+      VALUE_PARAMETER name:two index:1 type:T of <root>.test
+      VALUE_PARAMETER name:three index:2 type:T of <root>.test
+      VALUE_PARAMETER name:wrap index:3 type:<unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>
+      BLOCK_BODY
+        VAR name:w type:<root>.Wrapper<T of <root>.test> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Wrapper<T of <root>.test> origin=INVOKE
+            $this: GET_VAR 'wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>> declared in <root>.test' type=<unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun compareAndSet (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.Wrapper' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  new: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun compareAndSet (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.Wrapper' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  new: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun getAndSet (expected: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun getAndSet (expected: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun compareAndSwap (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  new: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 8"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun compareAndSwap (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  new: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 9"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun compareAndSwap (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  new: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 10"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun compareAndSwap (expected: T of <root>.Wrapper, new: T of <root>.Wrapper): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                  expected: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  new: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                arg1: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 11"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun get (): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                arg1: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 12"
+        CALL 'public abstract fun set (new: T of <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.Wrapper' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+          new: GET_VAR 'three: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun get (): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                arg1: GET_VAR 'three: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 13"
+        CALL 'public abstract fun set (new: T of <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.Wrapper' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+          new: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun get (): T of <root>.Wrapper declared in <root>.Wrapper' type=T of <root>.test origin=null
+                  $this: GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                arg1: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL 14"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.IncWrapper<T of <root>.test>
+              GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: CALL 'public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper' type=T of <root>.test origin=null
+                        $this: TYPE_OP type=<root>.IncWrapper<T of <root>.test> origin=IMPLICIT_CAST typeOperand=<root>.IncWrapper<T of <root>.test>
+                          GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                        expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                      arg1: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="FAIL 15"
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.test origin=null
+                        $this: TYPE_OP type=<root>.IncWrapper<T of <root>.test> origin=IMPLICIT_CAST typeOperand=<root>.IncWrapper<T of <root>.test>
+                          GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                      arg1: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="FAIL 16"
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: CALL 'public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper' type=T of <root>.test origin=null
+                        $this: TYPE_OP type=<root>.IncWrapper<T of <root>.test> origin=IMPLICIT_CAST typeOperand=<root>.IncWrapper<T of <root>.test>
+                          GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                        expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                      arg1: GET_VAR 'two: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="FAIL 17"
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: CALL 'public abstract fun getAndAdd (expected: T of <root>.IncWrapper): T of <root>.IncWrapper declared in <root>.IncWrapper' type=T of <root>.test origin=null
+                        $this: TYPE_OP type=<root>.IncWrapper<T of <root>.test> origin=IMPLICIT_CAST typeOperand=<root>.IncWrapper<T of <root>.test>
+                          GET_VAR 'val w: <root>.Wrapper<T of <root>.test> [val] declared in <root>.test' type=<root>.Wrapper<T of <root>.test> origin=null
+                        expected: GET_VAR 'one: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                      arg1: GET_VAR 'three: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="FAIL 18"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>'
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                two: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                three: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                wrap: FUNCTION_REFERENCE 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.IntWrapper> origin=null reflectionTarget=<same>
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Int: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST Long type=<unbound IrClassSymbolImpl> value=1
+                two: CONST Long type=<unbound IrClassSymbolImpl> value=2
+                three: CONST Long type=<unbound IrClassSymbolImpl> value=3
+                wrap: FUNCTION_REFERENCE 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.LongWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.LongWrapper> origin=null reflectionTarget=<same>
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Long: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST Short type=<unbound IrClassSymbolImpl> value=1
+                two: CONST Short type=<unbound IrClassSymbolImpl> value=2
+                three: CONST Short type=<unbound IrClassSymbolImpl> value=3
+                wrap: FUNCTION_REFERENCE 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.ShortWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.ShortWrapper> origin=null reflectionTarget=<same>
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp2_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp2_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Short: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST Byte type=<unbound IrClassSymbolImpl> value=1
+                two: CONST Byte type=<unbound IrClassSymbolImpl> value=2
+                three: CONST Byte type=<unbound IrClassSymbolImpl> value=3
+                wrap: FUNCTION_REFERENCE 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.ByteWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.ByteWrapper> origin=null reflectionTarget=<same>
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp3_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp3_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Byte: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp4_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                two: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                three: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                wrap: FUNCTION_REFERENCE 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.BooleanWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.BooleanWrapper> origin=null reflectionTarget=<same>
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp4_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp4_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Boolean: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp5_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                two: CONST String type=<unbound IrClassSymbolImpl> value="2"
+                three: CONST String type=<unbound IrClassSymbolImpl> value="3"
+                wrap: FUNCTION_REFERENCE 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.StringWrapper> origin=null reflectionTarget=<same>
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp5_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp5_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="String: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp6_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                two: CONST String type=<unbound IrClassSymbolImpl> value="2"
+                three: CONST String type=<unbound IrClassSymbolImpl> value="3"
+                wrap: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Wrapper<<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<root>.Wrapper<<unbound IrClassSymbolImpl>>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <root>.Wrapper<<unbound IrClassSymbolImpl>> declared in <root>.box'
+                        CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.GenericWrapper) [primary] declared in <root>.GenericWrapper' type=<root>.GenericWrapper<<unbound IrClassSymbolImpl>> origin=null
+                          <class: T>: <unbound IrClassSymbolImpl>
+                          x: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp6_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp6_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Generic<String>: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp7_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun test <T> (one: T of <root>.test, two: T of <root>.test, three: T of <root>.test, wrap: <unbound IrClassSymbolImpl><T of <root>.test, <root>.Wrapper<T of <root>.test>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                one: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                two: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                three: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                wrap: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Wrapper<<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<root>.Wrapper<<unbound IrClassSymbolImpl>>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <root>.Wrapper<<unbound IrClassSymbolImpl>> declared in <root>.box'
+                        CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.GenericWrapper) [primary] declared in <root>.GenericWrapper' type=<root>.GenericWrapper<<unbound IrClassSymbolImpl>> origin=null
+                          <class: T>: <unbound IrClassSymbolImpl>
+                          x: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp7_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val tmp7_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Generic<Int>: "
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

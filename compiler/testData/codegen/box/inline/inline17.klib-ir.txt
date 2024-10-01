@@ -1,0 +1,36 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inline17.kt
+    FUN name:foo signature:/foo|foo(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (i1:T of <root>.foo, i2:T of <root>.foo) returnType:<unbound IrClassSymbolImpl><T of <root>.foo> [inline]
+      annotations:
+        <unbound>(1 = ["NOTHING_TO_INLINE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:i1 index:0 type:T of <root>.foo
+      VALUE_PARAMETER name:i2 index:1 type:T of <root>.foo
+      BLOCK_BODY
+        VAR name:j1 type:T of <root>.foo [val]
+          GET_VAR 'i1: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+        VAR name:j2 type:T of <root>.foo [val]
+          GET_VAR 'i2: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T> (i1: T of <root>.foo, i2: T of <root>.foo): <unbound IrClassSymbolImpl><T of <root>.foo> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.foo> origin=null
+            <1>: T of <root>.foo
+            1: VARARG type=<unbound IrClassSymbolImpl><out T of <root>.foo> varargElementType=T of <root>.foo
+              GET_VAR 'val j1: T of <root>.foo [val] declared in <root>.foo' type=T of <root>.foo origin=null
+              GET_VAR 'val j2: T of <root>.foo [val] declared in <root>.foo' type=T of <root>.foo origin=null
+    FUN name:bar signature:/bar|bar(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun foo <T> (i1: T of <root>.foo, i2: T of <root>.foo): <unbound IrClassSymbolImpl><T of <root>.foo> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            i1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            i2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[1, 2]"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'public final fun bar (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

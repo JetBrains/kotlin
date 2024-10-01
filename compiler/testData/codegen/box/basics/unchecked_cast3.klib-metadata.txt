@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestKlass
+
+    public final class TestKlass : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun ensure(b: kotlin/Boolean): kotlin/Unit
+
+      public final fun <T#0 /* T */ : kotlin/Any> testCast(x: kotlin/Any?, expectSuccess: kotlin/Boolean): kotlin/Unit
+
+      public final fun <T#0 /* T */ : kotlin/Any> testCastToNullable(x: kotlin/Any?, expectSuccess: kotlin/Boolean): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,23 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt47840.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:t type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        FUN LOCAL_FUNCTION name:foo visibility:local modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            FUN LOCAL_FUNCTION name:bar visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                FUN LOCAL_FUNCTION name:a visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'local final fun foo (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                      x: CONST String type=<unbound IrClassSymbolImpl> value=""
+                    CALL 'local final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.box.foo' type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var t: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.box.foo' type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'local final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.box.foo' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'local final fun foo (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var t: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

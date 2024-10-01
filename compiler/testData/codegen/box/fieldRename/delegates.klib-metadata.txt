@@ -1,0 +1,66 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: TestDelegate
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class D : kotlin/Any {
+
+      public constructor()
+    }
+
+    public open class TestDelegate<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(initializer: kotlin/Function0<T#0>)
+
+      public open operator fun getValue(thisRef: kotlin/Any?, desc: kotlin/reflect/KProperty<*>): T#0
+
+      public open operator fun setValue(thisRef: kotlin/Any?, desc: kotlin/reflect/KProperty<*>, svalue: T#0): kotlin/Unit
+
+      private final val initializer: kotlin/Function0<T#0>
+        private final get
+
+      private final var value: T#0?
+        private final get
+        private final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ val A.s: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val B.s: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val C.s: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val D.s: kotlin/String
+        public final /* non-default */ get
+    }
+  }
+}

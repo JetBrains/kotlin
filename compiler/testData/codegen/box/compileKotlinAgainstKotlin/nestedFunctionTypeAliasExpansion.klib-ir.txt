@@ -1,0 +1,27 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:lib fileName:/lib.kt
+    TYPEALIAS name:Dispatch signature:lib/Dispatch|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl><Msg of lib.Dispatch, <unbound IrClassSymbolImpl>>
+      TYPE_PARAMETER name:Msg index:0 variance: signature:[ lib/Dispatch|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Msg index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    TYPEALIAS name:Effect signature:lib/Effect|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><Msg of lib.Effect, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>
+      TYPE_PARAMETER name:Msg index:0 variance: signature:[ lib/Effect|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Msg index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:noEffect signature:lib/noEffect|noEffect(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <Msg> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><Msg of lib.noEffect, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>
+      TYPE_PARAMETER name:Msg index:0 variance: signature:[ lib/noEffect|noEffect(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:Msg index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun noEffect <Msg> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><Msg of lib.noEffect, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> declared in lib'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> [val]
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> declared in <root>.box'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

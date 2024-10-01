@@ -1,0 +1,131 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/inNestedInline.kt
+    CLASS CLASS name:Pair signature:test/Pair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Pair<A of test.Pair, B of test.Pair>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ test/Pair|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ test/Pair|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/Pair.<init>|<init>(1:0;1:1){}[0] visibility:public <> (x:A of test.Pair, y:B of test.Pair) returnType:test.Pair<A of test.Pair, B of test.Pair> [primary]
+        VALUE_PARAMETER name:x index:0 type:A of test.Pair
+        VALUE_PARAMETER name:y index:1 type:B of test.Pair
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Pair signature:test/Pair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:test/Pair.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/Pair.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:A of test.Pair visibility:private [final]] ] type:A of test.Pair visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: A of test.Pair declared in test.Pair.<init>' type=A of test.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:test/Pair.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:test.Pair<A of test.Pair, B of test.Pair>) returnType:A of test.Pair
+          correspondingProperty: PROPERTY name:x signature:test/Pair.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Pair<A of test.Pair, B of test.Pair>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): A of test.Pair declared in test.Pair'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/Pair.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:A of test.Pair visibility:private [final]] ] type:A of test.Pair visibility:private [final]' type=A of test.Pair origin=null
+                receiver: GET_VAR '<this>: test.Pair<A of test.Pair, B of test.Pair> declared in test.Pair.<get-x>' type=test.Pair<A of test.Pair, B of test.Pair> origin=null
+      PROPERTY name:y signature:test/Pair.y|{}y[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:y signature:[ test/Pair.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:A of test.Pair visibility:private [final]] ] type:B of test.Pair visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'y: B of test.Pair declared in test.Pair.<init>' type=B of test.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> signature:test/Pair.y.<get-y>|<get-y>(){}[0] visibility:public modality:FINAL <> ($this:test.Pair<A of test.Pair, B of test.Pair>) returnType:B of test.Pair
+          correspondingProperty: PROPERTY name:y signature:test/Pair.y|{}y[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Pair<A of test.Pair, B of test.Pair>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y> (): B of test.Pair declared in test.Pair'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y signature:[ test/Pair.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:A of test.Pair visibility:private [final]] ] type:B of test.Pair visibility:private [final]' type=B of test.Pair origin=null
+                receiver: GET_VAR '<this>: test.Pair<A of test.Pair, B of test.Pair> declared in test.Pair.<get-y>' type=test.Pair<A of test.Pair, B of test.Pair> origin=null
+    FUN name:typeOfX signature:test/typeOfX|typeOfX(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T1> (x:T1 of test.typeOfX) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T1 index:0 variance: signature:[ test/typeOfX|typeOfX(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:T1 of test.typeOfX
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun typeOfX <T1> (x: T1 of test.typeOfX): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: T1 of test.typeOfX
+    FUN name:typeOfPair signature:test/typeOfPair|typeOfPair(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T2, T3> (x:T2 of test.typeOfPair, y:T3 of test.typeOfPair) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T2 index:0 variance: signature:[ test/typeOfPair|typeOfPair(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:T3 index:1 variance: signature:[ test/typeOfPair|typeOfPair(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T2 of test.typeOfPair
+      VALUE_PARAMETER name:y index:1 type:T3 of test.typeOfPair
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun typeOfPair <T2, T3> (x: T2 of test.typeOfPair, y: T3 of test.typeOfPair): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'public final fun typeOfX <T1> (x: T1 of test.typeOfX): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T1>: test.Pair<T2 of test.typeOfPair, T3 of test.typeOfPair>
+            x: CONSTRUCTOR_CALL 'public constructor <init> (x: A of test.Pair, y: B of test.Pair) [primary] declared in test.Pair' type=test.Pair<T2 of test.typeOfPair, T3 of test.typeOfPair> origin=null
+              <class: A>: T2 of test.typeOfPair
+              <class: B>: T3 of test.typeOfPair
+              x: GET_VAR 'x: T2 of test.typeOfPair declared in test.typeOfPair' type=T2 of test.typeOfPair origin=null
+              y: GET_VAR 'y: T3 of test.typeOfPair declared in test.typeOfPair' type=T3 of test.typeOfPair origin=null
+    FUN name:typeOfPair2 signature:test/typeOfPair2|typeOfPair2(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T4, T5> (x:T4 of test.typeOfPair2, y:T5 of test.typeOfPair2) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T4 index:0 variance: signature:[ test/typeOfPair2|typeOfPair2(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T5 index:1 variance: signature:[ test/typeOfPair2|typeOfPair2(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T4 of test.typeOfPair2
+      VALUE_PARAMETER name:y index:1 type:T5 of test.typeOfPair2
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun typeOfPair2 <T4, T5> (x: T4 of test.typeOfPair2, y: T5 of test.typeOfPair2): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'public final fun typeOfPair <T2, T3> (x: T2 of test.typeOfPair, y: T3 of test.typeOfPair): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T2>: test.Pair<T4 of test.typeOfPair2, T5 of test.typeOfPair2>
+            <T3>: T5 of test.typeOfPair2
+            x: CONSTRUCTOR_CALL 'public constructor <init> (x: A of test.Pair, y: B of test.Pair) [primary] declared in test.Pair' type=test.Pair<T4 of test.typeOfPair2, T5 of test.typeOfPair2> origin=null
+              <class: A>: T4 of test.typeOfPair2
+              <class: B>: T5 of test.typeOfPair2
+              x: GET_VAR 'x: T4 of test.typeOfPair2 declared in test.typeOfPair2' type=T4 of test.typeOfPair2 origin=null
+              y: GET_VAR 'y: T5 of test.typeOfPair2 declared in test.typeOfPair2' type=T5 of test.typeOfPair2 origin=null
+            y: GET_VAR 'y: T5 of test.typeOfPair2 declared in test.typeOfPair2' type=T5 of test.typeOfPair2 origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun typeOfX <T1> (x: T1 of test.typeOfX): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                      <T1>: <unbound IrClassSymbolImpl>
+                      x: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.String"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1: "
+                CALL 'public final fun typeOfX <T1> (x: T1 of test.typeOfX): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T1>: <unbound IrClassSymbolImpl>
+                  x: CONST String type=<unbound IrClassSymbolImpl> value="1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun typeOfPair <T2, T3> (x: T2 of test.typeOfPair, y: T3 of test.typeOfPair): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                      <T2>: <unbound IrClassSymbolImpl>
+                      <T3>: <unbound IrClassSymbolImpl>
+                      x: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                      y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="test.Pair<kotlin.String, T3>"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 2: "
+                CALL 'public final fun typeOfPair <T2, T3> (x: T2 of test.typeOfPair, y: T3 of test.typeOfPair): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T2>: <unbound IrClassSymbolImpl>
+                  <T3>: <unbound IrClassSymbolImpl>
+                  x: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                  y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun typeOfPair2 <T4, T5> (x: T4 of test.typeOfPair2, y: T5 of test.typeOfPair2): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                      <T4>: <unbound IrClassSymbolImpl>
+                      <T5>: <unbound IrClassSymbolImpl>
+                      x: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                      y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="test.Pair<test.Pair<T4, T5>, T3>"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 3: "
+                CALL 'public final fun typeOfPair2 <T4, T5> (x: T4 of test.typeOfPair2, y: T5 of test.typeOfPair2): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T4>: <unbound IrClassSymbolImpl>
+                  <T5>: <unbound IrClassSymbolImpl>
+                  x: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                  y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

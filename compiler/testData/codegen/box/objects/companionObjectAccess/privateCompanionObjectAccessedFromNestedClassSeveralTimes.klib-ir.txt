@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/privateCompanionObjectAccessedFromNestedClassSeveralTimes.kt
+    CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+      CONSTRUCTOR signature:/Outer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:private [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Companion
+        CONSTRUCTOR signature:/Outer.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Outer.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:private [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:xo signature:/Outer.Companion.xo|xo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun xo (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion'
+              CONST String type=<unbound IrClassSymbolImpl> value="O"
+        FUN name:xk signature:/Outer.Companion.xk|xk(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun xk (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion'
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+      CLASS CLASS name:Nested1 signature:/Outer.Nested1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Nested1
+        CONSTRUCTOR signature:/Outer.Nested1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer.Nested1 [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Nested1 signature:/Outer.Nested1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:foo signature:/Outer.Nested1.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.Nested1) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Nested1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested1'
+              CALL 'public final fun xo (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:private [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Outer.Companion
+      CLASS CLASS name:Nested2 signature:/Outer.Nested2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Nested2
+        CONSTRUCTOR signature:/Outer.Nested2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer.Nested2 [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Nested2 signature:/Outer.Nested2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:bar signature:/Outer.Nested2.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.Nested2) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Nested2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested2'
+              CALL 'public final fun xk (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:private [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Outer.Companion
+      FUN name:test signature:/Outer.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Outer
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.Outer'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested1' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Nested1' type=<root>.Outer.Nested1 origin=null
+              1: CALL 'public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested2' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Nested2' type=<root>.Outer.Nested2 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null

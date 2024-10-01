@@ -1,0 +1,402 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:testObject type:<root>.TestClass [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-testExtensionReceiver> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val testObject: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testExtensionReceiver failed"
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-testDispatchReceiver> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val testObject: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testDispatchReceiver failed"
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-testArg0> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val testObject: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testArg0 failed"
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-testChain> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val testObject: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testChain failed"
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/testClass.kt
+    CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass
+      CONSTRUCTOR signature:/TestClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TestClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:testExtensionReceiver signature:/TestClass.testExtensionReceiver|{}testExtensionReceiver[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver signature:[ /TestClass.testExtensionReceiver|{}testExtensionReceiver[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun testApplyToExtensionReceiver <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>>): T of <root>.testApplyToExtensionReceiver [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'public final fun functionWithLambda (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (strArg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:strArg index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      VAR name:anonymousObj type:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val]
+                        CALL 'public final fun genericFunctionWithLambda <T> (f: <unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>): T of <root>.genericFunctionWithLambda declared in <root>' type=<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                          <T>: <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                          f: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testExtensionReceiver.<anonymous>'
+                                  CALL 'public final fun testLet <T, R> (block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>): R of <root>.testLet [inline] declared in <root>' type=<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                    <T>: <unbound IrClassSymbolImpl>
+                                    <R>: <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                    $receiver: GET_VAR 'strArg: <unbound IrClassSymbolImpl> declared in <root>.TestClass.testExtensionReceiver.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                        VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                                        BLOCK_BODY
+                                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>'
+                                            BLOCK type=<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                                                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> [primary]
+                                                  BLOCK_BODY
+                                                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                                                PROPERTY name:strField visibility:public modality:FINAL [val]
+                                                  FIELD PROPERTY_BACKING_FIELD name:strField type:<unbound IrClassSymbolImpl> visibility:private [final]
+                                                    EXPRESSION_BODY
+                                                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-strField> visibility:public modality:FINAL <> ($this:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                                    correspondingProperty: PROPERTY name:strField visibility:public modality:FINAL [val]
+                                                    $this: VALUE_PARAMETER name:<this> type:<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                    BLOCK_BODY
+                                                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-strField> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>'
+                                                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strField type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                                                          receiver: GET_VAR '<this>: <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>.<get-strField>' type=<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (strArg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testExtensionReceiver'
+                        CALL 'public final fun <get-strField> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val anonymousObj: <root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val] declared in <root>.TestClass.testExtensionReceiver.<anonymous>' type=<root>.TestClass.testExtensionReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+              block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$testApplyToExtensionReceiver type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testExtensionReceiver'
+                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testExtensionReceiver> signature:/TestClass.testExtensionReceiver.<get-testExtensionReceiver>|<get-testExtensionReceiver>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:testExtensionReceiver signature:/TestClass.testExtensionReceiver|{}testExtensionReceiver[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-testExtensionReceiver> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver signature:[ /TestClass.testExtensionReceiver|{}testExtensionReceiver[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-testExtensionReceiver>' type=<root>.TestClass origin=null
+      PROPERTY name:testDispatchReceiver signature:/TestClass.testDispatchReceiver|{}testDispatchReceiver[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:testDispatchReceiver signature:[ /TestClass.testDispatchReceiver|{}testDispatchReceiver[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun testApplyToDispatchReceiver (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun functionWithLambda (f: <unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper>): <root>.StringWrapper declared in <root>' type=<root>.StringWrapper origin=null
+                f: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (strArg:<root>.StringWrapper) returnType:<root>.StringWrapper
+                    VALUE_PARAMETER name:strArg index:0 type:<root>.StringWrapper
+                    BLOCK_BODY
+                      VAR name:anonymousObj type:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val]
+                        CALL 'public final fun genericFunctionWithLambda <T> (f: <unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>): T of <root>.genericFunctionWithLambda declared in <root>' type=<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                          <T>: <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                          f: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testDispatchReceiver.<anonymous>'
+                                  CALL 'public final fun testLet <T, R> (block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>): R of <root>.testLet [inline] declared in <root>' type=<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                    <T>: <root>.StringWrapper
+                                    <R>: <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                    $receiver: GET_VAR 'strArg: <root>.StringWrapper declared in <root>.TestClass.testDispatchReceiver.<anonymous>' type=<root>.StringWrapper origin=null
+                                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.StringWrapper) returnType:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                        VALUE_PARAMETER name:it index:0 type:<root>.StringWrapper
+                                        BLOCK_BODY
+                                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.StringWrapper): <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>'
+                                            BLOCK type=<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                                                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> [primary]
+                                                  BLOCK_BODY
+                                                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                                                PROPERTY name:strField visibility:public modality:FINAL [val]
+                                                  FIELD PROPERTY_BACKING_FIELD name:strField type:<root>.StringWrapper visibility:private [final]
+                                                    EXPRESSION_BODY
+                                                      GET_VAR 'it: <root>.StringWrapper declared in <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>' type=<root>.StringWrapper origin=null
+                                                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-strField> visibility:public modality:FINAL <> ($this:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>) returnType:<root>.StringWrapper
+                                                    correspondingProperty: PROPERTY name:strField visibility:public modality:FINAL [val]
+                                                    $this: VALUE_PARAMETER name:<this> type:<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                    BLOCK_BODY
+                                                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-strField> (): <root>.StringWrapper declared in <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>'
+                                                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strField type:<root>.StringWrapper visibility:private [final]' type=<root>.StringWrapper origin=null
+                                                          receiver: GET_VAR '<this>: <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>.<get-strField>' type=<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (strArg: <root>.StringWrapper): <root>.StringWrapper declared in <root>.TestClass.testDispatchReceiver'
+                        CALL 'public final fun <get-strField> (): <root>.StringWrapper declared in <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<root>.StringWrapper origin=GET_PROPERTY
+                          $this: GET_VAR 'val anonymousObj: <root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val] declared in <root>.TestClass.testDispatchReceiver.<anonymous>' type=<root>.TestClass.testDispatchReceiver.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+              block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.StringWrapper) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$testApplyToDispatchReceiver type:<root>.StringWrapper
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testDispatchReceiver'
+                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testDispatchReceiver> signature:/TestClass.testDispatchReceiver.<get-testDispatchReceiver>|<get-testDispatchReceiver>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:testDispatchReceiver signature:/TestClass.testDispatchReceiver|{}testDispatchReceiver[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-testDispatchReceiver> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testDispatchReceiver signature:[ /TestClass.testDispatchReceiver|{}testDispatchReceiver[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-testDispatchReceiver>' type=<root>.TestClass origin=null
+      PROPERTY name:testArg0 signature:/TestClass.testArg0|{}testArg0[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:testArg0 signature:[ /TestClass.testArg0|{}testArg0[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun testApplyToArg0 <T> (args: T of <root>.testApplyToArg0, block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToArg0, <unbound IrClassSymbolImpl>>): T of <root>.testApplyToArg0 [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              args: CALL 'public final fun functionWithLambda (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (strArg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:strArg index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      VAR name:anonymousObj type:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val]
+                        CALL 'public final fun genericFunctionWithLambda <T> (f: <unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>): T of <root>.genericFunctionWithLambda declared in <root>' type=<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                          <T>: <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                          f: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testArg0.<anonymous>'
+                                  CALL 'public final fun testLet <T, R> (block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>): R of <root>.testLet [inline] declared in <root>' type=<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                    <T>: <unbound IrClassSymbolImpl>
+                                    <R>: <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                    $receiver: GET_VAR 'strArg: <unbound IrClassSymbolImpl> declared in <root>.TestClass.testArg0.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                        VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                                        BLOCK_BODY
+                                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testArg0.<anonymous>.<anonymous>'
+                                            BLOCK type=<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                                                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> [primary]
+                                                  BLOCK_BODY
+                                                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                                                PROPERTY name:strField visibility:public modality:FINAL [val]
+                                                  FIELD PROPERTY_BACKING_FIELD name:strField type:<unbound IrClassSymbolImpl> visibility:private [final]
+                                                    EXPRESSION_BODY
+                                                      GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-strField> visibility:public modality:FINAL <> ($this:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                                    correspondingProperty: PROPERTY name:strField visibility:public modality:FINAL [val]
+                                                    $this: VALUE_PARAMETER name:<this> type:<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                    BLOCK_BODY
+                                                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-strField> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>'
+                                                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strField type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                                                          receiver: GET_VAR '<this>: <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>.<get-strField>' type=<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (strArg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testArg0'
+                        CALL 'public final fun <get-strField> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val anonymousObj: <root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val] declared in <root>.TestClass.testArg0.<anonymous>' type=<root>.TestClass.testArg0.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+              block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$testApplyToArg0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testArg0'
+                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testArg0> signature:/TestClass.testArg0.<get-testArg0>|<get-testArg0>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:testArg0 signature:/TestClass.testArg0|{}testArg0[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-testArg0> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testArg0 signature:[ /TestClass.testArg0|{}testArg0[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-testArg0>' type=<root>.TestClass origin=null
+      PROPERTY name:testChain signature:/TestClass.testChain|{}testChain[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:testChain signature:[ /TestClass.testChain|{}testChain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun testApplyToExtensionReceiver <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>>): T of <root>.testApplyToExtensionReceiver [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'public final fun functionWithLambda (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (strArg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:strArg index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      VAR name:anonymousObj type:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val]
+                        CALL 'public final fun genericFunctionWithLambda <T> (f: <unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>): T of <root>.genericFunctionWithLambda declared in <root>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                          <T>: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                          f: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testChain.<anonymous>'
+                                  CALL 'public final fun testLet <T, R> (block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>): R of <root>.testLet [inline] declared in <root>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                    <T>: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                    <R>: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                    $receiver: CALL 'public final fun testLet <T, R> (block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>): R of <root>.testLet [inline] declared in <root>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                      <T>: <unbound IrClassSymbolImpl>
+                                      <R>: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                      $receiver: GET_VAR 'strArg: <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                      block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                          VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                                          BLOCK_BODY
+                                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>'
+                                              BLOCK type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                                                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                  CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> [primary]
+                                                    BLOCK_BODY
+                                                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                                                  PROPERTY name:strField1 visibility:public modality:FINAL [val]
+                                                    FIELD PROPERTY_BACKING_FIELD name:strField1 type:<unbound IrClassSymbolImpl> visibility:private [final]
+                                                      EXPRESSION_BODY
+                                                        GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-strField1> visibility:public modality:FINAL <> ($this:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                                      correspondingProperty: PROPERTY name:strField1 visibility:public modality:FINAL [val]
+                                                      $this: VALUE_PARAMETER name:<this> type:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                      BLOCK_BODY
+                                                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-strField1> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>'
+                                                          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strField1 type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                                                            receiver: GET_VAR '<this>: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>.<get-strField1>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>, <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>) returnType:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                        VALUE_PARAMETER name:it index:0 type:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                        BLOCK_BODY
+                                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>): <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>'
+                                            BLOCK type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                                                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> [primary]
+                                                  BLOCK_BODY
+                                                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                                                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                                                PROPERTY name:strField2 visibility:public modality:FINAL [val]
+                                                  FIELD PROPERTY_BACKING_FIELD name:strField2 type:<unbound IrClassSymbolImpl> visibility:private [final]
+                                                    EXPRESSION_BODY
+                                                      CALL 'public final fun <get-strField1> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                                        $this: GET_VAR 'it: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-strField2> visibility:public modality:FINAL <> ($this:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                                    correspondingProperty: PROPERTY name:strField2 visibility:public modality:FINAL [val]
+                                                    $this: VALUE_PARAMETER name:<this> type:<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>
+                                                    BLOCK_BODY
+                                                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-strField2> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>'
+                                                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strField2 type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                                                          receiver: GET_VAR '<this>: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>.<get-strField2>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+                                              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (strArg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain'
+                        CALL 'public final fun <get-strField2> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val anonymousObj: <root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> [val] declared in <root>.TestClass.testChain.<anonymous>' type=<root>.TestClass.testChain.<anonymous>.<anonymous>.<anonymous>.<no name provided> origin=null
+              block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$testApplyToExtensionReceiver type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass.testChain'
+                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testChain> signature:/TestClass.testChain.<get-testChain>|<get-testChain>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:testChain signature:/TestClass.testChain|{}testChain[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-testChain> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testChain signature:[ /TestClass.testChain|{}testChain[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:testExtensionReceiver type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-testChain>' type=<root>.TestClass origin=null
+  FILE fqName:<root> fileName:/utils.kt
+    FUN name:functionWithLambda signature:/functionWithLambda|functionWithLambda(kotlin.Function1<kotlin.String,kotlin.String>){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun functionWithLambda (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.functionWithLambda' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:functionWithLambda signature:/functionWithLambda|functionWithLambda(kotlin.Function1<StringWrapper,StringWrapper>){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper>) returnType:<root>.StringWrapper
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun functionWithLambda (f: <unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper>): <root>.StringWrapper declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.StringWrapper origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper> declared in <root>.functionWithLambda' type=<unbound IrClassSymbolImpl><<root>.StringWrapper, <root>.StringWrapper> origin=VARIABLE_AS_FUNCTION
+            1: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.StringWrapper' type=<root>.StringWrapper origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:genericFunctionWithLambda signature:/genericFunctionWithLambda|genericFunctionWithLambda(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f:<unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>) returnType:T of <root>.genericFunctionWithLambda
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /genericFunctionWithLambda|genericFunctionWithLambda(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun genericFunctionWithLambda <T> (f: <unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda>): T of <root>.genericFunctionWithLambda declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.genericFunctionWithLambda origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda> declared in <root>.genericFunctionWithLambda' type=<unbound IrClassSymbolImpl><T of <root>.genericFunctionWithLambda> origin=VARIABLE_AS_FUNCTION
+    FUN name:testLet signature:/testLet|testLet@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> ($receiver:T of <root>.testLet, block:<unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>) returnType:R of <root>.testLet [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testLet|testLet@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /testLet|testLet@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.testLet
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testLet <T, R> (block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet>): R of <root>.testLet [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.testLet origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet> declared in <root>.testLet' type=<unbound IrClassSymbolImpl><T of <root>.testLet, R of <root>.testLet> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR '<this>: T of <root>.testLet declared in <root>.testLet' type=T of <root>.testLet origin=null
+    FUN name:testApplyToExtensionReceiver signature:/testApplyToExtensionReceiver|testApplyToExtensionReceiver@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.testApplyToExtensionReceiver, block:@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>>) returnType:T of <root>.testApplyToExtensionReceiver [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testApplyToExtensionReceiver|testApplyToExtensionReceiver@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.testApplyToExtensionReceiver
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>> declared in <root>.testApplyToExtensionReceiver' type=@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR '<this>: T of <root>.testApplyToExtensionReceiver declared in <root>.testApplyToExtensionReceiver' type=T of <root>.testApplyToExtensionReceiver origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testApplyToExtensionReceiver <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToExtensionReceiver, <unbound IrClassSymbolImpl>>): T of <root>.testApplyToExtensionReceiver [inline] declared in <root>'
+          GET_VAR '<this>: T of <root>.testApplyToExtensionReceiver declared in <root>.testApplyToExtensionReceiver' type=T of <root>.testApplyToExtensionReceiver origin=null
+    CLASS CLASS name:StringWrapper signature:/StringWrapper|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringWrapper
+      CONSTRUCTOR signature:/StringWrapper.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.StringWrapper [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringWrapper signature:/StringWrapper|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/StringWrapper.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /StringWrapper.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.StringWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/StringWrapper.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.StringWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/StringWrapper.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /StringWrapper.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.<get-s>' type=<root>.StringWrapper origin=null
+      FUN name:testApplyToDispatchReceiver signature:/StringWrapper.testApplyToDispatchReceiver|testApplyToDispatchReceiver(kotlin.Function1<StringWrapper,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.StringWrapper, block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringWrapper
+        VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>> declared in <root>.StringWrapper.testApplyToDispatchReceiver' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.testApplyToDispatchReceiver' type=<root>.StringWrapper origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun testApplyToDispatchReceiver (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.StringWrapper, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.StringWrapper'
+            CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.StringWrapper' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.StringWrapper declared in <root>.StringWrapper.testApplyToDispatchReceiver' type=<root>.StringWrapper origin=null
+    FUN name:testApplyToArg0 signature:/testApplyToArg0|testApplyToArg0(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (args:T of <root>.testApplyToArg0, block:@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToArg0, <unbound IrClassSymbolImpl>>) returnType:T of <root>.testApplyToArg0 [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testApplyToArg0|testApplyToArg0(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:args index:0 type:T of <root>.testApplyToArg0
+      VALUE_PARAMETER name:block index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToArg0, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToArg0, <unbound IrClassSymbolImpl>> declared in <root>.testApplyToArg0' type=@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToArg0, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR 'args: T of <root>.testApplyToArg0 declared in <root>.testApplyToArg0' type=T of <root>.testApplyToArg0 origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testApplyToArg0 <T> (args: T of <root>.testApplyToArg0, block: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.testApplyToArg0, <unbound IrClassSymbolImpl>>): T of <root>.testApplyToArg0 [inline] declared in <root>'
+          GET_VAR 'args: T of <root>.testApplyToArg0 declared in <root>.testApplyToArg0' type=T of <root>.testApplyToArg0 origin=null

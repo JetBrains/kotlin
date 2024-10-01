@@ -1,0 +1,64 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Node
+
+    public final enum class Node : kotlin/Enum<Node> {
+
+      private constructor(external: kotlin/Boolean, dependsOn: kotlin/collections/Set<Node>, required: kotlin/Boolean)
+
+      public final val dependsOn: kotlin/collections/Set<Node>
+        public final get
+
+      public final val external: kotlin/Boolean
+        public final get
+
+      public final val required: kotlin/Boolean
+        public final get
+
+      A,
+
+      B,
+
+      C,
+
+      D,
+
+      E,
+
+      F,
+
+      G,
+
+      H,
+
+      I,
+
+      J,
+
+      K,
+
+      L,
+
+      M,
+
+      N,
+
+      O,
+
+      AG,
+
+      FIELD_REPORT,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

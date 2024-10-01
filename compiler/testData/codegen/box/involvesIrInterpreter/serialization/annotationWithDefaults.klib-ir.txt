@@ -1,0 +1,147 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS ANNOTATION_CLASS name:IntegerNumberValid signature:/IntegerNumberValid|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntegerNumberValid
+      CONSTRUCTOR signature:/IntegerNumberValid.<init>|<init>(kotlin.String;kotlin.Array<kotlin.reflect.KClass<*>>;kotlin.Long;kotlin.Long;kotlin.LongArray;kotlin.LongArray){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>, groups:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>, minimum:<unbound IrClassSymbolImpl>, maximum:<unbound IrClassSymbolImpl>, minMaxArray:<unbound IrClassSymbolImpl>, minMaxArrayCollection:<unbound IrClassSymbolImpl>) returnType:<root>.IntegerNumberValid [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="Has illegal integer number value"
+        VALUE_PARAMETER name:groups index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> varargElementType=<unbound IrClassSymbolImpl><*>
+        VALUE_PARAMETER name:minimum index:2 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=-9223372036854775808
+        VALUE_PARAMETER name:maximum index:3 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=9223372036854775807
+        VALUE_PARAMETER name:minMaxArray index:4 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Long type=<unbound IrClassSymbolImpl> value=-9223372036854775808
+              CONST Long type=<unbound IrClassSymbolImpl> value=9223372036854775807
+        VALUE_PARAMETER name:minMaxArrayCollection index:5 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Long type=<unbound IrClassSymbolImpl> value=-9223372036854775808
+              CONST Long type=<unbound IrClassSymbolImpl> value=9223372036854775807
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:IntegerNumberValid signature:/IntegerNumberValid|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:message signature:/IntegerNumberValid.message|{}message[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:message signature:[ /IntegerNumberValid.message|{}message[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-message> signature:/IntegerNumberValid.message.<get-message>|<get-message>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntegerNumberValid) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:message signature:/IntegerNumberValid.message|{}message[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntegerNumberValid
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-message> (): <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:message signature:[ /IntegerNumberValid.message|{}message[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntegerNumberValid declared in <root>.IntegerNumberValid.<get-message>' type=<root>.IntegerNumberValid origin=null
+      PROPERTY name:groups signature:/IntegerNumberValid.groups|{}groups[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:groups signature:[ /IntegerNumberValid.groups|{}groups[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'groups: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in <root>.IntegerNumberValid.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-groups> signature:/IntegerNumberValid.groups.<get-groups>|<get-groups>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntegerNumberValid) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          correspondingProperty: PROPERTY name:groups signature:/IntegerNumberValid.groups|{}groups[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntegerNumberValid
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-groups> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in <root>.IntegerNumberValid'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:groups signature:[ /IntegerNumberValid.groups|{}groups[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=null
+                receiver: GET_VAR '<this>: <root>.IntegerNumberValid declared in <root>.IntegerNumberValid.<get-groups>' type=<root>.IntegerNumberValid origin=null
+      PROPERTY name:minimum signature:/IntegerNumberValid.minimum|{}minimum[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:minimum signature:[ /IntegerNumberValid.minimum|{}minimum[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'minimum: <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-minimum> signature:/IntegerNumberValid.minimum.<get-minimum>|<get-minimum>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntegerNumberValid) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:minimum signature:/IntegerNumberValid.minimum|{}minimum[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntegerNumberValid
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-minimum> (): <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:minimum signature:[ /IntegerNumberValid.minimum|{}minimum[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntegerNumberValid declared in <root>.IntegerNumberValid.<get-minimum>' type=<root>.IntegerNumberValid origin=null
+      PROPERTY name:maximum signature:/IntegerNumberValid.maximum|{}maximum[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:maximum signature:[ /IntegerNumberValid.maximum|{}maximum[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'maximum: <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-maximum> signature:/IntegerNumberValid.maximum.<get-maximum>|<get-maximum>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntegerNumberValid) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:maximum signature:/IntegerNumberValid.maximum|{}maximum[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntegerNumberValid
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-maximum> (): <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:maximum signature:[ /IntegerNumberValid.maximum|{}maximum[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntegerNumberValid declared in <root>.IntegerNumberValid.<get-maximum>' type=<root>.IntegerNumberValid origin=null
+      PROPERTY name:minMaxArray signature:/IntegerNumberValid.minMaxArray|{}minMaxArray[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:minMaxArray signature:[ /IntegerNumberValid.minMaxArray|{}minMaxArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'minMaxArray: <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-minMaxArray> signature:/IntegerNumberValid.minMaxArray.<get-minMaxArray>|<get-minMaxArray>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntegerNumberValid) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:minMaxArray signature:/IntegerNumberValid.minMaxArray|{}minMaxArray[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntegerNumberValid
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-minMaxArray> (): <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:minMaxArray signature:[ /IntegerNumberValid.minMaxArray|{}minMaxArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntegerNumberValid declared in <root>.IntegerNumberValid.<get-minMaxArray>' type=<root>.IntegerNumberValid origin=null
+      PROPERTY name:minMaxArrayCollection signature:/IntegerNumberValid.minMaxArrayCollection|{}minMaxArrayCollection[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:minMaxArrayCollection signature:[ /IntegerNumberValid.minMaxArrayCollection|{}minMaxArrayCollection[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'minMaxArrayCollection: <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-minMaxArrayCollection> signature:/IntegerNumberValid.minMaxArrayCollection.<get-minMaxArrayCollection>|<get-minMaxArrayCollection>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntegerNumberValid) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:minMaxArrayCollection signature:/IntegerNumberValid.minMaxArrayCollection|{}minMaxArrayCollection[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntegerNumberValid
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-minMaxArrayCollection> (): <unbound IrClassSymbolImpl> declared in <root>.IntegerNumberValid'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:minMaxArrayCollection signature:[ /IntegerNumberValid.minMaxArrayCollection|{}minMaxArrayCollection[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntegerNumberValid declared in <root>.IntegerNumberValid.<get-minMaxArrayCollection>' type=<root>.IntegerNumberValid origin=null
+    CLASS ANNOTATION_CLASS name:AnnotationWithDefault signature:/AnnotationWithDefault|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AnnotationWithDefault
+      CONSTRUCTOR signature:/AnnotationWithDefault.<init>|<init>(kotlin.String){}[0] visibility:public <> (str:<unbound IrClassSymbolImpl>) returnType:<root>.AnnotationWithDefault [primary]
+        VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="String"
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnotationWithDefault signature:/AnnotationWithDefault|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:str signature:/AnnotationWithDefault.str|{}str[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:str signature:[ /AnnotationWithDefault.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'str: <unbound IrClassSymbolImpl> declared in <root>.AnnotationWithDefault.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> signature:/AnnotationWithDefault.str.<get-str>|<get-str>(){}[0] visibility:public modality:FINAL <> ($this:<root>.AnnotationWithDefault) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:str signature:/AnnotationWithDefault.str|{}str[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.AnnotationWithDefault
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-str> (): <unbound IrClassSymbolImpl> declared in <root>.AnnotationWithDefault'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:str signature:[ /AnnotationWithDefault.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:message type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.AnnotationWithDefault declared in <root>.AnnotationWithDefault.<get-str>' type=<root>.AnnotationWithDefault origin=null
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        AnnotationWithDefault(str = <null>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        AnnotationWithDefault(str = "Other")
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,52 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/pcaRootIsDelegatedConstructorCall.kt
+    CLASS INTERFACE name:Consumer signature:/Consumer|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Consumer<T of <root>.Consumer>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /Consumer|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:buildConsumer signature:/buildConsumer|buildConsumer(kotlin.Function1<Consumer<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:<unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /buildConsumer|buildConsumer(kotlin.Function1<Consumer<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun buildConsumer <T> (block: <unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl>? declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:expectConsumerString signature:/expectConsumerString|expectConsumerString(Consumer<kotlin.String>){}[0] visibility:public modality:FINAL <> (x:<root>.Consumer<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.Consumer<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    CLASS CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(kotlin.Any?){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>?) returnType:<root>.A [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/A.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.A.<init>' type=<unbound IrClassSymbolImpl>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:x signature:/A.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl>? declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-x>' type=<root>.A origin=null
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.A'
+            x: CALL 'public final fun buildConsumer <T> (block: <unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Consumer<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.Consumer<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<root>.Consumer<<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    CALL 'public final fun expectConsumerString (x: <root>.Consumer<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      x: GET_VAR 'it: <root>.Consumer<<unbound IrClassSymbolImpl>> declared in <root>.B.<init>.<anonymous>' type=<root>.Consumer<<unbound IrClassSymbolImpl>> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null

@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: I
+    // class name: I.Companion
+    // class name: IC
+
+    public abstract interface I : kotlin/Any {
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object I.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val default: IC<kotlin/String>
+        public final /* non-default */ get
+    }
+
+    public final value class IC<T#0 /* T */ : kotlin/String> : I {
+
+      public constructor(ok: T#0 /* = ... */)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ok: T#0
+        public final get
+
+      // underlying property: ok
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

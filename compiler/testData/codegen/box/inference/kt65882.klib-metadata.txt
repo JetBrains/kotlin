@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* R */> foo(returnType: kotlin/String): T#0
+
+      public final fun <T#0 /* T */> kotlin/Any?.unsafeCast(): T#0
+    }
+  }
+}

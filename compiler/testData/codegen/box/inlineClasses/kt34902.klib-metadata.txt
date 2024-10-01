@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: OneofField
+    // class name: OneofField.OneofUint32
+
+    public abstract interface OneofField<T#0 /* T */> : kotlin/Any {
+
+      public abstract val name: kotlin/String
+        public abstract get
+
+      public abstract val number: kotlin/Int
+        public abstract get
+
+      public abstract val value: T#0
+        public abstract get
+
+      // nested class: OneofUint32
+    }
+
+    public final data class OneofField.OneofUint32 : OneofField<kotlin/UInt> {
+
+      public constructor(value: kotlin/UInt, number: kotlin/Int /* = ... */, name: kotlin/String /* = ... */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/UInt
+
+      public final /* synthesized */ operator fun component2(): kotlin/Int
+
+      public final /* synthesized */ operator fun component3(): kotlin/String
+
+      public final /* synthesized */ fun copy(value: kotlin/UInt /* = ... */, number: kotlin/Int /* = ... */, name: kotlin/String /* = ... */): OneofField.OneofUint32
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val name: kotlin/String
+        public open get
+
+      public open val number: kotlin/Int
+        public open get
+
+      public open val value: kotlin/UInt
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

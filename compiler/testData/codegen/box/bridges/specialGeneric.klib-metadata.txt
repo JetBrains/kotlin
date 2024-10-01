@@ -1,0 +1,63 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ContainedElement
+    // class name: Element
+    // class name: MySet
+    // class name: NotContainedElement
+
+    public final object ContainedElement : Element {
+
+      private constructor()
+
+      public open val isContained: kotlin/Boolean /* = ... */
+        public open get
+    }
+
+    public abstract interface Element : kotlin/Any {
+
+      public abstract val isContained: kotlin/Boolean
+        public abstract get
+    }
+
+    internal final class MySet<T#0 /* E */ : Element> : kotlin/collections/Set<T#0> {
+
+      public constructor()
+
+      public open operator fun contains(element: T#0): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun hashCode(): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<T#0>
+
+      public open fun toString(): kotlin/String
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final object NotContainedElement : Element {
+
+      private constructor()
+
+      public open val isContained: kotlin/Boolean /* = ... */
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun set(): kotlin/collections/Set<kotlin/Any>
+    }
+  }
+}

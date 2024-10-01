@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AC
+    // class name: I
+    // class name: VC
+
+    public abstract class AC<T#0 /* E */> : I<T#0> {
+
+      public constructor(vc: VC<T#0>)
+
+      public open fun foo(): VC<T#0>
+
+      public final val vc: VC<T#0>
+        public final get
+    }
+
+    public abstract interface I<T#0 /* E */> : kotlin/Any {
+
+      public abstract fun foo(): VC<T#0>
+    }
+
+    @kotlin/jvm/JvmInline
+    public final value class VC<out T#0 /* T */> : kotlin/Any {
+
+      public constructor(holder: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val holder: kotlin/String
+        public final get
+
+      // underlying property: holder
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

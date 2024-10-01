@@ -1,0 +1,48 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/A
+    // class name: lib/B
+    // class name: lib/C
+
+    public abstract interface lib/A : kotlin/Any {
+
+      public abstract fun f(x: kotlin/String /* = ... */): kotlin/String
+    }
+
+    public final class lib/B : lib/A {
+
+      public constructor()
+
+      public open fun f(x: kotlin/String): kotlin/String
+    }
+
+    public final class lib/C : lib/A {
+
+      public constructor(x: lib/A)
+
+      public open /* delegation */ fun f(x: kotlin/String): kotlin/String
+
+      public final val x: lib/A
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

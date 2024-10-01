@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+    CLASS CLASS name:X signature:/X|null[0] modality:FINAL visibility:public superTypes:[<root>.I1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+      CONSTRUCTOR signature:/X.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.X [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X signature:/X|null[0] modality:FINAL visibility:public superTypes:[<root>.I1]'
+      FUN name:f signature:/X.f|f(0:0){0§<kotlin.Any?>}[0] visibility:public modality:OPEN <A> ($this:<root>.X, a:A of <root>.X.f) returnType:A of <root>.X.f
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        TYPE_PARAMETER name:A index:0 variance: signature:[ /X.f|f(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.X
+        VALUE_PARAMETER name:a index:0 type:A of <root>.X.f
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun f <A> (a: A of <root>.X.f): A of <root>.X.f declared in <root>.X'
+            GET_VAR 'a: A of <root>.X.f declared in <root>.X.f' type=A of <root>.X.f origin=null
+    CLASS INTERFACE name:I1 signature:/I1|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
+    CLASS CLASS name:Y signature:/Y|null[0] modality:FINAL visibility:public superTypes:[<root>.I3<B of <root>.Y>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Y<B of <root>.Y>
+      TYPE_PARAMETER name:B index:0 variance: signature:[ /Y|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Y.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Y<B of <root>.Y> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Y signature:/Y|null[0] modality:FINAL visibility:public superTypes:[<root>.I3<B of <root>.Y>]'
+      FUN name:f signature:/Y.f|f(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Y<B of <root>.Y>, b:B of <root>.Y) returnType:B of <root>.Y
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Y<B of <root>.Y>
+        VALUE_PARAMETER name:b index:0 type:B of <root>.Y
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun f (b: B of <root>.Y): B of <root>.Y declared in <root>.Y'
+            GET_VAR 'b: B of <root>.Y declared in <root>.Y.f' type=B of <root>.Y origin=null
+    CLASS INTERFACE name:I3 signature:/I3|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I4<B of <root>.I3>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I3<B of <root>.I3>
+      TYPE_PARAMETER name:B index:0 variance: signature:[ /I3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public open fun f <A> (a: A of <root>.X.f): A of <root>.X.f declared in <root>.X' type=<unbound IrClassSymbolImpl> origin=null
+              <A>: <unbound IrClassSymbolImpl>
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.X' type=<root>.X origin=null
+              a: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CALL 'public open fun f (b: B of <root>.Y): B of <root>.Y declared in <root>.Y' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Y' type=<root>.Y<<unbound IrClassSymbolImpl>> origin=null
+                <class: B>: <unbound IrClassSymbolImpl>
+              b: CONST String type=<unbound IrClassSymbolImpl> value="K"
+  FILE fqName:<root> fileName:/platform.kt
+    CLASS INTERFACE name:I2 signature:/I2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2
+      FUN name:f signature:/I2.f|f(0:0){0§<kotlin.Any?>}[0] visibility:public modality:ABSTRACT <A> ($this:<root>.I2, a:A of <root>.I2.f) returnType:A of <root>.I2.f
+        TYPE_PARAMETER name:A index:0 variance: signature:[ /I2.f|f(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.I2
+        VALUE_PARAMETER name:a index:0 type:A of <root>.I2.f
+    CLASS INTERFACE name:I4 signature:/I4|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I4<B of <root>.I4>
+      TYPE_PARAMETER name:B index:0 variance: signature:[ /I4|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:f signature:/I4.f|f(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I4<B of <root>.I4>, b:B of <root>.I4) returnType:B of <root>.I4
+        $this: VALUE_PARAMETER name:<this> type:<root>.I4<B of <root>.I4>
+        VALUE_PARAMETER name:b index:0 type:B of <root>.I4

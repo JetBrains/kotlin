@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor(foo: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Int>)
+
+      public final val foo: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Int>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(f: kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int
+
+      public final fun test2(f: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int
+    }
+  }
+}

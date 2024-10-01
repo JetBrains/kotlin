@@ -1,0 +1,89 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt9428.kt
+    CLASS CLASS name:Player signature:/Player|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Player
+      CONSTRUCTOR signature:/Player.<init>|<init>(kotlin.String){}[0] visibility:public <> (name:<unbound IrClassSymbolImpl>) returnType:<root>.Player [primary]
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Player signature:/Player|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:name signature:/Player.name|{}name[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:name signature:[ /Player.name|{}name[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.Player.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> signature:/Player.name.<get-name>|<get-name>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Player) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:name signature:/Player.name|{}name[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Player
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-name> (): <unbound IrClassSymbolImpl> declared in <root>.Player'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name signature:[ /Player.name|{}name[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Player declared in <root>.Player.<get-name>' type=<root>.Player origin=null
+    CLASS CLASS name:SlashPlayer signature:/SlashPlayer|null[0] modality:OPEN visibility:public superTypes:[<root>.Player]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SlashPlayer
+      CONSTRUCTOR signature:/SlashPlayer.<init>|<init>(kotlin.String){}[0] visibility:public <> (name:<unbound IrClassSymbolImpl>) returnType:<root>.SlashPlayer [primary]
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (name: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Player'
+            name: GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.SlashPlayer.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SlashPlayer signature:/SlashPlayer|null[0] modality:OPEN visibility:public superTypes:[<root>.Player]'
+    CLASS CLASS name:Game signature:/Game|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Game<T of <root>.Game>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Game|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Player] reified:false] ] superTypes:[<root>.Player] reified:false
+      CONSTRUCTOR signature:/Game.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Game<T of <root>.Game> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Game signature:/Game|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getPlayer signature:/Game.getPlayer|getPlayer(kotlin.String;kotlin.Boolean){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Game<T of <root>.Game>, name:<unbound IrClassSymbolImpl>, create:<unbound IrClassSymbolImpl>) returnType:T of <root>.Game?
+        $this: VALUE_PARAMETER name:<this> type:<root>.Game<T of <root>.Game>
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:create index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:SimpleGame signature:/SimpleGame|null[0] modality:FINAL visibility:public superTypes:[<root>.Game<<root>.SlashPlayer>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SimpleGame
+      CONSTRUCTOR signature:/SimpleGame.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SimpleGame [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Game'
+            <T>: <root>.SlashPlayer
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SimpleGame signature:/SimpleGame|null[0] modality:FINAL visibility:public superTypes:[<root>.Game<<root>.SlashPlayer>]'
+      FUN name:getPlayer signature:/SimpleGame.getPlayer|getPlayer(kotlin.String;kotlin.Boolean){}[0] visibility:public modality:OPEN <> ($this:<root>.SimpleGame, name:<unbound IrClassSymbolImpl>, create:<unbound IrClassSymbolImpl>) returnType:<root>.SlashPlayer?
+        overridden:
+          public abstract fun getPlayer (name: <unbound IrClassSymbolImpl>, create: <unbound IrClassSymbolImpl>): T of <root>.Game? declared in <root>.Game
+        $this: VALUE_PARAMETER name:<this> type:<root>.SimpleGame
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:create index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getPlayer (name: <unbound IrClassSymbolImpl>, create: <unbound IrClassSymbolImpl>): <root>.SlashPlayer? declared in <root>.SimpleGame'
+            WHEN type=<root>.SlashPlayer? origin=IF
+              BRANCH
+                if: GET_VAR 'create: <unbound IrClassSymbolImpl> declared in <root>.SimpleGame.getPlayer' type=<unbound IrClassSymbolImpl> origin=null
+                then: BLOCK type=<root>.SlashPlayer origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> (name: <unbound IrClassSymbolImpl>) [primary] declared in <root>.SlashPlayer' type=<root>.SlashPlayer origin=null
+                    name: GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.SimpleGame.getPlayer' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:player1 type:<root>.SlashPlayer? [val]
+          CALL 'public open fun getPlayer (name: <unbound IrClassSymbolImpl>, create: <unbound IrClassSymbolImpl>): <root>.SlashPlayer? declared in <root>.SimpleGame' type=<root>.SlashPlayer? origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SimpleGame' type=<root>.SimpleGame origin=null
+            name: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+            create: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val player1: <root>.SlashPlayer? [val] declared in <root>.box' type=<root>.SlashPlayer? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        VAR name:player2 type:<root>.SlashPlayer? [val]
+          CALL 'public open fun getPlayer (name: <unbound IrClassSymbolImpl>, create: <unbound IrClassSymbolImpl>): <root>.SlashPlayer? declared in <root>.SimpleGame' type=<root>.SlashPlayer? origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SimpleGame' type=<root>.SimpleGame origin=null
+            name: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.SlashPlayer origin=EXCLEXCL
+              <T0>: <root>.SlashPlayer
+              arg0: GET_VAR 'val player2: <root>.SlashPlayer? [val] declared in <root>.box' type=<root>.SlashPlayer? origin=null

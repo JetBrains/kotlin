@@ -1,0 +1,47 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/manyTypeArguments.kt
+    CLASS INTERFACE name:I1 signature:test/I1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I1
+    CLASS INTERFACE name:I2 signature:test/I2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I2
+    CLASS INTERFACE name:I3 signature:test/I3|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I3
+    CLASS INTERFACE name:I4 signature:test/I4|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I4
+    CLASS INTERFACE name:I5 signature:test/I5|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I5
+    CLASS INTERFACE name:I6 signature:test/I6|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I6
+    CLASS INTERFACE name:I7 signature:test/I7|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.I7
+    CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C<T1 of test.C, T2 of test.C, T3 of test.C, T4 of test.C, T5 of test.C, T6 of test.C, T7 of test.C>
+      TYPE_PARAMETER name:T1 index:0 variance: signature:[ test/C|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T2 index:1 variance: signature:[ test/C|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T3 index:2 variance: signature:[ test/C|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:T3 index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T4 index:3 variance: signature:[ test/C|null[0] <- Local[<TP>,3|TYPE_PARAMETER name:T4 index:3 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T5 index:4 variance: signature:[ test/C|null[0] <- Local[<TP>,4|TYPE_PARAMETER name:T5 index:4 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T6 index:5 variance: signature:[ test/C|null[0] <- Local[<TP>,5|TYPE_PARAMETER name:T6 index:5 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T7 index:6 variance: signature:[ test/C|null[0] <- Local[<TP>,6|TYPE_PARAMETER name:T7 index:6 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/C.<init>|<init>(){}[0] visibility:public <> () returnType:test.C<T1 of test.C, T2 of test.C, T3 of test.C, T4 of test.C, T5 of test.C, T6 of test.C, T7 of test.C> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="test.C<test.I1, test.I2, test.I3?, in test.I4, out test.I5, test.I6, test.I7?>"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: test.C<test.I1, test.I2, test.I3?, in test.I4, out test.I5, test.I6, test.I7?>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="test.C<out test.I1, test.I2?, test.I3, test.I4, test.I5, test.I6?, in test.I7>?"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: test.C<out test.I1, test.I2?, test.I3, test.I4, test.I5, test.I6?, in test.I7>?
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

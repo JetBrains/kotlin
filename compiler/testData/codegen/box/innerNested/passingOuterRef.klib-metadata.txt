@@ -1,0 +1,92 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A1
+    // class name: A2
+    // class name: A2.B1
+    // class name: A2.B2
+    // class name: A2.B3
+    // class name: A3
+    // class name: A3.B1
+    // class name: A3.B2
+    // class name: A3.B3
+
+    public open class A1 : kotlin/Any {
+
+      public constructor(y: kotlin/String)
+
+      public final val x: kotlin/String
+        public final get
+    }
+
+    public open class A2 : kotlin/Any {
+
+      public constructor(y: kotlin/String)
+
+      public final fun foo(): kotlin/String
+
+      public final val x: kotlin/String
+        public final get
+
+      // nested class: B1
+
+      // nested class: B2
+
+      // nested class: B3
+    }
+
+    public open inner class A2.B1 : A1 {
+
+      public /* secondary */ constructor(p: kotlin/String)
+    }
+
+    public open inner class A2.B2 : A2 {
+
+      public /* secondary */ constructor(p: kotlin/String)
+    }
+
+    public final inner class A2.B3 : A2.B1 {
+
+      public /* secondary */ constructor(p: kotlin/String)
+    }
+
+    public open class A3 : kotlin/Any {
+
+      public constructor(y: kotlin/String)
+
+      public final fun foo(): kotlin/String
+
+      public final val x: kotlin/String
+        public final get
+
+      // nested class: B1
+
+      // nested class: B2
+
+      // nested class: B3
+    }
+
+    public open inner class A3.B1 : A1 {
+
+      public constructor(p: kotlin/String)
+    }
+
+    public open inner class A3.B2 : A3 {
+
+      public constructor(p: kotlin/String)
+    }
+
+    public final inner class A3.B3 : A3.B1 {
+
+      public constructor(p: kotlin/String)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

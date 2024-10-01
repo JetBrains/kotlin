@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt49834.kt
+    FUN name:getValue signature:/getValue|getValue(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:computeValue signature:/computeValue|computeValue(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun computeValue (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+    FUN name:repro signature:/repro|repro(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        VAR name:value type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'public final fun getValue (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun repro (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val value: <unbound IrClassSymbolImpl>? [val] declared in <root>.repro' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun computeValue (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  GET_VAR 'val value: <unbound IrClassSymbolImpl>? [val] declared in <root>.repro' type=<unbound IrClassSymbolImpl>? origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

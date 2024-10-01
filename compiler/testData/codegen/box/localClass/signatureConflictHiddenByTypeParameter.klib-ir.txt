@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/signatureConflictHiddenByTypeParameter.kt
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:f signature:/A.f|f(0:0){0§<kotlin.Any?>}[0] visibility:public modality:OPEN <T> ($this:<root>.A, x:T of <root>.A.f) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /A.f|f(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:x index:0 type:T of <root>.A.f
+        BLOCK_BODY
+          CLASS CLASS name:B modality:FINAL visibility:local superTypes:[<root>.A]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.f.B<T of <root>.A.f>
+            CONSTRUCTOR visibility:public <> () returnType:<root>.A.f.B<T of <root>.A.f> [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:local superTypes:[<root>.A]'
+            FUN name:f visibility:public modality:OPEN <S> ($this:<root>.A.f.B<T of <root>.A.f>, x:T of <root>.A.f) returnType:<unbound IrClassSymbolImpl>
+              TYPE_PARAMETER name:S index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+              $this: VALUE_PARAMETER name:<this> type:<root>.A.f.B<T of <root>.A.f>
+              VALUE_PARAMETER name:x index:0 type:T of <root>.A.f
+              BLOCK_BODY
+                CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                  <set-?>: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: T of <root>.A.f declared in <root>.A.f.B.f' type=T of <root>.A.f origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun f <T> (x: T of <root>.A.f): <unbound IrClassSymbolImpl> declared in <root>.A'
+            CALL 'public open fun f <S> (x: T of <root>.A.f): <unbound IrClassSymbolImpl> declared in <root>.A.f.B' type=<unbound IrClassSymbolImpl> origin=null
+              <S>: T of <root>.A.f
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.f.B' type=<root>.A.f.B<T of <root>.A.f> origin=null
+              x: GET_VAR 'x: T of <root>.A.f declared in <root>.A.f' type=T of <root>.A.f origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public open fun f <T> (x: T of <root>.A.f): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          x: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

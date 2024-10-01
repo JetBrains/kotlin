@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getOrElse(): kotlin/Int
+
+      public final fun isNotEmpty(l: kotlin/collections/ArrayList<kotlin/Int>): kotlin/Boolean
+    }
+  }
+}

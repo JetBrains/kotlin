@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Nesting
+    // class name: test/One
+    // class name: test/Two
+    // class name: test/WithKClass
+
+    public final annotation class test/Nesting : kotlin/Annotation {
+
+      public constructor(a1: test/One<kotlin/Int> /* = ... */, a2: test/Two<kotlin/String, kotlin/collections/List<kotlin/String>> /* = ... */)
+
+      public final val a1: test/One<kotlin/Int>
+        public final get
+
+      public final val a2: test/Two<kotlin/String, kotlin/collections/List<kotlin/String>>
+        public final get
+    }
+
+    public final annotation class test/One<T#0 /* T */> : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final annotation class test/Two<T#0 /* K */, T#1 /* V */> : kotlin/Annotation {
+
+      public constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    public final annotation class test/WithKClass<T#0 /* K */ : kotlin/Any> : kotlin/Annotation {
+
+      public constructor(k: kotlin/reflect/KClass<T#0>)
+
+      public final val k: kotlin/reflect/KClass<T#0>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,246 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/safeCallRangeTo.kt
+    FUN name:charRange signature:/charRange|charRange(kotlin.Char?;kotlin.Char){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun charRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.charRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.charRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.charRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.charRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:byteRange signature:/byteRange|byteRange(kotlin.Byte?;kotlin.Byte){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun byteRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.byteRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.byteRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.byteRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.byteRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:shortRange signature:/shortRange|shortRange(kotlin.Short?;kotlin.Short){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shortRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.shortRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.shortRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.shortRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.shortRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:intRange signature:/intRange|intRange(kotlin.Int?;kotlin.Int){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.intRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.intRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.intRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.intRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:longRange signature:/longRange|longRange(kotlin.Long?;kotlin.Long){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.longRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.longRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.longRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.longRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:floatRange signature:/floatRange|floatRange(kotlin.Float?;kotlin.Float){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun floatRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.floatRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.floatRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.floatRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.floatRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:dougleRange signature:/dougleRange|dougleRange(kotlin.Double?;kotlin.Double){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun dougleRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.dougleRange' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.dougleRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.dougleRange' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.dougleRange' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testSafeRange signature:/testSafeRange|testSafeRange(0:0;0:0;kotlin.String;kotlin.Function2<0:0?,0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> (x:T of <root>.testSafeRange, y:T of <root>.testSafeRange, expectStr:<unbound IrClassSymbolImpl>, safeRange:<unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testSafeRange|testSafeRange(0:0;0:0;kotlin.String;kotlin.Function2<0:0?,0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /testSafeRange|testSafeRange(0:0;0:0;kotlin.String;kotlin.Function2<0:0?,0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.testSafeRange
+      VALUE_PARAMETER name:y index:1 type:T of <root>.testSafeRange
+      VALUE_PARAMETER name:expectStr index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:safeRange index:3 type:<unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>
+      BLOCK_BODY
+        VAR name:rNull type:R of <root>.testSafeRange? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.testSafeRange? origin=INVOKE
+            $this: GET_VAR 'safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?> declared in <root>.testSafeRange' type=<unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?> origin=VARIABLE_AS_FUNCTION
+            1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            2: GET_VAR 'y: T of <root>.testSafeRange declared in <root>.testSafeRange' type=T of <root>.testSafeRange origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'val rNull: R of <root>.testSafeRange? [val] declared in <root>.testSafeRange' type=R of <root>.testSafeRange? origin=null
+            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.testSafeRange'
+                  STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                      $this: CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: signature:[ /testSafeRange|testSafeRange(0:0;0:0;kotlin.String;kotlin.Function2<0:0?,0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><T of <root>.testSafeRange>
+                    CONST String type=<unbound IrClassSymbolImpl> value=": Expected: null, got "
+                    GET_VAR 'val rNull: R of <root>.testSafeRange? [val] declared in <root>.testSafeRange' type=R of <root>.testSafeRange? origin=null
+        VAR name:rxy type:R of <root>.testSafeRange? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.testSafeRange? origin=INVOKE
+            $this: GET_VAR 'safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?> declared in <root>.testSafeRange' type=<unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'x: T of <root>.testSafeRange declared in <root>.testSafeRange' type=T of <root>.testSafeRange origin=null
+            2: GET_VAR 'y: T of <root>.testSafeRange declared in <root>.testSafeRange' type=T of <root>.testSafeRange origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:R of <root>.testSafeRange? [val]
+                GET_VAR 'val rxy: R of <root>.testSafeRange? [val] declared in <root>.testSafeRange' type=R of <root>.testSafeRange? origin=null
+              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_safe_receiver: R of <root>.testSafeRange? [val] declared in <root>.testSafeRange' type=R of <root>.testSafeRange? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tmp0_safe_receiver: R of <root>.testSafeRange? [val] declared in <root>.testSafeRange' type=R of <root>.testSafeRange? origin=null
+            arg1: GET_VAR 'expectStr: <unbound IrClassSymbolImpl> declared in <root>.testSafeRange' type=<unbound IrClassSymbolImpl> origin=null
+          2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.testSafeRange'
+                  STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                      $this: CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: signature:[ /testSafeRange|testSafeRange(0:0;0:0;kotlin.String;kotlin.Function2<0:0?,0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><T of <root>.testSafeRange>
+                    CONST String type=<unbound IrClassSymbolImpl> value=": Expected: "
+                    GET_VAR 'expectStr: <unbound IrClassSymbolImpl> declared in <root>.testSafeRange' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=", got "
+                    GET_VAR 'val rxy: R of <root>.testSafeRange? [val] declared in <root>.testSafeRange' type=R of <root>.testSafeRange? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST Char type=<unbound IrClassSymbolImpl> value='0'
+          y: CONST Char type=<unbound IrClassSymbolImpl> value='1'
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0..1"
+          safeRange: FUNCTION_REFERENCE 'public final fun charRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST Byte type=<unbound IrClassSymbolImpl> value=0
+          y: CONST Byte type=<unbound IrClassSymbolImpl> value=1
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0..1"
+          safeRange: FUNCTION_REFERENCE 'public final fun byteRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST Short type=<unbound IrClassSymbolImpl> value=0
+          y: CONST Short type=<unbound IrClassSymbolImpl> value=1
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0..1"
+          safeRange: FUNCTION_REFERENCE 'public final fun shortRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0..1"
+          safeRange: FUNCTION_REFERENCE 'public final fun intRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          y: CONST Long type=<unbound IrClassSymbolImpl> value=1
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0..1"
+          safeRange: FUNCTION_REFERENCE 'public final fun longRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          x: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+          y: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0.0..1.0"
+          safeRange: FUNCTION_REFERENCE 'public final fun floatRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> origin=null reflectionTarget=<same>
+        CALL 'public final fun testSafeRange <T, R> (x: T of <root>.testSafeRange, y: T of <root>.testSafeRange, expectStr: <unbound IrClassSymbolImpl>, safeRange: <unbound IrClassSymbolImpl><T of <root>.testSafeRange?, T of <root>.testSafeRange, R of <root>.testSafeRange?>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          x: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+          y: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+          expectStr: CONST String type=<unbound IrClassSymbolImpl> value="0.0..1.0"
+          safeRange: FUNCTION_REFERENCE 'public final fun dougleRange (x: <unbound IrClassSymbolImpl>?, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> origin=null reflectionTarget=<same>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

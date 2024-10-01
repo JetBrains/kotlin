@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Runnable
+    // class name: SomeClass
+
+    public abstract interface Runnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    public final object SomeClass : kotlin/Any {
+
+      private constructor()
+
+      private final fun foo(): kotlin/Unit
+
+      public final fun run(): kotlin/Unit
+
+      private final val work: kotlin/Any
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

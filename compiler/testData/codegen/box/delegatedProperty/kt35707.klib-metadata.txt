@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: PropertyDelegate
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ val b: kotlin/Boolean
+        public final /* non-default */ get
+    }
+
+    public abstract interface PropertyDelegate : kotlin/Any {
+
+      public open operator fun getValue(thisRef: A, property: kotlin/reflect/KProperty<*>): kotlin/Boolean
+
+      public open operator fun setValue(thisRef: A, property: kotlin/reflect/KProperty<*>, value: kotlin/Boolean): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

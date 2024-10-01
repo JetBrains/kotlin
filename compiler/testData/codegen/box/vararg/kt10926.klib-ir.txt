@@ -1,0 +1,605 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt10926.kt
+    CLASS CLASS name:AllCollection signature:/AllCollection|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /AllCollection|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/AllCollection.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AllCollection<T of <root>.AllCollection> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AllCollection signature:/AllCollection|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:addAll1 signature:/AllCollection.addAll1|addAll1(kotlin.Array<out|1:0>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection> varargElementType:T of <root>.AllCollection [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll1 (vararg values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll1 signature:/AllCollection.addAll1|addAll1(kotlin.collections.Iterable<out|1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll1 (values: <unbound IrClassSymbolImpl><out T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll2 signature:/AllCollection.addAll2|addAll2(kotlin.Array<out|kotlin.Any>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll2 (vararg values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll2 signature:/AllCollection.addAll2|addAll2(kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll2 (values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll3 signature:/AllCollection.addAll3|addAll3(kotlin.Array<out|1:0>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection> varargElementType:T of <root>.AllCollection [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll3 (vararg values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll3 signature:/AllCollection.addAll3|addAll3(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:T of <root>.AllCollection) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:T of <root>.AllCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll3 (values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll4 signature:/AllCollection.addAll4|addAll4(kotlin.Array<out|1:0>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection> varargElementType:T of <root>.AllCollection [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll4 (vararg values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll4 signature:/AllCollection.addAll4|addAll4(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll4 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll5 signature:/AllCollection.addAll5|addAll5(kotlin.Array<out|kotlin.Any>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll5 (vararg values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll5 signature:/AllCollection.addAll5|addAll5(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll5 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll6 signature:/AllCollection.addAll6|addAll6(kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll6 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll6 signature:/AllCollection.addAll6|addAll6(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll6 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll7 signature:/AllCollection.addAll7|addAll7(kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll7 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll7 signature:/AllCollection.addAll7|addAll7(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:T of <root>.AllCollection) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:T of <root>.AllCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll7 (values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll8 signature:/AllCollection.addAll8|addAll8(kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll8 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll8 signature:/AllCollection.addAll8|addAll8(kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll8 (values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll9 signature:/AllCollection.addAll9|addAll9(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll9 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll9 signature:/AllCollection.addAll9|addAll9(kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll9 (values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll10 signature:/AllCollection.addAll10|addAll10(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll10 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll10 signature:/AllCollection.addAll10|addAll10(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:T of <root>.AllCollection) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:T of <root>.AllCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll10 (values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll11 signature:/AllCollection.addAll11|addAll11(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll11 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll11 signature:/AllCollection.addAll11|addAll11(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll11 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll12 signature:/AllCollection.addAll12|addAll12(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll12 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll12 signature:/AllCollection.addAll12|addAll12(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll12 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll13 signature:/AllCollection.addAll13|addAll13(kotlin.Array<out|kotlin.Any>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll13 (vararg values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll13 signature:/AllCollection.addAll13|addAll13(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll13 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll14 signature:/AllCollection.addAll14|addAll14(kotlin.Array<out|1:0>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection> varargElementType:T of <root>.AllCollection [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll14 (vararg values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll14 signature:/AllCollection.addAll14|addAll14(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll14 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll15 signature:/AllCollection.addAll15|addAll15(kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll15 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll15 signature:/AllCollection.addAll15|addAll15(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll15 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll16 signature:/AllCollection.addAll16|addAll16(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll16 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll16 signature:/AllCollection.addAll16|addAll16(kotlin.collections.Collection<kotlin.String>;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll16 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll17 signature:/AllCollection.addAll17|addAll17(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll17 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll17 signature:/AllCollection.addAll17|addAll17(kotlin.collections.Collection<1:0>;kotlin.collections.Collection<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><T of <root>.AllCollection>, values2:<unbound IrClassSymbolImpl><T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll17 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>, values2: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll18 signature:/AllCollection.addAll18|addAll18(kotlin.Array<out|kotlin.Any>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll18 (vararg values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll18 signature:/AllCollection.addAll18|addAll18(kotlin.collections.Collection<kotlin.String>;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll18 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll19 signature:/AllCollection.addAll19|addAll19(kotlin.Array<out|1:0>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection> varargElementType:T of <root>.AllCollection [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll19 (vararg values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll19 signature:/AllCollection.addAll19|addAll19(kotlin.collections.Collection<kotlin.String>;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll19 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll20 signature:/AllCollection.addAll20|addAll20(kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll20 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll20 signature:/AllCollection.addAll20|addAll20(kotlin.collections.Collection<kotlin.String>;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll20 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll21 signature:/AllCollection.addAll21|addAll21(kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll21 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll21 signature:/AllCollection.addAll21|addAll21(kotlin.collections.Collection<kotlin.String>;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll21 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll22 signature:/AllCollection.addAll22|addAll22(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll22 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll22 signature:/AllCollection.addAll22|addAll22(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl>, values2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll22 (values: <unbound IrClassSymbolImpl>, values2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll23 signature:/AllCollection.addAll23|addAll23(kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll23 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll23 signature:/AllCollection.addAll23|addAll23(1:0;1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:T of <root>.AllCollection, values2:T of <root>.AllCollection) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:T of <root>.AllCollection
+        VALUE_PARAMETER name:values2 index:1 type:T of <root>.AllCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll23 (values: T of <root>.AllCollection, values2: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll24 signature:/AllCollection.addAll24|addAll24(kotlin.collections.Collection<1:0>;kotlin.Array<out|kotlin.collections.Collection<1:0>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><T of <root>.AllCollection>, values2:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><T of <root>.AllCollection>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><T of <root>.AllCollection>> varargElementType:<unbound IrClassSymbolImpl><T of <root>.AllCollection> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll24 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>, vararg values2: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll24 signature:/AllCollection.addAll24|addAll24(kotlin.collections.Collection<kotlin.String>;kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll24 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll25 signature:/AllCollection.addAll25|addAll25(kotlin.collections.Collection<kotlin.String>;kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll25 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, vararg values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll25 signature:/AllCollection.addAll25|addAll25(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl>, values2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll25 (values: <unbound IrClassSymbolImpl>, values2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll26 signature:/AllCollection.addAll26|addAll26(kotlin.collections.Collection<kotlin.String>;kotlin.Array<out|kotlin.collections.Collection<kotlin.String>>...){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll26 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, vararg values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:addAll26 signature:/AllCollection.addAll26|addAll26(1:0;1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:T of <root>.AllCollection, values2:T of <root>.AllCollection) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:T of <root>.AllCollection
+        VALUE_PARAMETER name:values2 index:1 type:T of <root>.AllCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll26 (values: T of <root>.AllCollection, values2: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll28 signature:/AllCollection.addAll28|addAll28(kotlin.Array<out|0:1>...;0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <K, T> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:<unbound IrClassSymbolImpl><out T of <root>.AllCollection.addAll28>, values2:K of <root>.AllCollection.addAll28) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:K index:0 variance: signature:[ /AllCollection.addAll28|addAll28(kotlin.Array<out|0:1>...;0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:T index:1 variance: signature:[ /AllCollection.addAll28|addAll28(kotlin.Array<out|0:1>...;0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection.addAll28> varargElementType:T of <root>.AllCollection.addAll28 [vararg]
+        VALUE_PARAMETER name:values2 index:1 type:K of <root>.AllCollection.addAll28
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll28 <K, T> (vararg values: T of <root>.AllCollection.addAll28, values2: K of <root>.AllCollection.addAll28): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+      FUN name:addAll28 signature:/AllCollection.addAll28|addAll28(0:0;kotlin.Array<out|0:1>...){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <K, T> ($this:<root>.AllCollection<T of <root>.AllCollection>, values:K of <root>.AllCollection.addAll28, values2:<unbound IrClassSymbolImpl><out T of <root>.AllCollection.addAll28>) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:K index:0 variance: signature:[ /AllCollection.addAll28|addAll28(0:0;kotlin.Array<out|0:1>...){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:T index:1 variance: signature:[ /AllCollection.addAll28|addAll28(0:0;kotlin.Array<out|0:1>...){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.AllCollection<T of <root>.AllCollection>
+        VALUE_PARAMETER name:values index:0 type:K of <root>.AllCollection.addAll28
+        VALUE_PARAMETER name:values2 index:1 type:<unbound IrClassSymbolImpl><out T of <root>.AllCollection.addAll28> varargElementType:T of <root>.AllCollection.addAll28 [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun addAll28 <K, T> (values: K of <root>.AllCollection.addAll28, vararg values2: T of <root>.AllCollection.addAll28): <unbound IrClassSymbolImpl> declared in <root>.AllCollection'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:<root>.AllCollection<<unbound IrClassSymbolImpl>?> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AllCollection' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>?
+        VAR name:x1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll1 (values: <unbound IrClassSymbolImpl><out T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll2 (values: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll3 (values: T of <root>.AllCollection): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll4 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x5 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll5 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x6 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll6 (values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x7 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll7 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x8 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll8 (vararg values: <unbound IrClassSymbolImpl><T of <root>.AllCollection>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x9 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll9 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x10 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll10 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x11 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll11 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x12 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll12 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x13 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll13 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x14 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll14 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x15 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll15 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x16 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll16 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x17 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll17 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x18 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll18 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x19 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll19 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x20 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll20 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x21 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll21 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x22 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll22 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x23 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll23 (vararg values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x24 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll24 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x25 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll25 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, vararg values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:x26 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun addAll26 (values: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, vararg values2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.AllCollection' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.AllCollection<<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<root>.AllCollection<<unbound IrClassSymbolImpl>?> origin=null
+            values: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            values2: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:all type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              GET_VAR 'val x1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x5: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x6: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x7: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x8: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x9: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x10: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x11: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x12: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x13: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x14: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x15: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x16: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x17: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x18: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x19: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x20: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x21: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x22: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x23: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x24: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x25: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val x26: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                $receiver: GET_VAR 'val all: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                        CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="NOK"

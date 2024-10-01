@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(o: kotlin/String): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> mrun(noinline block: kotlin/Function0<T#0>): T#0
+
+      public final inline fun <T#0 /* T */> mrunTwice(block: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

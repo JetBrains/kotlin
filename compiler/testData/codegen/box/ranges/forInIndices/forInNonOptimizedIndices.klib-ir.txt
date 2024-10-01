@@ -1,0 +1,69 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/forInNonOptimizedIndices.kt
+    FUN name:sumIndices signature:/sumIndices|sumIndices(kotlin.collections.Collection<*>?){}[0] visibility:public modality:FINAL <> (coll:<unbound IrClassSymbolImpl><*>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:coll index:0 type:<unbound IrClassSymbolImpl><*>?
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                  BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl><*>? [val]
+                      GET_VAR 'coll: <unbound IrClassSymbolImpl><*>? declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl><*>? origin=null
+                    WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl><*>? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl><*>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun sumIndices (coll: <unbound IrClassSymbolImpl><*>?): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl>? origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun sumIndices (coll: <unbound IrClassSymbolImpl><*>?): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.sumIndices' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+          2: CALL 'public final fun sumIndices (coll: <unbound IrClassSymbolImpl><*>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            coll: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'public final fun sumIndices (coll: <unbound IrClassSymbolImpl><*>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            coll: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

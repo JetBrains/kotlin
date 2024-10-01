@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun byteRange(x: kotlin/Byte?, y: kotlin/Byte): kotlin/ranges/IntRange?
+
+      public final fun charRange(x: kotlin/Char?, y: kotlin/Char): kotlin/ranges/CharRange?
+
+      public final fun dougleRange(x: kotlin/Double?, y: kotlin/Double): kotlin/ranges/ClosedFloatingPointRange<kotlin/Double>?
+
+      public final fun floatRange(x: kotlin/Float?, y: kotlin/Float): kotlin/ranges/ClosedFloatingPointRange<kotlin/Float>?
+
+      public final fun intRange(x: kotlin/Int?, y: kotlin/Int): kotlin/ranges/IntRange?
+
+      public final fun longRange(x: kotlin/Long?, y: kotlin/Long): kotlin/ranges/LongRange?
+
+      public final fun shortRange(x: kotlin/Short?, y: kotlin/Short): kotlin/ranges/IntRange?
+
+      public final inline fun <reified T#0 /* T */, T#1 /* R */> testSafeRange(x: T#0, y: T#0, expectStr: kotlin/String, safeRange: kotlin/Function2<T#0?, T#0, T#1?>): kotlin/Unit
+    }
+  }
+}

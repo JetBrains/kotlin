@@ -1,0 +1,246 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt17588.kt
+    CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Style signature:/Test.Style|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.Style
+        CONSTRUCTOR signature:/Test.Style.<init>|<init>(kotlin.Int?;kotlin.Boolean?;kotlin.String){}[0] visibility:public <> (color:<unbound IrClassSymbolImpl>?, underlined:<unbound IrClassSymbolImpl>?, separator:<unbound IrClassSymbolImpl>) returnType:<root>.Test.Style [primary]
+          VALUE_PARAMETER name:color index:0 type:<unbound IrClassSymbolImpl>?
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          VALUE_PARAMETER name:underlined index:1 type:<unbound IrClassSymbolImpl>?
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          VALUE_PARAMETER name:separator index:2 type:<unbound IrClassSymbolImpl>
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value=""
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Style signature:/Test.Style|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:color signature:/Test.Style.color|{}color[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'color: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.<init>' type=<unbound IrClassSymbolImpl>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-color> signature:/Test.Style.color.<get-color>|<get-color>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:color signature:/Test.Style.color|{}color[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-color> (): <unbound IrClassSymbolImpl>? declared in <root>.Test.Style'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.<get-color>' type=<root>.Test.Style origin=null
+        PROPERTY name:underlined signature:/Test.Style.underlined|{}underlined[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'underlined: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.<init>' type=<unbound IrClassSymbolImpl>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-underlined> signature:/Test.Style.underlined.<get-underlined>|<get-underlined>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:underlined signature:/Test.Style.underlined|{}underlined[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-underlined> (): <unbound IrClassSymbolImpl>? declared in <root>.Test.Style'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.<get-underlined>' type=<root>.Test.Style origin=null
+        PROPERTY name:separator signature:/Test.Style.separator|{}separator[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'separator: <unbound IrClassSymbolImpl> declared in <root>.Test.Style.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-separator> signature:/Test.Style.separator.<get-separator>|<get-separator>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:separator signature:/Test.Style.separator|{}separator[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-separator> (): <unbound IrClassSymbolImpl> declared in <root>.Test.Style'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.<get-separator>' type=<root>.Test.Style origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/Test.Style.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>? [operator]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl>? [operator] declared in <root>.Test.Style'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.component1' type=<root>.Test.Style origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:component2 signature:/Test.Style.component2|component2(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>? [operator]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun component2 (): <unbound IrClassSymbolImpl>? [operator] declared in <root>.Test.Style'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.component2' type=<root>.Test.Style origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:component3 signature:/Test.Style.component3|component3(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl> [operator]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun component3 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.component3' type=<root>.Test.Style origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/Test.Style.copy|copy(kotlin.Int?;kotlin.Boolean?;kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Style, color:<unbound IrClassSymbolImpl>?, underlined:<unbound IrClassSymbolImpl>?, separator:<unbound IrClassSymbolImpl>) returnType:<root>.Test.Style
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          VALUE_PARAMETER name:color index:0 type:<unbound IrClassSymbolImpl>?
+            EXPRESSION_BODY
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.copy' type=<root>.Test.Style origin=null
+          VALUE_PARAMETER name:underlined index:1 type:<unbound IrClassSymbolImpl>?
+            EXPRESSION_BODY
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.copy' type=<root>.Test.Style origin=null
+          VALUE_PARAMETER name:separator index:2 type:<unbound IrClassSymbolImpl>
+            EXPRESSION_BODY
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.copy' type=<root>.Test.Style origin=null
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (color: <unbound IrClassSymbolImpl>?, underlined: <unbound IrClassSymbolImpl>?, separator: <unbound IrClassSymbolImpl>): <root>.Test.Style declared in <root>.Test.Style'
+              CONSTRUCTOR_CALL 'public constructor <init> (color: <unbound IrClassSymbolImpl>?, underlined: <unbound IrClassSymbolImpl>?, separator: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Test.Style' type=<root>.Test.Style origin=null
+                color: GET_VAR 'color: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.copy' type=<unbound IrClassSymbolImpl>? origin=null
+                underlined: GET_VAR 'underlined: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.copy' type=<unbound IrClassSymbolImpl>? origin=null
+                separator: GET_VAR 'separator: <unbound IrClassSymbolImpl> declared in <root>.Test.Style.copy' type=<unbound IrClassSymbolImpl> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/Test.Style.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Test.Style'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Style("
+                CONST String type=<unbound IrClassSymbolImpl> value="color="
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.toString' type=<root>.Test.Style origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=", "
+                CONST String type=<unbound IrClassSymbolImpl> value="underlined="
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.toString' type=<root>.Test.Style origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=", "
+                CONST String type=<unbound IrClassSymbolImpl> value="separator="
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.toString' type=<root>.Test.Style origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=")"
+        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/Test.Style.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Test.Style) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          BLOCK_BODY
+            VAR name:result type:<unbound IrClassSymbolImpl> [var]
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                      receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.hashCode' type=<root>.Test.Style origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                      receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.hashCode' type=<root>.Test.Style origin=null
+            SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Test.Style.hashCode' type=<unbound IrClassSymbolImpl> origin=EQ
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Test.Style.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=31
+                1: WHEN type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                        receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.hashCode' type=<root>.Test.Style origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                        receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.hashCode' type=<root>.Test.Style origin=null
+            SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Test.Style.hashCode' type=<unbound IrClassSymbolImpl> origin=EQ
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Test.Style.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=31
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.hashCode' type=<root>.Test.Style origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Test.Style'
+              GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.Test.Style.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/Test.Style.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Test.Style, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Style
+          VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                  arg0: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                  arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Test.Style
+                  GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Test.Style [val]
+              TYPE_OP type=<root>.Test.Style origin=CAST typeOperand=<root>.Test.Style
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Test.Style.equals' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                      receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                    arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:color signature:[ /Test.Style.color|{}color[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                      receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test.Style [val] declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                      receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                    arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:underlined signature:[ /Test.Style.underlined|{}underlined[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                      receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test.Style [val] declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: <root>.Test.Style declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                    arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:separator signature:[ /Test.Style.separator|{}separator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:color type:kotlin.Int? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test.Style [val] declared in <root>.Test.Style.equals' type=<root>.Test.Style origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Test.Style'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          VAR name:flag type:<unbound IrClassSymbolImpl>? [var]
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          VAR name:receiver type:<unbound IrClassSymbolImpl> [val]
+            CONST String type=<unbound IrClassSymbolImpl> value="123"
+          TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: GET_VAR 'val receiver: <unbound IrClassSymbolImpl> [val] declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=null
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:a2 index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      SET_VAR 'var flag: <unbound IrClassSymbolImpl>? [var] declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=EQ
+                        CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val receiver: <unbound IrClassSymbolImpl> [val] declared in <root>.Test' type=<unbound IrClassSymbolImpl> origin=null
+          VAR name:style type:<root>.Test.Style [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (color: <unbound IrClassSymbolImpl>?, underlined: <unbound IrClassSymbolImpl>?, separator: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Test.Style' type=<root>.Test.Style origin=null
+              color: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              underlined: GET_VAR 'var flag: <unbound IrClassSymbolImpl>? [var] declared in <root>.Test' type=<unbound IrClassSymbolImpl>? origin=null
+              separator: CONST String type=<unbound IrClassSymbolImpl> value="123"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test' type=<root>.Test origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

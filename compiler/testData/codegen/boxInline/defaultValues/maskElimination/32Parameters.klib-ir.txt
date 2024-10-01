@@ -1,0 +1,287 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:calc signature:test/calc|calc(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun calc (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:test signature:test/test|test(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> (p1:<unbound IrClassSymbolImpl>, p2:<unbound IrClassSymbolImpl>, p3:<unbound IrClassSymbolImpl>, p4:<unbound IrClassSymbolImpl>, p5:<unbound IrClassSymbolImpl>, p6:<unbound IrClassSymbolImpl>, p7:<unbound IrClassSymbolImpl>, p8:<unbound IrClassSymbolImpl>, p9:<unbound IrClassSymbolImpl>, p10:<unbound IrClassSymbolImpl>, p11:<unbound IrClassSymbolImpl>, p12:<unbound IrClassSymbolImpl>, p13:<unbound IrClassSymbolImpl>, p14:<unbound IrClassSymbolImpl>, p15:<unbound IrClassSymbolImpl>, p16:<unbound IrClassSymbolImpl>, p17:<unbound IrClassSymbolImpl>, p18:<unbound IrClassSymbolImpl>, p19:<unbound IrClassSymbolImpl>, p20:<unbound IrClassSymbolImpl>, p21:<unbound IrClassSymbolImpl>, p22:<unbound IrClassSymbolImpl>, p23:<unbound IrClassSymbolImpl>, p24:<unbound IrClassSymbolImpl>, p25:<unbound IrClassSymbolImpl>, p26:<unbound IrClassSymbolImpl>, p27:<unbound IrClassSymbolImpl>, p28:<unbound IrClassSymbolImpl>, p29:<unbound IrClassSymbolImpl>, p30:<unbound IrClassSymbolImpl>, p31:<unbound IrClassSymbolImpl>, p32:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:p1 index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="1"
+      VALUE_PARAMETER name:p2 index:1 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="2"
+      VALUE_PARAMETER name:p3 index:2 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="3"
+      VALUE_PARAMETER name:p4 index:3 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="4"
+      VALUE_PARAMETER name:p5 index:4 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="5"
+      VALUE_PARAMETER name:p6 index:5 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="6"
+      VALUE_PARAMETER name:p7 index:6 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="7"
+      VALUE_PARAMETER name:p8 index:7 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="8"
+      VALUE_PARAMETER name:p9 index:8 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="9"
+      VALUE_PARAMETER name:p10 index:9 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="10"
+      VALUE_PARAMETER name:p11 index:10 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="11"
+      VALUE_PARAMETER name:p12 index:11 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="12"
+      VALUE_PARAMETER name:p13 index:12 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="13"
+      VALUE_PARAMETER name:p14 index:13 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="14"
+      VALUE_PARAMETER name:p15 index:14 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="15"
+      VALUE_PARAMETER name:p16 index:15 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="16"
+      VALUE_PARAMETER name:p17 index:16 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="17"
+      VALUE_PARAMETER name:p18 index:17 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="18"
+      VALUE_PARAMETER name:p19 index:18 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="19"
+      VALUE_PARAMETER name:p20 index:19 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="20"
+      VALUE_PARAMETER name:p21 index:20 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="21"
+      VALUE_PARAMETER name:p22 index:21 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="22"
+      VALUE_PARAMETER name:p23 index:22 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="23"
+      VALUE_PARAMETER name:p24 index:23 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="24"
+      VALUE_PARAMETER name:p25 index:24 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="25"
+      VALUE_PARAMETER name:p26 index:25 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="26"
+      VALUE_PARAMETER name:p27 index:26 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="27"
+      VALUE_PARAMETER name:p28 index:27 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="28"
+      VALUE_PARAMETER name:p29 index:28 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="29"
+      VALUE_PARAMETER name:p30 index:29 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="30"
+      VALUE_PARAMETER name:p31 index:30 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="31"
+      VALUE_PARAMETER name:p32 index:31 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="32"
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                                                                                      $this: GET_VAR 'p1: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                                                    1: GET_VAR 'p2: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                                                1: GET_VAR 'p3: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                                            1: GET_VAR 'p4: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                                        1: GET_VAR 'p5: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                                    1: GET_VAR 'p6: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                                1: GET_VAR 'p7: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                            1: GET_VAR 'p8: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                        1: GET_VAR 'p9: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                    1: GET_VAR 'p10: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                                1: GET_VAR 'p11: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                            1: GET_VAR 'p12: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                        1: GET_VAR 'p13: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                    1: GET_VAR 'p14: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                                1: GET_VAR 'p15: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                            1: GET_VAR 'p16: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                        1: GET_VAR 'p17: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                    1: GET_VAR 'p18: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                                1: GET_VAR 'p19: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                            1: GET_VAR 'p20: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                        1: GET_VAR 'p21: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                    1: GET_VAR 'p22: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                                1: GET_VAR 'p23: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                            1: GET_VAR 'p24: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                        1: GET_VAR 'p25: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                    1: GET_VAR 'p26: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                                1: GET_VAR 'p27: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                            1: GET_VAR 'p28: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                          1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                        1: GET_VAR 'p29: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                    1: GET_VAR 'p30: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+                1: GET_VAR 'p31: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+            1: GET_VAR 'p32: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 1: "
+                CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  p20: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 OK 21 22 23 24 25 26 27 28 29 30 31 32"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 2: "
+                CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  p20: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  p20: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  p22: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 O 21 K 23 24 25 26 27 28 29 30 31 32"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 3: "
+                CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  p20: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  p22: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  p20: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  p22: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                  p32: CONST String type=<unbound IrClassSymbolImpl> value="23"
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 O 21 K 23 24 25 26 27 28 29 30 31 23"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 4: "
+                CALL 'public final fun test (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>, p4: <unbound IrClassSymbolImpl>, p5: <unbound IrClassSymbolImpl>, p6: <unbound IrClassSymbolImpl>, p7: <unbound IrClassSymbolImpl>, p8: <unbound IrClassSymbolImpl>, p9: <unbound IrClassSymbolImpl>, p10: <unbound IrClassSymbolImpl>, p11: <unbound IrClassSymbolImpl>, p12: <unbound IrClassSymbolImpl>, p13: <unbound IrClassSymbolImpl>, p14: <unbound IrClassSymbolImpl>, p15: <unbound IrClassSymbolImpl>, p16: <unbound IrClassSymbolImpl>, p17: <unbound IrClassSymbolImpl>, p18: <unbound IrClassSymbolImpl>, p19: <unbound IrClassSymbolImpl>, p20: <unbound IrClassSymbolImpl>, p21: <unbound IrClassSymbolImpl>, p22: <unbound IrClassSymbolImpl>, p23: <unbound IrClassSymbolImpl>, p24: <unbound IrClassSymbolImpl>, p25: <unbound IrClassSymbolImpl>, p26: <unbound IrClassSymbolImpl>, p27: <unbound IrClassSymbolImpl>, p28: <unbound IrClassSymbolImpl>, p29: <unbound IrClassSymbolImpl>, p30: <unbound IrClassSymbolImpl>, p31: <unbound IrClassSymbolImpl>, p32: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  p20: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  p22: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                  p32: CONST String type=<unbound IrClassSymbolImpl> value="23"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

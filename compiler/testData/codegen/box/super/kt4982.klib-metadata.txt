@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: WaitFor
+
+    public abstract class WaitFor : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun condition(): kotlin/Boolean
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

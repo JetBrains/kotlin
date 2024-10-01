@@ -1,0 +1,66 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: L
+    // class name: R
+
+    public final value class A<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public abstract interface B<T#0 /* T */, T#1 /* U */> : kotlin/Any {
+
+      public abstract fun f(x: T#0, y: T#1): kotlin/String
+    }
+
+    public open class C : kotlin/Any {
+
+      public constructor()
+
+      public open fun f(x: A<kotlin/String>, y: A<kotlin/String>): kotlin/String
+    }
+
+    public final class D : C, B<A<kotlin/String>, A<kotlin/String>>, L<A<kotlin/String>>, R<A<kotlin/String>> {
+
+      public constructor()
+
+      public open fun f(x: A<kotlin/String>, y: A<kotlin/String>): kotlin/String
+    }
+
+    public abstract interface L<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun f(x: T#0, y: A<kotlin/String>): kotlin/String
+    }
+
+    public abstract interface R<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun f(x: A<kotlin/String>, y: T#0): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

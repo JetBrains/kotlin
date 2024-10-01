@@ -1,0 +1,52 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/typeAliasObject.kt
+    CLASS OBJECT name:OHolder signature:/OHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OHolder
+      CONSTRUCTOR signature:/OHolder.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.OHolder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:OHolder signature:/OHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:O signature:/OHolder.O|{}O[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:O signature:[ /OHolder.O|{}O[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:O type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-O> signature:/OHolder.O.<get-O>|<get-O>(){}[0] visibility:public modality:FINAL <> ($this:<root>.OHolder) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:O signature:/OHolder.O|{}O[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.OHolder
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-O> (): <unbound IrClassSymbolImpl> declared in <root>.OHolder'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:O signature:[ /OHolder.O|{}O[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:O type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.OHolder declared in <root>.OHolder.<get-O>' type=<root>.OHolder origin=null
+    TYPEALIAS name:OHolderAlias signature:/OHolderAlias|null[0] visibility:public expandedType:<root>.OHolder
+    CLASS CLASS name:KHolder signature:/KHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KHolder
+      CONSTRUCTOR signature:/KHolder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.KHolder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KHolder signature:/KHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/KHolder.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KHolder.Companion
+        CONSTRUCTOR signature:/KHolder.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.KHolder.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/KHolder.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:K signature:/KHolder.Companion.K|{}K[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:K signature:[ /KHolder.Companion.K|{}K[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:O type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-K> signature:/KHolder.Companion.K.<get-K>|<get-K>(){}[0] visibility:public modality:FINAL <> ($this:<root>.KHolder.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:K signature:/KHolder.Companion.K|{}K[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.KHolder.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-K> (): <unbound IrClassSymbolImpl> declared in <root>.KHolder.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:K signature:[ /KHolder.Companion.K|{}K[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:O type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.KHolder.Companion declared in <root>.KHolder.Companion.<get-K>' type=<root>.KHolder.Companion origin=null
+    TYPEALIAS name:KHolderAlias signature:/KHolderAlias|null[0] visibility:public expandedType:<root>.KHolder
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-O> (): <unbound IrClassSymbolImpl> declared in <root>.OHolder' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:OHolder signature:/OHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.OHolder
+            1: CALL 'public final fun <get-K> (): <unbound IrClassSymbolImpl> declared in <root>.KHolder.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/KHolder.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.KHolder.Companion

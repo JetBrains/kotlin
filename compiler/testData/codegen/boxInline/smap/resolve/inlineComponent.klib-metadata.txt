@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: zzz
+
+    // class name: zzz/A
+
+    public final class zzz/A : kotlin/Any {
+
+      public constructor(a: kotlin/Int, b: kotlin/Int)
+
+      public final val a: kotlin/Int
+        public final get
+
+      public final val b: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final operator inline fun zzz/A.component1(): kotlin/Int
+
+      public final operator inline fun zzz/A.component2(): kotlin/Int
+    }
+  }
+}

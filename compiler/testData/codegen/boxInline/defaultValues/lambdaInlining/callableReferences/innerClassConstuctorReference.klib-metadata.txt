@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/A.Inner
+
+    public final class test/A : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+
+      // nested class: Inner
+    }
+
+    public final inner class test/A.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun ok(): kotlin/String
+    }
+
+    package {
+
+      public final inline fun inlineFun(a: test/A, lambda: kotlin/Function0<test/A.Inner> /* = ... */): test/A.Inner
+    }
+  }
+}

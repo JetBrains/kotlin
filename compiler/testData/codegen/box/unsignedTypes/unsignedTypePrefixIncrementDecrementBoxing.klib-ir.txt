@@ -1,0 +1,331 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unsignedTypePrefixIncrementDecrementBoxing.kt
+    PROPERTY name:gb signature:/gb|{}gb[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:gb signature:[ /gb|{}gb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Byte type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-gb> signature:/gb.<get-gb>|<get-gb>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gb signature:/gb|{}gb[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-gb> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gb signature:[ /gb|{}gb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-gb> signature:/gb.<set-gb>|<set-gb>(kotlin.UByte){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gb signature:/gb|{}gb[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gb signature:[ /gb|{}gb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-gb>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:gs signature:/gs|{}gs[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:gs signature:[ /gs|{}gs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Short type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-gs> signature:/gs.<get-gs>|<get-gs>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gs signature:/gs|{}gs[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-gs> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gs signature:[ /gs|{}gs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-gs> signature:/gs.<set-gs>|<set-gs>(kotlin.UShort){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gs signature:/gs|{}gs[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gs signature:[ /gs|{}gs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-gs>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:gi signature:/gi|{}gi[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:gi signature:[ /gi|{}gi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-gi> signature:/gi.<get-gi>|<get-gi>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gi signature:/gi|{}gi[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-gi> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gi signature:[ /gi|{}gi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-gi> signature:/gi.<set-gi>|<set-gi>(kotlin.UInt){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gi signature:/gi|{}gi[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gi signature:[ /gi|{}gi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-gi>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:gl signature:/gl|{}gl[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:gl signature:[ /gl|{}gl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-gl> signature:/gl.<get-gl>|<get-gl>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gl signature:/gl|{}gl[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-gl> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gl signature:[ /gl|{}gl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-gl> signature:/gl.<set-gl>|<set-gl>(kotlin.ULong){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:gl signature:/gl|{}gl[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:gl signature:[ /gl|{}gl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:gb type:kotlin.UByte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-gl>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:prefixDecrementUByteLocal signature:/prefixDecrementUByteLocal|prefixDecrementUByteLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Byte type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementUByteLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUByteLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUByteLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUByteLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixDecrementUShortLocal signature:/prefixDecrementUShortLocal|prefixDecrementUShortLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Short type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementUShortLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUShortLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUShortLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUShortLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixDecrementUIntLocal signature:/prefixDecrementUIntLocal|prefixDecrementUIntLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementUIntLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUIntLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUIntLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementUIntLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixDecrementULongLocal signature:/prefixDecrementULongLocal|prefixDecrementULongLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Long type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementULongLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementULongLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementULongLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixDecrementULongLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixIncrementUByteLocal signature:/prefixIncrementUByteLocal|prefixIncrementUByteLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Byte type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementUByteLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUByteLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUByteLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUByteLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixIncrementUShortLocal signature:/prefixIncrementUShortLocal|prefixIncrementUShortLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Short type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementUShortLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUShortLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUShortLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUShortLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixIncrementUIntLocal signature:/prefixIncrementUIntLocal|prefixIncrementUIntLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementUIntLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUIntLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUIntLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementUIntLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixIncrementULongLocal signature:/prefixIncrementULongLocal|prefixIncrementULongLocal(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+          CONST Long type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementULongLocal (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementULongLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementULongLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.prefixIncrementULongLocal' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixDecrementUByteProperty signature:/prefixDecrementUByteProperty|prefixDecrementUByteProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gb> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Byte type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementUByteProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <set-gb> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: CALL 'public final fun <get-gb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <get-gb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixDecrementUShortProperty signature:/prefixDecrementUShortProperty|prefixDecrementUShortProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Short type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementUShortProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <set-gs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: CALL 'public final fun <get-gs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <get-gs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixDecrementUIntProperty signature:/prefixDecrementUIntProperty|prefixDecrementUIntProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gi> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementUIntProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <set-gi> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: CALL 'public final fun <get-gi> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <get-gi> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixDecrementULongProperty signature:/prefixDecrementULongProperty|prefixDecrementULongProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gl> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Long type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixDecrementULongProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <set-gl> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+                $this: CALL 'public final fun <get-gl> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+            CALL 'public final fun <get-gl> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_DECR
+    FUN name:prefixIncrementUByteProperty signature:/prefixIncrementUByteProperty|prefixIncrementUByteProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gb> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Byte type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementUByteProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <set-gb> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: CALL 'public final fun <get-gb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <get-gb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixIncrementUShortProperty signature:/prefixIncrementUShortProperty|prefixIncrementUShortProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Short type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementUShortProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <set-gs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: CALL 'public final fun <get-gs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <get-gs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixIncrementUIntProperty signature:/prefixIncrementUIntProperty|prefixIncrementUIntProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gi> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementUIntProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <set-gi> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: CALL 'public final fun <get-gi> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <get-gi> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:prefixIncrementULongProperty signature:/prefixIncrementULongProperty|prefixIncrementULongProperty(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'public final fun <set-gl> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Long type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun prefixIncrementULongProperty (): <unbound IrClassSymbolImpl>? declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <set-gl> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $this: CALL 'public final fun <get-gl> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'public final fun <get-gl> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:check signature:/check|check(kotlin.Any?;kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> (u:<unbound IrClassSymbolImpl>?, ts:<unbound IrClassSymbolImpl>, className:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:u index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:ts index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:className index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: GET_VAR 'u: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'u: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: GET_VAR 'ts: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'u: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+                    GET_VAR 'u: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: GET_VAR 'className: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+                    GET_VAR 'u: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementUByteLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=255
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UByte"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementUShortLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=65535
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UShort"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementUIntLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UInt"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementULongLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Long type=<unbound IrClassSymbolImpl> value=-1
+          className: CONST String type=<unbound IrClassSymbolImpl> value="ULong"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementUByteLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UByte"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementUShortLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UShort"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementUIntLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UInt"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementULongLocal (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="ULong"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementUByteProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=255
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UByte"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementUShortProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=65535
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UShort"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementUIntProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UInt"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixDecrementULongProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Long type=<unbound IrClassSymbolImpl> value=-1
+          className: CONST String type=<unbound IrClassSymbolImpl> value="ULong"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementUByteProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UByte"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementUShortProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UShort"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementUIntProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="UInt"
+        CALL 'public final fun check (u: <unbound IrClassSymbolImpl>?, ts: <unbound IrClassSymbolImpl>, className: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          u: CALL 'public final fun prefixIncrementULongProperty (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+          ts: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          className: CONST String type=<unbound IrClassSymbolImpl> value="ULong"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

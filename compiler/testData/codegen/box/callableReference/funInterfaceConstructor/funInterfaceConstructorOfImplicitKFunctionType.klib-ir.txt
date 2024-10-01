@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceConstructorOfImplicitKFunctionType.kt
+    PROPERTY name:kr signature:/kr|{}kr[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:kr signature:[ /kr|{}kr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kr type:kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+            FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.KRunnable
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun KRunnable (function: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <root>.KRunnable declared in <root>.kr'
+                  TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      arg0: GET_VAR 'function: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.kr.KRunnable' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            FUNCTION_REFERENCE 'local final fun KRunnable (function: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <root>.KRunnable declared in <root>.kr' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kr> signature:/kr.<get-kr>|<get-kr>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable>
+        correspondingProperty: PROPERTY name:kr signature:/kr|{}kr[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kr signature:[ /kr|{}kr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kr type:kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> origin=null
+    CLASS INTERFACE name:KRunnable signature:/KRunnable|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
+      FUN name:run signature:/KRunnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="Failed"
+        CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in <root>.KRunnable' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.KRunnable origin=INVOKE
+            $this: CALL 'public final fun <get-kr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KRunnable> origin=GET_PROPERTY
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  SET_VAR 'var test: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var test: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Anything
+
+    public final class Anything : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Any.nothing(): kotlin/Nothing
+
+      public final fun testFunction1(obj: kotlin/Any?): kotlin/Nothing?
+
+      public final fun testFunction2(obj: kotlin/Any?): kotlin/Any?
+
+      public final fun testFunction3(obj: kotlin/Any?): kotlin/String?
+
+      public final fun testFunction4(obj: kotlin/Any?): kotlin/Unit?
+
+      public final fun testFunction5(obj: kotlin/Any?): Anything?
+
+      public final fun testLambda1(): kotlin/Unit
+
+      public final fun testLambda2(): kotlin/Unit
+    }
+  }
+}

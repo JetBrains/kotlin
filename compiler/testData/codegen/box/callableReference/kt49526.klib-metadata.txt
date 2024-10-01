@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> useRef(value: T#0, f: kotlin/Function1<T#0, kotlin/Boolean>): kotlin/Boolean
+    }
+  }
+}

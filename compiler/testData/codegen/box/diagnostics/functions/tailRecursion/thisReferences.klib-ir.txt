@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/thisReferences.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:f1 signature:/A.f1|f1(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.A, c:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [tailrec]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                arg0: GET_VAR 'c: <unbound IrClassSymbolImpl> declared in <root>.A.f1' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun f1 (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '<this>: <root>.A declared in <root>.A.f1' type=<root>.A origin=null
+                  c: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                    $this: GET_VAR 'c: <unbound IrClassSymbolImpl> declared in <root>.A.f1' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:f2 signature:/A.f2|f2(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.A, c:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [tailrec]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                arg0: GET_VAR 'c: <unbound IrClassSymbolImpl> declared in <root>.A.f2' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun f2 (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '<this>: <root>.A declared in <root>.A.f2' type=<root>.A origin=null
+                  c: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                    $this: GET_VAR 'c: <unbound IrClassSymbolImpl> declared in <root>.A.f2' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:f3 signature:/A.f3|f3(A){}[0] visibility:public modality:FINAL <> ($this:<root>.A, a:<root>.A) returnType:<unbound IrClassSymbolImpl> [tailrec]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:a index:0 type:<root>.A
+        BLOCK_BODY
+          CALL 'public final fun f3 (a: <root>.A): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.A.f3' type=<root>.A origin=null
+            a: GET_VAR 'a: <root>.A declared in <root>.A.f3' type=<root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun f1 (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          c: CONST Int type=<unbound IrClassSymbolImpl> value=1000000
+        CALL 'public final fun f2 (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          c: CONST Int type=<unbound IrClassSymbolImpl> value=1000000
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

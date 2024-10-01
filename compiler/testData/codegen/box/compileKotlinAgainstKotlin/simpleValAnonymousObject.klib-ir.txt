@@ -1,0 +1,49 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:pkg fileName:/A.kt
+    CLASS INTERFACE name:ClassA signature:pkg/ClassA|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pkg.ClassA
+      CLASS OBJECT name:Companion signature:pkg/ClassA.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pkg.ClassA.Companion
+        CONSTRUCTOR signature:pkg/ClassA.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:pkg.ClassA.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:pkg/ClassA.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:DEFAULT signature:pkg/ClassA.Companion.DEFAULT|{}DEFAULT[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:DEFAULT signature:[ pkg/ClassA.Companion.DEFAULT|{}DEFAULT[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DEFAULT type:pkg.ClassA visibility:private [final]] ] type:pkg.ClassA visibility:private [final]
+            EXPRESSION_BODY
+              BLOCK type=pkg.ClassA.Companion.DEFAULT.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[pkg.ClassA]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pkg.ClassA.Companion.DEFAULT.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:pkg.ClassA.Companion.DEFAULT.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[pkg.ClassA]'
+                  FUN name:toString visibility:public modality:OPEN <> ($this:pkg.ClassA.Companion.DEFAULT.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                    overridden:
+                      UNBOUND IrSimpleFunctionSymbolImpl
+                    $this: VALUE_PARAMETER name:<this> type:pkg.ClassA.Companion.DEFAULT.<no name provided>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in pkg.ClassA.Companion.DEFAULT.<no name provided>'
+                        CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in pkg.ClassA.Companion.DEFAULT.<no name provided>' type=pkg.ClassA.Companion.DEFAULT.<no name provided> origin=OBJECT_LITERAL
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-DEFAULT> signature:pkg/ClassA.Companion.DEFAULT.<get-DEFAULT>|<get-DEFAULT>(){}[0] visibility:public modality:FINAL <> ($this:pkg.ClassA.Companion) returnType:pkg.ClassA
+            correspondingProperty: PROPERTY name:DEFAULT signature:pkg/ClassA.Companion.DEFAULT|{}DEFAULT[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:pkg.ClassA.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-DEFAULT> (): pkg.ClassA declared in pkg.ClassA.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:DEFAULT signature:[ pkg/ClassA.Companion.DEFAULT|{}DEFAULT[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DEFAULT type:pkg.ClassA visibility:private [final]] ] type:pkg.ClassA visibility:private [final]' type=pkg.ClassA origin=null
+                  receiver: GET_VAR '<this>: pkg.ClassA.Companion declared in pkg.ClassA.Companion.<get-DEFAULT>' type=pkg.ClassA.Companion origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/B.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:obj type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'val obj: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

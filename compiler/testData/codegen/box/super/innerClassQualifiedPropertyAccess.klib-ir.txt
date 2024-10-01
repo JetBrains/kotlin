@@ -1,0 +1,152 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/innerClassQualifiedPropertyAccess.kt
+    CLASS INTERFACE name:T signature:/T|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.T
+      PROPERTY name:baz signature:/T.baz|{}baz[0] visibility:public modality:OPEN [val]
+        FUN name:<get-baz> signature:/T.baz.<get-baz>|<get-baz>(){}[0] visibility:public modality:OPEN <> ($this:<root>.T) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:baz signature:/T.baz|{}baz[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.T
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-baz> (): <unbound IrClassSymbolImpl> declared in <root>.T'
+              CONST String type=<unbound IrClassSymbolImpl> value="T.baz"
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:bar signature:/A.bar|{}bar[0] visibility:public modality:OPEN [val]
+        FUN name:<get-bar> signature:/A.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/A.bar|{}bar[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      PROPERTY name:boo signature:/A.boo|{}boo[0] visibility:public modality:OPEN [val]
+        FUN name:<get-boo> signature:/A.boo.<get-boo>|<get-boo>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:boo signature:/A.boo|{}boo[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-boo> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[<root>.A; <root>.T]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[<root>.A; <root>.T]'
+      PROPERTY name:bar signature:/B.bar|{}bar[0] visibility:public modality:OPEN [val]
+        FUN name:<get-bar> signature:/B.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.B) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/B.bar|{}bar[0] visibility:public modality:OPEN [val]
+          overridden:
+            public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.A
+          $this: VALUE_PARAMETER name:<this> type:<root>.B
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.B'
+              CONST String type=<unbound IrClassSymbolImpl> value="B"
+      PROPERTY name:baz signature:/B.baz|{}baz[0] visibility:public modality:OPEN [val]
+        FUN name:<get-baz> signature:/B.baz.<get-baz>|<get-baz>(){}[0] visibility:public modality:OPEN <> ($this:<root>.B) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:baz signature:/B.baz|{}baz[0] visibility:public modality:OPEN [val]
+          overridden:
+            public open fun <get-baz> (): <unbound IrClassSymbolImpl> declared in <root>.T
+          $this: VALUE_PARAMETER name:<this> type:<root>.B
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-baz> (): <unbound IrClassSymbolImpl> declared in <root>.B'
+              CONST String type=<unbound IrClassSymbolImpl> value="B.baz"
+      CLASS CLASS name:E signature:/B.E|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B.E
+        CONSTRUCTOR signature:/B.E.<init>|<init>(){}[0] visibility:public <> ($this:<root>.B) returnType:<root>.B.E [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.B
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E signature:/B.E|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:bar signature:/B.E.bar|{}bar[0] visibility:public modality:FINAL [val]
+          FUN name:<get-bar> signature:/B.E.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:FINAL <> ($this:<root>.B.E) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:bar signature:/B.E.bar|{}bar[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.B.E
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.B.E'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.A' superQualifier='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.B declared in <root>.B' type=<root>.B origin=null
+                    1: CALL 'public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.A' superQualifier='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.B declared in <root>.B' type=<root>.B origin=null
+                  1: CALL 'public open fun <get-baz> (): <unbound IrClassSymbolImpl> declared in <root>.T' superQualifier='CLASS INTERFACE name:T signature:/T|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.B declared in <root>.B' type=<root>.B origin=null
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.B]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.B]'
+      PROPERTY name:bar signature:/C.bar|{}bar[0] visibility:public modality:OPEN [val]
+        FUN name:<get-bar> signature:/C.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/C.bar|{}bar[0] visibility:public modality:OPEN [val]
+          overridden:
+            public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.B
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              CONST String type=<unbound IrClassSymbolImpl> value="C"
+      PROPERTY name:boo signature:/C.boo|{}boo[0] visibility:public modality:OPEN [val]
+        FUN name:<get-boo> signature:/C.boo.<get-boo>|<get-boo>(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:boo signature:/C.boo|{}boo[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-boo> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              CONST String type=<unbound IrClassSymbolImpl> value="C"
+      CLASS CLASS name:D signature:/C.D|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C.D
+        CONSTRUCTOR signature:/C.D.<init>|<init>(){}[0] visibility:public <> ($this:<root>.C) returnType:<root>.C.D [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D signature:/C.D|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:bar signature:/C.D.bar|{}bar[0] visibility:public modality:FINAL [val]
+          FUN name:<get-bar> signature:/C.D.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C.D) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:bar signature:/C.D.bar|{}bar[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.C.D
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.C.D'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.B' superQualifier='CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[<root>.A; <root>.T]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[<root>.A; <root>.T]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:r type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.B.E' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B.E' type=<root>.B.E origin=null
+              $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OKOKT.baz"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 1; r = "
+                GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.C.D' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C.D' type=<root>.C.D origin=null
+              $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="BOK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 2; r = "
+                GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

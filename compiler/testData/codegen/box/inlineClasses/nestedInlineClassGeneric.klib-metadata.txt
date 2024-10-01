@@ -1,0 +1,123 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: C.Companion
+    // class name: C.Companion.IC2
+    // class name: C.IC1
+    // class name: I
+    // class name: I.IC4
+    // class name: O
+    // class name: O.IC3
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: IC1
+
+      // nested class: Companion
+    }
+
+    public final companion object C.Companion : kotlin/Any {
+
+      private constructor()
+
+      // nested class: IC2
+    }
+
+    public final value class C.Companion.IC2<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class C.IC1<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public abstract interface I : kotlin/Any {
+
+      // nested class: IC4
+    }
+
+    public final value class I.IC4<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final object O : kotlin/Any {
+
+      private constructor()
+
+      // nested class: IC3
+    }
+
+    public final value class O.IC3<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: InlineAll
+
+    public final class InlineAll : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun inline(s: kotlin/Function5<kotlin/Int, kotlin/Double, kotlin/Double, kotlin/String, kotlin/Long, kotlin/String>, a1: kotlin/Int, a2: kotlin/Double, a3: kotlin/Double, a4: kotlin/String, a5: kotlin/Long): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testAll(): kotlin/String
+
+      public final fun testAllWithCapturedVal(): kotlin/String
+
+      public final fun testAllWithCapturedValAndVar(): kotlin/String
+
+      public final fun testAllWithCapturedVar(): kotlin/String
+    }
+  }
+}

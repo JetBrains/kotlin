@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/X
+
+    public final class a/X : pack/SomeClass {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: kotlin.jvm
+
+    // class name: kotlin/jvm/SomeClass
+
+    private final class kotlin/jvm/SomeClass : kotlin/Any {
+
+      public constructor()
+    }
+  }
+
+  library fragment {
+    // package name: pack
+
+    // class name: pack/SomeClass
+
+    public open class pack/SomeClass : kotlin/Any {
+
+      public constructor()
+    }
+  }
+}

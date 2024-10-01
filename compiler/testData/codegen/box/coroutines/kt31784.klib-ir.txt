@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/kt31784.kt
+    annotations:
+      <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+    CLASS INTERFACE name:Builder signature:test/Builder|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Builder<T of test.Builder>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/Builder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:filter signature:test/Builder.filter|filter(kotlin.Function1<1:0,kotlin.Boolean>){}[0] visibility:public modality:ABSTRACT <> ($this:test.Builder<T of test.Builder>, filter:<unbound IrClassSymbolImpl><T of test.Builder, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Builder<T of test.Builder>
+        VALUE_PARAMETER name:filter index:0 type:<unbound IrClassSymbolImpl><T of test.Builder, <unbound IrClassSymbolImpl>>
+    FUN name:build signature:test/build|build(kotlin.Function1<test.Builder<0:0>,kotlin.Unit>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (block:@[<unbound>] <unbound IrClassSymbolImpl><test.Builder<T of test.build>, <unbound IrClassSymbolImpl>>) returnType:T of test.build
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/build|build(kotlin.Function1<test.Builder<0:0>,kotlin.Unit>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><test.Builder<T of test.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:o type:test.build.<no name provided><T of test.build> [val]
+          BLOCK type=test.build.<no name provided><T of test.build> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Builder<T of test.build>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.build.<no name provided><T of test.build>
+              CONSTRUCTOR visibility:public <> () returnType:test.build.<no name provided><T of test.build> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Builder<T of test.build>]'
+              FUN name:filter visibility:public modality:OPEN <> ($this:test.build.<no name provided><T of test.build>, filter:<unbound IrClassSymbolImpl><T of test.build, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun filter (filter: <unbound IrClassSymbolImpl><T of test.Builder, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in test.Builder
+                $this: VALUE_PARAMETER name:<this> type:test.build.<no name provided><T of test.build>
+                VALUE_PARAMETER name:filter index:0 type:<unbound IrClassSymbolImpl><T of test.build, <unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.build.<no name provided>' type=test.build.<no name provided><T of test.build> origin=OBJECT_LITERAL
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><test.Builder<T of test.build>, <unbound IrClassSymbolImpl>> declared in test.build' type=@[<unbound>] <unbound IrClassSymbolImpl><test.Builder<T of test.build>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR 'val o: test.build.<no name provided><T of test.build> [val] declared in test.build' type=test.build.<no name provided><T of test.build> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><test.Builder<T of test.build>, <unbound IrClassSymbolImpl>>): T of test.build declared in test'
+          TYPE_OP type=T of test.build origin=CAST typeOperand=T of test.build
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:r type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun build <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><test.Builder<T of test.build>, <unbound IrClassSymbolImpl>>): T of test.build declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><test.Builder<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:test.Builder<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:test.Builder<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'public abstract fun filter (filter: <unbound IrClassSymbolImpl><T of test.Builder, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in test.Builder' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$build: test.Builder<<unbound IrClassSymbolImpl>> declared in test.box.<anonymous>' type=test.Builder<<unbound IrClassSymbolImpl>> origin=null
+                    filter: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                        VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.box.<anonymous>'
+                            CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                              arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in test.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val r: <unbound IrClassSymbolImpl> [val] declared in test.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val r: <unbound IrClassSymbolImpl> [val] declared in test.box' type=<unbound IrClassSymbolImpl> origin=null

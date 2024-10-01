@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun ge(a: kotlin/Any, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun gex(a: kotlin/Comparable<kotlin/Any>, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun gt(a: kotlin/Any, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun gtx(a: kotlin/Comparable<kotlin/Any>, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun le(a: kotlin/Any, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun lex(a: kotlin/Comparable<kotlin/Any>, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun lt(a: kotlin/Any, b: kotlin/Any): kotlin/Boolean
+
+      public final inline fun ltx(a: kotlin/Comparable<kotlin/Any>, b: kotlin/Any): kotlin/Boolean
+
+      public final val MINUS0D: kotlin/Double /* = ... */
+        public final get
+
+      public final val MINUS0F: kotlin/Float /* = ... */
+        public final get
+
+      public final val PLUS0D: kotlin/Double /* = ... */
+        public final get
+
+      public final val PLUS0F: kotlin/Float /* = ... */
+        public final get
+    }
+  }
+}

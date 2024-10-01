@@ -1,0 +1,39 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/shared.kt
+    FUN name:mustBe signature:/mustBe|mustBe@0:0(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.mustBe, t:T of <root>.mustBe) returnType:<unbound IrClassSymbolImpl> [infix]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mustBe|mustBe@0:0(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.mustBe
+      VALUE_PARAMETER name:t index:0 type:T of <root>.mustBe
+      BLOCK_BODY
+        CALL 'public final fun assert (message: <unbound IrClassSymbolImpl>, condition: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          message: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            GET_VAR '<this>: T of <root>.mustBe declared in <root>.mustBe' type=T of <root>.mustBe origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value=" must be "
+            GET_VAR 't: T of <root>.mustBe declared in <root>.mustBe' type=T of <root>.mustBe origin=null
+          condition: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.mustBe'
+                  CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR '<this>: T of <root>.mustBe declared in <root>.mustBe' type=T of <root>.mustBe origin=null
+                    arg1: GET_VAR 't: T of <root>.mustBe declared in <root>.mustBe' type=T of <root>.mustBe origin=null
+    FUN name:assert signature:/assert|assert(kotlin.String;kotlin.Function0<kotlin.Boolean>){}[0] visibility:public modality:FINAL <> (message:<unbound IrClassSymbolImpl>, condition:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:condition index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                $this: GET_VAR 'condition: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.assert' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.assert' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun mustBe <T> (t: T of <root>.mustBe): <unbound IrClassSymbolImpl> [infix] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          $receiver: CONST String type=<unbound IrClassSymbolImpl> value="lala"
+          t: CONST String type=<unbound IrClassSymbolImpl> value="lala"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

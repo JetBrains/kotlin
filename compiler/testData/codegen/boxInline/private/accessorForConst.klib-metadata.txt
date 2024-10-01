@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/IntentionsBundle
+    // class name: test/IntentionsBundle.Companion
+
+    public final class test/IntentionsBundle : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object test/IntentionsBundle.Companion : kotlin/Any {
+
+      private constructor()
+
+      internal final inline fun message(): kotlin/String
+
+      private final const val BUNDLE: kotlin/String /* = "K" */
+        private final get
+
+      protected final const val KEY: kotlin/String /* = "O" */
+        protected final get
+    }
+  }
+}

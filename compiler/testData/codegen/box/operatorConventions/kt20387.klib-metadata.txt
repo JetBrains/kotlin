@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Derived
+    // class name: Derived.Inner
+
+    public final class Derived : base/Base<kotlin/Long> {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final inner class Derived.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: base
+
+    // class name: base/Base
+
+    public open class base/Base<T#0 /* K */> : kotlin/Any {
+
+      public constructor()
+
+      protected final operator fun get(key: T#0): kotlin/String
+    }
+  }
+}

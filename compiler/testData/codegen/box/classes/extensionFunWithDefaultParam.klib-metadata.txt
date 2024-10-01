@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyLogic
+    // class name: MyLogicSpecified
+    // class name: MyLogicWithDifferentPostfix
+
+    public open class MyLogic : kotlin/Any {
+
+      public constructor()
+
+      public open fun kotlin/String.foo(prefix: kotlin/String /* = ... */): kotlin/String
+
+      public final fun result(): kotlin/String
+
+      protected final fun transform(a: kotlin/String): kotlin/String
+
+      protected open val postfix: kotlin/String /* = ... */
+        protected open get
+    }
+
+    public final class MyLogicSpecified : MyLogic {
+
+      public constructor()
+
+      public open fun kotlin/String.foo(prefix: kotlin/String): kotlin/String
+    }
+
+    public open class MyLogicWithDifferentPostfix : MyLogic {
+
+      public constructor()
+
+      protected open val postfix: kotlin/String /* = ... */
+        protected open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

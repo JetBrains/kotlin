@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/postfixIncrementOnSmartCast.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i type:<unbound IrClassSymbolImpl>? [var]
+        SET_VAR 'var i: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST Int type=<unbound IrClassSymbolImpl> value=10
+        VAR name:j type:<unbound IrClassSymbolImpl> [val]
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var i: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+            SET_VAR 'var i: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val j: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                    arg1: GET_VAR 'var i: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail j = "
+                GET_VAR 'val j: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=" i = "
+                GET_VAR 'var i: <unbound IrClassSymbolImpl>? [var] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null

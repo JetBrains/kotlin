@@ -1,0 +1,54 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun g (): <unbound IrClassSymbolImpl> declared in p1.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in p1.A' type=p1.A origin=null
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'public final fun f (): <unbound IrClassSymbolImpl> declared in p1' type=<unbound IrClassSymbolImpl> origin=null
+                1: CALL 'public final fun f (): <unbound IrClassSymbolImpl> declared in p2' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+  FILE fqName:p1 fileName:/p1.kt
+    FUN name:test signature:p1/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in p1'
+          CALL 'public final fun g (): <unbound IrClassSymbolImpl> declared in p1.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in p1.A' type=p1.A origin=null
+  FILE fqName:p1 fileName:/p11.kt
+    FUN name:f signature:p1/f|f(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (): <unbound IrClassSymbolImpl> declared in p1'
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+    CLASS CLASS name:A signature:p1/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:p1.A
+      CONSTRUCTOR signature:p1/A.<init>|<init>(){}[0] visibility:public <> () returnType:p1.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:p1/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:g signature:p1/A.g|g(){}[0] visibility:public modality:FINAL <> ($this:p1.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:p1.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun g (): <unbound IrClassSymbolImpl> declared in p1.A'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+  FILE fqName:p2 fileName:/p2.kt
+  FILE fqName:p2 fileName:/p22.kt
+    FUN name:f signature:p2/f|f(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (): <unbound IrClassSymbolImpl> declared in p2'
+          CONST String type=<unbound IrClassSymbolImpl> value="K"
+    CLASS CLASS name:A signature:p2/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:p2.A
+      CONSTRUCTOR signature:p2/A.<init>|<init>(){}[0] visibility:public <> () returnType:p2.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:p2/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:g signature:p2/A.g|g(){}[0] visibility:public modality:FINAL <> ($this:p2.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:p2.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun g (): <unbound IrClassSymbolImpl> declared in p2.A'
+            CONST Int type=<unbound IrClassSymbolImpl> value=42

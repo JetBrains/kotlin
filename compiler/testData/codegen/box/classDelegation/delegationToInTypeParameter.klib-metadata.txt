@@ -1,0 +1,144 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bin
+    // class name: Domain
+    // class name: DomainBin
+    // class name: DomainBin10
+    // class name: DomainBin11
+    // class name: DomainBin2
+    // class name: DomainBin3
+    // class name: DomainBin4
+    // class name: DomainBin5
+    // class name: DomainBin6
+    // class name: DomainBin7
+    // class name: DomainBin8
+    // class name: DomainBin9
+
+    public abstract interface Bin<in T#0 /* T */ : kotlin/Any, out T#1 /* V */> : Domain<T#0> {
+    }
+
+    public abstract interface Domain<in T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Unit
+    }
+
+    public final class DomainBin<T#0 /* T */ : kotlin/Comparable<T#0>, T#1 /* D */ : Domain<T#0>, out T#2 /* V */> : Bin<T#0, T#2>, Domain<T#0> {
+
+      public constructor(domain: T#1)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val domain: T#1
+        public final get
+    }
+
+    public final class DomainBin10<T#0 /* D */ : Domain<T#0>, in T#1 /* A */ : T#0> : Domain<T#1> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class DomainBin11<T#0 /* A */ : Domain<*>, T#1 /* D */ : Domain<T#0>> : Domain<T#0> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#1
+        public final get
+    }
+
+    public final class DomainBin2<T#0 /* T */ : kotlin/Comparable<T#0>, T#1 /* D */ : Domain<T#0>, out T#2 /* V */, T#3 /* G */ : T#1> : Bin<T#0, T#2>, Domain<T#0> {
+
+      public constructor(domain: T#3)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val domain: T#3
+        public final get
+    }
+
+    public final class DomainBin3<T#0 /* D */ : Domain<kotlin/Int>> : Domain<kotlin/Int> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class DomainBin4<T#0 /* D */ : kotlin/Any> : Domain<T#0> {
+
+      public constructor(a: Domain<T#0>)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: Domain<T#0>
+        public final get
+    }
+
+    public final class DomainBin5<T#0 /* D */ : kotlin/Number> : Domain<T#0> {
+
+      public constructor(a: Domain<T#0>)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: Domain<T#0>
+        public final get
+    }
+
+    public final class DomainBin6<T#0 /* D */ : Domain<kotlin/Int>> : Domain<kotlin/Int> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class DomainBin7<T#0 /* D */ : Domain<T#0>> : Domain<T#0> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class DomainBin8<T#0 /* A */ : kotlin/Any, T#1 /* D */ : Domain<T#0>> : Domain<T#0> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#1
+        public final get
+    }
+
+    public final class DomainBin9<T#0 /* A */ : kotlin/Any, T#1 /* D */ : Domain<Domain<T#0>>> : Domain<Domain<T#0>> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val a: T#1
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

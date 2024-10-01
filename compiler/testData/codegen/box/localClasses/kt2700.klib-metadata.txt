@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: a.b
+
+    // class name: a/b/Test
+
+    public abstract interface a/b/Test : kotlin/Any {
+
+      public open fun invoke(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+
+      private final val a: a/b/Test
+        private final get
+    }
+  }
+}

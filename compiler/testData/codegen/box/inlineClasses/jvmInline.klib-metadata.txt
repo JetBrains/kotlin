@@ -1,0 +1,536 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: VCAny
+    // class name: VCAnyNullable
+    // class name: VCInt
+    // class name: VCIntNullable
+    // class name: VCString
+    // class name: VCStringNullable
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun ordinaryInlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final inline fun ordinaryInlineReturnsVCAny(): VCAny
+
+      public final inline fun ordinaryInlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final inline fun ordinaryInlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final inline fun ordinaryInlineReturnsVCAny_Null(): VCAny?
+
+      public final inline fun ordinaryInlineReturnsVCInt(): VCInt
+
+      public final inline fun ordinaryInlineReturnsVCIntNullable(): VCIntNullable
+
+      public final inline fun ordinaryInlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final inline fun ordinaryInlineReturnsVCInt_Null(): VCInt?
+
+      public final inline fun ordinaryInlineReturnsVCString(): VCString
+
+      public final inline fun ordinaryInlineReturnsVCStringNullable(): VCStringNullable
+
+      public final inline fun ordinaryInlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final inline fun ordinaryInlineReturnsVCString_Null(): VCString?
+
+      public final fun ordinaryNoninlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final fun ordinaryNoninlineReturnsVCAny(): VCAny
+
+      public final fun ordinaryNoninlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final fun ordinaryNoninlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final fun ordinaryNoninlineReturnsVCAny_Null(): VCAny?
+
+      public final fun ordinaryNoninlineReturnsVCInt(): VCInt
+
+      public final fun ordinaryNoninlineReturnsVCIntNullable(): VCIntNullable
+
+      public final fun ordinaryNoninlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final fun ordinaryNoninlineReturnsVCInt_Null(): VCInt?
+
+      public final fun ordinaryNoninlineReturnsVCString(): VCString
+
+      public final fun ordinaryNoninlineReturnsVCStringNullable(): VCStringNullable
+
+      public final fun ordinaryNoninlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final fun ordinaryNoninlineReturnsVCString_Null(): VCString?
+
+      public final inline suspend fun suspendInlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineReturnsVCAny(): VCAny
+
+      public final inline suspend fun suspendInlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final inline suspend fun suspendInlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final inline suspend fun suspendInlineReturnsVCAny_Null(): VCAny?
+
+      public final inline suspend fun suspendInlineReturnsVCInt(): VCInt
+
+      public final inline suspend fun suspendInlineReturnsVCIntNullable(): VCIntNullable
+
+      public final inline suspend fun suspendInlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final inline suspend fun suspendInlineReturnsVCInt_Null(): VCInt?
+
+      public final inline suspend fun suspendInlineReturnsVCString(): VCString
+
+      public final inline suspend fun suspendInlineReturnsVCStringNullable(): VCStringNullable
+
+      public final inline suspend fun suspendInlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final inline suspend fun suspendInlineReturnsVCString_Null(): VCString?
+
+      public final suspend fun suspendNoninlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineReturnsVCAny(): VCAny
+
+      public final suspend fun suspendNoninlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final suspend fun suspendNoninlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final suspend fun suspendNoninlineReturnsVCAny_Null(): VCAny?
+
+      public final suspend fun suspendNoninlineReturnsVCInt(): VCInt
+
+      public final suspend fun suspendNoninlineReturnsVCIntNullable(): VCIntNullable
+
+      public final suspend fun suspendNoninlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final suspend fun suspendNoninlineReturnsVCInt_Null(): VCInt?
+
+      public final suspend fun suspendNoninlineReturnsVCString(): VCString
+
+      public final suspend fun suspendNoninlineReturnsVCStringNullable(): VCStringNullable
+
+      public final suspend fun suspendNoninlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final suspend fun suspendNoninlineReturnsVCString_Null(): VCString?
+    }
+
+    public final value class VCAny : kotlin/Any {
+
+      public constructor(a: kotlin/Any)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Any
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Any
+    }
+
+    public final value class VCAnyNullable : kotlin/Any {
+
+      public constructor(a: kotlin/Any?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Any?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Any?
+    }
+
+    public final value class VCInt : kotlin/Any {
+
+      public constructor(a: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Int
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class VCIntNullable : kotlin/Any {
+
+      public constructor(a: kotlin/Int?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Int?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Int?
+    }
+
+    public final value class VCString : kotlin/Any {
+
+      public constructor(a: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/String
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class VCStringNullable : kotlin/Any {
+
+      public constructor(a: kotlin/String?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/String?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/String?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final inline fun ordinaryInlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final inline fun ordinaryInlineReturnsVCAny(): VCAny
+
+      public final inline fun ordinaryInlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final inline fun ordinaryInlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final inline fun ordinaryInlineReturnsVCAny_Null(): VCAny?
+
+      public final inline fun ordinaryInlineReturnsVCInt(): VCInt
+
+      public final inline fun ordinaryInlineReturnsVCIntNullable(): VCIntNullable
+
+      public final inline fun ordinaryInlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final inline fun ordinaryInlineReturnsVCInt_Null(): VCInt?
+
+      public final inline fun ordinaryInlineReturnsVCString(): VCString
+
+      public final inline fun ordinaryInlineReturnsVCStringNullable(): VCStringNullable
+
+      public final inline fun ordinaryInlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final inline fun ordinaryInlineReturnsVCString_Null(): VCString?
+
+      public final fun ordinaryNoninlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final fun ordinaryNoninlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final fun ordinaryNoninlineReturnsVCAny(): VCAny
+
+      public final fun ordinaryNoninlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final fun ordinaryNoninlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final fun ordinaryNoninlineReturnsVCAny_Null(): VCAny?
+
+      public final fun ordinaryNoninlineReturnsVCInt(): VCInt
+
+      public final fun ordinaryNoninlineReturnsVCIntNullable(): VCIntNullable
+
+      public final fun ordinaryNoninlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final fun ordinaryNoninlineReturnsVCInt_Null(): VCInt?
+
+      public final fun ordinaryNoninlineReturnsVCString(): VCString
+
+      public final fun ordinaryNoninlineReturnsVCStringNullable(): VCStringNullable
+
+      public final fun ordinaryNoninlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final fun ordinaryNoninlineReturnsVCString_Null(): VCString?
+
+      public final inline suspend fun suspendInlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final inline suspend fun suspendInlineReturnsVCAny(): VCAny
+
+      public final inline suspend fun suspendInlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final inline suspend fun suspendInlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final inline suspend fun suspendInlineReturnsVCAny_Null(): VCAny?
+
+      public final inline suspend fun suspendInlineReturnsVCInt(): VCInt
+
+      public final inline suspend fun suspendInlineReturnsVCIntNullable(): VCIntNullable
+
+      public final inline suspend fun suspendInlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final inline suspend fun suspendInlineReturnsVCInt_Null(): VCInt?
+
+      public final inline suspend fun suspendInlineReturnsVCString(): VCString
+
+      public final inline suspend fun suspendInlineReturnsVCStringNullable(): VCStringNullable
+
+      public final inline suspend fun suspendInlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final inline suspend fun suspendInlineReturnsVCString_Null(): VCString?
+
+      public final suspend fun suspendNoninlineAcceptsVCAny(i: kotlin/Int, vc: VCAny): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCAnyNullable(i: kotlin/Int, vc: VCAnyNullable): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCAnyNullable_Null(i: kotlin/Int, vc: VCAnyNullable?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCAny_Null(i: kotlin/Int, vc: VCAny?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCInt(i: kotlin/Int, vc: VCInt): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCIntNullable(i: kotlin/Int, vc: VCIntNullable): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCIntNullable_Null(i: kotlin/Int, vc: VCIntNullable?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCInt_Null(i: kotlin/Int, vc: VCInt?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCString(i: kotlin/Int, vc: VCString): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCStringNullable(i: kotlin/Int, vc: VCStringNullable): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCStringNullable_Null(i: kotlin/Int, vc: VCStringNullable?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineAcceptsVCString_Null(i: kotlin/Int, vc: VCString?): kotlin/Unit
+
+      public final suspend fun suspendNoninlineReturnsVCAny(): VCAny
+
+      public final suspend fun suspendNoninlineReturnsVCAnyNullable(): VCAnyNullable
+
+      public final suspend fun suspendNoninlineReturnsVCAnyNullable_Null(): VCAnyNullable?
+
+      public final suspend fun suspendNoninlineReturnsVCAny_Null(): VCAny?
+
+      public final suspend fun suspendNoninlineReturnsVCInt(): VCInt
+
+      public final suspend fun suspendNoninlineReturnsVCIntNullable(): VCIntNullable
+
+      public final suspend fun suspendNoninlineReturnsVCIntNullable_Null(): VCIntNullable?
+
+      public final suspend fun suspendNoninlineReturnsVCInt_Null(): VCInt?
+
+      public final suspend fun suspendNoninlineReturnsVCString(): VCString
+
+      public final suspend fun suspendNoninlineReturnsVCStringNullable(): VCStringNullable
+
+      public final suspend fun suspendNoninlineReturnsVCStringNullable_Null(): VCStringNullable?
+
+      public final suspend fun suspendNoninlineReturnsVCString_Null(): VCString?
+
+      public final suspend fun test(): kotlin/Unit
+
+      public final var result: kotlin/Any?
+        public final get
+        public final set
+    }
+  }
+
+  library fragment {
+    // package name: kotlin.jvm
+
+    // class name: kotlin/jvm/JvmInline
+
+    public final annotation class kotlin/jvm/JvmInline : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}

@@ -1,0 +1,267 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt6816.kt
+    CLASS CLASS name:CalculatorConstants signature:/CalculatorConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CalculatorConstants
+      CONSTRUCTOR signature:/CalculatorConstants.<init>|<init>(kotlin.Long;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.Double;kotlin.String?;kotlin.Double;kotlin.String){}[0] visibility:public <> (id:<unbound IrClassSymbolImpl>, detour:<unbound IrClassSymbolImpl>, taxi:<unbound IrClassSymbolImpl>, loop:<unbound IrClassSymbolImpl>, planeCondition:<unbound IrClassSymbolImpl>, co2PerKerosene:<unbound IrClassSymbolImpl>, freight:<unbound IrClassSymbolImpl>, rfi:<unbound IrClassSymbolImpl>, rfiAltitude:<unbound IrClassSymbolImpl>, averageContribution:<unbound IrClassSymbolImpl>, singleContribution:<unbound IrClassSymbolImpl>, returnContribution:<unbound IrClassSymbolImpl>, defraFactor:<unbound IrClassSymbolImpl>, airCondMult:<unbound IrClassSymbolImpl>, autoTransMult:<unbound IrClassSymbolImpl>, hybridDefault:<unbound IrClassSymbolImpl>?, travelClassOne:<unbound IrClassSymbolImpl>, status:<unbound IrClassSymbolImpl>) returnType:<root>.CalculatorConstants [primary]
+        VALUE_PARAMETER name:id index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=0
+        VALUE_PARAMETER name:detour index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:taxi index:2 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:loop index:3 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:planeCondition index:4 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:co2PerKerosene index:5 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:freight index:6 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:rfi index:7 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:rfiAltitude index:8 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:averageContribution index:9 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:singleContribution index:10 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:returnContribution index:11 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:defraFactor index:12 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:airCondMult index:13 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:autoTransMult index:14 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:hybridDefault index:15 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:travelClassOne index:16 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+        VALUE_PARAMETER name:status index:17 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CalculatorConstants signature:/CalculatorConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:id signature:/CalculatorConstants.id|{}id[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:id signature:[ /CalculatorConstants.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'id: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> signature:/CalculatorConstants.id.<get-id>|<get-id>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:id signature:/CalculatorConstants.id|{}id[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-id> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /CalculatorConstants.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-id>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:detour signature:/CalculatorConstants.detour|{}detour[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:detour signature:[ /CalculatorConstants.detour|{}detour[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'detour: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-detour> signature:/CalculatorConstants.detour.<get-detour>|<get-detour>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:detour signature:/CalculatorConstants.detour|{}detour[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-detour> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:detour signature:[ /CalculatorConstants.detour|{}detour[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-detour>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:taxi signature:/CalculatorConstants.taxi|{}taxi[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:taxi signature:[ /CalculatorConstants.taxi|{}taxi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'taxi: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-taxi> signature:/CalculatorConstants.taxi.<get-taxi>|<get-taxi>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:taxi signature:/CalculatorConstants.taxi|{}taxi[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-taxi> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:taxi signature:[ /CalculatorConstants.taxi|{}taxi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-taxi>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:loop signature:/CalculatorConstants.loop|{}loop[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:loop signature:[ /CalculatorConstants.loop|{}loop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'loop: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-loop> signature:/CalculatorConstants.loop.<get-loop>|<get-loop>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:loop signature:/CalculatorConstants.loop|{}loop[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-loop> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:loop signature:[ /CalculatorConstants.loop|{}loop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-loop>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:planeCondition signature:/CalculatorConstants.planeCondition|{}planeCondition[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:planeCondition signature:[ /CalculatorConstants.planeCondition|{}planeCondition[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'planeCondition: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-planeCondition> signature:/CalculatorConstants.planeCondition.<get-planeCondition>|<get-planeCondition>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:planeCondition signature:/CalculatorConstants.planeCondition|{}planeCondition[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-planeCondition> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:planeCondition signature:[ /CalculatorConstants.planeCondition|{}planeCondition[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-planeCondition>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:co2PerKerosene signature:/CalculatorConstants.co2PerKerosene|{}co2PerKerosene[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:co2PerKerosene signature:[ /CalculatorConstants.co2PerKerosene|{}co2PerKerosene[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'co2PerKerosene: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-co2PerKerosene> signature:/CalculatorConstants.co2PerKerosene.<get-co2PerKerosene>|<get-co2PerKerosene>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:co2PerKerosene signature:/CalculatorConstants.co2PerKerosene|{}co2PerKerosene[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-co2PerKerosene> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:co2PerKerosene signature:[ /CalculatorConstants.co2PerKerosene|{}co2PerKerosene[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-co2PerKerosene>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:freight signature:/CalculatorConstants.freight|{}freight[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:freight signature:[ /CalculatorConstants.freight|{}freight[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'freight: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-freight> signature:/CalculatorConstants.freight.<get-freight>|<get-freight>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:freight signature:/CalculatorConstants.freight|{}freight[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-freight> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:freight signature:[ /CalculatorConstants.freight|{}freight[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-freight>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:rfi signature:/CalculatorConstants.rfi|{}rfi[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:rfi signature:[ /CalculatorConstants.rfi|{}rfi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'rfi: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rfi> signature:/CalculatorConstants.rfi.<get-rfi>|<get-rfi>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:rfi signature:/CalculatorConstants.rfi|{}rfi[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-rfi> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rfi signature:[ /CalculatorConstants.rfi|{}rfi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-rfi>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:rfiAltitude signature:/CalculatorConstants.rfiAltitude|{}rfiAltitude[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:rfiAltitude signature:[ /CalculatorConstants.rfiAltitude|{}rfiAltitude[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'rfiAltitude: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rfiAltitude> signature:/CalculatorConstants.rfiAltitude.<get-rfiAltitude>|<get-rfiAltitude>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:rfiAltitude signature:/CalculatorConstants.rfiAltitude|{}rfiAltitude[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-rfiAltitude> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rfiAltitude signature:[ /CalculatorConstants.rfiAltitude|{}rfiAltitude[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-rfiAltitude>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:averageContribution signature:/CalculatorConstants.averageContribution|{}averageContribution[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:averageContribution signature:[ /CalculatorConstants.averageContribution|{}averageContribution[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'averageContribution: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-averageContribution> signature:/CalculatorConstants.averageContribution.<get-averageContribution>|<get-averageContribution>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:averageContribution signature:/CalculatorConstants.averageContribution|{}averageContribution[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-averageContribution> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:averageContribution signature:[ /CalculatorConstants.averageContribution|{}averageContribution[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-averageContribution>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:singleContribution signature:/CalculatorConstants.singleContribution|{}singleContribution[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:singleContribution signature:[ /CalculatorConstants.singleContribution|{}singleContribution[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'singleContribution: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-singleContribution> signature:/CalculatorConstants.singleContribution.<get-singleContribution>|<get-singleContribution>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:singleContribution signature:/CalculatorConstants.singleContribution|{}singleContribution[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-singleContribution> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:singleContribution signature:[ /CalculatorConstants.singleContribution|{}singleContribution[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-singleContribution>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:returnContribution signature:/CalculatorConstants.returnContribution|{}returnContribution[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:returnContribution signature:[ /CalculatorConstants.returnContribution|{}returnContribution[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'returnContribution: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-returnContribution> signature:/CalculatorConstants.returnContribution.<get-returnContribution>|<get-returnContribution>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:returnContribution signature:/CalculatorConstants.returnContribution|{}returnContribution[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-returnContribution> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:returnContribution signature:[ /CalculatorConstants.returnContribution|{}returnContribution[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-returnContribution>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:defraFactor signature:/CalculatorConstants.defraFactor|{}defraFactor[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:defraFactor signature:[ /CalculatorConstants.defraFactor|{}defraFactor[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'defraFactor: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-defraFactor> signature:/CalculatorConstants.defraFactor.<get-defraFactor>|<get-defraFactor>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:defraFactor signature:/CalculatorConstants.defraFactor|{}defraFactor[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-defraFactor> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:defraFactor signature:[ /CalculatorConstants.defraFactor|{}defraFactor[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-defraFactor>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:airCondMult signature:/CalculatorConstants.airCondMult|{}airCondMult[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:airCondMult signature:[ /CalculatorConstants.airCondMult|{}airCondMult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'airCondMult: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-airCondMult> signature:/CalculatorConstants.airCondMult.<get-airCondMult>|<get-airCondMult>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:airCondMult signature:/CalculatorConstants.airCondMult|{}airCondMult[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-airCondMult> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:airCondMult signature:[ /CalculatorConstants.airCondMult|{}airCondMult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-airCondMult>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:autoTransMult signature:/CalculatorConstants.autoTransMult|{}autoTransMult[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:autoTransMult signature:[ /CalculatorConstants.autoTransMult|{}autoTransMult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'autoTransMult: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-autoTransMult> signature:/CalculatorConstants.autoTransMult.<get-autoTransMult>|<get-autoTransMult>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:autoTransMult signature:/CalculatorConstants.autoTransMult|{}autoTransMult[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-autoTransMult> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:autoTransMult signature:[ /CalculatorConstants.autoTransMult|{}autoTransMult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-autoTransMult>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:hybridDefault signature:/CalculatorConstants.hybridDefault|{}hybridDefault[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:hybridDefault signature:[ /CalculatorConstants.hybridDefault|{}hybridDefault[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'hybridDefault: <unbound IrClassSymbolImpl>? declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hybridDefault> signature:/CalculatorConstants.hybridDefault.<get-hybridDefault>|<get-hybridDefault>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:hybridDefault signature:/CalculatorConstants.hybridDefault|{}hybridDefault[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-hybridDefault> (): <unbound IrClassSymbolImpl>? declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:hybridDefault signature:[ /CalculatorConstants.hybridDefault|{}hybridDefault[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final]' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-hybridDefault>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:travelClassOne signature:/CalculatorConstants.travelClassOne|{}travelClassOne[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:travelClassOne signature:[ /CalculatorConstants.travelClassOne|{}travelClassOne[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'travelClassOne: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-travelClassOne> signature:/CalculatorConstants.travelClassOne.<get-travelClassOne>|<get-travelClassOne>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:travelClassOne signature:/CalculatorConstants.travelClassOne|{}travelClassOne[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-travelClassOne> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:travelClassOne signature:[ /CalculatorConstants.travelClassOne|{}travelClassOne[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-travelClassOne>' type=<root>.CalculatorConstants origin=null
+      PROPERTY name:status signature:/CalculatorConstants.status|{}status[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:status signature:[ /CalculatorConstants.status|{}status[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'status: <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-status> signature:/CalculatorConstants.status.<get-status>|<get-status>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CalculatorConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:status signature:/CalculatorConstants.status|{}status[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CalculatorConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-status> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:status signature:[ /CalculatorConstants.status|{}status[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CalculatorConstants declared in <root>.CalculatorConstants.<get-status>' type=<root>.CalculatorConstants origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:<root>.CalculatorConstants [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (id: <unbound IrClassSymbolImpl>, detour: <unbound IrClassSymbolImpl>, taxi: <unbound IrClassSymbolImpl>, loop: <unbound IrClassSymbolImpl>, planeCondition: <unbound IrClassSymbolImpl>, co2PerKerosene: <unbound IrClassSymbolImpl>, freight: <unbound IrClassSymbolImpl>, rfi: <unbound IrClassSymbolImpl>, rfiAltitude: <unbound IrClassSymbolImpl>, averageContribution: <unbound IrClassSymbolImpl>, singleContribution: <unbound IrClassSymbolImpl>, returnContribution: <unbound IrClassSymbolImpl>, defraFactor: <unbound IrClassSymbolImpl>, airCondMult: <unbound IrClassSymbolImpl>, autoTransMult: <unbound IrClassSymbolImpl>, hybridDefault: <unbound IrClassSymbolImpl>?, travelClassOne: <unbound IrClassSymbolImpl>, status: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CalculatorConstants' type=<root>.CalculatorConstants origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-status> (): <unbound IrClassSymbolImpl> declared in <root>.CalculatorConstants' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val c: <root>.CalculatorConstants [val] declared in <root>.box' type=<root>.CalculatorConstants origin=null

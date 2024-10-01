@@ -1,0 +1,288 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/forInCharSequenceWithCustomIterator.kt
+    CLASS CLASS name:CharSequenceWithExtensionIterator signature:/CharSequenceWithExtensionIterator|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CharSequenceWithExtensionIterator
+      CONSTRUCTOR signature:/CharSequenceWithExtensionIterator.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.CharSequenceWithExtensionIterator [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CharSequenceWithExtensionIterator signature:/CharSequenceWithExtensionIterator|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/CharSequenceWithExtensionIterator.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /CharSequenceWithExtensionIterator.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/CharSequenceWithExtensionIterator.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CharSequenceWithExtensionIterator) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/CharSequenceWithExtensionIterator.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithExtensionIterator
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /CharSequenceWithExtensionIterator.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CharSequenceWithExtensionIterator declared in <root>.CharSequenceWithExtensionIterator.<get-s>' type=<root>.CharSequenceWithExtensionIterator origin=null
+      FUN name:get signature:/CharSequenceWithExtensionIterator.get|get(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.CharSequenceWithExtensionIterator, foo:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithExtensionIterator
+        VALUE_PARAMETER name:foo index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun get (foo: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="shouldn't be called!"
+      PROPERTY name:length signature:/CharSequenceWithExtensionIterator.length|{}length[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:length signature:[ /CharSequenceWithExtensionIterator.length|{}length[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.CharSequenceWithExtensionIterator declared in <root>.CharSequenceWithExtensionIterator' type=<root>.CharSequenceWithExtensionIterator origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> signature:/CharSequenceWithExtensionIterator.length.<get-length>|<get-length>(){}[0] visibility:public modality:OPEN <> ($this:<root>.CharSequenceWithExtensionIterator) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:length signature:/CharSequenceWithExtensionIterator.length|{}length[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithExtensionIterator
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-length> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length signature:[ /CharSequenceWithExtensionIterator.length|{}length[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CharSequenceWithExtensionIterator declared in <root>.CharSequenceWithExtensionIterator.<get-length>' type=<root>.CharSequenceWithExtensionIterator origin=null
+      FUN name:subSequence signature:/CharSequenceWithExtensionIterator.subSequence|subSequence(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.CharSequenceWithExtensionIterator, startIndex:<unbound IrClassSymbolImpl>, endIndex:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithExtensionIterator
+        VALUE_PARAMETER name:startIndex index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:endIndex index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun subSequence (startIndex: <unbound IrClassSymbolImpl>, endIndex: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.CharSequenceWithExtensionIterator declared in <root>.CharSequenceWithExtensionIterator.subSequence' type=<root>.CharSequenceWithExtensionIterator origin=null
+              1: GET_VAR 'startIndex: <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator.subSequence' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'endIndex: <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator.subSequence' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/CharSequenceWithExtensionIterator.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.CharSequenceWithExtensionIterator, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithExtensionIterator
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharSequenceWithExtensionIterator'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.CharSequenceWithExtensionIterator declared in <root>.CharSequenceWithExtensionIterator.get' type=<root>.CharSequenceWithExtensionIterator origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithExtensionIterator.get' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:iterator signature:/iterator|iterator@CharSequenceWithExtensionIterator(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.CharSequenceWithExtensionIterator) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithExtensionIterator
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterator (): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          BLOCK type=<root>.iterator.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.iterator.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.iterator.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+              FUN name:nextChar visibility:public modality:OPEN <> ($this:<root>.iterator.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.iterator.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun nextChar (): <unbound IrClassSymbolImpl> declared in <root>.iterator.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.iterator.<no name provided>) returnType:<unbound IrClassSymbolImpl> [operator]
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.iterator.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.iterator.<no name provided>'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.iterator.<no name provided>' type=<root>.iterator.<no name provided> origin=OBJECT_LITERAL
+    CLASS CLASS name:CharSequenceWithMemberIterator signature:/CharSequenceWithMemberIterator|null[0] modality:FINAL visibility:public superTypes:[<root>.CharSequenceWithExtensionIterator]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CharSequenceWithMemberIterator
+      CONSTRUCTOR signature:/CharSequenceWithMemberIterator.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.CharSequenceWithMemberIterator [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CharSequenceWithExtensionIterator'
+            s: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CharSequenceWithMemberIterator signature:/CharSequenceWithMemberIterator|null[0] modality:FINAL visibility:public superTypes:[<root>.CharSequenceWithExtensionIterator]'
+      FUN name:iterator signature:/CharSequenceWithMemberIterator.iterator|iterator(){}[0] visibility:public modality:FINAL <> ($this:<root>.CharSequenceWithMemberIterator) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithMemberIterator
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterator (): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharSequenceWithMemberIterator'
+            BLOCK type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.CharSequenceWithMemberIterator.iterator.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                PROPERTY name:index visibility:private modality:FINAL [var]
+                  FIELD PROPERTY_BACKING_FIELD name:index type:<unbound IrClassSymbolImpl> visibility:private
+                    EXPRESSION_BODY
+                      CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-index> visibility:private modality:FINAL <> ($this:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                    correspondingProperty: PROPERTY name:index visibility:private modality:FINAL [var]
+                    $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>'
+                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                          receiver: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator.iterator.<no name provided> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.<get-index>' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=null
+                  FUN DEFAULT_PROPERTY_ACCESSOR name:<set-index> visibility:private modality:FINAL <> ($this:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    correspondingProperty: PROPERTY name:index visibility:private modality:FINAL [var]
+                    $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>
+                    VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                        receiver: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator.iterator.<no name provided> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.<set-index>' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=null
+                        value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.<set-index>' type=<unbound IrClassSymbolImpl> origin=null
+                FUN name:nextChar visibility:public modality:OPEN <> ($this:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun nextChar (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator declared in <root>.CharSequenceWithMemberIterator.iterator' type=<root>.CharSequenceWithMemberIterator origin=null
+                        1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator declared in <root>.CharSequenceWithMemberIterator.iterator' type=<root>.CharSequenceWithMemberIterator origin=null
+                          1: BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                            CALL 'private final fun <set-index> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                              $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator.iterator.<no name provided> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.nextChar' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=null
+                              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                                $this: CALL 'private final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                                  $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator.iterator.<no name provided> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.nextChar' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=null
+                            CALL 'private final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                              $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator.iterator.<no name provided> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.nextChar' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=null
+                FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>) returnType:<unbound IrClassSymbolImpl> [operator]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.CharSequenceWithMemberIterator.iterator.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>'
+                      CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                        arg0: CALL 'private final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator.iterator.<no name provided> declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>.hasNext' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=null
+                        arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.CharSequenceWithMemberIterator declared in <root>.CharSequenceWithMemberIterator.iterator' type=<root>.CharSequenceWithMemberIterator origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CharSequenceWithMemberIterator.iterator.<no name provided>' type=<root>.CharSequenceWithMemberIterator.iterator.<no name provided> origin=OBJECT_LITERAL
+    FUN name:collectChars signature:/collectChars|collectChars(kotlin.CharSequence){}[0] visibility:public modality:FINAL <> (cs:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:cs index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'cs: <unbound IrClassSymbolImpl> declared in <root>.collectChars' type=<unbound IrClassSymbolImpl> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.collectChars' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:c type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.collectChars' type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.collectChars' type=<unbound IrClassSymbolImpl> origin=null
+                    1: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.collectChars' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun collectChars (cs: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.collectChars' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:collectCharsTypeParam signature:/collectCharsTypeParam|collectCharsTypeParam(0:0){0§<kotlin.CharSequence>}[0] visibility:public modality:FINAL <T> (cs:T of <root>.collectCharsTypeParam) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /collectCharsTypeParam|collectCharsTypeParam(0:0){0§<kotlin.CharSequence>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:cs index:0 type:T of <root>.collectCharsTypeParam
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'cs: T of <root>.collectCharsTypeParam declared in <root>.collectCharsTypeParam' type=T of <root>.collectCharsTypeParam origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.collectCharsTypeParam' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:c type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.collectCharsTypeParam' type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.collectCharsTypeParam' type=<unbound IrClassSymbolImpl> origin=null
+                    1: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.collectCharsTypeParam' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun collectCharsTypeParam <T> (cs: T of <root>.collectCharsTypeParam): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.collectCharsTypeParam' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:csWithExtIt type:<root>.CharSequenceWithExtensionIterator [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CharSequenceWithExtensionIterator' type=<root>.CharSequenceWithExtensionIterator origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="1234"
+        VAR name:csWithExtItResult type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'public final fun iterator (): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'val csWithExtIt: <root>.CharSequenceWithExtensionIterator [val] declared in <root>.box' type=<root>.CharSequenceWithExtensionIterator origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:c type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val csWithExtItResult: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    1: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value=""
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val csWithExtItResult: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:csWithMemIt type:<root>.CharSequenceWithMemberIterator [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CharSequenceWithMemberIterator' type=<root>.CharSequenceWithMemberIterator origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="1234"
+        VAR name:csWithMemItResult type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'public final fun iterator (): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharSequenceWithMemberIterator' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val csWithMemIt: <root>.CharSequenceWithMemberIterator [val] declared in <root>.box' type=<root>.CharSequenceWithMemberIterator origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:c type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val csWithMemItResult: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    1: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="4321"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val csWithMemItResult: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="1234"
+          2: CALL 'public final fun collectChars (cs: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            cs: GET_VAR 'val csWithExtIt: <root>.CharSequenceWithExtensionIterator [val] declared in <root>.box' type=<root>.CharSequenceWithExtensionIterator origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="1234"
+          2: CALL 'public final fun collectCharsTypeParam <T> (cs: T of <root>.collectCharsTypeParam): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <root>.CharSequenceWithExtensionIterator
+            cs: GET_VAR 'val csWithExtIt: <root>.CharSequenceWithExtensionIterator [val] declared in <root>.box' type=<root>.CharSequenceWithExtensionIterator origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="1234"
+          2: CALL 'public final fun collectChars (cs: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            cs: GET_VAR 'val csWithMemIt: <root>.CharSequenceWithMemberIterator [val] declared in <root>.box' type=<root>.CharSequenceWithMemberIterator origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="1234"
+          2: CALL 'public final fun collectCharsTypeParam <T> (cs: T of <root>.collectCharsTypeParam): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <root>.CharSequenceWithMemberIterator
+            cs: GET_VAR 'val csWithMemIt: <root>.CharSequenceWithMemberIterator [val] declared in <root>.box' type=<root>.CharSequenceWithMemberIterator origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

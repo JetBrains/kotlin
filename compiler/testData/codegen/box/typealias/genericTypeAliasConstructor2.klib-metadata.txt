@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Pair
+
+    public final class Pair<T#0 /* T1 */, T#1 /* T2 */> : kotlin/Any {
+
+      public constructor(x1: T#0, x2: T#1)
+
+      public final val x1: T#0
+        public final get
+
+      public final val x2: T#1
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public typealias ST<T#0 /* T */> = Pair<kotlin/String, T#0> /* = Pair<kotlin/String, T#0> */
+    }
+  }
+}

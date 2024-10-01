@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Cell
+
+    public final class Cell : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Int
+
+      public final operator fun set(i: kotlin/Int, v: kotlin/Int): kotlin/Unit
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

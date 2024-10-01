@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun stub(): kotlin/Unit
+
+      @kotlin/internal/InlineOnly
+      public final val prop: kotlin/String
+        public final /* non-default */ inline get
+    }
+  }
+}

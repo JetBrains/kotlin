@@ -1,0 +1,60 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Base
+    // class name: test/Base2
+
+    public final enum class test/Base : kotlin/Enum<test/Base> {
+
+      private constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+
+      OK,
+
+      B,
+
+      // has Enum.entries
+    }
+
+    public final enum class test/Base2 : kotlin/Enum<test/Base2> {
+
+      private constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+
+      A,
+
+      B,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun cond(): kotlin/Boolean
+
+      public final fun foo(base: kotlin/Enum<*>): kotlin/Unit
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Enum<T#0>, reified T#1 /* Y */ : kotlin/Enum<T#1>> process(name: kotlin/String): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

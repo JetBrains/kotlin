@@ -1,0 +1,81 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:foo fileName:/genericWithSameName.kt
+    CLASS CLASS name:C signature:foo/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.C<T of foo.C>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ foo/C|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:foo/C.<init>|<init>(1:0){}[0] visibility:public <> (pp:T of foo.C) returnType:foo.C<T of foo.C> [primary]
+        VALUE_PARAMETER name:pp index:0 type:T of foo.C
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:foo/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:pp signature:foo/C.pp|{}pp[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:pp signature:[ foo/C.pp|{}pp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:pp type:T of foo.C visibility:private [final]] ] type:T of foo.C visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'pp: T of foo.C declared in foo.C.<init>' type=T of foo.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pp> signature:foo/C.pp.<get-pp>|<get-pp>(){}[0] visibility:public modality:FINAL <> ($this:foo.C<T of foo.C>) returnType:T of foo.C
+          correspondingProperty: PROPERTY name:pp signature:foo/C.pp|{}pp[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.C<T of foo.C>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-pp> (): T of foo.C declared in foo.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pp signature:[ foo/C.pp|{}pp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:pp type:T of foo.C visibility:private [final]] ] type:T of foo.C visibility:private [final]' type=T of foo.C origin=null
+                receiver: GET_VAR '<this>: foo.C<T of foo.C> declared in foo.C.<get-pp>' type=foo.C<T of foo.C> origin=null
+    PROPERTY name:p signature:foo/p|@foo.C<0:0>{0§<kotlin.Any?>}p[0] visibility:public modality:FINAL [val]
+      FUN name:<get-p> signature:foo/p.<get-p>|<get-p>@foo.C<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:foo.C<T of foo.<get-p>>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:p signature:foo/p|@foo.C<0:0>{0§<kotlin.Any?>}p[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ foo/p|@foo.C<0:0>{0§<kotlin.Any?>}p[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:foo.C<T of foo.<get-p>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> <T> (): <unbound IrClassSymbolImpl> declared in foo'
+            BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+              VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:T of foo.<get-p> [val]
+                    CALL 'public final fun <get-pp> (): T of foo.C declared in foo.C' type=T of foo.<get-p> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: foo.C<T of foo.<get-p>> declared in foo.<get-p>' type=foo.C<T of foo.<get-p>> origin=null
+                  WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_safe_receiver: T of foo.<get-p> [val] declared in foo.<get-p>' type=T of foo.<get-p> origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'val tmp0_safe_receiver: T of foo.<get-p> [val] declared in foo.<get-p>' type=T of foo.<get-p> origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in foo.<get-p>' type=<unbound IrClassSymbolImpl>? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in foo.<get-p>' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:p signature:foo/p|@foo.C<0:0>{0§<kotlin.Any>}p[0] visibility:public modality:FINAL [val]
+      FUN name:<get-p> signature:foo/p.<get-p>|<get-p>@foo.C<0:0>(){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> ($receiver:foo.C<T of foo.<get-p>>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:p signature:foo/p|@foo.C<0:0>{0§<kotlin.Any>}p[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ foo/p|@foo.C<0:0>{0§<kotlin.Any>}p[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:foo.C<T of foo.<get-p>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> <T> (): <unbound IrClassSymbolImpl> declared in foo'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-pp> (): T of foo.C declared in foo.C' type=T of foo.<get-p> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: foo.C<T of foo.<get-p>> declared in foo.<get-p>' type=foo.C<T of foo.<get-p>> origin=null
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c1 type:foo.C<<unbound IrClassSymbolImpl>?> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (pp: T of foo.C) [primary] declared in foo.C' type=foo.C<<unbound IrClassSymbolImpl>?> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>?
+            pp: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VAR name:c2 type:foo.C<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (pp: T of foo.C) [primary] declared in foo.C' type=foo.C<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            pp: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-p> <T> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              <T>: <unbound IrClassSymbolImpl>?
+              $receiver: GET_VAR 'val c1: foo.C<<unbound IrClassSymbolImpl>?> [val] declared in foo.box' type=foo.C<<unbound IrClassSymbolImpl>?> origin=null
+            1: CALL 'public final fun <get-p> <T> (): <unbound IrClassSymbolImpl> declared in foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              <T>: <unbound IrClassSymbolImpl>
+              $receiver: GET_VAR 'val c2: foo.C<<unbound IrClassSymbolImpl>> [val] declared in foo.box' type=foo.C<<unbound IrClassSymbolImpl>> origin=null

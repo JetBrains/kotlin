@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testByte(): kotlin/Unit
+
+      public final fun testChar(): kotlin/Unit
+
+      public final fun testInt(): kotlin/Unit
+
+      public final fun testLong(): kotlin/Unit
+
+      public final fun testShort(): kotlin/Unit
+
+      public final const val MB: kotlin/Byte /* = -128.toByte() */
+        public final get
+
+      public final const val MC: kotlin/Char /* = '\u0000' */
+        public final get
+
+      public final const val MI: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val ML: kotlin/Long /* = -9223372036854775808L */
+        public final get
+
+      public final const val MS: kotlin/Short /* = -32768.toShort() */
+        public final get
+    }
+  }
+}

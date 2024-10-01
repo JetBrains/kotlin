@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun log(message: kotlin/String): kotlin/Unit
+
+      public final val a: kotlin/Unit
+        public final get
+
+      public final val b: kotlin/Unit
+        public final get
+
+      public final var boxtest_log: kotlin/String
+        public final get
+        public final set
+
+      public final val c: kotlin/Unit
+        public final get
+    }
+  }
+}

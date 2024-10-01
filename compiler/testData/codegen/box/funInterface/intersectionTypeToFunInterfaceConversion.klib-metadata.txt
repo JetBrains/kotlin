@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KBoolean
+    // class name: KRunnable
+    // class name: Test
+
+    public abstract fun interface KBoolean : kotlin/Any {
+
+      public abstract fun invoke(b: kotlin/Boolean): kotlin/Unit
+    }
+
+    public abstract fun interface KRunnable : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    public final object Test : kotlin/Function0<kotlin/Unit>, kotlin/Function1<kotlin/Boolean, kotlin/Unit> {
+
+      private constructor()
+
+      public open operator fun invoke(): kotlin/Unit
+
+      public open operator fun invoke(p1: kotlin/Boolean): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Function0<kotlin/Unit> & kotlin/Function1<kotlin/Boolean, kotlin/Unit>> testIntersection(x: T#0): kotlin/Unit
+
+      public final fun useFunInterface(fn: KRunnable): kotlin/Unit
+
+      public final fun useFunInterfacePredicate(fn: KBoolean): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EnumWithClash
+
+    public final enum class EnumWithClash : kotlin/Enum<EnumWithClash> {
+
+      private constructor()
+
+      values,
+
+      entries,
+
+      valueOf,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

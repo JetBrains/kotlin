@@ -1,0 +1,43 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:a signature:test/A.a|a(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun a (): <unbound IrClassSymbolImpl> [inline] declared in test.A'
+            CALL 'public final fun b (): <unbound IrClassSymbolImpl> [inline] declared in test.B' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.B' type=test.B origin=null
+      FUN name:c signature:test/A.c|c(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun c (): <unbound IrClassSymbolImpl> [inline] declared in test.A'
+            CALL 'public final fun d (): <unbound IrClassSymbolImpl> [inline] declared in test.B' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.B' type=test.B origin=null
+    CLASS CLASS name:B signature:test/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.B
+      CONSTRUCTOR signature:test/B.<init>|<init>(){}[0] visibility:public <> () returnType:test.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:test/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:b signature:test/B.b|b(){}[0] visibility:public modality:FINAL <> ($this:test.B) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun b (): <unbound IrClassSymbolImpl> [inline] declared in test.B'
+            CALL 'public final fun c (): <unbound IrClassSymbolImpl> [inline] declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null
+      FUN name:d signature:test/B.d|d(){}[0] visibility:public modality:FINAL <> ($this:test.B) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun d (): <unbound IrClassSymbolImpl> [inline] declared in test.B'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun a (): <unbound IrClassSymbolImpl> [inline] declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null

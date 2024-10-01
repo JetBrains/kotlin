@@ -1,0 +1,79 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericValOnLHS.kt
+    CLASS CLASS name:Generic signature:/Generic|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Generic<P of <root>.Generic>
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /Generic|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/Generic.<init>|<init>(1:0){}[0] visibility:public <> (p:P of <root>.Generic) returnType:<root>.Generic<P of <root>.Generic> [primary]
+        VALUE_PARAMETER name:p index:0 type:P of <root>.Generic
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Generic signature:/Generic|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:p signature:/Generic.p|{}p[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:p signature:[ /Generic.p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:P of <root>.Generic visibility:private [final]] ] type:P of <root>.Generic visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'p: P of <root>.Generic declared in <root>.Generic.<init>' type=P of <root>.Generic origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> signature:/Generic.p.<get-p>|<get-p>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Generic<P of <root>.Generic>) returnType:P of <root>.Generic
+          correspondingProperty: PROPERTY name:p signature:/Generic.p|{}p[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Generic<P of <root>.Generic>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> (): P of <root>.Generic declared in <root>.Generic'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p signature:[ /Generic.p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:P of <root>.Generic visibility:private [final]] ] type:P of <root>.Generic visibility:private [final]' type=P of <root>.Generic origin=null
+                receiver: GET_VAR '<this>: <root>.Generic<P of <root>.Generic> declared in <root>.Generic.<get-p>' type=<root>.Generic<P of <root>.Generic> origin=null
+    CLASS CLASS name:Host signature:/Host|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+      CONSTRUCTOR signature:/Host.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Host [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host signature:/Host|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:t signature:/Host.t|t(){}[0] visibility:public modality:FINAL <> ($this:<root>.Host) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        BLOCK_BODY
+      PROPERTY name:v signature:/Host.v|{}v[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:v signature:[ /Host.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:P of <root>.Generic visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:/Host.v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Host) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:v signature:/Host.v|{}v[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Host
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in <root>.Host'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ /Host.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:p type:P of <root>.Generic visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-v>' type=<root>.Host origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_CLASS type=<unbound IrClassSymbolImpl><out <root>.Host>
+            CALL 'public final fun <get-p> (): P of <root>.Generic declared in <root>.Generic' type=<root>.Host origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (p: P of <root>.Generic) [primary] declared in <root>.Generic' type=<root>.Generic<<root>.Host> origin=null
+                <class: P>: <root>.Host
+                p: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: FUNCTION_REFERENCE 'public final fun t (): <unbound IrClassSymbolImpl> declared in <root>.Host' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $this: CALL 'public final fun <get-p> (): P of <root>.Generic declared in <root>.Generic' type=<root>.Host origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (p: P of <root>.Generic) [primary] declared in <root>.Generic' type=<root>.Generic<<root>.Host> origin=null
+                <class: P>: <root>.Host
+                p: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final v: <unbound IrClassSymbolImpl> [val] declared in <root>.Host' field=null getter='public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in <root>.Host' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: CALL 'public final fun <get-p> (): P of <root>.Generic declared in <root>.Generic' type=<root>.Host origin=GET_PROPERTY
+                $this: CONSTRUCTOR_CALL 'public constructor <init> (p: P of <root>.Generic) [primary] declared in <root>.Generic' type=<root>.Generic<<root>.Host> origin=null
+                  <class: P>: <root>.Host
+                  p: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION

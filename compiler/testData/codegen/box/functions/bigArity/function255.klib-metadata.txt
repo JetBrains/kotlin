@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      private final fun check(a: A, value: kotlin/Int): kotlin/Unit
+
+      public final fun lmao(p001: A, p002: A, p003: A, p004: A, p005: A, p006: A, p007: A, p008: A, p009: A, p010: A, p011: A, p012: A, p013: A, p014: A, p015: A, p016: A, p017: A, p018: A, p019: A, p020: A, p021: A, p022: A, p023: A, p024: A, p025: A, p026: A, p027: A, p028: A, p029: A, p030: A, p031: A, p032: A, p033: A, p034: A, p035: A, p036: A, p037: A, p038: A, p039: A, p040: A, p041: A, p042: A, p043: A, p044: A, p045: A, p046: A, p047: A, p048: A, p049: A, p050: A, p051: A, p052: A, p053: A, p054: A, p055: A, p056: A, p057: A, p058: A, p059: A, p060: A, p061: A, p062: A, p063: A, p064: A, p065: A, p066: A, p067: A, p068: A, p069: A, p070: A, p071: A, p072: A, p073: A, p074: A, p075: A, p076: A, p077: A, p078: A, p079: A, p080: A, p081: A, p082: A, p083: A, p084: A, p085: A, p086: A, p087: A, p088: A, p089: A, p090: A, p091: A, p092: A, p093: A, p094: A, p095: A, p096: A, p097: A, p098: A, p099: A, p100: A, p101: A, p102: A, p103: A, p104: A, p105: A, p106: A, p107: A, p108: A, p109: A, p110: A, p111: A, p112: A, p113: A, p114: A, p115: A, p116: A, p117: A, p118: A, p119: A, p120: A, p121: A, p122: A, p123: A, p124: A, p125: A, p126: A, p127: A, p128: A, p129: A, p130: A, p131: A, p132: A, p133: A, p134: A, p135: A, p136: A, p137: A, p138: A, p139: A, p140: A, p141: A, p142: A, p143: A, p144: A, p145: A, p146: A, p147: A, p148: A, p149: A, p150: A, p151: A, p152: A, p153: A, p154: A, p155: A, p156: A, p157: A, p158: A, p159: A, p160: A, p161: A, p162: A, p163: A, p164: A, p165: A, p166: A, p167: A, p168: A, p169: A, p170: A, p171: A, p172: A, p173: A, p174: A, p175: A, p176: A, p177: A, p178: A, p179: A, p180: A, p181: A, p182: A, p183: A, p184: A, p185: A, p186: A, p187: A, p188: A, p189: A, p190: A, p191: A, p192: A, p193: A, p194: A, p195: A, p196: A, p197: A, p198: A, p199: A, p200: A, p201: A, p202: A, p203: A, p204: A, p205: A, p206: A, p207: A, p208: A, p209: A, p210: A, p211: A, p212: A, p213: A, p214: A, p215: A, p216: A, p217: A, p218: A, p219: A, p220: A, p221: A, p222: A, p223: A, p224: A, p225: A, p226: A, p227: A, p228: A, p229: A, p230: A, p231: A, p232: A, p233: A, p234: A, p235: A, p236: A, p237: A, p238: A, p239: A, p240: A, p241: A, p242: A, p243: A, p244: A, p245: A, p246: A, p247: A, p248: A, p249: A, p250: A, p251: A, p252: A, p253: A, p254: A): kotlin/Unit
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: HttpServer
+    // class name: LoggerAware
+    // class name: MyHttpServer
+
+    public abstract class HttpServer : LoggerAware {
+
+      public constructor()
+
+      public final fun start(): kotlin/Unit
+    }
+
+    public abstract interface LoggerAware : kotlin/Any {
+
+      public abstract val logger: kotlin/text/StringBuilder
+        public abstract get
+    }
+
+    public final class MyHttpServer : HttpServer {
+
+      public constructor()
+
+      public open val logger: kotlin/text/StringBuilder
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

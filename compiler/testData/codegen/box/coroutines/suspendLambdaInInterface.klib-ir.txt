@@ -1,0 +1,22 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/suspendLambdaInInterface.kt
+    FUN name:susp signature:/susp|susp(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+      FUN name:problematic signature:/I.problematic|problematic(){}[0] visibility:public modality:OPEN <> ($this:<root>.I) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.I
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <root>.I
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR '<this>: <root>.I declared in <root>.I.problematic' type=<root>.I origin=null
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.I, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.I) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$run type:<root>.I
+                BLOCK_BODY
+                  CALL 'public final fun susp (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

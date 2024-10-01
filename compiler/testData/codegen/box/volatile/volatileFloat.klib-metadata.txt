@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FloatWrapper
+
+    public final class FloatWrapper : kotlin/Any {
+
+      public constructor(x: kotlin/Float)
+
+      public final var x: kotlin/Float
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val global: FloatWrapper
+        public final get
+    }
+  }
+}

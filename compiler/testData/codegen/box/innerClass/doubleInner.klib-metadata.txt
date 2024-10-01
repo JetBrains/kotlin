@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Father
+    // class name: Father.Child
+    // class name: Father.Child.Child2
+    // class name: Father.InClass
+
+    public open class Father : kotlin/Any {
+
+      public constructor(param: kotlin/String)
+
+      public final val param: kotlin/String
+        public final get
+
+      // nested class: InClass
+
+      // nested class: Child
+    }
+
+    public final inner class Father.Child : Father {
+
+      public constructor(p: kotlin/String)
+
+      // nested class: Child2
+    }
+
+    public final inner class Father.Child.Child2 : Father.InClass {
+
+      public /* secondary */ constructor()
+    }
+
+    public abstract inner class Father.InClass : kotlin/Any {
+
+      public constructor()
+
+      public final fun work(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,39 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3500.kt
+    CLASS INTERFACE name:BK signature:/BK|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BK
+      FUN name:foo signature:/BK.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.BK) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.BK
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.BK'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=10
+    CLASS INTERFACE name:KTrait signature:/KTrait|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BK]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KTrait
+      FUN name:foo signature:/KTrait.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.KTrait) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.BK
+        $this: VALUE_PARAMETER name:<this> type:<root>.KTrait
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.KTrait'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=30
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.BK; <root>.KTrait]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.BK; <root>.KTrait]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="30"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

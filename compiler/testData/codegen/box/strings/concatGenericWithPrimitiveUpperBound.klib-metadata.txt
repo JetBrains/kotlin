@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Boolean> concatBoolean(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Byte> concatByte(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Double> concatDouble(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Float> concatFloat(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Int> concatInt(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Long> concatLong(x: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Short> concatShort(x: T#0): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: regressions
+
+    // class name: regressions/Kt1619Test
+
+    public final class regressions/Kt1619Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun doSomething(list: kotlin/collections/List<kotlin/String?>): kotlin/Int
+
+      public final fun testCollectionNotNullCanBeUsedForNullables(): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Bar.Baz
+    // class name: Foo
+
+    public final class Bar : Foo {
+
+      public constructor()
+
+      // nested class: Baz
+    }
+
+    public final inner class Bar.Baz : kotlin/Any {
+
+      public constructor()
+
+      public final fun call(): kotlin/Unit
+    }
+
+    public abstract class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final var isOpen: kotlin/Boolean
+        public final get
+        private final /* non-default */ set(value: kotlin/Boolean)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

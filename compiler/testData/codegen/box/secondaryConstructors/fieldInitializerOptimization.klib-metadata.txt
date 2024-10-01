@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Derived
+
+    public open class Base : kotlin/Any {
+
+      public constructor()
+
+      public open fun setup(): kotlin/Unit
+    }
+
+    public final class Derived : Base {
+
+      public /* secondary */ constructor()
+
+      public open fun setup(): kotlin/Unit
+
+      public final var xBool: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var xByte: kotlin/Byte
+        public final get
+        public final set
+
+      public final var xChar: kotlin/Char
+        public final get
+        public final set
+
+      public final var xDouble: kotlin/Double
+        public final get
+        public final set
+
+      public final var xFloat: kotlin/Float
+        public final get
+        public final set
+
+      public final var xInt: kotlin/Int
+        public final get
+        public final set
+
+      public final var xLong: kotlin/Long
+        public final get
+        public final set
+
+      public final var xRef: kotlin/Any?
+        public final get
+        public final set
+
+      public final var xShort: kotlin/Short
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val placeHolder: kotlin/Any
+        public final get
+    }
+  }
+}

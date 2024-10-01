@@ -1,0 +1,75 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/viaTypeAlias.kt
+    CLASS INTERFACE name:MyMap signature:/MyMap|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /MyMap|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /MyMap|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:get signature:/MyMap.get|get(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>, k:K of <root>.MyMap) returnType:V of <root>.MyMap
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
+        VALUE_PARAMETER name:k index:0 type:K of <root>.MyMap
+    TYPEALIAS name:MyMapAlias signature:/MyMapAlias|null[0] visibility:public expandedType:<root>.MyMap<X of <root>.MyMapAlias, Y of <root>.MyMapAlias>
+      TYPE_PARAMETER name:X index:0 variance: signature:[ /MyMapAlias|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:Y index:1 variance: signature:[ /MyMapAlias|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyMap<T of <root>.A, E of <root>.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A, E of <root>.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:E index:1 variance: signature:[ /A|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A.<init>|<init>(MyMap<1:0,1:1>){}[0] visibility:public <> (m:<root>.MyMap<T of <root>.A, E of <root>.A>) returnType:<root>.A<T of <root>.A, E of <root>.A> [primary]
+        VALUE_PARAMETER name:m index:0 type:<root>.MyMap<T of <root>.A, E of <root>.A>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyMap<T of <root>.A, E of <root>.A>]'
+      PROPERTY name:m signature:/A.m|{}m[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:m signature:[ /A.m|{}m[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:m type:<root>.MyMap<T of <root>.A, E of <root>.A> visibility:private [final]] ] type:<root>.MyMap<T of <root>.A, E of <root>.A> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'm: <root>.MyMap<T of <root>.A, E of <root>.A> declared in <root>.A.<init>' type=<root>.MyMap<T of <root>.A, E of <root>.A> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-m> signature:/A.m.<get-m>|<get-m>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A, E of <root>.A>) returnType:<root>.MyMap<T of <root>.A, E of <root>.A>
+          correspondingProperty: PROPERTY name:m signature:/A.m|{}m[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A, E of <root>.A>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-m> (): <root>.MyMap<T of <root>.A, E of <root>.A> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:m signature:[ /A.m|{}m[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:m type:<root>.MyMap<T of <root>.A, E of <root>.A> visibility:private [final]] ] type:<root>.MyMap<T of <root>.A, E of <root>.A> visibility:private [final]' type=<root>.MyMap<T of <root>.A, E of <root>.A> origin=null
+                receiver: GET_VAR '<this>: <root>.A<T of <root>.A, E of <root>.A> declared in <root>.A.<get-m>' type=<root>.A<T of <root>.A, E of <root>.A> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/A.get|get(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A<T of <root>.A, E of <root>.A>, k:T of <root>.A) returnType:E of <root>.A
+        overridden:
+          public abstract fun get (k: K of <root>.MyMap): V of <root>.MyMap declared in <root>.MyMap
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A, E of <root>.A>
+        VALUE_PARAMETER name:k index:0 type:T of <root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (k: T of <root>.A): E of <root>.A declared in <root>.A'
+            CALL 'public abstract fun get (k: K of <root>.MyMap): V of <root>.MyMap declared in <root>.MyMap' type=E of <root>.A origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:m signature:[ /A.m|{}m[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:m type:<root>.MyMap<T of <root>.A, E of <root>.A> visibility:private [final]] ] type:<root>.MyMap<T of <root>.A, E of <root>.A> visibility:private [final]' type=<root>.MyMap<T of <root>.A, E of <root>.A> origin=null
+                receiver: GET_VAR '<this>: <root>.A<T of <root>.A, E of <root>.A> declared in <root>.A.get' type=<root>.A<T of <root>.A, E of <root>.A> origin=null
+              k: GET_VAR 'k: T of <root>.A declared in <root>.A.get' type=T of <root>.A origin=null
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (m: <root>.MyMap<T of <root>.A, E of <root>.A>) [primary] declared in <root>.A'
+            <T>: <unbound IrClassSymbolImpl>
+            <E>: <unbound IrClassSymbolImpl>
+            m: BLOCK type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.MyMap<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B.<init>.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.B.<init>.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.MyMap<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+                FUN name:get visibility:public modality:OPEN <> ($this:<root>.B.<init>.<no name provided>, w:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public abstract fun get (k: K of <root>.MyMap): V of <root>.MyMap declared in <root>.MyMap
+                  $this: VALUE_PARAMETER name:<this> type:<root>.B.<init>.<no name provided>
+                  VALUE_PARAMETER name:w index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (w: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.B.<init>.<no name provided>'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: GET_VAR 'w: <unbound IrClassSymbolImpl> declared in <root>.B.<init>.<no name provided>.get' type=<unbound IrClassSymbolImpl> origin=null
+                        1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B.<init>.<no name provided>' type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="O"

@@ -1,0 +1,17 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun Trace(format: kotlin/String /* = ... */): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final val traceFormatDefault: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}

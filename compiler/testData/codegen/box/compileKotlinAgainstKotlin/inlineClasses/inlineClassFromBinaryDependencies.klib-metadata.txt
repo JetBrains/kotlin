@@ -1,0 +1,70 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: z
+
+    // class name: z/IFoo
+    // class name: z/Z
+    // class name: z/Z.Companion
+
+    public abstract interface z/IFoo : kotlin/Any {
+
+      public abstract fun foo(): kotlin/String
+    }
+
+    public final value class z/Z : z/IFoo {
+
+      public /* secondary */ constructor(i: kotlin/Int)
+
+      public constructor(s: kotlin/String)
+
+      public final fun bar(): kotlin/String
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final inline fun <T#0 /* T */> run(lambda: kotlin/Function1<kotlin/String, T#0>): T#0
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // underlying property: s
+
+      // underlying type: kotlin/String
+    }
+
+    public final companion object z/Z.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun z(i: kotlin/Int): z/Z
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(z: z/Z): kotlin/Unit
+    }
+  }
+}

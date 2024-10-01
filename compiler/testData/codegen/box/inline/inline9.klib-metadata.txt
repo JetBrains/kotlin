@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(i1: kotlin/Int, i2: kotlin/Int): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final inline fun foo(i3: kotlin/Int, i4: kotlin/Int): kotlin/Int
+
+      public final fun quiz(i: kotlin/Int): kotlin/Int
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

@@ -1,0 +1,218 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt10934.kt
+    CLASS CLASS name:Parser signature:/Parser|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>
+      TYPE_PARAMETER name:TInput index:0 variance: signature:[ /Parser|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TInput index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:TValue index:1 variance: signature:[ /Parser|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TValue index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Parser.<init>|<init>(kotlin.Function1<1:0,Result<1:0,1:1>>){}[0] visibility:public <> (f:<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>>) returnType:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> [primary]
+        VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Parser signature:/Parser|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:f signature:/Parser.f|{}f[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:f signature:[ /Parser.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'f: <unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> declared in <root>.Parser.<init>' type=<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-f> signature:/Parser.f.<get-f>|<get-f>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>) returnType:<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>>
+          correspondingProperty: PROPERTY name:f signature:/Parser.f|{}f[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-f> (): <unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> declared in <root>.Parser'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f signature:[ /Parser.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]' type=<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> origin=null
+                receiver: GET_VAR '<this>: <root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> declared in <root>.Parser.<get-f>' type=<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+      FUN name:invoke signature:/Parser.invoke|invoke(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>, input:TInput of <root>.Parser) returnType:<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>
+        VALUE_PARAMETER name:input index:0 type:TInput of <root>.Parser
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke (input: TInput of <root>.Parser): <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [operator] declared in <root>.Parser'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=INVOKE
+              $this: CALL 'public final fun <get-f> (): <unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> declared in <root>.Parser' type=<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> declared in <root>.Parser.invoke' type=<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+              1: GET_VAR 'input: TInput of <root>.Parser declared in <root>.Parser.invoke' type=TInput of <root>.Parser origin=null
+      FUN name:mapJoin signature:/Parser.mapJoin|mapJoin(kotlin.Function1<1:1,Parser<1:0,0:0>>;kotlin.Function2<1:1,0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <TIntermediate, TValue2> ($this:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>, selector:<unbound IrClassSymbolImpl><TValue of <root>.Parser, <root>.Parser<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>>, projector:<unbound IrClassSymbolImpl><TValue of <root>.Parser, TIntermediate of <root>.Parser.mapJoin, TValue2 of <root>.Parser.mapJoin>) returnType:<root>.Parser<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin>
+        TYPE_PARAMETER name:TIntermediate index:0 variance: signature:[ /Parser.mapJoin|mapJoin(kotlin.Function1<1:1,Parser<1:0,0:0>>;kotlin.Function2<1:1,0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TInput index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:TValue2 index:1 variance: signature:[ /Parser.mapJoin|mapJoin(kotlin.Function1<1:1,Parser<1:0,0:0>>;kotlin.Function2<1:1,0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:TValue index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser>
+        VALUE_PARAMETER name:selector index:0 type:<unbound IrClassSymbolImpl><TValue of <root>.Parser, <root>.Parser<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>>
+        VALUE_PARAMETER name:projector index:1 type:<unbound IrClassSymbolImpl><TValue of <root>.Parser, TIntermediate of <root>.Parser.mapJoin, TValue2 of <root>.Parser.mapJoin>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun mapJoin <TIntermediate, TValue2> (selector: <unbound IrClassSymbolImpl><TValue of <root>.Parser, <root>.Parser<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>>, projector: <unbound IrClassSymbolImpl><TValue of <root>.Parser, TIntermediate of <root>.Parser.mapJoin, TValue2 of <root>.Parser.mapJoin>): <root>.Parser<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> declared in <root>.Parser'
+            CONSTRUCTOR_CALL 'public constructor <init> (f: <unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>>) [primary] declared in <root>.Parser' type=<root>.Parser<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=null
+              <class: TInput>: TInput of <root>.Parser
+              <class: TValue>: TValue2 of <root>.Parser.mapJoin
+              f: FUN_EXPR type=<unbound IrClassSymbolImpl><TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (input:TInput of <root>.Parser) returnType:<root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin>
+                  VALUE_PARAMETER name:input index:0 type:TInput of <root>.Parser
+                  BLOCK_BODY
+                    VAR name:res type:<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val]
+                      CALL 'public final fun invoke (input: TInput of <root>.Parser): <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [operator] declared in <root>.Parser' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                        $this: GET_VAR '<this>: <root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> declared in <root>.Parser.mapJoin' type=<root>.Parser<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                        input: GET_VAR 'input: TInput of <root>.Parser declared in <root>.Parser.mapJoin.<anonymous>' type=TInput of <root>.Parser origin=null
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (input: TInput of <root>.Parser): <root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> declared in <root>.Parser.mapJoin'
+                      BLOCK type=<root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=WHEN
+                        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val]
+                          GET_VAR 'val res: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                        WHEN type=<root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=WHEN
+                          BRANCH
+                            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser>
+                              GET_VAR 'val tmp0_subject: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                            then: CONSTRUCTOR_CALL 'public constructor <init> (productionLabel: <unbound IrClassSymbolImpl>, child: <root>.Result.ParseError<TInput of <root>.Result.ParseError, *>?, rest: TInput of <root>.Result.ParseError) [primary] declared in <root>.Result.ParseError' type=<root>.Result.ParseError<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=null
+                              <class: TInput>: TInput of <root>.Parser
+                              <class: TValue>: TValue2 of <root>.Parser.mapJoin
+                              productionLabel: CALL 'public final fun <get-productionLabel> (): <unbound IrClassSymbolImpl> declared in <root>.Result.ParseError' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                $this: TYPE_OP type=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser> origin=IMPLICIT_CAST typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser>
+                                  GET_VAR 'val res: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                              child: CALL 'public final fun <get-child> (): <root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? declared in <root>.Result.ParseError' type=<root>.Result.ParseError<TInput of <root>.Parser, *>? origin=GET_PROPERTY
+                                $this: TYPE_OP type=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser> origin=IMPLICIT_CAST typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser>
+                                  GET_VAR 'val res: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                              rest: CALL 'public final fun <get-rest> (): TInput of <root>.Result.ParseError declared in <root>.Result.ParseError' type=TInput of <root>.Parser origin=GET_PROPERTY
+                                $this: TYPE_OP type=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser> origin=IMPLICIT_CAST typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TValue of <root>.Parser>
+                                  GET_VAR 'val res: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                          BRANCH
+                            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Result.Value<TInput of <root>.Parser, TValue of <root>.Parser>
+                              GET_VAR 'val tmp0_subject: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                            then: BLOCK type=<root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=null
+                              VAR name:v type:TValue of <root>.Parser [val]
+                                CALL 'public final fun <get-value> (): TValue of <root>.Result.Value declared in <root>.Result.Value' type=TValue of <root>.Parser origin=GET_PROPERTY
+                                  $this: TYPE_OP type=<root>.Result.Value<TInput of <root>.Parser, TValue of <root>.Parser> origin=IMPLICIT_CAST typeOperand=<root>.Result.Value<TInput of <root>.Parser, TValue of <root>.Parser>
+                                    GET_VAR 'val res: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                              VAR name:res2 type:<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val]
+                                CALL 'public final fun invoke (input: TInput of <root>.Parser): <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [operator] declared in <root>.Parser' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Parser<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=INVOKE
+                                    $this: GET_VAR 'selector: <unbound IrClassSymbolImpl><TValue of <root>.Parser, <root>.Parser<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>> declared in <root>.Parser.mapJoin' type=<unbound IrClassSymbolImpl><TValue of <root>.Parser, <root>.Parser<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>> origin=VARIABLE_AS_FUNCTION
+                                    1: GET_VAR 'val v: TValue of <root>.Parser [val] declared in <root>.Parser.mapJoin.<anonymous>' type=TValue of <root>.Parser origin=null
+                                  input: CALL 'public final fun <get-rest> (): TInput of <root>.Result.Value declared in <root>.Result.Value' type=TInput of <root>.Parser origin=GET_PROPERTY
+                                    $this: TYPE_OP type=<root>.Result.Value<TInput of <root>.Parser, TValue of <root>.Parser> origin=IMPLICIT_CAST typeOperand=<root>.Result.Value<TInput of <root>.Parser, TValue of <root>.Parser>
+                                      GET_VAR 'val res: <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TValue of <root>.Parser> origin=null
+                              BLOCK type=<root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=WHEN
+                                VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val]
+                                  GET_VAR 'val res2: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                WHEN type=<root>.Result<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=WHEN
+                                  BRANCH
+                                    if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                      GET_VAR 'val tmp1_subject: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                    then: CONSTRUCTOR_CALL 'public constructor <init> (productionLabel: <unbound IrClassSymbolImpl>, child: <root>.Result.ParseError<TInput of <root>.Result.ParseError, *>?, rest: TInput of <root>.Result.ParseError) [primary] declared in <root>.Result.ParseError' type=<root>.Result.ParseError<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=null
+                                      <class: TInput>: TInput of <root>.Parser
+                                      <class: TValue>: TValue2 of <root>.Parser.mapJoin
+                                      productionLabel: CALL 'public final fun <get-productionLabel> (): <unbound IrClassSymbolImpl> declared in <root>.Result.ParseError' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                        $this: TYPE_OP type=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=IMPLICIT_CAST typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                          GET_VAR 'val res2: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                      child: CALL 'public final fun <get-child> (): <root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? declared in <root>.Result.ParseError' type=<root>.Result.ParseError<TInput of <root>.Parser, *>? origin=GET_PROPERTY
+                                        $this: TYPE_OP type=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=IMPLICIT_CAST typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                          GET_VAR 'val res2: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                      rest: CALL 'public final fun <get-rest> (): TInput of <root>.Result.ParseError declared in <root>.Result.ParseError' type=TInput of <root>.Parser origin=GET_PROPERTY
+                                        $this: TYPE_OP type=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=IMPLICIT_CAST typeOperand=<root>.Result.ParseError<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                          GET_VAR 'val res2: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                  BRANCH
+                                    if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Result.Value<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                      GET_VAR 'val tmp1_subject: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                    then: CONSTRUCTOR_CALL 'public constructor <init> (value: TValue of <root>.Result.Value, rest: TInput of <root>.Result.Value) [primary] declared in <root>.Result.Value' type=<root>.Result.Value<TInput of <root>.Parser, TValue2 of <root>.Parser.mapJoin> origin=null
+                                      <class: TInput>: TInput of <root>.Parser
+                                      <class: TValue>: TValue2 of <root>.Parser.mapJoin
+                                      value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=TValue2 of <root>.Parser.mapJoin origin=INVOKE
+                                        $this: GET_VAR 'projector: <unbound IrClassSymbolImpl><TValue of <root>.Parser, TIntermediate of <root>.Parser.mapJoin, TValue2 of <root>.Parser.mapJoin> declared in <root>.Parser.mapJoin' type=<unbound IrClassSymbolImpl><TValue of <root>.Parser, TIntermediate of <root>.Parser.mapJoin, TValue2 of <root>.Parser.mapJoin> origin=VARIABLE_AS_FUNCTION
+                                        1: GET_VAR 'val v: TValue of <root>.Parser [val] declared in <root>.Parser.mapJoin.<anonymous>' type=TValue of <root>.Parser origin=null
+                                        2: CALL 'public final fun <get-value> (): TValue of <root>.Result.Value declared in <root>.Result.Value' type=TIntermediate of <root>.Parser.mapJoin origin=GET_PROPERTY
+                                          $this: TYPE_OP type=<root>.Result.Value<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=IMPLICIT_CAST typeOperand=<root>.Result.Value<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                            GET_VAR 'val res2: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                      rest: CALL 'public final fun <get-rest> (): TInput of <root>.Result.Value declared in <root>.Result.Value' type=TInput of <root>.Parser origin=GET_PROPERTY
+                                        $this: TYPE_OP type=<root>.Result.Value<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=IMPLICIT_CAST typeOperand=<root>.Result.Value<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin>
+                                          GET_VAR 'val res2: <root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> [val] declared in <root>.Parser.mapJoin.<anonymous>' type=<root>.Result<TInput of <root>.Parser, TIntermediate of <root>.Parser.mapJoin> origin=null
+                                  BRANCH
+                                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                    then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Result signature:/Result|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Result<TInput of <root>.Result, TValue of <root>.Result>
+      TYPE_PARAMETER name:TInput index:0 variance: signature:[ /Result|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TInput index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:TValue index:1 variance: signature:[ /Result|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TValue index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Result.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.Result<TInput of <root>.Result, TValue of <root>.Result> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result signature:/Result|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Value signature:/Result.Value|null[0] modality:FINAL visibility:public superTypes:[<root>.Result<TInput of <root>.Result.Value, TValue of <root>.Result.Value>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value>
+        TYPE_PARAMETER name:TInput index:0 variance: signature:[ /Result.Value|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TInput index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:TValue index:1 variance: signature:[ /Result.Value|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TValue index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        CONSTRUCTOR signature:/Result.Value.<init>|<init>(1:1;1:0){}[0] visibility:public <> (value:TValue of <root>.Result.Value, rest:TInput of <root>.Result.Value) returnType:<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value> [primary]
+          VALUE_PARAMETER name:value index:0 type:TValue of <root>.Result.Value
+          VALUE_PARAMETER name:rest index:1 type:TInput of <root>.Result.Value
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Result'
+              <TInput>: TInput of <root>.Result.Value
+              <TValue>: TValue of <root>.Result.Value
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Value signature:/Result.Value|null[0] modality:FINAL visibility:public superTypes:[<root>.Result<TInput of <root>.Result.Value, TValue of <root>.Result.Value>]'
+        PROPERTY name:value signature:/Result.Value.value|{}value[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Result.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:TValue of <root>.Result.Value visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'value: TValue of <root>.Result.Value declared in <root>.Result.Value.<init>' type=TValue of <root>.Result.Value origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Result.Value.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value>) returnType:TValue of <root>.Result.Value
+            correspondingProperty: PROPERTY name:value signature:/Result.Value.value|{}value[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): TValue of <root>.Result.Value declared in <root>.Result.Value'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Result.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:TValue of <root>.Result.Value visibility:private [final]' type=TValue of <root>.Result.Value origin=null
+                  receiver: GET_VAR '<this>: <root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value> declared in <root>.Result.Value.<get-value>' type=<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value> origin=null
+        PROPERTY name:rest signature:/Result.Value.rest|{}rest[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:rest signature:[ /Result.Value.rest|{}rest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:TInput of <root>.Result.Value visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'rest: TInput of <root>.Result.Value declared in <root>.Result.Value.<init>' type=TInput of <root>.Result.Value origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rest> signature:/Result.Value.rest.<get-rest>|<get-rest>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value>) returnType:TInput of <root>.Result.Value
+            correspondingProperty: PROPERTY name:rest signature:/Result.Value.rest|{}rest[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-rest> (): TInput of <root>.Result.Value declared in <root>.Result.Value'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rest signature:[ /Result.Value.rest|{}rest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:TInput of <root>.Result.Value visibility:private [final]' type=TInput of <root>.Result.Value origin=null
+                  receiver: GET_VAR '<this>: <root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value> declared in <root>.Result.Value.<get-rest>' type=<root>.Result.Value<TInput of <root>.Result.Value, TValue of <root>.Result.Value> origin=null
+      CLASS CLASS name:ParseError signature:/Result.ParseError|null[0] modality:FINAL visibility:public superTypes:[<root>.Result<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>
+        TYPE_PARAMETER name:TInput index:0 variance: signature:[ /Result.ParseError|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TInput index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:TValue index:1 variance: signature:[ /Result.ParseError|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TValue index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        CONSTRUCTOR signature:/Result.ParseError.<init>|<init>(kotlin.String;Result.ParseError<1:0,*>?;1:0){}[0] visibility:public <> (productionLabel:<unbound IrClassSymbolImpl>, child:<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>?, rest:TInput of <root>.Result.ParseError) returnType:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> [primary]
+          VALUE_PARAMETER name:productionLabel index:0 type:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER name:child index:1 type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>?
+          VALUE_PARAMETER name:rest index:2 type:TInput of <root>.Result.ParseError
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Result'
+              <TInput>: TInput of <root>.Result.ParseError
+              <TValue>: TValue of <root>.Result.ParseError
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ParseError signature:/Result.ParseError|null[0] modality:FINAL visibility:public superTypes:[<root>.Result<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>]'
+        PROPERTY name:productionLabel signature:/Result.ParseError.productionLabel|{}productionLabel[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:productionLabel signature:[ /Result.ParseError.productionLabel|{}productionLabel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'productionLabel: <unbound IrClassSymbolImpl> declared in <root>.Result.ParseError.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-productionLabel> signature:/Result.ParseError.productionLabel.<get-productionLabel>|<get-productionLabel>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:productionLabel signature:/Result.ParseError.productionLabel|{}productionLabel[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-productionLabel> (): <unbound IrClassSymbolImpl> declared in <root>.Result.ParseError'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:productionLabel signature:[ /Result.ParseError.productionLabel|{}productionLabel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> declared in <root>.Result.ParseError.<get-productionLabel>' type=<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> origin=null
+        PROPERTY name:child signature:/Result.ParseError.child|{}child[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:child signature:[ /Result.ParseError.child|{}child[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'child: <root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? declared in <root>.Result.ParseError.<init>' type=<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-child> signature:/Result.ParseError.child.<get-child>|<get-child>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>) returnType:<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>?
+            correspondingProperty: PROPERTY name:child signature:/Result.ParseError.child|{}child[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-child> (): <root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? declared in <root>.Result.ParseError'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:child signature:[ /Result.ParseError.child|{}child[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? visibility:private [final]' type=<root>.Result.ParseError<TInput of <root>.Result.ParseError, *>? origin=null
+                  receiver: GET_VAR '<this>: <root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> declared in <root>.Result.ParseError.<get-child>' type=<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> origin=null
+        PROPERTY name:rest signature:/Result.ParseError.rest|{}rest[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:rest signature:[ /Result.ParseError.rest|{}rest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:TInput of <root>.Result.ParseError visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'rest: TInput of <root>.Result.ParseError declared in <root>.Result.ParseError.<init>' type=TInput of <root>.Result.ParseError origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rest> signature:/Result.ParseError.rest.<get-rest>|<get-rest>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>) returnType:TInput of <root>.Result.ParseError
+            correspondingProperty: PROPERTY name:rest signature:/Result.ParseError.rest|{}rest[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-rest> (): TInput of <root>.Result.ParseError declared in <root>.Result.ParseError'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rest signature:[ /Result.ParseError.rest|{}rest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Function1<TInput of <root>.Parser, <root>.Result<TInput of <root>.Parser, TValue of <root>.Parser>> visibility:private [final]] ] type:TInput of <root>.Result.ParseError visibility:private [final]' type=TInput of <root>.Result.ParseError origin=null
+                  receiver: GET_VAR '<this>: <root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> declared in <root>.Result.ParseError.<get-rest>' type=<root>.Result.ParseError<TInput of <root>.Result.ParseError, TValue of <root>.Result.ParseError> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

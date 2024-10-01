@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/MyEnum
+
+    public final enum class test/MyEnum : kotlin/Enum<test/MyEnum> {
+
+      private constructor()
+
+      public final inline fun <T#0 /* T */> doSmth(a: T#0): kotlin/String
+
+      K,
+
+      // has Enum.entries
+    }
+  }
+}

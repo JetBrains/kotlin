@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: E
+    // class name: E.Companion
+
+    public final enum class E : kotlin/Enum<E> {
+
+      private constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      X,
+
+      // has Enum.entries
+    }
+
+    public final companion object E.Companion : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun kotlin/Any?.getValue(x: kotlin/Any?, y: kotlin/Any?): kotlin/String
+
+      public final var initialized: kotlin/Boolean
+        public final get
+        public final set
+
+      public final /* delegated */ val result: kotlin/String
+        public final /* non-default */ get
+    }
+  }
+}

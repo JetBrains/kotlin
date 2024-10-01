@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> cache(invalid: kotlin/Boolean, block: kotlin/Function0<T#0>): T#0
+
+      public final fun case1(): kotlin/Unit
+
+      public final fun case2(): kotlin/Unit
+
+      public final fun case3(): kotlin/Unit
+
+      public final inline fun <T#0 /* T */> depth1(a: kotlin/Any?): T#0
+
+      public final inline fun <T#0 /* T */> depth2(a: kotlin/Any?): T#0
+
+      public final fun fail(s: kotlin/String): kotlin/Nothing
+
+      public final fun <T#0 /* T */> functionThatReturnsNull(): T#0?
+
+      public final fun kt60496(): kotlin/Unit
+
+      public final fun log(t: kotlin/String?): kotlin/Unit
+
+      public final inline fun <T#0 /* T */> remember(crossinline calculation: kotlin/Function0<T#0>): T#0
+
+      public final fun rememberedValue(): kotlin/Any?
+
+      public final fun test(): kotlin/Unit
+
+      public final val ComposerEmpty: kotlin/Any
+        public final get
+
+      public final var l: kotlin/String
+        public final get
+        public final set
+
+      public final var stupidRemembered: kotlin/Any?
+        public final get
+        public final set
+    }
+  }
+}

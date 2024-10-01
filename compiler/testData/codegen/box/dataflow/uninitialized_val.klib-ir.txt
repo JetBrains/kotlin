@@ -1,0 +1,34 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/uninitialized_val.kt
+    FUN name:foo signature:/foo|foo(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [val]
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=EQ
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=EQ
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:uninitializedUnused type:<unbound IrClassSymbolImpl> [val]
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'public final fun foo (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: CALL 'public final fun foo (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

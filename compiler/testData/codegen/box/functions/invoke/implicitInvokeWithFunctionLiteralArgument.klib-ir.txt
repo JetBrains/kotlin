@@ -1,0 +1,31 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/implicitInvokeWithFunctionLiteralArgument.kt
+    CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass
+      CONSTRUCTOR signature:/TestClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TestClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:invoke signature:/TestClass.invoke|invoke(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.TestClass, task:<unbound IrClassSymbolImpl><T of <root>.TestClass.invoke>) returnType:T of <root>.TestClass.invoke [inline,operator]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /TestClass.invoke|invoke(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        VALUE_PARAMETER name:task index:0 type:<unbound IrClassSymbolImpl><T of <root>.TestClass.invoke>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke <T> (task: <unbound IrClassSymbolImpl><T of <root>.TestClass.invoke>): T of <root>.TestClass.invoke [inline,operator] declared in <root>.TestClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.TestClass.invoke origin=INVOKE
+              $this: GET_VAR 'task: <unbound IrClassSymbolImpl><T of <root>.TestClass.invoke> declared in <root>.TestClass.invoke' type=<unbound IrClassSymbolImpl><T of <root>.TestClass.invoke> origin=VARIABLE_AS_FUNCTION
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test type:<root>.TestClass [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null
+        VAR name:ok type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        VAR name:x type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun invoke <T> (task: <unbound IrClassSymbolImpl><T of <root>.TestClass.invoke>): T of <root>.TestClass.invoke [inline,operator] declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $this: GET_VAR 'val test: <root>.TestClass [val] declared in <root>.box' type=<root>.TestClass origin=VARIABLE_AS_FUNCTION
+            task: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                    GET_VAR 'val ok: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

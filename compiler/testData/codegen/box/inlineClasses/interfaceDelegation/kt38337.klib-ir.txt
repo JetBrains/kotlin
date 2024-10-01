@@ -1,0 +1,202 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt38337.kt
+    CLASS CLASS name:Wrapper signature:/Wrapper|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Wrapper
+      CONSTRUCTOR signature:/Wrapper.<init>|<init>(kotlin.Int){}[0] visibility:public <> (id:<unbound IrClassSymbolImpl>) returnType:<root>.Wrapper [primary]
+        VALUE_PARAMETER name:id index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Wrapper signature:/Wrapper|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:id signature:/Wrapper.id|{}id[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Wrapper.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'id: <unbound IrClassSymbolImpl> declared in <root>.Wrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> signature:/Wrapper.id.<get-id>|<get-id>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Wrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:id signature:/Wrapper.id|{}id[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-id> (): <unbound IrClassSymbolImpl> declared in <root>.Wrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Wrapper.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper.<get-id>' type=<root>.Wrapper origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/Wrapper.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Wrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Wrapper'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Wrapper("
+              CONST String type=<unbound IrClassSymbolImpl> value="id="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Wrapper.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper.toString' type=<root>.Wrapper origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/Wrapper.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Wrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Wrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Wrapper.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper.hashCode' type=<root>.Wrapper origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/Wrapper.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Wrapper, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Wrapper
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Wrapper.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Wrapper'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Wrapper [val]
+            TYPE_OP type=<root>.Wrapper origin=CAST typeOperand=<root>.Wrapper
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Wrapper.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Wrapper.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper.equals' type=<root>.Wrapper origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /Wrapper.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Wrapper [val] declared in <root>.Wrapper.equals' type=<root>.Wrapper origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Wrapper'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Wrapper'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:DMap signature:/DMap|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DMap
+      CONSTRUCTOR signature:/DMap.<init>|<init>(kotlin.collections.Map<Wrapper,kotlin.String>){}[0] visibility:public <> (map:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>) returnType:<root>.DMap [primary]
+        VALUE_PARAMETER name:map index:0 type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DMap signature:/DMap|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>]'
+      PROPERTY name:map signature:/DMap.map|{}map[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'map: <unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> declared in <root>.DMap.<init>' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> signature:/DMap.map.<get-map>|<get-map>(){}[0] visibility:private modality:FINAL <> ($this:<root>.DMap) returnType:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:map signature:/DMap.map|{}map[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-map> (): <unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> declared in <root>.DMap'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.<get-map>' type=<root>.DMap origin=null
+      FUN DELEGATED_MEMBER name:isEmpty signature:/DMap.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.DMap'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.isEmpty' type=<root>.DMap origin=null
+      FUN DELEGATED_MEMBER name:containsKey signature:/DMap.containsKey|containsKey(Wrapper){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap, key:<root>.Wrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+        VALUE_PARAMETER name:key index:0 type:<root>.Wrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsKey (key: <root>.Wrapper): <unbound IrClassSymbolImpl> declared in <root>.DMap'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.containsKey' type=<root>.DMap origin=null
+              1: GET_VAR 'key: <root>.Wrapper declared in <root>.DMap.containsKey' type=<root>.Wrapper origin=null
+      FUN DELEGATED_MEMBER name:containsValue signature:/DMap.containsValue|containsValue(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsValue (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.DMap'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.containsValue' type=<root>.DMap origin=null
+              1: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.DMap.containsValue' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/DMap.get|get(Wrapper){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap, key:<root>.Wrapper) returnType:<unbound IrClassSymbolImpl>? [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+        VALUE_PARAMETER name:key index:0 type:<root>.Wrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (key: <root>.Wrapper): <unbound IrClassSymbolImpl>? [operator] declared in <root>.DMap'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.get' type=<root>.DMap origin=null
+              1: GET_VAR 'key: <root>.Wrapper declared in <root>.DMap.get' type=<root>.Wrapper origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/DMap.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/DMap.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/DMap.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.DMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.<get-size>' type=<root>.DMap origin=null
+      PROPERTY DELEGATED_MEMBER name:keys signature:/DMap.keys|{}keys[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-keys> signature:/DMap.keys.<get-keys>|<get-keys>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap) returnType:<unbound IrClassSymbolImpl><<root>.Wrapper>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:keys signature:/DMap.keys|{}keys[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-keys> (): <unbound IrClassSymbolImpl><<root>.Wrapper> declared in <root>.DMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Wrapper> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.<get-keys>' type=<root>.DMap origin=null
+      PROPERTY DELEGATED_MEMBER name:values signature:/DMap.values|{}values[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-values> signature:/DMap.values.<get-values>|<get-values>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:values signature:/DMap.values|{}values[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-values> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.DMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.<get-values>' type=<root>.DMap origin=null
+      PROPERTY DELEGATED_MEMBER name:entries signature:/DMap.entries|{}entries[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-entries> signature:/DMap.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DMap) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:entries signature:/DMap.entries|{}entries[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>> declared in <root>.DMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /DMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.DMap declared in <root>.DMap.<get-entries>' type=<root>.DMap origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:dmap type:<root>.DMap [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (map: <unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>) [primary] declared in <root>.DMap' type=<root>.DMap origin=null
+            map: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <root>.Wrapper
+              <2>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Wrapper, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <root>.Wrapper
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONSTRUCTOR_CALL 'public constructor <init> (id: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Wrapper' type=<root>.Wrapper origin=null
+                    id: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public open fun get (key: <root>.Wrapper): <unbound IrClassSymbolImpl>? [operator] declared in <root>.DMap' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                $this: GET_VAR 'val dmap: <root>.DMap [val] declared in <root>.box' type=<root>.DMap origin=null
+                key: CONSTRUCTOR_CALL 'public constructor <init> (id: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Wrapper' type=<root>.Wrapper origin=null
+                  id: CONST Int type=<unbound IrClassSymbolImpl> value=42
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null

@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: UInt
+
+    public final value class UInt : kotlin/Any {
+
+      public constructor(a: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun takeAnyInside(a: kotlin/Any): kotlin/Unit
+
+      public final fun test(): kotlin/Unit
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Int
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun takeNullable(a: UInt?): kotlin/Unit
+    }
+  }
+}

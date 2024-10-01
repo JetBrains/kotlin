@@ -1,0 +1,440 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/checkBoxingAfterAssertionOperatorGeneric.kt
+    CLASS CLASS name:WithPrimitive signature:/WithPrimitive|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WithPrimitive<T of <root>.WithPrimitive>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /WithPrimitive|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/WithPrimitive.<init>|<init>(1:0){}[0] visibility:public <> (a:T of <root>.WithPrimitive) returnType:<root>.WithPrimitive<T of <root>.WithPrimitive> [primary]
+        VALUE_PARAMETER name:a index:0 type:T of <root>.WithPrimitive
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithPrimitive signature:/WithPrimitive|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/WithPrimitive.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithPrimitive.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithPrimitive visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: T of <root>.WithPrimitive declared in <root>.WithPrimitive.<init>' type=T of <root>.WithPrimitive origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/WithPrimitive.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.WithPrimitive<T of <root>.WithPrimitive>) returnType:T of <root>.WithPrimitive
+          correspondingProperty: PROPERTY name:a signature:/WithPrimitive.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.WithPrimitive<T of <root>.WithPrimitive>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): T of <root>.WithPrimitive declared in <root>.WithPrimitive'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithPrimitive.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithPrimitive visibility:private [final]' type=T of <root>.WithPrimitive origin=null
+                receiver: GET_VAR '<this>: <root>.WithPrimitive<T of <root>.WithPrimitive> declared in <root>.WithPrimitive.<get-a>' type=<root>.WithPrimitive<T of <root>.WithPrimitive> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/WithPrimitive.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithPrimitive<T of <root>.WithPrimitive>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithPrimitive<T of <root>.WithPrimitive>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.WithPrimitive'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="WithPrimitive("
+              CONST String type=<unbound IrClassSymbolImpl> value="a="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithPrimitive.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithPrimitive visibility:private [final]' type=T of <root>.WithPrimitive origin=null
+                receiver: GET_VAR '<this>: <root>.WithPrimitive<T of <root>.WithPrimitive> declared in <root>.WithPrimitive.toString' type=<root>.WithPrimitive<T of <root>.WithPrimitive> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/WithPrimitive.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithPrimitive<T of <root>.WithPrimitive>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithPrimitive<T of <root>.WithPrimitive>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.WithPrimitive'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithPrimitive.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithPrimitive visibility:private [final]' type=T of <root>.WithPrimitive origin=null
+                receiver: GET_VAR '<this>: <root>.WithPrimitive<T of <root>.WithPrimitive> declared in <root>.WithPrimitive.hashCode' type=<root>.WithPrimitive<T of <root>.WithPrimitive> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/WithPrimitive.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.WithPrimitive<T of <root>.WithPrimitive>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithPrimitive<T of <root>.WithPrimitive>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.WithPrimitive<T of <root>.WithPrimitive>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithPrimitive.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithPrimitive'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.WithPrimitive<T of <root>.WithPrimitive> [val]
+            TYPE_OP type=<root>.WithPrimitive<T of <root>.WithPrimitive> origin=CAST typeOperand=<root>.WithPrimitive<T of <root>.WithPrimitive>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithPrimitive.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithPrimitive.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithPrimitive visibility:private [final]' type=T of <root>.WithPrimitive origin=null
+                    receiver: GET_VAR '<this>: <root>.WithPrimitive<T of <root>.WithPrimitive> declared in <root>.WithPrimitive.equals' type=<root>.WithPrimitive<T of <root>.WithPrimitive> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithPrimitive.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithPrimitive visibility:private [final]' type=T of <root>.WithPrimitive origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.WithPrimitive<T of <root>.WithPrimitive> [val] declared in <root>.WithPrimitive.equals' type=<root>.WithPrimitive<T of <root>.WithPrimitive> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithPrimitive'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithPrimitive'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:takeWithPrimitive signature:/takeWithPrimitive|takeWithPrimitive(WithPrimitive<0:0>){0§<kotlin.Int>}[0] visibility:public modality:FINAL <T> (a:<root>.WithPrimitive<T of <root>.takeWithPrimitive>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /takeWithPrimitive|takeWithPrimitive(WithPrimitive<0:0>){0§<kotlin.Int>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithPrimitive<T of <root>.takeWithPrimitive>
+      BLOCK_BODY
+    CLASS CLASS name:WithReference signature:/WithReference|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WithReference<T of <root>.WithReference>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /WithReference|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/WithReference.<init>|<init>(1:0){}[0] visibility:public <> (a:T of <root>.WithReference) returnType:<root>.WithReference<T of <root>.WithReference> [primary]
+        VALUE_PARAMETER name:a index:0 type:T of <root>.WithReference
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithReference signature:/WithReference|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/WithReference.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithReference visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: T of <root>.WithReference declared in <root>.WithReference.<init>' type=T of <root>.WithReference origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/WithReference.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.WithReference<T of <root>.WithReference>) returnType:T of <root>.WithReference
+          correspondingProperty: PROPERTY name:a signature:/WithReference.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.WithReference<T of <root>.WithReference>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): T of <root>.WithReference declared in <root>.WithReference'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithReference visibility:private [final]' type=T of <root>.WithReference origin=null
+                receiver: GET_VAR '<this>: <root>.WithReference<T of <root>.WithReference> declared in <root>.WithReference.<get-a>' type=<root>.WithReference<T of <root>.WithReference> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/WithReference.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithReference<T of <root>.WithReference>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithReference<T of <root>.WithReference>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.WithReference'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="WithReference("
+              CONST String type=<unbound IrClassSymbolImpl> value="a="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithReference visibility:private [final]' type=T of <root>.WithReference origin=null
+                receiver: GET_VAR '<this>: <root>.WithReference<T of <root>.WithReference> declared in <root>.WithReference.toString' type=<root>.WithReference<T of <root>.WithReference> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/WithReference.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithReference<T of <root>.WithReference>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithReference<T of <root>.WithReference>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.WithReference'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithReference visibility:private [final]' type=T of <root>.WithReference origin=null
+                receiver: GET_VAR '<this>: <root>.WithReference<T of <root>.WithReference> declared in <root>.WithReference.hashCode' type=<root>.WithReference<T of <root>.WithReference> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/WithReference.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.WithReference<T of <root>.WithReference>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithReference<T of <root>.WithReference>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.WithReference<T of <root>.WithReference>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithReference.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithReference'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.WithReference<T of <root>.WithReference> [val]
+            TYPE_OP type=<root>.WithReference<T of <root>.WithReference> origin=CAST typeOperand=<root>.WithReference<T of <root>.WithReference>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithReference.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithReference visibility:private [final]' type=T of <root>.WithReference origin=null
+                    receiver: GET_VAR '<this>: <root>.WithReference<T of <root>.WithReference> declared in <root>.WithReference.equals' type=<root>.WithReference<T of <root>.WithReference> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithReference visibility:private [final]' type=T of <root>.WithReference origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.WithReference<T of <root>.WithReference> [val] declared in <root>.WithReference.equals' type=<root>.WithReference<T of <root>.WithReference> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithReference'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithReference'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:takeWithReference signature:/takeWithReference|takeWithReference(WithReference<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (a:<root>.WithReference<T of <root>.takeWithReference>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /takeWithReference|takeWithReference(WithReference<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithReference<T of <root>.takeWithReference>
+      BLOCK_BODY
+    CLASS CLASS name:WithNullableReference signature:/WithNullableReference|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WithNullableReference<T of <root>.WithNullableReference>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /WithNullableReference|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/WithNullableReference.<init>|<init>(1:0){}[0] visibility:public <> (a:T of <root>.WithNullableReference) returnType:<root>.WithNullableReference<T of <root>.WithNullableReference> [primary]
+        VALUE_PARAMETER name:a index:0 type:T of <root>.WithNullableReference
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithNullableReference signature:/WithNullableReference|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/WithNullableReference.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: T of <root>.WithNullableReference declared in <root>.WithNullableReference.<init>' type=T of <root>.WithNullableReference origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/WithNullableReference.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.WithNullableReference<T of <root>.WithNullableReference>) returnType:T of <root>.WithNullableReference
+          correspondingProperty: PROPERTY name:a signature:/WithNullableReference.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference<T of <root>.WithNullableReference>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): T of <root>.WithNullableReference declared in <root>.WithNullableReference'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]' type=T of <root>.WithNullableReference origin=null
+                receiver: GET_VAR '<this>: <root>.WithNullableReference<T of <root>.WithNullableReference> declared in <root>.WithNullableReference.<get-a>' type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/WithNullableReference.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithNullableReference<T of <root>.WithNullableReference>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference<T of <root>.WithNullableReference>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.WithNullableReference'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="WithNullableReference("
+              CONST String type=<unbound IrClassSymbolImpl> value="a="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]' type=T of <root>.WithNullableReference origin=null
+                receiver: GET_VAR '<this>: <root>.WithNullableReference<T of <root>.WithNullableReference> declared in <root>.WithNullableReference.toString' type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/WithNullableReference.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithNullableReference<T of <root>.WithNullableReference>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference<T of <root>.WithNullableReference>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.WithNullableReference'
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]' type=T of <root>.WithNullableReference origin=null
+                    receiver: GET_VAR '<this>: <root>.WithNullableReference<T of <root>.WithNullableReference> declared in <root>.WithNullableReference.hashCode' type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]' type=T of <root>.WithNullableReference origin=null
+                    receiver: GET_VAR '<this>: <root>.WithNullableReference<T of <root>.WithNullableReference> declared in <root>.WithNullableReference.hashCode' type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/WithNullableReference.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.WithNullableReference<T of <root>.WithNullableReference>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference<T of <root>.WithNullableReference>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.WithNullableReference<T of <root>.WithNullableReference>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithNullableReference.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithNullableReference'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.WithNullableReference<T of <root>.WithNullableReference> [val]
+            TYPE_OP type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=CAST typeOperand=<root>.WithNullableReference<T of <root>.WithNullableReference>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithNullableReference.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]' type=T of <root>.WithNullableReference origin=null
+                    receiver: GET_VAR '<this>: <root>.WithNullableReference<T of <root>.WithNullableReference> declared in <root>.WithNullableReference.equals' type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference visibility:private [final]' type=T of <root>.WithNullableReference origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.WithNullableReference<T of <root>.WithNullableReference> [val] declared in <root>.WithNullableReference.equals' type=<root>.WithNullableReference<T of <root>.WithNullableReference> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithNullableReference'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithNullableReference'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:takeWithNullableReference signature:/takeWithNullableReference|takeWithNullableReference(WithNullableReference<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (a:<root>.WithNullableReference<T of <root>.takeWithNullableReference>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /takeWithNullableReference|takeWithNullableReference(WithNullableReference<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithNullableReference<T of <root>.takeWithNullableReference>
+      BLOCK_BODY
+    CLASS CLASS name:WithNullableReference2 signature:/WithNullableReference2|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /WithNullableReference2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/WithNullableReference2.<init>|<init>(1:0?){}[0] visibility:public <> (a:T of <root>.WithNullableReference2?) returnType:<root>.WithNullableReference2<T of <root>.WithNullableReference2> [primary]
+        VALUE_PARAMETER name:a index:0 type:T of <root>.WithNullableReference2?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithNullableReference2 signature:/WithNullableReference2|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/WithNullableReference2.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: T of <root>.WithNullableReference2? declared in <root>.WithNullableReference2.<init>' type=T of <root>.WithNullableReference2? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/WithNullableReference2.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.WithNullableReference2<T of <root>.WithNullableReference2>) returnType:T of <root>.WithNullableReference2?
+          correspondingProperty: PROPERTY name:a signature:/WithNullableReference2.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): T of <root>.WithNullableReference2? declared in <root>.WithNullableReference2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]' type=T of <root>.WithNullableReference2? origin=null
+                receiver: GET_VAR '<this>: <root>.WithNullableReference2<T of <root>.WithNullableReference2> declared in <root>.WithNullableReference2.<get-a>' type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/WithNullableReference2.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithNullableReference2<T of <root>.WithNullableReference2>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.WithNullableReference2'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="WithNullableReference2("
+              CONST String type=<unbound IrClassSymbolImpl> value="a="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]' type=T of <root>.WithNullableReference2? origin=null
+                receiver: GET_VAR '<this>: <root>.WithNullableReference2<T of <root>.WithNullableReference2> declared in <root>.WithNullableReference2.toString' type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/WithNullableReference2.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.WithNullableReference2<T of <root>.WithNullableReference2>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.WithNullableReference2'
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]' type=T of <root>.WithNullableReference2? origin=null
+                    receiver: GET_VAR '<this>: <root>.WithNullableReference2<T of <root>.WithNullableReference2> declared in <root>.WithNullableReference2.hashCode' type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]' type=T of <root>.WithNullableReference2? origin=null
+                    receiver: GET_VAR '<this>: <root>.WithNullableReference2<T of <root>.WithNullableReference2> declared in <root>.WithNullableReference2.hashCode' type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/WithNullableReference2.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.WithNullableReference2<T of <root>.WithNullableReference2>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithNullableReference2.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithNullableReference2'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.WithNullableReference2<T of <root>.WithNullableReference2> [val]
+            TYPE_OP type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=CAST typeOperand=<root>.WithNullableReference2<T of <root>.WithNullableReference2>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.WithNullableReference2.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]' type=T of <root>.WithNullableReference2? origin=null
+                    receiver: GET_VAR '<this>: <root>.WithNullableReference2<T of <root>.WithNullableReference2> declared in <root>.WithNullableReference2.equals' type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithNullableReference2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.WithPrimitive visibility:private [final]] ] type:T of <root>.WithNullableReference2? visibility:private [final]' type=T of <root>.WithNullableReference2? origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.WithNullableReference2<T of <root>.WithNullableReference2> [val] declared in <root>.WithNullableReference2.equals' type=<root>.WithNullableReference2<T of <root>.WithNullableReference2> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithNullableReference2'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.WithNullableReference2'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:takeWithNullableReference2 signature:/takeWithNullableReference2|takeWithNullableReference2(WithNullableReference2<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (a:<root>.WithNullableReference2<T of <root>.takeWithNullableReference2>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /takeWithNullableReference2|takeWithNullableReference2(WithNullableReference2<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithNullableReference2<T of <root>.takeWithNullableReference2>
+      BLOCK_BODY
+    FUN name:foo signature:/foo|foo(WithPrimitive<0:0>?;WithPrimitive<0:0>){0§<kotlin.Int>}[0] visibility:public modality:FINAL <T> (a:<root>.WithPrimitive<T of <root>.foo>?, b:<root>.WithPrimitive<T of <root>.foo>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(WithPrimitive<0:0>?;WithPrimitive<0:0>){0§<kotlin.Int>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithPrimitive<T of <root>.foo>?
+      VALUE_PARAMETER name:b index:1 type:<root>.WithPrimitive<T of <root>.foo>
+      BLOCK_BODY
+        CALL 'public final fun takeWithPrimitive <T> (a: <root>.WithPrimitive<T of <root>.takeWithPrimitive>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.foo
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithPrimitive<T of <root>.foo> origin=EXCLEXCL
+            <T0>: <root>.WithPrimitive<T of <root>.foo>
+            arg0: GET_VAR 'a: <root>.WithPrimitive<T of <root>.foo>? declared in <root>.foo' type=<root>.WithPrimitive<T of <root>.foo>? origin=null
+        CALL 'public final fun takeWithPrimitive <T> (a: <root>.WithPrimitive<T of <root>.takeWithPrimitive>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.foo
+          a: GET_VAR 'a: <root>.WithPrimitive<T of <root>.foo>? declared in <root>.foo' type=<root>.WithPrimitive<T of <root>.foo>? origin=null
+        CALL 'public final fun takeWithPrimitive <T> (a: <root>.WithPrimitive<T of <root>.takeWithPrimitive>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.foo
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithPrimitive<T of <root>.foo> origin=EXCLEXCL
+            <T0>: <root>.WithPrimitive<T of <root>.foo>
+            arg0: GET_VAR 'b: <root>.WithPrimitive<T of <root>.foo> declared in <root>.foo' type=<root>.WithPrimitive<T of <root>.foo> origin=null
+    FUN name:bar signature:/bar|bar(WithReference<0:0>?;WithReference<0:1>){0§<kotlin.Any>;1§<kotlin.Any>}[0] visibility:public modality:FINAL <T, T2> (a:<root>.WithReference<T of <root>.bar>?, b:<root>.WithReference<T2 of <root>.bar>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /bar|bar(WithReference<0:0>?;WithReference<0:1>){0§<kotlin.Any>;1§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:T2 index:1 variance: signature:[ /bar|bar(WithReference<0:0>?;WithReference<0:1>){0§<kotlin.Any>;1§<kotlin.Any>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithReference<T of <root>.bar>?
+      VALUE_PARAMETER name:b index:1 type:<root>.WithReference<T2 of <root>.bar>
+      BLOCK_BODY
+        CALL 'public final fun takeWithReference <T> (a: <root>.WithReference<T of <root>.takeWithReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.bar
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithReference<T of <root>.bar> origin=EXCLEXCL
+            <T0>: <root>.WithReference<T of <root>.bar>
+            arg0: GET_VAR 'a: <root>.WithReference<T of <root>.bar>? declared in <root>.bar' type=<root>.WithReference<T of <root>.bar>? origin=null
+        CALL 'public final fun takeWithReference <T> (a: <root>.WithReference<T of <root>.takeWithReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.bar
+          a: GET_VAR 'a: <root>.WithReference<T of <root>.bar>? declared in <root>.bar' type=<root>.WithReference<T of <root>.bar>? origin=null
+        CALL 'public final fun takeWithReference <T> (a: <root>.WithReference<T of <root>.takeWithReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T2 of <root>.bar
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithReference<T2 of <root>.bar> origin=EXCLEXCL
+            <T0>: <root>.WithReference<T2 of <root>.bar>
+            arg0: GET_VAR 'b: <root>.WithReference<T2 of <root>.bar> declared in <root>.bar' type=<root>.WithReference<T2 of <root>.bar> origin=null
+    FUN name:baz signature:/baz|baz(WithNullableReference<0:0>?;WithNullableReference<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> (a:<root>.WithNullableReference<T of <root>.baz>?, b:<root>.WithNullableReference<R of <root>.baz>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /baz|baz(WithNullableReference<0:0>?;WithNullableReference<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /baz|baz(WithNullableReference<0:0>?;WithNullableReference<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithNullableReference<T of <root>.baz>?
+      VALUE_PARAMETER name:b index:1 type:<root>.WithNullableReference<R of <root>.baz>
+      BLOCK_BODY
+        CALL 'public final fun takeWithNullableReference <T> (a: <root>.WithNullableReference<T of <root>.takeWithNullableReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.baz
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithNullableReference<T of <root>.baz> origin=EXCLEXCL
+            <T0>: <root>.WithNullableReference<T of <root>.baz>
+            arg0: GET_VAR 'a: <root>.WithNullableReference<T of <root>.baz>? declared in <root>.baz' type=<root>.WithNullableReference<T of <root>.baz>? origin=null
+        CALL 'public final fun takeWithNullableReference <T> (a: <root>.WithNullableReference<T of <root>.takeWithNullableReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.baz
+          a: GET_VAR 'a: <root>.WithNullableReference<T of <root>.baz>? declared in <root>.baz' type=<root>.WithNullableReference<T of <root>.baz>? origin=null
+        CALL 'public final fun takeWithNullableReference <T> (a: <root>.WithNullableReference<T of <root>.takeWithNullableReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.baz
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithNullableReference<T of <root>.baz> origin=EXCLEXCL
+            <T0>: <root>.WithNullableReference<T of <root>.baz>
+            arg0: GET_VAR 'a: <root>.WithNullableReference<T of <root>.baz>? declared in <root>.baz' type=<root>.WithNullableReference<T of <root>.baz>? origin=null
+        CALL 'public final fun takeWithNullableReference <T> (a: <root>.WithNullableReference<T of <root>.takeWithNullableReference>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: R of <root>.baz
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithNullableReference<R of <root>.baz> origin=EXCLEXCL
+            <T0>: <root>.WithNullableReference<R of <root>.baz>
+            arg0: GET_VAR 'b: <root>.WithNullableReference<R of <root>.baz> declared in <root>.baz' type=<root>.WithNullableReference<R of <root>.baz> origin=null
+    FUN name:baz2 signature:/baz2|baz2(WithNullableReference2<0:0>?;WithNullableReference2<0:1>){0§<kotlin.Any>;1§<kotlin.Any>}[0] visibility:public modality:FINAL <T, R> (a:<root>.WithNullableReference2<T of <root>.baz2>?, b:<root>.WithNullableReference2<R of <root>.baz2>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /baz2|baz2(WithNullableReference2<0:0>?;WithNullableReference2<0:1>){0§<kotlin.Any>;1§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /baz2|baz2(WithNullableReference2<0:0>?;WithNullableReference2<0:1>){0§<kotlin.Any>;1§<kotlin.Any>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:<root>.WithNullableReference2<T of <root>.baz2>?
+      VALUE_PARAMETER name:b index:1 type:<root>.WithNullableReference2<R of <root>.baz2>
+      BLOCK_BODY
+        CALL 'public final fun takeWithNullableReference2 <T> (a: <root>.WithNullableReference2<T of <root>.takeWithNullableReference2>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.baz2
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithNullableReference2<T of <root>.baz2> origin=EXCLEXCL
+            <T0>: <root>.WithNullableReference2<T of <root>.baz2>
+            arg0: GET_VAR 'a: <root>.WithNullableReference2<T of <root>.baz2>? declared in <root>.baz2' type=<root>.WithNullableReference2<T of <root>.baz2>? origin=null
+        CALL 'public final fun takeWithNullableReference2 <T> (a: <root>.WithNullableReference2<T of <root>.takeWithNullableReference2>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.baz2
+          a: GET_VAR 'a: <root>.WithNullableReference2<T of <root>.baz2>? declared in <root>.baz2' type=<root>.WithNullableReference2<T of <root>.baz2>? origin=null
+        CALL 'public final fun takeWithNullableReference2 <T> (a: <root>.WithNullableReference2<T of <root>.takeWithNullableReference2>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: T of <root>.baz2
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithNullableReference2<T of <root>.baz2> origin=EXCLEXCL
+            <T0>: <root>.WithNullableReference2<T of <root>.baz2>
+            arg0: GET_VAR 'a: <root>.WithNullableReference2<T of <root>.baz2>? declared in <root>.baz2' type=<root>.WithNullableReference2<T of <root>.baz2>? origin=null
+        CALL 'public final fun takeWithNullableReference2 <T> (a: <root>.WithNullableReference2<T of <root>.takeWithNullableReference2>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: R of <root>.baz2
+          a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.WithNullableReference2<R of <root>.baz2> origin=EXCLEXCL
+            <T0>: <root>.WithNullableReference2<R of <root>.baz2>
+            arg0: GET_VAR 'b: <root>.WithNullableReference2<R of <root>.baz2> declared in <root>.baz2' type=<root>.WithNullableReference2<R of <root>.baz2> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a1 type:<root>.WithPrimitive<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithPrimitive) [primary] declared in <root>.WithPrimitive' type=<root>.WithPrimitive<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:b1 type:<root>.WithPrimitive<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithPrimitive) [primary] declared in <root>.WithPrimitive' type=<root>.WithPrimitive<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun foo <T> (a: <root>.WithPrimitive<T of <root>.foo>?, b: <root>.WithPrimitive<T of <root>.foo>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          a: GET_VAR 'val a1: <root>.WithPrimitive<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithPrimitive<<unbound IrClassSymbolImpl>> origin=null
+          b: GET_VAR 'val b1: <root>.WithPrimitive<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithPrimitive<<unbound IrClassSymbolImpl>> origin=null
+        VAR name:a2 type:<root>.WithReference<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithReference) [primary] declared in <root>.WithReference' type=<root>.WithReference<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public final fun bar <T, T2> (a: <root>.WithReference<T of <root>.bar>?, b: <root>.WithReference<T2 of <root>.bar>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <T2>: <unbound IrClassSymbolImpl>
+          a: GET_VAR 'val a2: <root>.WithReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithReference<<unbound IrClassSymbolImpl>> origin=null
+          b: GET_VAR 'val a2: <root>.WithReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithReference<<unbound IrClassSymbolImpl>> origin=null
+        VAR name:a3 type:<root>.WithNullableReference<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithNullableReference) [primary] declared in <root>.WithNullableReference' type=<root>.WithNullableReference<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST String type=<unbound IrClassSymbolImpl> value="test"
+        VAR name:a4 type:<root>.WithNullableReference<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithNullableReference) [primary] declared in <root>.WithNullableReference' type=<root>.WithNullableReference<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST Int type=<unbound IrClassSymbolImpl> value=123
+        CALL 'public final fun baz <T, R> (a: <root>.WithNullableReference<T of <root>.baz>?, b: <root>.WithNullableReference<R of <root>.baz>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          a: GET_VAR 'val a3: <root>.WithNullableReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithNullableReference<<unbound IrClassSymbolImpl>> origin=null
+          b: GET_VAR 'val a4: <root>.WithNullableReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithNullableReference<<unbound IrClassSymbolImpl>> origin=null
+        VAR name:a32 type:<root>.WithNullableReference2<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithNullableReference2?) [primary] declared in <root>.WithNullableReference2' type=<root>.WithNullableReference2<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST String type=<unbound IrClassSymbolImpl> value="test"
+        VAR name:a42 type:<root>.WithNullableReference2<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a: T of <root>.WithNullableReference2?) [primary] declared in <root>.WithNullableReference2' type=<root>.WithNullableReference2<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            a: CONST Int type=<unbound IrClassSymbolImpl> value=123
+        CALL 'public final fun baz2 <T, R> (a: <root>.WithNullableReference2<T of <root>.baz2>?, b: <root>.WithNullableReference2<R of <root>.baz2>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          a: GET_VAR 'val a32: <root>.WithNullableReference2<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithNullableReference2<<unbound IrClassSymbolImpl>> origin=null
+          b: GET_VAR 'val a42: <root>.WithNullableReference2<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.WithNullableReference2<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

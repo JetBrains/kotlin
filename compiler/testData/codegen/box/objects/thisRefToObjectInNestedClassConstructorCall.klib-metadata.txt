@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Host
+    // class name: Host.Derived
+
+    public open class Base : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    public final object Host : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): kotlin/String
+
+      // nested class: Derived
+    }
+
+    public final class Host.Derived : Base {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

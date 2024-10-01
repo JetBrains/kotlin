@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final operator inline fun kotlin/Int.get(z: kotlin/Int, p: kotlin/Int): kotlin/Int
+
+      public final operator inline fun kotlin/Int.set(z: kotlin/Int, p: kotlin/Int, l: kotlin/Int): kotlin/Unit
+
+      public final var res: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

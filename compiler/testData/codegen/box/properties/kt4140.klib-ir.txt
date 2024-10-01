@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt4140.kt
+    CLASS CLASS name:TestObject signature:/TestObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestObject
+      CONSTRUCTOR signature:/TestObject.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TestObject [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestObject signature:/TestObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/TestObject.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestObject.Companion
+        CONSTRUCTOR signature:/TestObject.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestObject.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/TestObject.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:prop signature:/TestObject.Companion.prop|{}prop[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /TestObject.Companion.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+          FUN name:<get-prop> signature:/TestObject.Companion.prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestObject.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:prop signature:/TestObject.Companion.prop|{}prop[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.TestObject.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.TestObject.Companion'
+                BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /TestObject.Companion.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: <root>.TestObject.Companion declared in <root>.TestObject.Companion.<get-prop>' type=<root>.TestObject.Companion origin=null
+                  SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /TestObject.Companion.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    receiver: GET_VAR '<this>: <root>.TestObject.Companion declared in <root>.TestObject.Companion.<get-prop>' type=<root>.TestObject.Companion origin=null
+                    value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.TestObject.Companion.<get-prop>' type=<unbound IrClassSymbolImpl> origin=null
+                  GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.TestObject.Companion.<get-prop>' type=<unbound IrClassSymbolImpl> origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop> signature:/TestObject.Companion.prop.<set-prop>|<set-prop>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.TestObject.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:prop signature:/TestObject.Companion.prop|{}prop[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.TestObject.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /TestObject.Companion.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TestObject.Companion declared in <root>.TestObject.Companion.<set-prop>' type=<root>.TestObject.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.TestObject.Companion.<set-prop>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.TestObject.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/TestObject.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.TestObject.Companion
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.TestObject.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/TestObject.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.TestObject.Companion
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

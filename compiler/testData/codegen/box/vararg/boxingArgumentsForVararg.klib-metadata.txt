@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: InlineClass
+
+    public final value class InlineClass : kotlin/Any {
+
+      public constructor(x: kotlin/Float)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Float
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Float
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> anyVararg(vararg x: T#0 /* kotlin/Array<out T#0> */): kotlin/Boolean
+
+      public final fun box(): kotlin/String
+
+      public final fun boxingInlineClassToAny(x: InlineClass): kotlin/Boolean
+
+      public final fun boxingNullablePrimitiveToAny(x: kotlin/Float?): kotlin/Boolean
+
+      public final fun boxingPrimitiveToAny(x: kotlin/Float): kotlin/Boolean
+
+      public final fun noBoxingPrimitiveToPrimitive(x: kotlin/Float): kotlin/Boolean
+
+      public final fun primitiveVararg(vararg x: kotlin/Float /* kotlin/FloatArray */): kotlin/Boolean
+
+      public final fun unboxingNullablePrimitiveToPrimitive(x: kotlin/Float?): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : InlineClass> valueClassAnyVararg(vararg x: T#0 /* kotlin/Array<out T#0> */): kotlin/Boolean
+    }
+  }
+}

@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractInsnNode
+    // class name: LabelNode
+    // class name: LineNumberNode
+
+    public abstract class AbstractInsnNode : kotlin/Any {
+
+      public constructor(next: AbstractInsnNode? /* = ... */)
+
+      public final val next: AbstractInsnNode?
+        public final get
+    }
+
+    public final class LabelNode : AbstractInsnNode {
+
+      public constructor()
+    }
+
+    public final class LineNumberNode : AbstractInsnNode {
+
+      public constructor(next: AbstractInsnNode? /* = ... */)
+
+      public final val line: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isDeadLineNumber(insn: LineNumberNode, index: kotlin/Int, frames: kotlin/Array<out kotlin/Any?>): kotlin/Boolean
+    }
+  }
+}

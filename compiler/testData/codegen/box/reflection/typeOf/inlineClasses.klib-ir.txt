@@ -1,0 +1,126 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/inlineClasses.kt
+    CLASS CLASS name:Z signature:test/Z|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Z
+      CONSTRUCTOR signature:test/Z.<init>|<init>(kotlin.String){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:test.Z [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z signature:test/Z|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:test/Z.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in test.Z.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:test/Z.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:test.Z) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:test/Z.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Z
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in test.Z'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Z declared in test.Z.<get-value>' type=test.Z origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:test/Z.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:test.Z) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:test.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in test.Z'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Z("
+              CONST String type=<unbound IrClassSymbolImpl> value="value="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Z declared in test.Z.toString' type=test.Z origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:test/Z.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:test.Z) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:test.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in test.Z'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Z declared in test.Z.hashCode' type=test.Z origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:test/Z.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:test.Z, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:test.Z
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=test.Z
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in test.Z.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in test.Z'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:test.Z [val]
+            TYPE_OP type=test.Z origin=CAST typeOperand=test.Z
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in test.Z.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: test.Z declared in test.Z.equals' type=test.Z origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: test.Z [val] declared in test.Z.equals' type=test.Z origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in test.Z'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in test.Z'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:check signature:test/check|check(kotlin.String;kotlin.reflect.KType){}[0] visibility:public modality:FINAL <> (expected:<unbound IrClassSymbolImpl>, actual:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:actual index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in test.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'actual: <unbound IrClassSymbolImpl> declared in test.check' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="test.Z"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: test.Z
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="test.Z?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: test.Z?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<test.Z>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><test.Z>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<test.Z?>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><test.Z?>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.UInt"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.UInt?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.ULong?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.UShortArray"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.UShortArray?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<kotlin.UByteArray>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<kotlin.UByteArray?>?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>?
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

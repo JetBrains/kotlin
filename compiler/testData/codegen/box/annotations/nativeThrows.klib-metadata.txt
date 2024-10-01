@@ -1,0 +1,40 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public abstract interface Foo<T#0 /* T */> : kotlin/Any {
+
+      @kotlin/Throws(exceptionClasses = [kotlin/IllegalArgumentException::class])
+      public open fun f(data: T#0): T#0
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+
+    public final class Bar<T#0 /* K */> : Foo<T#0> {
+
+      public constructor()
+
+      @kotlin/Throws(exceptionClasses = [kotlin/IllegalArgumentException::class])
+      public open fun f(data: T#0): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

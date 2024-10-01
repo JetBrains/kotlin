@@ -1,0 +1,92 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:a fileName:/A.kt
+    CLASS CLASS name:Empty signature:a/Empty|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.Empty
+      CONSTRUCTOR signature:a/Empty.<init>|<init>(){}[0] visibility:protected <> () returnType:a.Empty [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Empty signature:a/Empty|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:OnlyNested signature:a/OnlyNested|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.OnlyNested
+      CONSTRUCTOR signature:a/OnlyNested.<init>|<init>(){}[0] visibility:protected <> () returnType:a.OnlyNested [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OnlyNested signature:a/OnlyNested|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Nested signature:a/OnlyNested.Nested|null[0] modality:FINAL visibility:public superTypes:[a.OnlyNested]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.OnlyNested.Nested
+        CONSTRUCTOR signature:a/OnlyNested.Nested.<init>|<init>(){}[0] visibility:public <> () returnType:a.OnlyNested.Nested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in a.OnlyNested'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Nested signature:a/OnlyNested.Nested|null[0] modality:FINAL visibility:public superTypes:[a.OnlyNested]'
+    CLASS CLASS name:NestedAndTopLevel signature:a/NestedAndTopLevel|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.NestedAndTopLevel
+      CONSTRUCTOR signature:a/NestedAndTopLevel.<init>|<init>(){}[0] visibility:protected <> () returnType:a.NestedAndTopLevel [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NestedAndTopLevel signature:a/NestedAndTopLevel|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Nested signature:a/NestedAndTopLevel.Nested|null[0] modality:FINAL visibility:public superTypes:[a.NestedAndTopLevel]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.NestedAndTopLevel.Nested
+        CONSTRUCTOR signature:a/NestedAndTopLevel.Nested.<init>|<init>(){}[0] visibility:public <> () returnType:a.NestedAndTopLevel.Nested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in a.NestedAndTopLevel'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Nested signature:a/NestedAndTopLevel.Nested|null[0] modality:FINAL visibility:public superTypes:[a.NestedAndTopLevel]'
+    CLASS CLASS name:TopLevel signature:a/TopLevel|null[0] modality:FINAL visibility:public superTypes:[a.NestedAndTopLevel]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.TopLevel
+      CONSTRUCTOR signature:a/TopLevel.<init>|<init>(){}[0] visibility:public <> () returnType:a.TopLevel [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in a.NestedAndTopLevel'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TopLevel signature:a/TopLevel|null[0] modality:FINAL visibility:public superTypes:[a.NestedAndTopLevel]'
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/B.kt
+    FUN name:empty signature:/empty|empty(a.Empty){}[0] visibility:public modality:FINAL <> (e:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:e index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun empty (e: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'e: <unbound IrClassSymbolImpl> declared in <root>.empty' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST String type=<unbound IrClassSymbolImpl> value="1"
+    FUN name:onlyNested signature:/onlyNested|onlyNested(a.OnlyNested){}[0] visibility:public modality:FINAL <> (on:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:on index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun onlyNested (on: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'on: <unbound IrClassSymbolImpl> declared in <root>.onlyNested' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.onlyNested' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="2"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:nestedAndTopLevel signature:/nestedAndTopLevel|nestedAndTopLevel(a.NestedAndTopLevel){}[0] visibility:public modality:FINAL <> (natl:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:natl index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun nestedAndTopLevel (natl: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'natl: <unbound IrClassSymbolImpl> declared in <root>.nestedAndTopLevel' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nestedAndTopLevel' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="3"
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nestedAndTopLevel' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="4"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

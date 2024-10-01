@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun main(): kotlin/Unit
+
+      public final fun <T#0 /* T */> mySequence(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<kotlin/sequences/SequenceScope<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/sequences/Sequence<T#0>
+
+      public final operator fun <T#0 /* T */> kotlin/sequences/SequenceScope<kotlin/String>.plusAssign(x: kotlin/sequences/SequenceScope<T#0>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2852.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:o type:<root>.box.<no name provided> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+              CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>.A
+                CONSTRUCTOR visibility:public <> ($this:<root>.box.<no name provided>, value:<unbound IrClassSymbolImpl>) returnType:<root>.box.<no name provided>.A [primary]
+                  $outer: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                  VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+                    EXPRESSION_BODY
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+                PROPERTY name:value visibility:public modality:FINAL [val]
+                  FIELD PROPERTY_BACKING_FIELD name:value type:<unbound IrClassSymbolImpl> visibility:private [final]
+                    EXPRESSION_BODY
+                      GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.box.<no name provided>.A) returnType:<unbound IrClassSymbolImpl>
+                    correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
+                    $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>.A
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.A'
+                        GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                          receiver: GET_VAR '<this>: <root>.box.<no name provided>.A declared in <root>.box.<no name provided>.A.<get-value>' type=<root>.box.<no name provided>.A origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.box.<no name provided>.A' type=<root>.box.<no name provided>.A origin=null
+              $outer: GET_VAR 'val o: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null

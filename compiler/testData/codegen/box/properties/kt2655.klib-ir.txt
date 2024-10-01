@@ -1,0 +1,91 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2655.kt
+    CLASS INTERFACE name:TextField signature:/TextField|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TextField
+      FUN name:getText signature:/TextField.getText|getText(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TextField) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TextField
+      FUN name:setText signature:/TextField.setText|setText(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TextField, text:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TextField
+        VALUE_PARAMETER name:text index:0 type:<unbound IrClassSymbolImpl>
+    CLASS CLASS name:SimpleTextField signature:/SimpleTextField|null[0] modality:FINAL visibility:public superTypes:[<root>.TextField]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SimpleTextField
+      CONSTRUCTOR signature:/SimpleTextField.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SimpleTextField [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SimpleTextField signature:/SimpleTextField|null[0] modality:FINAL visibility:public superTypes:[<root>.TextField]'
+      PROPERTY name:text2 signature:/SimpleTextField.text2|{}text2[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:text2 signature:[ /SimpleTextField.text2|{}text2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:text2 type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text2> signature:/SimpleTextField.text2.<get-text2>|<get-text2>(){}[0] visibility:private modality:FINAL <> ($this:<root>.SimpleTextField) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:text2 signature:/SimpleTextField.text2|{}text2[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SimpleTextField
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-text2> (): <unbound IrClassSymbolImpl> declared in <root>.SimpleTextField'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text2 signature:[ /SimpleTextField.text2|{}text2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:text2 type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.SimpleTextField declared in <root>.SimpleTextField.<get-text2>' type=<root>.SimpleTextField origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-text2> signature:/SimpleTextField.text2.<set-text2>|<set-text2>(kotlin.String){}[0] visibility:private modality:FINAL <> ($this:<root>.SimpleTextField, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:text2 signature:/SimpleTextField.text2|{}text2[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SimpleTextField
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text2 signature:[ /SimpleTextField.text2|{}text2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:text2 type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.SimpleTextField declared in <root>.SimpleTextField.<set-text2>' type=<root>.SimpleTextField origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.SimpleTextField.<set-text2>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getText signature:/SimpleTextField.getText|getText(){}[0] visibility:public modality:OPEN <> ($this:<root>.SimpleTextField) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getText (): <unbound IrClassSymbolImpl> declared in <root>.TextField
+        $this: VALUE_PARAMETER name:<this> type:<root>.SimpleTextField
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getText (): <unbound IrClassSymbolImpl> declared in <root>.SimpleTextField'
+            CALL 'private final fun <get-text2> (): <unbound IrClassSymbolImpl> declared in <root>.SimpleTextField' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.SimpleTextField declared in <root>.SimpleTextField.getText' type=<root>.SimpleTextField origin=null
+      FUN name:setText signature:/SimpleTextField.setText|setText(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.SimpleTextField, text:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun setText (text: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TextField
+        $this: VALUE_PARAMETER name:<this> type:<root>.SimpleTextField
+        VALUE_PARAMETER name:text index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'private final fun <set-text2> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.SimpleTextField' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.SimpleTextField declared in <root>.SimpleTextField.setText' type=<root>.SimpleTextField origin=null
+            <set-?>: GET_VAR 'text: <unbound IrClassSymbolImpl> declared in <root>.SimpleTextField.setText' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:TextFieldWrapper signature:/TextFieldWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.TextField]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TextFieldWrapper
+      CONSTRUCTOR signature:/TextFieldWrapper.<init>|<init>(TextField){}[0] visibility:public <> (textField:<root>.TextField) returnType:<root>.TextFieldWrapper [primary]
+        VALUE_PARAMETER name:textField index:0 type:<root>.TextField
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TextFieldWrapper signature:/TextFieldWrapper|null[0] modality:FINAL visibility:public superTypes:[<root>.TextField]'
+      FIELD DELEGATE name:$$delegate_0 signature:/TextFieldWrapper.$$delegate_0|[0] type:<root>.TextField visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'textField: <root>.TextField declared in <root>.TextFieldWrapper.<init>' type=<root>.TextField origin=null
+      FUN DELEGATED_MEMBER name:getText signature:/TextFieldWrapper.getText|getText(){}[0] visibility:public modality:OPEN <> ($this:<root>.TextFieldWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun getText (): <unbound IrClassSymbolImpl> declared in <root>.TextField
+        $this: VALUE_PARAMETER name:<this> type:<root>.TextFieldWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getText (): <unbound IrClassSymbolImpl> declared in <root>.TextFieldWrapper'
+            CALL 'public abstract fun getText (): <unbound IrClassSymbolImpl> declared in <root>.TextField' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/TextFieldWrapper.$$delegate_0|[0] type:<root>.TextField visibility:private [final] declared in <root>.TextFieldWrapper' type=<root>.TextField origin=null
+                receiver: GET_VAR '<this>: <root>.TextFieldWrapper declared in <root>.TextFieldWrapper.getText' type=<root>.TextFieldWrapper origin=null
+      FUN DELEGATED_MEMBER name:setText signature:/TextFieldWrapper.setText|setText(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.TextFieldWrapper, text:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun setText (text: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TextField
+        $this: VALUE_PARAMETER name:<this> type:<root>.TextFieldWrapper
+        VALUE_PARAMETER name:text index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public abstract fun setText (text: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TextField' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/TextFieldWrapper.$$delegate_0|[0] type:<root>.TextField visibility:private [final] declared in <root>.TextFieldWrapper' type=<root>.TextField origin=null
+              receiver: GET_VAR '<this>: <root>.TextFieldWrapper declared in <root>.TextFieldWrapper.setText' type=<root>.TextFieldWrapper origin=null
+            text: GET_VAR 'text: <unbound IrClassSymbolImpl> declared in <root>.TextFieldWrapper.setText' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:textField type:<root>.TextFieldWrapper [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (textField: <root>.TextField) [primary] declared in <root>.TextFieldWrapper' type=<root>.TextFieldWrapper origin=null
+            textField: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SimpleTextField' type=<root>.SimpleTextField origin=null
+        CALL 'public open fun setText (text: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TextFieldWrapper' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val textField: <root>.TextFieldWrapper [val] declared in <root>.box' type=<root>.TextFieldWrapper origin=null
+          text: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun getText (): <unbound IrClassSymbolImpl> declared in <root>.TextFieldWrapper' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val textField: <root>.TextFieldWrapper [val] declared in <root>.box' type=<root>.TextFieldWrapper origin=null

@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Holder
+
+    public final class Holder : kotlin/Any {
+
+      public constructor()
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test01(h: Holder): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Exception1
+
+    public final class test/Exception1 : kotlin/RuntimeException {
+
+      public constructor(message: kotlin/String)
+    }
+
+    package {
+
+      public final inline fun doCall(block: kotlin/Function0<kotlin/String>, exception: kotlin/Function1<@kotlin/ParameterName(name = "e") kotlin/Exception, kotlin/Unit>, finallyBlock: kotlin/Function0<kotlin/String>, res: kotlin/String /* = ... */): kotlin/String
+    }
+  }
+}

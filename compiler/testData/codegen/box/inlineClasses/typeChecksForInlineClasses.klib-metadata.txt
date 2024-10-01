@@ -1,0 +1,85 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AsAny
+    // class name: AsInt
+    // class name: Primitive
+    // class name: Reference
+
+    public final value class AsAny : kotlin/Any {
+
+      public constructor(a: kotlin/Any?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun myEq(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Any?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Any?
+    }
+
+    public final value class AsInt : kotlin/Any {
+
+      public constructor(a: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun myEq(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Int
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Int
+    }
+
+    public final object Primitive : kotlin/Any {
+
+      private constructor()
+
+      public final fun isNotNullable(a: AsInt): kotlin/Boolean
+
+      public final fun isNullable(a: AsInt): kotlin/Boolean
+
+      public final fun isNullableNotNullable(a: AsInt?): kotlin/Boolean
+
+      public final fun isNullableNullable(a: AsInt?): kotlin/Boolean
+    }
+
+    public final object Reference : kotlin/Any {
+
+      private constructor()
+
+      public final fun isNotNullable(a: AsAny): kotlin/Boolean
+
+      public final fun isNullable(a: AsAny): kotlin/Boolean
+
+      public final fun isNullableNotNullable(a: AsAny?): kotlin/Boolean
+
+      public final fun isNullableNullable(a: AsAny?): kotlin/Boolean
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> kotlin/Any?.isCheck(): kotlin/Boolean
+    }
+  }
+}

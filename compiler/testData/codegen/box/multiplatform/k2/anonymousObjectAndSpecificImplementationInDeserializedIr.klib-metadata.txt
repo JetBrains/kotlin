@@ -1,0 +1,35 @@
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/Base
+    // class name: foo/Derived
+
+    public abstract interface foo/Base<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public abstract val capacity: kotlin/Int
+        public abstract get
+    }
+
+    public abstract class foo/Derived<T#0 /* T */ : kotlin/Any> : foo/Base<T#0> {
+
+      public constructor(capacity: kotlin/Int)
+
+      public final val capacity: kotlin/Int
+        public final get
+
+      private final val instances: kotlin/Array<kotlin/Any?>
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      internal final val ByteArrayPool: foo/Derived<kotlin/ByteArray>
+        internal final get
+    }
+  }
+}

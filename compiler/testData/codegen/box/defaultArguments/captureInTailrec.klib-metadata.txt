@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun C.bar(s: kotlin/String): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final tailrec fun C.foo(x: kotlin/String, f: kotlin/Function1<kotlin/String, kotlin/String> /* = ... */): kotlin/String
+    }
+  }
+}

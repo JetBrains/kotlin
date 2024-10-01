@@ -1,0 +1,34 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MySet
+
+    public abstract interface MySet<out T#0 /* E */> : kotlin/Any {
+
+      public abstract fun contains(e: T#0): kotlin/Boolean
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyMutableSet
+
+    public abstract interface MyMutableSet<T#0 /* E */> : MySet<T#0> {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

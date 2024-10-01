@@ -1,0 +1,46 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/inPackage.kt
+    CLASS ENUM_CLASS name:Season signature:test/Season|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Season>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Season
+      CONSTRUCTOR signature:test/Season.<init>|<init>(){}[0] visibility:private <> () returnType:test.Season [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.Season
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Season signature:test/Season|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Season>]'
+      ENUM_ENTRY name:WINTER signature:test/Season.WINTER|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Season'
+      ENUM_ENTRY name:SPRING signature:test/Season.SPRING|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Season'
+      ENUM_ENTRY name:SUMMER signature:test/Season.SUMMER|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Season'
+      ENUM_ENTRY name:AUTUMN signature:test/Season.AUTUMN|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Season'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/Season.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.Season>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/Season.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.Season
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Season.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/Season.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.Season>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Season.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:foo signature:test/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:test.Season
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): test.Season declared in test'
+          GET_ENUM 'ENUM_ENTRY name:SPRING signature:test/Season.SPRING|null[0]' type=test.Season
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun foo (): test.Season declared in test' type=test.Season origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:SPRING signature:test/Season.SPRING|null[0]' type=test.Season
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

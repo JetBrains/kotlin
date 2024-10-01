@@ -1,0 +1,89 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt6176.kt
+    FUN name:foo signature:/foo|foo(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (f:<unbound IrClassSymbolImpl><R of <root>.foo>) returnType:R of <root>.foo
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /foo|foo(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><R of <root>.foo>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <R> (f: <unbound IrClassSymbolImpl><R of <root>.foo>): R of <root>.foo declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.foo origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><R of <root>.foo> declared in <root>.foo' type=<unbound IrClassSymbolImpl><R of <root>.foo> origin=VARIABLE_AS_FUNCTION
+    FUN name:some signature:/some|some(0:0?;0:0){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (v:T of <root>.some?, b:T of <root>.some) returnType:T of <root>.some
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /some|some(0:0?;0:0){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:v index:0 type:T of <root>.some?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.some
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun some <T> (v: T of <root>.some?, b: T of <root>.some): T of <root>.some declared in <root>'
+          CALL 'public final fun foo <R> (f: <unbound IrClassSymbolImpl><R of <root>.foo>): R of <root>.foo declared in <root>' type=T of <root>.some origin=null
+            <R>: T of <root>.some
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.some> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T of <root>.some
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): T of <root>.some declared in <root>.some'
+                    WHEN type=T of <root>.some origin=IF
+                      BRANCH
+                        if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                            arg0: GET_VAR 'v: T of <root>.some? declared in <root>.some' type=T of <root>.some? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: BLOCK type={T of <root>.some & Any} origin=null
+                          GET_VAR 'v: T of <root>.some? declared in <root>.some' type=T of <root>.some? origin=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: BLOCK type=T of <root>.some origin=null
+                          GET_VAR 'b: T of <root>.some declared in <root>.some' type=T of <root>.some origin=null
+    FUN name:some1 signature:/some1|some1(0:0?;0:0){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (v:T of <root>.some1?, b:T of <root>.some1) returnType:T of <root>.some1
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /some1|some1(0:0?;0:0){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:v index:0 type:T of <root>.some1?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.some1
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun some1 <T> (v: T of <root>.some1?, b: T of <root>.some1): T of <root>.some1 declared in <root>'
+          CALL 'public final fun foo <R> (f: <unbound IrClassSymbolImpl><R of <root>.foo>): R of <root>.foo declared in <root>' type=T of <root>.some1 origin=null
+            <R>: T of <root>.some1
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.some1> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T of <root>.some1
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): T of <root>.some1 declared in <root>.some1'
+                    WHEN type=T of <root>.some1 origin=IF
+                      BRANCH
+                        if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                            arg0: GET_VAR 'v: T of <root>.some1? declared in <root>.some1' type=T of <root>.some1? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: GET_VAR 'v: T of <root>.some1? declared in <root>.some1' type=T of <root>.some1? origin=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: GET_VAR 'b: T of <root>.some1 declared in <root>.some1' type=T of <root>.some1 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public final fun some <T> (v: T of <root>.some?, b: T of <root>.some): T of <root>.some declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    v: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    b: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public final fun some <T> (v: T of <root>.some?, b: T of <root>.some): T of <root>.some declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    v: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    b: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public final fun some1 <T> (v: T of <root>.some1?, b: T of <root>.some1): T of <root>.some1 declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    v: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    b: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail 3"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

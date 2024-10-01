@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor(msg: kotlin/String)
+
+      public open fun toString(): kotlin/String
+
+      public final val msg: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val globalValue1: kotlin/Int /* = ... */
+        public final get
+
+      public final val globalValue2: A
+        public final get
+
+      public final val globalValue3: A
+        public final get
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkDouble(): kotlin/String?
+
+      public final fun checkLong(): kotlin/String?
+
+      private final operator fun kotlin/Double?.compareTo(other: kotlin/Double?): kotlin/Int
+
+      private final operator fun kotlin/Long?.compareTo(other: kotlin/Long?): kotlin/Int
+
+      public final var doubleCompareToInvocations: kotlin/Int
+        public final get
+        public final set
+
+      public final var longCompareToInvocations: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

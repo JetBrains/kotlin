@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inline
+
+    public final class Inline : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun calc(s: kotlin/Function1<kotlin/Int, kotlin/Int>, p: kotlin/Int): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): kotlin/Int
+    }
+  }
+}

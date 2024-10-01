@@ -1,0 +1,43 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:base fileName:/Base.kt
+    CLASS CLASS name:Base signature:base/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:base.Base<K of base.Base>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ base/Base|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:base/Base.<init>|<init>(){}[0] visibility:public <> () returnType:base.Base<K of base.Base> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:base/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:get signature:base/Base.get|get(1:0){}[0] visibility:protected modality:FINAL <> ($this:base.Base<K of base.Base>, key:K of base.Base) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:base.Base<K of base.Base>
+        VALUE_PARAMETER name:key index:0 type:K of base.Base
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected final fun get (key: K of base.Base): <unbound IrClassSymbolImpl> [operator] declared in base.Base'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/test.kt
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[base.Base<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+      CONSTRUCTOR signature:/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Derived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in base.Base'
+            <K>: <unbound IrClassSymbolImpl>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[base.Base<<unbound IrClassSymbolImpl>>]'
+      CLASS CLASS name:Inner signature:/Derived.Inner|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived.Inner
+        CONSTRUCTOR signature:/Derived.Inner.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Derived) returnType:<root>.Derived.Inner [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner signature:/Derived.Inner|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:foo signature:/Derived.Inner.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Derived.Inner) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived.Inner
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Derived.Inner'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
+                1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Derived.Inner' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived.Inner' type=<root>.Derived.Inner origin=null
+              $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived' type=<root>.Derived origin=null

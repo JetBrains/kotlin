@@ -1,0 +1,65 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/delegatedPropertyInEnum.kt
+    CLASS OBJECT name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+      CONSTRUCTOR signature:/D.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.D [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getValue signature:/D.getValue|getValue(kotlin.Any?;kotlin.Any?){}[0] visibility:public modality:FINAL <> ($this:<root>.D, a:<unbound IrClassSymbolImpl>?, b:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.D
+        VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (a: <unbound IrClassSymbolImpl>?, b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.D'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS ENUM_CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.A
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]'
+      ENUM_ENTRY name:GOO signature:/A.GOO|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A'
+      PROPERTY name:a signature:/A.a|{}a[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:a$delegate signature:[ /A.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:a$delegate type:<root>.D visibility:private [final]] ] type:<root>.D visibility:private [final]
+          EXPRESSION_BODY
+            GET_OBJECT 'CLASS OBJECT name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.D
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-a> signature:/A.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:a signature:/A.a|{}a[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              CALL 'public final fun getValue (a: <unbound IrClassSymbolImpl>?, b: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.D' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:a$delegate signature:[ /A.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:a$delegate type:<root>.D visibility:private [final]] ] type:<root>.D visibility:private [final] declared in <root>.A' type=<root>.D origin=null
+                  receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a>' type=<root>.A origin=null
+                a: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a>' type=<root>.A origin=null
+                b: PROPERTY_REFERENCE 'public final a: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.A' field=null getter='public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.A' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:b signature:/A.b|{}b[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:b signature:[ /A.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:a$delegate type:<root>.D visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> signature:/A.b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:b signature:/A.b|{}b[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b signature:[ /A.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:a$delegate type:<root>.D visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/A.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/A.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.A
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/A.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:GOO signature:/A.GOO|null[0]' type=<root>.A

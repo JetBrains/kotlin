@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt55912.kt
+    CLASS ANNOTATION_CLASS name:Entity signature:/Entity|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Entity
+      CONSTRUCTOR signature:/Entity.<init>|<init>(kotlin.Array<kotlin.String>){}[0] visibility:public <> (foreignKeys:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.Entity [primary]
+        VALUE_PARAMETER name:foreignKeys index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Entity signature:/Entity|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:foreignKeys signature:/Entity.foreignKeys|{}foreignKeys[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:foreignKeys signature:[ /Entity.foreignKeys|{}foreignKeys[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:foreignKeys type:kotlin.Array<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'foreignKeys: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Entity.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-foreignKeys> signature:/Entity.foreignKeys.<get-foreignKeys>|<get-foreignKeys>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Entity) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:foreignKeys signature:/Entity.foreignKeys|{}foreignKeys[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Entity
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-foreignKeys> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Entity'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:foreignKeys signature:[ /Entity.foreignKeys|{}foreignKeys[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:foreignKeys type:kotlin.Array<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Entity declared in <root>.Entity.<get-foreignKeys>' type=<root>.Entity origin=null
+    CLASS CLASS name:Record signature:/Record|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        Entity(foreignKeys = ["id"] type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Record
+      CONSTRUCTOR signature:/Record.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Record [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Record signature:/Record|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

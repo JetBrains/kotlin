@@ -1,0 +1,63 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ValByMapExtensionsTest
+
+    public final class ValByMapExtensionsTest : kotlin/Any {
+
+      public constructor()
+
+      public final fun doTest(): kotlin/Unit
+
+      public final /* delegated */ val a: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val b: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val c: kotlin/Any
+        public final /* non-default */ get
+
+      public final /* delegated */ val d: kotlin/String?
+        public final /* non-default */ get
+
+      public final /* delegated */ val e: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val f: kotlin/String?
+        public final /* non-default */ get
+
+      public final /* delegated */ val g: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val g1: kotlin/String
+        public final /* non-default */ get
+
+      public final val genericMap: kotlin/collections/Map<kotlin/String, kotlin/Any?>
+        public final get
+
+      public final val genericMmapOut: kotlin/collections/MutableMap<kotlin/String, out kotlin/Any?>
+        public final get
+
+      public final /* delegated */ val i: kotlin/Int
+        public final /* non-default */ get
+
+      public final val map: kotlin/collections/Map<kotlin/String, kotlin/String>
+        public final get
+
+      public final val mmapOut: kotlin/collections/MutableMap<kotlin/String, out kotlin/String>
+        public final get
+
+      public final /* delegated */ val x: kotlin/Double
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

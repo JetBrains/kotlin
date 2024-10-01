@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final data class A : kotlin/Any {
+
+      public constructor(z: kotlin/BooleanArray, c: kotlin/CharArray, b: kotlin/ByteArray, s: kotlin/ShortArray, i: kotlin/IntArray, f: kotlin/FloatArray, j: kotlin/LongArray, d: kotlin/DoubleArray)
+
+      public final /* synthesized */ operator fun component1(): kotlin/BooleanArray
+
+      public final /* synthesized */ operator fun component2(): kotlin/CharArray
+
+      public final /* synthesized */ operator fun component3(): kotlin/ByteArray
+
+      public final /* synthesized */ operator fun component4(): kotlin/ShortArray
+
+      public final /* synthesized */ operator fun component5(): kotlin/IntArray
+
+      public final /* synthesized */ operator fun component6(): kotlin/FloatArray
+
+      public final /* synthesized */ operator fun component7(): kotlin/LongArray
+
+      public final /* synthesized */ operator fun component8(): kotlin/DoubleArray
+
+      public final /* synthesized */ fun copy(z: kotlin/BooleanArray /* = ... */, c: kotlin/CharArray /* = ... */, b: kotlin/ByteArray /* = ... */, s: kotlin/ShortArray /* = ... */, i: kotlin/IntArray /* = ... */, f: kotlin/FloatArray /* = ... */, j: kotlin/LongArray /* = ... */, d: kotlin/DoubleArray /* = ... */): A
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val b: kotlin/ByteArray
+        public final get
+
+      public final var c: kotlin/CharArray
+        public final get
+        public final set
+
+      public final val d: kotlin/DoubleArray
+        public final get
+
+      public final val f: kotlin/FloatArray
+        public final get
+
+      public final val i: kotlin/IntArray
+        public final get
+
+      public final val j: kotlin/LongArray
+        public final get
+
+      public final val s: kotlin/ShortArray
+        public final get
+
+      public final val z: kotlin/BooleanArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

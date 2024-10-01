@@ -1,0 +1,42 @@
+// MODULE: sub
+library {
+  // module name: <sub>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/Base
+    // class name: foo/Base.My
+
+    public final class foo/Base : kotlin/Any {
+
+      public constructor()
+
+      @foo/Base.My
+      @kotlin/Deprecated(message = "Yes")
+      public final fun test(): kotlin/String
+
+      // nested class: My
+    }
+
+    @kotlin/RequiresOptIn
+    public final annotation class foo/Base.My : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: dep
+library {
+  // module name: <dep>
+
+  library fragment {
+    // package name: some
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SuperClass
+    // class name: obj
+    // class name: obj.Foo
+
+    public open class SuperClass : kotlin/Any {
+
+      public constructor(arg: kotlin/Function0<kotlin/String>)
+
+      public final val arg: kotlin/Function0<kotlin/String>
+        public final get
+    }
+
+    public final object obj : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): kotlin/String
+
+      // nested class: Foo
+    }
+
+    public final class obj.Foo : SuperClass {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

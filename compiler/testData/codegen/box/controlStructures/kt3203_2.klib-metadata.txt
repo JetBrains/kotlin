@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check1(): kotlin/Unit
+
+      public final fun check2(): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Derived
+    // class name: Impl
+
+    public abstract interface Base<T#0 /* T */, T#1 /* ID */> : kotlin/Any {
+
+      public abstract fun <T#2 /* S */ : T#0> foo(x: kotlin/collections/List<T#2>): kotlin/collections/List<T#2>
+    }
+
+    public abstract interface Derived : Base<kotlin/CharSequence, kotlin/String> {
+    }
+
+    public final class Impl : Derived {
+
+      public constructor()
+
+      public open fun <T#0 /* S */ : kotlin/CharSequence> foo(x: kotlin/collections/List<T#0>): kotlin/collections/List<T#0>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(d: Derived): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

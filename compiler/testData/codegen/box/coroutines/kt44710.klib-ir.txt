@@ -1,0 +1,170 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt44710.kt
+    PROPERTY name:res signature:/res|{}res[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:res signature:[ /res|{}res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:channel type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-res> signature:/res.<get-res>|<get-res>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:res signature:/res|{}res[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-res> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:res signature:[ /res|{}res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:channel type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-res> signature:/res.<set-res>|<set-res>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:res signature:/res|{}res[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:res signature:[ /res|{}res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:channel type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-res>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:WrappedChannel signature:/WrappedChannel|null[0] modality:FINAL visibility:public superTypes:[<root>.ReceiveChannel<T of <root>.WrappedChannel>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WrappedChannel<T of <root>.WrappedChannel>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /WrappedChannel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/WrappedChannel.<init>|<init>(Channel<1:0>){}[0] visibility:public <> (channel:<root>.Channel<T of <root>.WrappedChannel>) returnType:<root>.WrappedChannel<T of <root>.WrappedChannel> [primary]
+        VALUE_PARAMETER name:channel index:0 type:<root>.Channel<T of <root>.WrappedChannel>
+          EXPRESSION_BODY
+            CALL 'public final fun Channel <E> (): <root>.Channel<E of <root>.Channel> declared in <root>' type=<root>.Channel<T of <root>.WrappedChannel> origin=null
+              <E>: T of <root>.WrappedChannel
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WrappedChannel signature:/WrappedChannel|null[0] modality:FINAL visibility:public superTypes:[<root>.ReceiveChannel<T of <root>.WrappedChannel>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/WrappedChannel.$$delegate_0|[0] type:<root>.Channel<T of <root>.WrappedChannel> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'channel: <root>.Channel<T of <root>.WrappedChannel> declared in <root>.WrappedChannel.<init>' type=<root>.Channel<T of <root>.WrappedChannel> origin=null
+      FUN DELEGATED_MEMBER name:receive signature:/WrappedChannel.receive|receive(){}[0] visibility:public modality:OPEN <> ($this:<root>.WrappedChannel<T of <root>.WrappedChannel>) returnType:T of <root>.WrappedChannel [suspend]
+        overridden:
+          public abstract fun receive (): E of <root>.ReceiveChannel [suspend] declared in <root>.ReceiveChannel
+        $this: VALUE_PARAMETER name:<this> type:<root>.WrappedChannel<T of <root>.WrappedChannel>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun receive (): T of <root>.WrappedChannel [suspend] declared in <root>.WrappedChannel'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.WrappedChannel origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/WrappedChannel.$$delegate_0|[0] type:<root>.Channel<T of <root>.WrappedChannel> visibility:private [final] declared in <root>.WrappedChannel' type=<root>.Channel<T of <root>.WrappedChannel> origin=null
+                receiver: GET_VAR '<this>: <root>.WrappedChannel<T of <root>.WrappedChannel> declared in <root>.WrappedChannel.receive' type=<root>.WrappedChannel<T of <root>.WrappedChannel> origin=null
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    CLASS INTERFACE name:Flow signature:/Flow|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Flow<T of <root>.Flow>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /Flow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:collect signature:/Flow.collect|collect(FlowCollector<1:0>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Flow<T of <root>.Flow>, collector:<root>.FlowCollector<T of <root>.Flow>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.Flow>
+        VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<T of <root>.Flow>
+    CLASS INTERFACE name:FlowCollector signature:/FlowCollector|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlowCollector<T of <root>.FlowCollector>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /FlowCollector|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:emit signature:/FlowCollector.emit|emit(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FlowCollector<T of <root>.FlowCollector>, value:T of <root>.FlowCollector) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FlowCollector<T of <root>.FlowCollector>
+        VALUE_PARAMETER name:value index:0 type:T of <root>.FlowCollector
+    FUN name:consumeAsFlow signature:/consumeAsFlow|consumeAsFlow@ReceiveChannel<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.ReceiveChannel<T of <root>.consumeAsFlow>) returnType:<root>.Flow<T of <root>.consumeAsFlow>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /consumeAsFlow|consumeAsFlow@ReceiveChannel<0:0>(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<T of <root>.consumeAsFlow>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun consumeAsFlow <T> (): <root>.Flow<T of <root>.consumeAsFlow> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (channel: <root>.ReceiveChannel<T of <root>.ChannelAsFlow>) [primary] declared in <root>.ChannelAsFlow' type=<root>.ChannelAsFlow<T of <root>.consumeAsFlow> origin=null
+            <class: T>: T of <root>.consumeAsFlow
+            channel: GET_VAR '<this>: <root>.ReceiveChannel<T of <root>.consumeAsFlow> declared in <root>.consumeAsFlow' type=<root>.ReceiveChannel<T of <root>.consumeAsFlow> origin=null
+    CLASS CLASS name:ChannelAsFlow signature:/ChannelAsFlow|null[0] modality:FINAL visibility:public superTypes:[<root>.ChannelFlow<T of <root>.ChannelAsFlow>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ChannelAsFlow<T of <root>.ChannelAsFlow>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ChannelAsFlow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ChannelAsFlow.<init>|<init>(ReceiveChannel<1:0>){}[0] visibility:public <> (channel:<root>.ReceiveChannel<T of <root>.ChannelAsFlow>) returnType:<root>.ChannelAsFlow<T of <root>.ChannelAsFlow> [primary]
+        VALUE_PARAMETER name:channel index:0 type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ChannelFlow'
+            <T>: T of <root>.ChannelAsFlow
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ChannelAsFlow signature:/ChannelAsFlow|null[0] modality:FINAL visibility:public superTypes:[<root>.ChannelFlow<T of <root>.ChannelAsFlow>]'
+      PROPERTY name:channel signature:/ChannelAsFlow.channel|{}channel[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:channel signature:[ /ChannelAsFlow.channel|{}channel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:channel type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]] ] type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'channel: <root>.ReceiveChannel<T of <root>.ChannelAsFlow> declared in <root>.ChannelAsFlow.<init>' type=<root>.ReceiveChannel<T of <root>.ChannelAsFlow> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-channel> signature:/ChannelAsFlow.channel.<get-channel>|<get-channel>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ChannelAsFlow<T of <root>.ChannelAsFlow>) returnType:<root>.ReceiveChannel<T of <root>.ChannelAsFlow>
+          correspondingProperty: PROPERTY name:channel signature:/ChannelAsFlow.channel|{}channel[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ChannelAsFlow<T of <root>.ChannelAsFlow>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-channel> (): <root>.ReceiveChannel<T of <root>.ChannelAsFlow> declared in <root>.ChannelAsFlow'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:channel signature:[ /ChannelAsFlow.channel|{}channel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:channel type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]] ] type:<root>.ReceiveChannel<T of <root>.ChannelAsFlow> visibility:private [final]' type=<root>.ReceiveChannel<T of <root>.ChannelAsFlow> origin=null
+                receiver: GET_VAR '<this>: <root>.ChannelAsFlow<T of <root>.ChannelAsFlow> declared in <root>.ChannelAsFlow.<get-channel>' type=<root>.ChannelAsFlow<T of <root>.ChannelAsFlow> origin=null
+      FUN name:collect signature:/ChannelAsFlow.collect|collect(FlowCollector<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.ChannelAsFlow<T of <root>.ChannelAsFlow>, collector:<root>.FlowCollector<T of <root>.ChannelAsFlow>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ChannelAsFlow<T of <root>.ChannelAsFlow>
+        VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<T of <root>.ChannelAsFlow>
+        BLOCK_BODY
+          CALL 'public abstract fun emit (value: T of <root>.FlowCollector): <unbound IrClassSymbolImpl> [suspend] declared in <root>.FlowCollector' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'collector: <root>.FlowCollector<T of <root>.ChannelAsFlow> declared in <root>.ChannelAsFlow.collect' type=<root>.FlowCollector<T of <root>.ChannelAsFlow> origin=null
+            value: CALL 'public abstract fun receive (): E of <root>.ReceiveChannel [suspend] declared in <root>.ReceiveChannel' type=T of <root>.ChannelAsFlow origin=null
+              $this: CALL 'private final fun <get-channel> (): <root>.ReceiveChannel<T of <root>.ChannelAsFlow> declared in <root>.ChannelAsFlow' type=<root>.ReceiveChannel<T of <root>.ChannelAsFlow> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ChannelAsFlow<T of <root>.ChannelAsFlow> declared in <root>.ChannelAsFlow.collect' type=<root>.ChannelAsFlow<T of <root>.ChannelAsFlow> origin=null
+    CLASS CLASS name:ChannelFlow signature:/ChannelFlow|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Flow<T of <root>.ChannelFlow>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ChannelFlow<T of <root>.ChannelFlow>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ChannelFlow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ChannelFlow.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ChannelFlow<T of <root>.ChannelFlow> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ChannelFlow signature:/ChannelFlow|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Flow<T of <root>.ChannelFlow>]'
+    CLASS OBJECT name:StringCollector signature:/StringCollector|null[0] modality:FINAL visibility:public superTypes:[<root>.FlowCollector<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringCollector
+      CONSTRUCTOR signature:/StringCollector.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.StringCollector [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:StringCollector signature:/StringCollector|null[0] modality:FINAL visibility:public superTypes:[<root>.FlowCollector<<unbound IrClassSymbolImpl>>]'
+      FUN name:emit signature:/StringCollector.emit|emit(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollector, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        overridden:
+          public abstract fun emit (value: T of <root>.FlowCollector): <unbound IrClassSymbolImpl> [suspend] declared in <root>.FlowCollector
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringCollector
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-res> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.StringCollector.emit' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:ReceiveChannel signature:/ReceiveChannel|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReceiveChannel<E of <root>.ReceiveChannel>
+      TYPE_PARAMETER name:E index:0 variance:out signature:[ /ReceiveChannel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:receive signature:/ReceiveChannel.receive|receive(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ReceiveChannel<E of <root>.ReceiveChannel>) returnType:E of <root>.ReceiveChannel [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<E of <root>.ReceiveChannel>
+    CLASS INTERFACE name:Channel signature:/Channel|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.ReceiveChannel<E of <root>.Channel>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Channel<E of <root>.Channel>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /Channel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:Channel signature:/Channel|Channel(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> () returnType:<root>.Channel<E of <root>.Channel>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /Channel|Channel(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun Channel <E> (): <root>.Channel<E of <root>.Channel> declared in <root>'
+          BLOCK type=<root>.Channel.<no name provided><E of <root>.Channel> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Channel<E of <root>.Channel>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Channel.<no name provided><E of <root>.Channel>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.Channel.<no name provided><E of <root>.Channel> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Channel<E of <root>.Channel>]'
+              FUN name:receive visibility:public modality:OPEN <> ($this:<root>.Channel.<no name provided><E of <root>.Channel>) returnType:E of <root>.Channel [suspend]
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.Channel.<no name provided><E of <root>.Channel>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun receive (): E of <root>.Channel [suspend] declared in <root>.Channel.<no name provided>'
+                    TYPE_OP type=E of <root>.Channel origin=CAST typeOperand=E of <root>.Channel
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Channel.<no name provided>' type=<root>.Channel.<no name provided><E of <root>.Channel> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Flow' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun consumeAsFlow <T> (): <root>.Flow<T of <root>.consumeAsFlow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: CONSTRUCTOR_CALL 'public constructor <init> (channel: <root>.Channel<T of <root>.WrappedChannel>) [primary] declared in <root>.WrappedChannel' type=<root>.WrappedChannel<<unbound IrClassSymbolImpl>> origin=null
+                      <class: T>: <unbound IrClassSymbolImpl>
+                  collector: GET_OBJECT 'CLASS OBJECT name:StringCollector signature:/StringCollector|null[0] modality:FINAL visibility:public superTypes:[<root>.FlowCollector<<unbound IrClassSymbolImpl>>]' type=<root>.StringCollector
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-res> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

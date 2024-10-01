@@ -1,0 +1,127 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt51988.kt
+    PROPERTY name:resultProvider signature:/resultProvider|{}resultProvider[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:resultProvider signature:[ /resultProvider|{}resultProvider[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:resultProvider type:<root>.ResultProvider<kotlin.Any, kotlin.Any> visibility:private [final,static]] ] type:<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=<root>.resultProvider.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.resultProvider.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.resultProvider.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+              FUN name:provideResult visibility:public modality:OPEN <> ($this:<root>.resultProvider.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun provideResult (): AR of <root>.ResultProvider declared in <root>.ResultProvider
+                $this: VALUE_PARAMETER name:<this> type:<root>.resultProvider.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun provideResult (): <unbound IrClassSymbolImpl> declared in <root>.resultProvider.<no name provided>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="NOK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.resultProvider.<no name provided>' type=<root>.resultProvider.<no name provided> origin=OBJECT_LITERAL
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-resultProvider> signature:/resultProvider.<get-resultProvider>|<get-resultProvider>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:resultProvider signature:/resultProvider|{}resultProvider[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-resultProvider> (): <root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resultProvider signature:[ /resultProvider|{}resultProvider[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:resultProvider type:<root>.ResultProvider<kotlin.Any, kotlin.Any> visibility:private [final,static]] ] type:<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:resultProvider type:<root>.ResultProvider<kotlin.Any, kotlin.Any> visibility:private [final,static]] ] type:<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun build <AB1, BB1> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB1 of <root>.build>, BB1 of <root>.build>): <root>.ResultProvider<AB1 of <root>.build, BB1 of <root>.build> declared in <root>' type=<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <AB1>: <unbound IrClassSymbolImpl>
+            <BB1>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.BuilderScope<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.BuilderScope<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.result'
+                    CALL 'public abstract fun getResult <B1> (result: <root>.ResultProvider<BS of <root>.BuilderScope, B1 of <root>.BuilderScope.getResult>): B1 of <root>.BuilderScope.getResult declared in <root>.BuilderScope' type=<unbound IrClassSymbolImpl> origin=null
+                      <B1>: <unbound IrClassSymbolImpl>
+                      $this: GET_VAR '$this$build: <root>.BuilderScope<<unbound IrClassSymbolImpl>> declared in <root>.result.<anonymous>' type=<root>.BuilderScope<<unbound IrClassSymbolImpl>> origin=null
+                      result: CALL 'public final fun build2 <AB2, BB2> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB2 of <root>.build2>, BB2 of <root>.build2>): <root>.ResultProvider<AB2 of <root>.build2, BB2 of <root>.build2> declared in <root>' type=<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                        <AB2>: <unbound IrClassSymbolImpl>
+                        <BB2>: <unbound IrClassSymbolImpl>
+                        block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.BuilderScope<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                            $receiver: VALUE_PARAMETER name:$this$build2 type:<root>.BuilderScope<<unbound IrClassSymbolImpl>>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.result.<anonymous>'
+                                CALL 'public abstract fun getResult2 <B2> (result: <root>.ResultProvider<BS of <root>.BuilderScope, B2 of <root>.BuilderScope.getResult2>): B2 of <root>.BuilderScope.getResult2 declared in <root>.BuilderScope' type=<unbound IrClassSymbolImpl> origin=null
+                                  <B2>: <unbound IrClassSymbolImpl>
+                                  $this: GET_VAR '$this$build2: <root>.BuilderScope<<unbound IrClassSymbolImpl>> declared in <root>.result.<anonymous>.<anonymous>' type=<root>.BuilderScope<<unbound IrClassSymbolImpl>> origin=null
+                                  result: CALL 'public final fun <get-resultProvider> (): <root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>' type=<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:resultProvider type:<root>.ResultProvider<kotlin.Any, kotlin.Any> visibility:private [final,static]] ] type:<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:build signature:/build|build(kotlin.Function1<BuilderScope<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <AB1, BB1> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB1 of <root>.build>, BB1 of <root>.build>) returnType:<root>.ResultProvider<AB1 of <root>.build, BB1 of <root>.build>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:AB1 index:0 variance: signature:[ /build|build(kotlin.Function1<BuilderScope<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:AB1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:BB1 index:1 variance: signature:[ /build|build(kotlin.Function1<BuilderScope<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:BB1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB1 of <root>.build>, BB1 of <root>.build>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <AB1, BB1> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB1 of <root>.build>, BB1 of <root>.build>): <root>.ResultProvider<AB1 of <root>.build, BB1 of <root>.build> declared in <root>'
+          BLOCK type=<root>.build.<no name provided><AB1 of <root>.build, BB1 of <root>.build> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ResultProvider<AB1 of <root>.build, BB1 of <root>.build>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.build.<no name provided><AB1 of <root>.build, BB1 of <root>.build>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.build.<no name provided><AB1 of <root>.build, BB1 of <root>.build> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ResultProvider<AB1 of <root>.build, BB1 of <root>.build>]'
+              FUN name:provideResult visibility:public modality:OPEN <> ($this:<root>.build.<no name provided><AB1 of <root>.build, BB1 of <root>.build>) returnType:AB1 of <root>.build
+                overridden:
+                  public abstract fun provideResult (): AR of <root>.ResultProvider declared in <root>.ResultProvider
+                $this: VALUE_PARAMETER name:<this> type:<root>.build.<no name provided><AB1 of <root>.build, BB1 of <root>.build>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun provideResult (): AB1 of <root>.build declared in <root>.build.<no name provided>'
+                    TYPE_OP type=AB1 of <root>.build origin=CAST typeOperand=AB1 of <root>.build
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.build.<no name provided>' type=<root>.build.<no name provided><AB1 of <root>.build, BB1 of <root>.build> origin=OBJECT_LITERAL
+    FUN name:build2 signature:/build2|build2(kotlin.Function1<BuilderScope<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <AB2, BB2> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB2 of <root>.build2>, BB2 of <root>.build2>) returnType:<root>.ResultProvider<AB2 of <root>.build2, BB2 of <root>.build2>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:AB2 index:0 variance: signature:[ /build2|build2(kotlin.Function1<BuilderScope<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:AB1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:BB2 index:1 variance: signature:[ /build2|build2(kotlin.Function1<BuilderScope<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:BB1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB2 of <root>.build2>, BB2 of <root>.build2>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build2 <AB2, BB2> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.BuilderScope<AB2 of <root>.build2>, BB2 of <root>.build2>): <root>.ResultProvider<AB2 of <root>.build2, BB2 of <root>.build2> declared in <root>'
+          BLOCK type=<root>.build2.<no name provided><AB2 of <root>.build2, BB2 of <root>.build2> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ResultProvider<AB2 of <root>.build2, BB2 of <root>.build2>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.build2.<no name provided><AB2 of <root>.build2, BB2 of <root>.build2>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.build2.<no name provided><AB2 of <root>.build2, BB2 of <root>.build2> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ResultProvider<AB2 of <root>.build2, BB2 of <root>.build2>]'
+              FUN name:provideResult visibility:public modality:OPEN <> ($this:<root>.build2.<no name provided><AB2 of <root>.build2, BB2 of <root>.build2>) returnType:AB2 of <root>.build2
+                overridden:
+                  public abstract fun provideResult (): AR of <root>.ResultProvider declared in <root>.ResultProvider
+                $this: VALUE_PARAMETER name:<this> type:<root>.build2.<no name provided><AB2 of <root>.build2, BB2 of <root>.build2>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun provideResult (): AB2 of <root>.build2 declared in <root>.build2.<no name provided>'
+                    TYPE_OP type=AB2 of <root>.build2 origin=CAST typeOperand=AB2 of <root>.build2
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.build2.<no name provided>' type=<root>.build2.<no name provided><AB2 of <root>.build2, BB2 of <root>.build2> origin=OBJECT_LITERAL
+    CLASS INTERFACE name:BuilderScope signature:/BuilderScope|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BuilderScope<BS of <root>.BuilderScope>
+      TYPE_PARAMETER name:BS index:0 variance: signature:[ /BuilderScope|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:AB1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:getResult signature:/BuilderScope.getResult|getResult(ResultProvider<1:0,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:ABSTRACT <B1> ($this:<root>.BuilderScope<BS of <root>.BuilderScope>, result:<root>.ResultProvider<BS of <root>.BuilderScope, B1 of <root>.BuilderScope.getResult>) returnType:B1 of <root>.BuilderScope.getResult
+        TYPE_PARAMETER name:B1 index:0 variance: signature:[ /BuilderScope.getResult|getResult(ResultProvider<1:0,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:AB1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.BuilderScope<BS of <root>.BuilderScope>
+        VALUE_PARAMETER name:result index:0 type:<root>.ResultProvider<BS of <root>.BuilderScope, B1 of <root>.BuilderScope.getResult>
+      FUN name:getResult2 signature:/BuilderScope.getResult2|getResult2(ResultProvider<1:0,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:ABSTRACT <B2> ($this:<root>.BuilderScope<BS of <root>.BuilderScope>, result:<root>.ResultProvider<BS of <root>.BuilderScope, B2 of <root>.BuilderScope.getResult2>) returnType:B2 of <root>.BuilderScope.getResult2
+        TYPE_PARAMETER name:B2 index:0 variance: signature:[ /BuilderScope.getResult2|getResult2(ResultProvider<1:0,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:AB1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.BuilderScope<BS of <root>.BuilderScope>
+        VALUE_PARAMETER name:result index:0 type:<root>.ResultProvider<BS of <root>.BuilderScope, B2 of <root>.BuilderScope.getResult2>
+    CLASS INTERFACE name:ResultProvider signature:/ResultProvider|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResultProvider<AR of <root>.ResultProvider, BR of <root>.ResultProvider>
+      TYPE_PARAMETER name:AR index:0 variance: signature:[ /ResultProvider|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:AB1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:BR index:1 variance: signature:[ /ResultProvider|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:BB1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:provideResult signature:/ResultProvider.provideResult|provideResult(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ResultProvider<AR of <root>.ResultProvider, BR of <root>.ResultProvider>) returnType:AR of <root>.ResultProvider
+        $this: VALUE_PARAMETER name:<this> type:<root>.ResultProvider<AR of <root>.ResultProvider, BR of <root>.ResultProvider>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public abstract fun provideResult (): AR of <root>.ResultProvider declared in <root>.ResultProvider' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-result> (): <root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>' type=<root>.ResultProvider<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY

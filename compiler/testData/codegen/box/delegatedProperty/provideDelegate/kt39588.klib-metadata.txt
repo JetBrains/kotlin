@@ -1,0 +1,54 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractSingleOption
+    // class name: ArgumentSingleNullableValue
+    // class name: ArgumentValueDelegate
+    // class name: CLIEntity
+    // class name: OptionDescriptor
+    // class name: SingleNullableOption
+
+    public abstract class AbstractSingleOption<T#0 /* T */ : kotlin/Any, T#1 /* TResult */> : CLIEntity<T#1> {
+
+      public constructor(delegate: ArgumentValueDelegate<T#1>)
+    }
+
+    public final class ArgumentSingleNullableValue<T#0 /* T */ : kotlin/Any> : ArgumentValueDelegate<T#0?> {
+
+      public constructor(descriptor: OptionDescriptor<T#0>)
+    }
+
+    public abstract interface ArgumentValueDelegate<T#0 /* T */> : kotlin/Any {
+
+      public open operator fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+    }
+
+    public abstract class CLIEntity<T#0 /* TResult */> : kotlin/Any {
+
+      public constructor(delegate: ArgumentValueDelegate<T#0>)
+
+      public final operator fun provideDelegate(thisRef: kotlin/Any?, prop: kotlin/reflect/KProperty<*>): ArgumentValueDelegate<T#0>
+
+      public final val delegate: ArgumentValueDelegate<T#0>
+        public final get
+    }
+
+    public final class OptionDescriptor<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class SingleNullableOption<T#0 /* T */ : kotlin/Any> : AbstractSingleOption<T#0, T#0?> {
+
+      public constructor(descriptor: OptionDescriptor<T#0>)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

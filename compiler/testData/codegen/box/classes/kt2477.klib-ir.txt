@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/kt2477.kt
+    CLASS INTERFACE name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      PROPERTY name:c signature:test/A.c|{}c[0] visibility:public modality:OPEN [val]
+        FUN name:<get-c> signature:test/A.c.<get-c>|<get-c>(){}[0] visibility:public modality:OPEN <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:c signature:test/A.c|{}c[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-c> (): <unbound IrClassSymbolImpl> declared in test.A'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS INTERFACE name:B signature:test/B|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.B
+      PROPERTY name:c signature:test/B.c|{}c[0] visibility:private modality:FINAL [val]
+        FUN name:<get-c> signature:test/B.c.<get-c>|<get-c>(){}[0] visibility:private modality:FINAL <> ($this:test.B) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:c signature:test/B.c|{}c[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.B
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-c> (): <unbound IrClassSymbolImpl> declared in test.B'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+    CLASS CLASS name:C signature:test/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+      CONSTRUCTOR signature:test/C.<init>|<init>(){}[0] visibility:public <> () returnType:test.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:test/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:c signature:test/C.c|{}c[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:c signature:[ test/C.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> signature:test/C.c.<get-c>|<get-c>(){}[0] visibility:private modality:FINAL <> ($this:test.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:c signature:test/C.c|{}c[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-c> (): <unbound IrClassSymbolImpl> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c signature:[ test/C.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-c>' type=test.C origin=null
+    CLASS CLASS name:D signature:test/D|null[0] modality:OPEN visibility:public superTypes:[test.C; test.A; test.B]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.D
+      CONSTRUCTOR signature:test/D.<init>|<init>(){}[0] visibility:public <> () returnType:test.D [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.C'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D signature:test/D|null[0] modality:OPEN visibility:public superTypes:[test.C; test.A; test.B]'
+      PROPERTY name:b signature:test/D.b|{}b[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:b signature:[ test/D.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: test.D declared in test.D' type=test.D origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> signature:test/D.b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> ($this:test.D) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:b signature:test/D.b|{}b[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.D
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in test.D'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b signature:[ test/D.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.D declared in test.D.<get-b>' type=test.D origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.D' type=test.D origin=null

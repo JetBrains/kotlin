@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: Runnable
+
+    public abstract interface A<T#0 /* T */, T#1 /* U */ : kotlin/Number, T#2 /* V */ : kotlin/Any> : kotlin/Any {
+
+      public open fun foo(t: T#0, u: T#1): T#2?
+    }
+
+    public abstract interface B<T#0 /* T */, T#1 /* V */ : kotlin/Any> : A<T#0, kotlin/Int, T#1> {
+    }
+
+    public final class C : B<kotlin/String, Runnable> {
+
+      public constructor()
+
+      public open fun foo(t: kotlin/String, u: kotlin/Int): Runnable?
+    }
+
+    public abstract interface Runnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

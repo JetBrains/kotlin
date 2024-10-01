@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(): kotlin/Unit
+
+      public final inline fun baz(x: kotlin/Unit /* = ... */, y: kotlin/Unit): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Unit
+
+      public final fun myPrintln(s: kotlin/String): kotlin/Unit
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

@@ -1,0 +1,34 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AssertDSL
+    // class name: C
+
+    public abstract interface AssertDSL : kotlin/Any {
+
+      public open infix fun kotlin/Any?.equals(other: kotlin/Any?): kotlin/Unit
+
+      public open fun kotlin/Any?.hashCode(): kotlin/Int
+
+      public open fun kotlin/Any?.toString(): kotlin/String
+    }
+
+    public final class C : AssertDSL {
+
+      public constructor(x: kotlin/Int)
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun C.test(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CountingString
+
+    public final class CountingString : kotlin/CharSequence {
+
+      public constructor(s: kotlin/String)
+
+      public open operator fun get(index: kotlin/Int): kotlin/Char
+
+      public open fun subSequence(startIndex: kotlin/Int, endIndex: kotlin/Int): kotlin/Nothing
+
+      public final var getCtr: kotlin/Int
+        public final get
+        public final set
+
+      public open val length: kotlin/Int
+        public open /* non-default */ get
+
+      public final var lengthCtr: kotlin/Int
+        public final get
+        public final set
+
+      private final val s: kotlin/String
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val cs: CountingString
+        public final get
+    }
+  }
+}

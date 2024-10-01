@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ val lazyValue: kotlin/String
+        public final /* non-default */ get
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

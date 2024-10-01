@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final tailrec fun kotlin/String.escape(i: kotlin/Int /* = ... */, result: kotlin/text/StringBuilder /* = ... */): kotlin/String
+
+      public final fun escapeChar(c: kotlin/Char): kotlin/String?
+    }
+  }
+}

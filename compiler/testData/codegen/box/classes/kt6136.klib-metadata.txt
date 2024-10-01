@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Actor
+    // class name: Id
+
+    public final data class Actor : Id<kotlin/Int> {
+
+      public constructor(id: kotlin/Int, firstName: kotlin/String, lastName: kotlin/String)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      public final /* synthesized */ operator fun component3(): kotlin/String
+
+      public final /* synthesized */ fun copy(id: kotlin/Int /* = ... */, firstName: kotlin/String /* = ... */, lastName: kotlin/String /* = ... */): Actor
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val firstName: kotlin/String
+        public final get
+
+      public open val id: kotlin/Int
+        public open get
+
+      public final val lastName: kotlin/String
+        public final get
+    }
+
+    public abstract interface Id<T#0 /* T */> : kotlin/Any {
+
+      public abstract val id: T#0
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

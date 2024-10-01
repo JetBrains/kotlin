@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testArray(): kotlin/Unit
+
+      public final fun testArrayAlias(): kotlin/Unit
+
+      public final fun testBooleanArray(): kotlin/Unit
+
+      public final fun testCharArray(): kotlin/Unit
+
+      public final fun testDoubleArray(): kotlin/Unit
+
+      public final fun testFloatArray(): kotlin/Unit
+
+      public final fun testIntArray(): kotlin/Unit
+
+      public final fun testLongArray(): kotlin/Unit
+
+      public typealias ArrayS = kotlin/Array<kotlin/String> /* = kotlin/Array<kotlin/String> */
+    }
+  }
+}

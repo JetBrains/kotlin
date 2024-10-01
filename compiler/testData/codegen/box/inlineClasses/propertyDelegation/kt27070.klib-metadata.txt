@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+    // class name: Foo
+
+    public final value class Delegate : kotlin/properties/ReadOnlyProperty<Foo, kotlin/Int> {
+
+      public constructor(ignored: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open operator fun getValue(thisRef: Foo, property: kotlin/reflect/KProperty<*>): kotlin/Int
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ignored: kotlin/Int
+        public final get
+
+      // underlying property: ignored
+
+      // underlying type: kotlin/Int
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final val a: kotlin/Int /* = ... */
+        public final get
+
+      public final /* delegated */ val b: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

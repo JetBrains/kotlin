@@ -1,0 +1,33 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/cycle_do.kt
+    FUN name:cycle_do signature:/cycle_do|cycle_do(kotlin.Int){}[0] visibility:public modality:FINAL <> (cnt:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:cnt index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+        BLOCK type=<unbound IrClassSymbolImpl> origin=null
+          DO_WHILE label=null origin=DO_WHILE_LOOP
+            body: COMPOSITE type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.cycle_do' type=<unbound IrClassSymbolImpl> origin=EQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.cycle_do' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            condition: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.cycle_do' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: GET_VAR 'cnt: <unbound IrClassSymbolImpl> declared in <root>.cycle_do' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun cycle_do (cnt: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.cycle_do' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+          2: CALL 'public final fun cycle_do (cnt: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            cnt: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          2: CALL 'public final fun cycle_do (cnt: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            cnt: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

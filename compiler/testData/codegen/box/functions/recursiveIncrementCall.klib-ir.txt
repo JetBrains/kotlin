@@ -1,0 +1,39 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/recursiveIncrementCall.kt
+    FUN name:inc signature:/inc|inc@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.inc' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun inc (): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="done"
+        VAR name:s type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun inc (): <unbound IrClassSymbolImpl> [operator] declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            SET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.inc' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+              CALL 'public final fun inc (): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                $receiver: GET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.inc' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            GET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.inc' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="11test"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  SET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    CALL 'public final fun inc (): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                      $receiver: GET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  GET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="done"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="FAIL"

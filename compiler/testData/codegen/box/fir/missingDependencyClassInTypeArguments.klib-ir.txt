@@ -1,0 +1,37 @@
+// MODULE: lib1
+MODULE_FRAGMENT name:<lib1>
+  FILE fqName:<root> fileName:/Some.kt
+    CLASS CLASS name:Some signature:/Some|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some<T of <root>.Some>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Some|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Some.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Some<T of <root>.Some> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some signature:/Some|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+
+// MODULE: lib2
+MODULE_FRAGMENT name:<lib2>
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS CLASS name:Inv signature:/Inv|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inv<T of <root>.Inv>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Inv|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Inv.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Inv<T of <root>.Inv> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inv signature:/Inv|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      PROPERTY name:x signature:/Base.x|{}x[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Base.x.<get-x>|<get-x>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Base) returnType:<root>.Inv<<unbound IrClassSymbolImpl><*>>
+          correspondingProperty: PROPERTY name:x signature:/Base.x|{}x[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS INTERFACE name:Derived signature:/Derived|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

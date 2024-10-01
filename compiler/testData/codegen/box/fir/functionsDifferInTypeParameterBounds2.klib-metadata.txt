@@ -1,0 +1,81 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: X
+    // class name: Y
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    public open class B : kotlin/Any {
+
+      public constructor()
+    }
+
+    public open class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface X : kotlin/Any {
+
+      public abstract fun <T#0 /* T1 */, T#1 /* T2 */, T#2 /* T3 */> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T1 */, T#1 /* T2 */ : B, T#2 /* T3 */> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T1 */ : C, T#1 /* T2 */, T#2 /* T3 */ : A> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T1 */, T#1 /* T2 */ : A, T#2 /* T3 */ : B> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T11 */ : A, T#1 /* T12 */ : B, T#2 /* T13 */ : C> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T21 */ : A, T#1 /* T22 */ : C, T#2 /* T23 */ : B> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T31 */ : B, T#1 /* T32 */ : A, T#2 /* T33 */ : C> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T41 */ : B, T#1 /* T42 */ : C, T#2 /* T43 */ : A> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T51 */ : C, T#1 /* T52 */ : A, T#2 /* T53 */ : B> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public abstract fun <T#0 /* T61 */ : C, T#1 /* T62 */ : B, T#2 /* T63 */ : A> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+    }
+
+    public final class Y : X {
+
+      public constructor()
+
+      public open fun <T#0 /* S1 */, T#1 /* S2 */, T#2 /* S3 */> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S1 */, T#1 /* S2 */ : B, T#2 /* S3 */> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S1 */ : C, T#1 /* S2 */, T#2 /* S3 */ : A> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S1 */, T#1 /* S2 */ : A, T#2 /* S3 */ : B> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S11 */ : A, T#1 /* S12 */ : B, T#2 /* S13 */ : C> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S21 */ : A, T#1 /* S22 */ : C, T#2 /* S23 */ : B> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S31 */ : B, T#1 /* S32 */ : A, T#2 /* S33 */ : C> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S41 */ : B, T#1 /* S42 */ : C, T#2 /* S43 */ : A> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S51 */ : C, T#1 /* S52 */ : A, T#2 /* S53 */ : B> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+
+      public open fun <T#0 /* S61 */ : C, T#1 /* S62 */ : B, T#2 /* S63 */ : A> foo(t1: T#0, t2: T#1, t3: T#2): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

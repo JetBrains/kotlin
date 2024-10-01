@@ -1,0 +1,33 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt882.kt
+    PROPERTY name:_0 signature:/_0|{}_0[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:_0 signature:[ /_0|{}_0[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_0 type:kotlin.Double visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_0> signature:/_0.<get-_0>|<get-_0>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:_0 signature:/_0|{}_0[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-_0> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_0 signature:[ /_0|{}_0[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_0 type:kotlin.Double visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:_0dbl signature:/_0dbl|{}_0dbl[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:_0dbl signature:[ /_0dbl|{}_0dbl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_0 type:kotlin.Double visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_0dbl> signature:/_0dbl.<get-_0dbl>|<get-_0dbl>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:_0dbl signature:/_0dbl|{}_0dbl[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-_0dbl> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_0dbl signature:[ /_0dbl|{}_0dbl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:_0 type:kotlin.Double visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-_0> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CALL 'public final fun <get-_0dbl> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

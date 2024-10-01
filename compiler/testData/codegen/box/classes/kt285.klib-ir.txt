@@ -1,0 +1,65 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt285.kt
+    CLASS INTERFACE name:Trait signature:/Trait|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Trait
+      FUN name:foo signature:/Trait.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.Trait) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Trait
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Trait'
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+      FUN name:bar signature:/Trait.bar|bar(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Trait) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Trait
+    CLASS CLASS name:SimpleClass signature:/SimpleClass|null[0] modality:FINAL visibility:public superTypes:[<root>.Trait]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SimpleClass
+      CONSTRUCTOR signature:/SimpleClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SimpleClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SimpleClass signature:/SimpleClass|null[0] modality:FINAL visibility:public superTypes:[<root>.Trait]'
+      FUN name:bar signature:/SimpleClass.bar|bar(){}[0] visibility:public modality:OPEN <> ($this:<root>.SimpleClass) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun bar (): <unbound IrClassSymbolImpl> declared in <root>.Trait
+        $this: VALUE_PARAMETER name:<this> type:<root>.SimpleClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun bar (): <unbound IrClassSymbolImpl> declared in <root>.SimpleClass'
+            CONST String type=<unbound IrClassSymbolImpl> value="K"
+    CLASS CLASS name:ComplexClass signature:/ComplexClass|null[0] modality:FINAL visibility:public superTypes:[<root>.Trait]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ComplexClass
+      CONSTRUCTOR signature:/ComplexClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ComplexClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ComplexClass signature:/ComplexClass|null[0] modality:FINAL visibility:public superTypes:[<root>.Trait]'
+      FIELD DELEGATE name:$$delegate_0 signature:/ComplexClass.$$delegate_0|[0] type:<root>.SimpleClass visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SimpleClass' type=<root>.SimpleClass origin=null
+      FUN name:qux signature:/ComplexClass.qux|qux(){}[0] visibility:public modality:FINAL <> ($this:<root>.ComplexClass) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ComplexClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun qux (): <unbound IrClassSymbolImpl> declared in <root>.ComplexClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.ComplexClass' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.ComplexClass declared in <root>.ComplexClass.qux' type=<root>.ComplexClass origin=null
+              1: CALL 'public open fun bar (): <unbound IrClassSymbolImpl> declared in <root>.ComplexClass' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.ComplexClass declared in <root>.ComplexClass.qux' type=<root>.ComplexClass origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/ComplexClass.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.ComplexClass) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Trait
+        $this: VALUE_PARAMETER name:<this> type:<root>.ComplexClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.ComplexClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ComplexClass.$$delegate_0|[0] type:<root>.SimpleClass visibility:private [final] declared in <root>.ComplexClass' type=<root>.SimpleClass origin=null
+                receiver: GET_VAR '<this>: <root>.ComplexClass declared in <root>.ComplexClass.foo' type=<root>.ComplexClass origin=null
+      FUN DELEGATED_MEMBER name:bar signature:/ComplexClass.bar|bar(){}[0] visibility:public modality:OPEN <> ($this:<root>.ComplexClass) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun bar (): <unbound IrClassSymbolImpl> declared in <root>.Trait
+        $this: VALUE_PARAMETER name:<this> type:<root>.ComplexClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun bar (): <unbound IrClassSymbolImpl> declared in <root>.ComplexClass'
+            CALL 'public open fun bar (): <unbound IrClassSymbolImpl> declared in <root>.SimpleClass' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ComplexClass.$$delegate_0|[0] type:<root>.SimpleClass visibility:private [final] declared in <root>.ComplexClass' type=<root>.SimpleClass origin=null
+                receiver: GET_VAR '<this>: <root>.ComplexClass declared in <root>.ComplexClass.bar' type=<root>.ComplexClass origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun qux (): <unbound IrClassSymbolImpl> declared in <root>.ComplexClass' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ComplexClass' type=<root>.ComplexClass origin=null

@@ -1,0 +1,43 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt49838.kt
+    FUN name:event signature:/event|event(kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<Service<0:0,0:1>>;1§<Event<0:0>>}[0] visibility:public modality:FINAL <TService, TEvent> (handler:<unbound IrClassSymbolImpl><TEvent of <root>.event, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:TService index:0 variance: signature:[ /event|event(kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<Service<0:0,0:1>>;1§<Event<0:0>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TService index:0 variance: superTypes:[<root>.Service<TService of <root>.event, TEvent of <root>.event>] reified:true] ] superTypes:[<root>.Service<TService of <root>.event, TEvent of <root>.event>] reified:true
+      TYPE_PARAMETER name:TEvent index:1 variance: signature:[ /event|event(kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<Service<0:0,0:1>>;1§<Event<0:0>>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:TEvent index:1 variance: superTypes:[<root>.Event<TService of <root>.event>] reified:true] ] superTypes:[<root>.Event<TService of <root>.event>] reified:true
+      VALUE_PARAMETER name:handler index:0 type:<unbound IrClassSymbolImpl><TEvent of <root>.event, <unbound IrClassSymbolImpl>> [noinline]
+      BLOCK_BODY
+        VAR name:serviceKlass type:<unbound IrClassSymbolImpl><TService of <root>.event> [val]
+          CLASS_REFERENCE 'TYPE_PARAMETER name:TService index:0 variance: signature:[ /event|event(kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<Service<0:0,0:1>>;1§<Event<0:0>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TService index:0 variance: superTypes:[<root>.Service<TService of <root>.event, TEvent of <root>.event>] reified:true] ] superTypes:[<root>.Service<TService of <root>.event, TEvent of <root>.event>] reified:true' type=<unbound IrClassSymbolImpl><TService of <root>.event>
+        VAR name:eventKlass type:<unbound IrClassSymbolImpl><TEvent of <root>.event> [val]
+          CLASS_REFERENCE 'TYPE_PARAMETER name:TEvent index:1 variance: signature:[ /event|event(kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<Service<0:0,0:1>>;1§<Event<0:0>>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:TEvent index:1 variance: superTypes:[<root>.Event<TService of <root>.event>] reified:true] ] superTypes:[<root>.Event<TService of <root>.event>] reified:true' type=<unbound IrClassSymbolImpl><TEvent of <root>.event>
+    CLASS INTERFACE name:Service signature:/Service|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Service<Self of <root>.Service, TEvent of <root>.Service>
+      TYPE_PARAMETER name:Self index:0 variance: signature:[ /Service|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TService index:0 variance: superTypes:[<root>.Service<TService of <root>.event, TEvent of <root>.event>] reified:true] ] superTypes:[<root>.Service<Self of <root>.Service, TEvent of <root>.Service>] reified:false
+      TYPE_PARAMETER name:TEvent index:1 variance:in signature:[ /Service|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TEvent index:1 variance: superTypes:[<root>.Event<TService of <root>.event>] reified:true] ] superTypes:[<root>.Event<Self of <root>.Service>] reified:false
+    CLASS INTERFACE name:Event signature:/Event|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Event<T of <root>.Event>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /Event|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TService index:0 variance: superTypes:[<root>.Service<TService of <root>.event, TEvent of <root>.event>] reified:true] ] superTypes:[<root>.Service<out T of <root>.Event, *>] reified:false
+    CLASS CLASS name:SomeService signature:/SomeService|null[0] modality:FINAL visibility:public superTypes:[<root>.Service<<root>.SomeService, <root>.SomeService.SomeEvent>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SomeService
+      CONSTRUCTOR signature:/SomeService.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SomeService [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeService signature:/SomeService|null[0] modality:FINAL visibility:public superTypes:[<root>.Service<<root>.SomeService, <root>.SomeService.SomeEvent>]'
+      CLASS CLASS name:SomeEvent signature:/SomeService.SomeEvent|null[0] modality:FINAL visibility:public superTypes:[<root>.Event<<root>.SomeService>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SomeService.SomeEvent
+        CONSTRUCTOR signature:/SomeService.SomeEvent.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SomeService.SomeEvent [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeEvent signature:/SomeService.SomeEvent|null[0] modality:FINAL visibility:public superTypes:[<root>.Event<<root>.SomeService>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun event <TService, TEvent> (handler: <unbound IrClassSymbolImpl><TEvent of <root>.event, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <TService>: <root>.SomeService
+          <TEvent>: <root>.SomeService.SomeEvent
+          handler: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.SomeService.SomeEvent, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (someEvent:<root>.SomeService.SomeEvent) returnType:<unbound IrClassSymbolImpl> [suspend]
+              VALUE_PARAMETER name:someEvent index:0 type:<root>.SomeService.SomeEvent
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (someEvent: <root>.SomeService.SomeEvent): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

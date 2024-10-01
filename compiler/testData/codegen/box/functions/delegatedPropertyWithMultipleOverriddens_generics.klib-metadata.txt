@@ -1,0 +1,72 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MC
+    // class name: MyAbstractCollection
+    // class name: MyArrayList
+    // class name: MyCollection
+    // class name: MyList
+    // class name: MyMutableCollection
+    // class name: MyMutableList
+
+    public final class MC : MyMutableCollection<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun foo(): kotlin/String
+
+      public open /* delegation */ val bar: kotlin/String
+        public open get
+    }
+
+    public abstract class MyAbstractCollection<out T#0 /* E5 */> : MyCollection<T#0> {
+
+      protected constructor()
+
+      public abstract fun foo(): T#0
+
+      public abstract val bar: T#0
+        public abstract get
+    }
+
+    public final class MyArrayList<T#0 /* E6 */> : MyMutableList<T#0>, MyAbstractCollection<T#0> {
+
+      public constructor()
+
+      public open fun foo(): T#0
+
+      public open val bar: T#0
+        public open get
+    }
+
+    public abstract interface MyCollection<out T#0 /* E1 */> : kotlin/Any {
+
+      public abstract fun foo(): T#0
+
+      public abstract val bar: T#0
+        public abstract get
+    }
+
+    public abstract interface MyList<out T#0 /* E2 */> : MyCollection<T#0> {
+
+      public abstract fun foo(): T#0
+
+      public abstract val bar: T#0
+        public abstract get
+    }
+
+    public abstract interface MyMutableCollection<T#0 /* E3 */> : MyCollection<T#0> {
+    }
+
+    public abstract interface MyMutableList<T#0 /* E4 */> : MyList<T#0>, MyMutableCollection<T#0> {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun invoke(f: @kotlin/ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>): kotlin/Int
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun invoke(f: @kotlin/ExtensionFunctionType kotlin/Function1<B, kotlin/Unit>): kotlin/Int
+    }
+
+    public open class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    public open class D : C {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val C.attr: A
+        public final /* non-default */ get
+
+      public final val D.attr: B
+        public final /* non-default */ get
+    }
+  }
+}

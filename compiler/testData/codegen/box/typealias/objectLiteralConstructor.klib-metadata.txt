@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AddLastDesc2
+    // class name: LockFreeLinkedListNode
+    // class name: SendBuffered
+
+    public open class AddLastDesc2<out T#0 /* T */ : LockFreeLinkedListNode> : kotlin/Any {
+
+      public constructor(node: T#0)
+
+      public final val node: T#0
+        public final get
+    }
+
+    public open class LockFreeLinkedListNode : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    private final class SendBuffered : LockFreeLinkedListNode {
+
+      public constructor(s: kotlin/String)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun describeSendBuffered(): AddLastDesc2<*> /* = AddLastDesc^<*> */
+
+      public typealias AddLastDesc<T#0 /* T */> = AddLastDesc2<T#0> /* = AddLastDesc2<T#0> */
+    }
+  }
+}

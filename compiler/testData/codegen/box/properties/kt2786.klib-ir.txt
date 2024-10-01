@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2786.kt
+    CLASS INTERFACE name:FooTrait signature:/FooTrait|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooTrait
+      PROPERTY name:propertyTest signature:/FooTrait.propertyTest|{}propertyTest[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-propertyTest> signature:/FooTrait.propertyTest.<get-propertyTest>|<get-propertyTest>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FooTrait) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:propertyTest signature:/FooTrait.propertyTest|{}propertyTest[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FooTrait
+    CLASS CLASS name:FooDelegate signature:/FooDelegate|null[0] modality:FINAL visibility:public superTypes:[<root>.FooTrait]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooDelegate
+      CONSTRUCTOR signature:/FooDelegate.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.FooDelegate [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooDelegate signature:/FooDelegate|null[0] modality:FINAL visibility:public superTypes:[<root>.FooTrait]'
+      PROPERTY name:propertyTest signature:/FooDelegate.propertyTest|{}propertyTest[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:propertyTest signature:[ /FooDelegate.propertyTest|{}propertyTest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:propertyTest type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-propertyTest> signature:/FooDelegate.propertyTest.<get-propertyTest>|<get-propertyTest>(){}[0] visibility:public modality:OPEN <> ($this:<root>.FooDelegate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:propertyTest signature:/FooDelegate.propertyTest|{}propertyTest[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-propertyTest> (): <unbound IrClassSymbolImpl> declared in <root>.FooTrait
+          $this: VALUE_PARAMETER name:<this> type:<root>.FooDelegate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-propertyTest> (): <unbound IrClassSymbolImpl> declared in <root>.FooDelegate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertyTest signature:[ /FooDelegate.propertyTest|{}propertyTest[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:propertyTest type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.FooDelegate declared in <root>.FooDelegate.<get-propertyTest>' type=<root>.FooDelegate origin=null
+    CLASS CLASS name:DelegateTest signature:/DelegateTest|null[0] modality:FINAL visibility:public superTypes:[<root>.FooTrait]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DelegateTest
+      CONSTRUCTOR signature:/DelegateTest.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DelegateTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DelegateTest signature:/DelegateTest|null[0] modality:FINAL visibility:public superTypes:[<root>.FooTrait]'
+      FIELD DELEGATE name:$$delegate_0 signature:/DelegateTest.$$delegate_0|[0] type:<root>.FooDelegate visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FooDelegate' type=<root>.FooDelegate origin=null
+      FUN name:test signature:/DelegateTest.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.DelegateTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DelegateTest
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.DelegateTest'
+            CALL 'public open fun <get-propertyTest> (): <unbound IrClassSymbolImpl> declared in <root>.DelegateTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.DelegateTest declared in <root>.DelegateTest.test' type=<root>.DelegateTest origin=null
+      PROPERTY DELEGATED_MEMBER name:propertyTest signature:/DelegateTest.propertyTest|{}propertyTest[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-propertyTest> signature:/DelegateTest.propertyTest.<get-propertyTest>|<get-propertyTest>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DelegateTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:propertyTest signature:/DelegateTest.propertyTest|{}propertyTest[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-propertyTest> (): <unbound IrClassSymbolImpl> declared in <root>.FooTrait
+          $this: VALUE_PARAMETER name:<this> type:<root>.DelegateTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-propertyTest> (): <unbound IrClassSymbolImpl> declared in <root>.DelegateTest'
+              CALL 'public open fun <get-propertyTest> (): <unbound IrClassSymbolImpl> declared in <root>.FooDelegate' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/DelegateTest.$$delegate_0|[0] type:<root>.FooDelegate visibility:private [final] declared in <root>.DelegateTest' type=<root>.FooDelegate origin=null
+                  receiver: GET_VAR '<this>: <root>.DelegateTest declared in <root>.DelegateTest.<get-propertyTest>' type=<root>.DelegateTest origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.DelegateTest' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DelegateTest' type=<root>.DelegateTest origin=null

@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Variants
+    // class name: Variants.Companion
+
+    public final enum class Variants : kotlin/Enum<Variants> {
+
+      private constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      O,
+
+      K,
+
+      // has Enum.entries
+    }
+
+    public final companion object Variants.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val valueStr: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,152 @@
+// MODULE: InterfaceModule
+library {
+  // module name: <InterfaceModule>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyInterface
+    // class name: MyInterface2
+
+    public abstract interface MyInterface<T#0 /* T */> : kotlin/Any {
+
+      public open fun test(x: T#0): T#0
+
+      public open fun testWithDefault(x: T#0? /* = ... */): T#0?
+    }
+
+    public abstract interface MyInterface2 : MyInterface<kotlin/Int> {
+    }
+  }
+}
+
+// MODULE: OpenClassModule
+library {
+  // module name: <OpenClassModule>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyOpenClass
+    // class name: MyOpenClass2
+    // class name: MyOpenClass3
+
+    public open class MyOpenClass<T#0 /* T */> : MyInterface<T#0> {
+
+      public constructor()
+    }
+
+    public open class MyOpenClass2 : MyInterface2 {
+
+      public constructor()
+    }
+
+    public open class MyOpenClass3 : MyOpenClass<kotlin/Int> {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: OpenClassWithOverrideModule
+library {
+  // module name: <OpenClassWithOverrideModule>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyOpenClassWithOverride
+    // class name: MyOpenClassWithOverride2
+    // class name: MyOpenClassWithOverride3
+
+    public open class MyOpenClassWithOverride : MyInterface<kotlin/Int> {
+
+      public constructor()
+
+      public open fun test(x: kotlin/Int): kotlin/Int
+
+      public open fun testWithDefault(x: kotlin/Int?): kotlin/Int
+    }
+
+    public open class MyOpenClassWithOverride2 : MyInterface2, MyOpenClassWithOverride {
+
+      public constructor()
+    }
+
+    public open class MyOpenClassWithOverride3 : MyOpenClassWithOverride2 {
+
+      public constructor()
+
+      public open fun test(x: kotlin/Int): kotlin/Int
+
+      public open fun testWithDefault(x: kotlin/Int?): kotlin/Int
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyFinalClass
+    // class name: MyFinalClass2
+    // class name: MyFinalClass3
+    // class name: MyFinalClassI
+    // class name: MyFinalClassWithOverride
+    // class name: MyFinalClassWithOverride2
+    // class name: MyFinalClassWithOverride3
+    // class name: MyFinalClassWithOverrideI
+
+    public final class MyFinalClass : MyOpenClass<kotlin/Int> {
+
+      public constructor()
+    }
+
+    public final class MyFinalClass2 : MyOpenClass2 {
+
+      public constructor()
+    }
+
+    public final class MyFinalClass3 : MyOpenClass3 {
+
+      public constructor()
+    }
+
+    public final class MyFinalClassI : MyInterface<kotlin/Int>, MyOpenClass<kotlin/Int> {
+
+      public constructor()
+    }
+
+    public final class MyFinalClassWithOverride : MyOpenClassWithOverride {
+
+      public constructor()
+    }
+
+    public final class MyFinalClassWithOverride2 : MyOpenClassWithOverride2 {
+
+      public constructor()
+    }
+
+    public final class MyFinalClassWithOverride3 : MyOpenClassWithOverride3 {
+
+      public constructor()
+    }
+
+    public final class MyFinalClassWithOverrideI : MyInterface<kotlin/Int>, MyOpenClassWithOverride {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> asInterface(i: MyInterface<T#0>): MyInterface<T#0>
+
+      public final fun asInterface2(i: MyInterface2): MyInterface2
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

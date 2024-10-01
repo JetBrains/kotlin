@@ -1,0 +1,70 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nullablePrimitiveNoFieldInitializer.kt
+    PROPERTY name:zint signature:/zint|{}zint[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zint signature:[ /zint|{}zint[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zint> signature:/zint.<get-zint>|<get-zint>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zint signature:/zint|{}zint[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zint> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zint signature:[ /zint|{}zint[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:zlong signature:/zlong|{}zlong[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zlong signature:[ /zlong|{}zlong[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zlong> signature:/zlong.<get-zlong>|<get-zlong>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zlong signature:/zlong|{}zlong[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zlong> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zlong signature:[ /zlong|{}zlong[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:zbyte signature:/zbyte|{}zbyte[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zbyte signature:[ /zbyte|{}zbyte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Byte type=<unbound IrClassSymbolImpl> value=3
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zbyte> signature:/zbyte.<get-zbyte>|<get-zbyte>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zbyte signature:/zbyte|{}zbyte[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zbyte> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zbyte signature:[ /zbyte|{}zbyte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:zshort signature:/zshort|{}zshort[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zshort signature:[ /zshort|{}zshort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Short type=<unbound IrClassSymbolImpl> value=4
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zshort> signature:/zshort.<get-zshort>|<get-zshort>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zshort signature:/zshort|{}zshort[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zshort> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zshort signature:[ /zshort|{}zshort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:zchar signature:/zchar|{}zchar[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zchar signature:[ /zchar|{}zchar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Char type=<unbound IrClassSymbolImpl> value='c'
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zchar> signature:/zchar.<get-zchar>|<get-zchar>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zchar signature:/zchar|{}zchar[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zchar> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zchar signature:[ /zchar|{}zchar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:zdouble signature:/zdouble|{}zdouble[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zdouble signature:[ /zdouble|{}zdouble[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zdouble> signature:/zdouble.<get-zdouble>|<get-zdouble>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zdouble signature:/zdouble|{}zdouble[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zdouble> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zdouble signature:[ /zdouble|{}zdouble[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    PROPERTY name:zfloat signature:/zfloat|{}zfloat[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:zfloat signature:[ /zfloat|{}zfloat[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Double type=<unbound IrClassSymbolImpl> value=2.0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zfloat> signature:/zfloat.<get-zfloat>|<get-zfloat>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:zfloat signature:/zfloat|{}zfloat[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-zfloat> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:zfloat signature:[ /zfloat|{}zfloat[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:zint type:kotlin.Int? visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [final,static]' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

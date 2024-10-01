@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: t
+
+    // class name: t/Reproduce
+
+    public final class t/Reproduce : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

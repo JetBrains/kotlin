@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/test.kt
+    FUN name:foo signature:/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun takeClass (instanceClass: <root>.Sample<*>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          instanceClass: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Sample<out <unbound IrClassSymbolImpl>>? origin=null
+            <1>: <root>.Sample<out <unbound IrClassSymbolImpl>>?
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Sample<out <unbound IrClassSymbolImpl>>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Sample<out <unbound IrClassSymbolImpl>>?
+                BLOCK_BODY
+                  VAR name:outer type:<root>.Sample<out <unbound IrClassSymbolImpl>>? [val]
+                    CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.Sample<out <unbound IrClassSymbolImpl>>? declared in <root>.foo'
+                    WHEN type=<root>.Sample<out <unbound IrClassSymbolImpl>>? origin=IF
+                      BRANCH
+                        if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                            arg0: GET_VAR 'val outer: <root>.Sample<out <unbound IrClassSymbolImpl>>? [val] declared in <root>.foo.<anonymous>' type=<root>.Sample<out <unbound IrClassSymbolImpl>>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: GET_VAR 'val outer: <root>.Sample<out <unbound IrClassSymbolImpl>>? [val] declared in <root>.foo.<anonymous>' type=<root>.Sample<out <unbound IrClassSymbolImpl>>? origin=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:takeClass signature:/takeClass|takeClass(Sample<*>?){}[0] visibility:public modality:FINAL <> (instanceClass:<root>.Sample<*>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:instanceClass index:0 type:<root>.Sample<*>?
+      BLOCK_BODY
+    CLASS CLASS name:Sample signature:/Sample|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sample<T of <root>.Sample>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Sample|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/Sample.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Sample<T of <root>.Sample> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sample signature:/Sample|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

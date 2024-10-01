@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun compare(s1: kotlin/String, s2: kotlin/String): kotlin/Int
+
+      public final fun sort(list: kotlin/collections/MutableList<kotlin/String>, comparator: kotlin/Function2<kotlin/String, kotlin/String, kotlin/Int>): kotlin/Unit
+    }
+  }
+}

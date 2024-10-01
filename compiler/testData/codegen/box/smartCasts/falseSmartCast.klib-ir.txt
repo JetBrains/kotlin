@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/falseSmartCast.kt
+    CLASS CLASS name:SuperFoo signature:/SuperFoo|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuperFoo
+      CONSTRUCTOR signature:/SuperFoo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SuperFoo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SuperFoo signature:/SuperFoo|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:bar signature:/SuperFoo.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:<root>.SuperFoo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuperFoo
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Foo
+                GET_VAR '<this>: <root>.SuperFoo declared in <root>.SuperFoo.bar' type=<root>.SuperFoo origin=null
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun superFoo (): <unbound IrClassSymbolImpl> declared in <root>.Foo' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<root>.Foo origin=IMPLICIT_CAST typeOperand=<root>.Foo
+                    GET_VAR '<this>: <root>.SuperFoo declared in <root>.SuperFoo.bar' type=<root>.SuperFoo origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.SuperFoo'
+                  CALL 'public final fun baz (): <unbound IrClassSymbolImpl> declared in <root>.SuperFoo' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: <root>.SuperFoo declared in <root>.SuperFoo.bar' type=<root>.SuperFoo origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.SuperFoo'
+            CALL 'public final fun baz (): <unbound IrClassSymbolImpl> declared in <root>.SuperFoo' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.SuperFoo declared in <root>.SuperFoo.bar' type=<root>.SuperFoo origin=null
+      FUN name:baz signature:/SuperFoo.baz|baz(){}[0] visibility:public modality:FINAL <> ($this:<root>.SuperFoo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuperFoo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun baz (): <unbound IrClassSymbolImpl> declared in <root>.SuperFoo'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<root>.SuperFoo]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SuperFoo'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<root>.SuperFoo]'
+      FUN name:superFoo signature:/Foo.superFoo|superFoo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+        BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Foo' type=<root>.Foo origin=null

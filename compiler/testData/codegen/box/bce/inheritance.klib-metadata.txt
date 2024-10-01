@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Child
+    // class name: Delegate
+
+    public open class Base : kotlin/Any {
+
+      public constructor()
+
+      public open val array: kotlin/Array<kotlin/Int>
+        public open get
+
+      public final /* delegated */ val array1: kotlin/Array<kotlin/Int>
+        public final /* non-default */ get
+    }
+
+    public final class Child : Base {
+
+      public constructor()
+
+      public open val array: kotlin/Array<kotlin/Int>
+        public open /* non-default */ get
+    }
+
+    public final class Delegate : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): kotlin/Array<kotlin/Int>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var needSmallArray: kotlin/Boolean
+        public final get
+        public final set
+    }
+  }
+}

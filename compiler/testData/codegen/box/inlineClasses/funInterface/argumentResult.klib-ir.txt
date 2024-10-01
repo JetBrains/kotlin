@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/argumentResult.kt
+    CLASS INTERFACE name:ResultHandler signature:/ResultHandler|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResultHandler<T of <root>.ResultHandler>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ResultHandler|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:onResult signature:/ResultHandler.onResult|onResult(kotlin.Result<1:0>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ResultHandler<T of <root>.ResultHandler>, result:<unbound IrClassSymbolImpl><T of <root>.ResultHandler>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ResultHandler<T of <root>.ResultHandler>
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><T of <root>.ResultHandler>
+    FUN name:doSmth signature:/doSmth|doSmth(ResultHandler<kotlin.Boolean>){}[0] visibility:public modality:FINAL <> (resultHandler:<root>.ResultHandler<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:resultHandler index:0 type:<root>.ResultHandler<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'public abstract fun onResult (result: <unbound IrClassSymbolImpl><T of <root>.ResultHandler>): <unbound IrClassSymbolImpl> declared in <root>.ResultHandler' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'resultHandler: <root>.ResultHandler<<unbound IrClassSymbolImpl>> declared in <root>.doSmth' type=<root>.ResultHandler<<unbound IrClassSymbolImpl>> origin=null
+          result: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        CALL 'public final fun doSmth (resultHandler: <root>.ResultHandler<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          resultHandler: TYPE_OP type=<root>.ResultHandler<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.ResultHandler<<unbound IrClassSymbolImpl>>
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (result:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'result: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

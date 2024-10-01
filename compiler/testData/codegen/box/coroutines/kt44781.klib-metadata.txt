@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final suspend fun bar(block: suspend kotlin/Function2<kotlin/Int, kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final inline suspend fun foo(crossinline block: kotlin/Function0<kotlin/String>): kotlin/String
+
+      public final fun launch(block: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+    }
+  }
+}

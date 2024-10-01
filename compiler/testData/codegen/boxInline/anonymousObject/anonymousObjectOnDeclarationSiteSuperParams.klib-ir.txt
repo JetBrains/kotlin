@@ -1,0 +1,211 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A<R of test.A>
+      TYPE_PARAMETER name:R index:0 variance: signature:[ test/A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/A.<init>|<init>(1:0){}[0] visibility:public <> (param:R of test.A) returnType:test.A<R of test.A> [primary]
+        VALUE_PARAMETER name:param index:0 type:R of test.A
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:param signature:test/A.param|{}param[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:param signature:[ test/A.param|{}param[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:param type:R of test.A visibility:private [final]] ] type:R of test.A visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'param: R of test.A declared in test.A.<init>' type=R of test.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-param> signature:test/A.param.<get-param>|<get-param>(){}[0] visibility:public modality:FINAL <> ($this:test.A<R of test.A>) returnType:R of test.A
+          correspondingProperty: PROPERTY name:param signature:test/A.param|{}param[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A<R of test.A>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-param> (): R of test.A declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:param signature:[ test/A.param|{}param[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:param type:R of test.A visibility:private [final]] ] type:R of test.A visibility:private [final]' type=R of test.A origin=null
+                receiver: GET_VAR '<this>: test.A<R of test.A> declared in test.A.<get-param>' type=test.A<R of test.A> origin=null
+      FUN name:getO signature:test/A.getO|getO(){}[0] visibility:public modality:ABSTRACT <> ($this:test.A<R of test.A>) returnType:R of test.A
+        $this: VALUE_PARAMETER name:<this> type:test.A<R of test.A>
+      FUN name:getK signature:test/A.getK|getK(){}[0] visibility:public modality:ABSTRACT <> ($this:test.A<R of test.A>) returnType:R of test.A
+        $this: VALUE_PARAMETER name:<this> type:test.A<R of test.A>
+    FUN name:doWork signature:test/doWork|doWork(kotlin.Function0<0:0>;kotlin.Function0<0:0>;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (jobO:<unbound IrClassSymbolImpl><R of test.doWork>, jobK:<unbound IrClassSymbolImpl><R of test.doWork>, param:R of test.doWork) returnType:test.A<R of test.doWork> [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ test/doWork|doWork(kotlin.Function0<0:0>;kotlin.Function0<0:0>;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:jobO index:0 type:<unbound IrClassSymbolImpl><R of test.doWork> [crossinline]
+      VALUE_PARAMETER name:jobK index:1 type:<unbound IrClassSymbolImpl><R of test.doWork> [crossinline]
+      VALUE_PARAMETER name:param index:2 type:R of test.doWork
+      BLOCK_BODY
+        VAR name:s type:test.doWork.<no name provided><R of test.doWork> [val]
+          BLOCK type=test.doWork.<no name provided><R of test.doWork> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.A<R of test.doWork>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.doWork.<no name provided><R of test.doWork>
+              CONSTRUCTOR visibility:public <> () returnType:test.doWork.<no name provided><R of test.doWork> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (param: R of test.A) [primary] declared in test.A'
+                    <R>: R of test.doWork
+                    param: GET_VAR 'param: R of test.doWork declared in test.doWork' type=R of test.doWork origin=null
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.A<R of test.doWork>]'
+              FUN name:getO visibility:public modality:OPEN <> ($this:test.doWork.<no name provided><R of test.doWork>) returnType:R of test.doWork
+                overridden:
+                  public abstract fun getO (): R of test.A declared in test.A
+                $this: VALUE_PARAMETER name:<this> type:test.doWork.<no name provided><R of test.doWork>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun getO (): R of test.doWork declared in test.doWork.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.doWork origin=INVOKE
+                      $this: GET_VAR 'jobO: <unbound IrClassSymbolImpl><R of test.doWork> [crossinline] declared in test.doWork' type=<unbound IrClassSymbolImpl><R of test.doWork> origin=VARIABLE_AS_FUNCTION
+              FUN name:getK visibility:public modality:OPEN <> ($this:test.doWork.<no name provided><R of test.doWork>) returnType:R of test.doWork
+                overridden:
+                  public abstract fun getK (): R of test.A declared in test.A
+                $this: VALUE_PARAMETER name:<this> type:test.doWork.<no name provided><R of test.doWork>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun getK (): R of test.doWork declared in test.doWork.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.doWork origin=INVOKE
+                      $this: GET_VAR 'jobK: <unbound IrClassSymbolImpl><R of test.doWork> [crossinline] declared in test.doWork' type=<unbound IrClassSymbolImpl><R of test.doWork> origin=VARIABLE_AS_FUNCTION
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.doWork.<no name provided>' type=test.doWork.<no name provided><R of test.doWork> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doWork <R> (jobO: <unbound IrClassSymbolImpl><R of test.doWork>, jobK: <unbound IrClassSymbolImpl><R of test.doWork>, param: R of test.doWork): test.A<R of test.doWork> [inline] declared in test'
+          GET_VAR 'val s: test.doWork.<no name provided><R of test.doWork> [val] declared in test.doWork' type=test.doWork.<no name provided><R of test.doWork> origin=null
+    FUN name:doWorkInConstructor signature:test/doWorkInConstructor|doWorkInConstructor(kotlin.Function0<0:0>;kotlin.Function0<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (jobO:<unbound IrClassSymbolImpl><R of test.doWorkInConstructor>, jobK:<unbound IrClassSymbolImpl><R of test.doWorkInConstructor>, param:<unbound IrClassSymbolImpl><R of test.doWorkInConstructor>) returnType:test.A<R of test.doWorkInConstructor> [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ test/doWorkInConstructor|doWorkInConstructor(kotlin.Function0<0:0>;kotlin.Function0<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:jobO index:0 type:<unbound IrClassSymbolImpl><R of test.doWorkInConstructor> [crossinline]
+      VALUE_PARAMETER name:jobK index:1 type:<unbound IrClassSymbolImpl><R of test.doWorkInConstructor> [crossinline]
+      VALUE_PARAMETER name:param index:2 type:<unbound IrClassSymbolImpl><R of test.doWorkInConstructor> [crossinline]
+      BLOCK_BODY
+        VAR name:s type:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> [val]
+          BLOCK type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.A<R of test.doWorkInConstructor>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>
+              CONSTRUCTOR visibility:public <> () returnType:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (param: R of test.A) [primary] declared in test.A'
+                    <R>: R of test.doWorkInConstructor
+                    param: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.doWorkInConstructor origin=INVOKE
+                      $this: GET_VAR 'param: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor> [crossinline] declared in test.doWorkInConstructor' type=<unbound IrClassSymbolImpl><R of test.doWorkInConstructor> origin=VARIABLE_AS_FUNCTION
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.A<R of test.doWorkInConstructor>]'
+              PROPERTY name:o1 visibility:public modality:FINAL [val]
+                FIELD PROPERTY_BACKING_FIELD name:o1 type:R of test.doWorkInConstructor visibility:private [final]
+                  EXPRESSION_BODY
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.doWorkInConstructor origin=INVOKE
+                      $this: GET_VAR 'jobO: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor> [crossinline] declared in test.doWorkInConstructor' type=<unbound IrClassSymbolImpl><R of test.doWorkInConstructor> origin=VARIABLE_AS_FUNCTION
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<get-o1> visibility:public modality:FINAL <> ($this:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>) returnType:R of test.doWorkInConstructor
+                  correspondingProperty: PROPERTY name:o1 visibility:public modality:FINAL [val]
+                  $this: VALUE_PARAMETER name:<this> type:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-o1> (): R of test.doWorkInConstructor declared in test.doWorkInConstructor.<no name provided>'
+                      GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:o1 type:R of test.doWorkInConstructor visibility:private [final]' type=R of test.doWorkInConstructor origin=null
+                        receiver: GET_VAR '<this>: test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> declared in test.doWorkInConstructor.<no name provided>.<get-o1>' type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=null
+              PROPERTY name:k1 visibility:public modality:FINAL [val]
+                FIELD PROPERTY_BACKING_FIELD name:k1 type:R of test.doWorkInConstructor visibility:private [final]
+                  EXPRESSION_BODY
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.doWorkInConstructor origin=INVOKE
+                      $this: GET_VAR 'jobK: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor> [crossinline] declared in test.doWorkInConstructor' type=<unbound IrClassSymbolImpl><R of test.doWorkInConstructor> origin=VARIABLE_AS_FUNCTION
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<get-k1> visibility:public modality:FINAL <> ($this:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>) returnType:R of test.doWorkInConstructor
+                  correspondingProperty: PROPERTY name:k1 visibility:public modality:FINAL [val]
+                  $this: VALUE_PARAMETER name:<this> type:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-k1> (): R of test.doWorkInConstructor declared in test.doWorkInConstructor.<no name provided>'
+                      GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k1 type:R of test.doWorkInConstructor visibility:private [final]' type=R of test.doWorkInConstructor origin=null
+                        receiver: GET_VAR '<this>: test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> declared in test.doWorkInConstructor.<no name provided>.<get-k1>' type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=null
+              FUN name:getO visibility:public modality:OPEN <> ($this:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>) returnType:R of test.doWorkInConstructor
+                overridden:
+                  public abstract fun getO (): R of test.A declared in test.A
+                $this: VALUE_PARAMETER name:<this> type:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun getO (): R of test.doWorkInConstructor declared in test.doWorkInConstructor.<no name provided>'
+                    CALL 'public final fun <get-o1> (): R of test.doWorkInConstructor declared in test.doWorkInConstructor.<no name provided>' type=R of test.doWorkInConstructor origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> declared in test.doWorkInConstructor.<no name provided>.getO' type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=null
+              FUN name:getK visibility:public modality:OPEN <> ($this:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>) returnType:R of test.doWorkInConstructor
+                overridden:
+                  public abstract fun getK (): R of test.A declared in test.A
+                $this: VALUE_PARAMETER name:<this> type:test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun getK (): R of test.doWorkInConstructor declared in test.doWorkInConstructor.<no name provided>'
+                    CALL 'public final fun <get-k1> (): R of test.doWorkInConstructor declared in test.doWorkInConstructor.<no name provided>' type=R of test.doWorkInConstructor origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> declared in test.doWorkInConstructor.<no name provided>.getK' type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.doWorkInConstructor.<no name provided>' type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doWorkInConstructor <R> (jobO: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor>, jobK: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor>, param: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor>): test.A<R of test.doWorkInConstructor> [inline] declared in test'
+          GET_VAR 'val s: test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> [val] declared in test.doWorkInConstructor' type=test.doWorkInConstructor.<no name provided><R of test.doWorkInConstructor> origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:test1 signature:/test1|test1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:o type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+        VAR name:result type:test.A<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun doWork <R> (jobO: <unbound IrClassSymbolImpl><R of test.doWork>, jobK: <unbound IrClassSymbolImpl><R of test.doWork>, param: R of test.doWork): test.A<R of test.doWork> [inline] declared in test' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+            <R>: <unbound IrClassSymbolImpl>
+            jobO: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test1'
+                    GET_VAR 'val o: <unbound IrClassSymbolImpl> [val] declared in <root>.test1' type=<unbound IrClassSymbolImpl> origin=null
+            jobK: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test1'
+                    CONST String type=<unbound IrClassSymbolImpl> value="K"
+            param: CONST String type=<unbound IrClassSymbolImpl> value="11"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public abstract fun getO (): R of test.A declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.test1' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+              1: CALL 'public abstract fun getK (): R of test.A declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.test1' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'public final fun <get-param> (): R of test.A declared in test.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val result: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.test1' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+    FUN name:test2 signature:/test2|test2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:o1 type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+        VAR name:k1 type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="K"
+        VAR name:param type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="11"
+        VAR name:result type:test.A<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun doWorkInConstructor <R> (jobO: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor>, jobK: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor>, param: <unbound IrClassSymbolImpl><R of test.doWorkInConstructor>): test.A<R of test.doWorkInConstructor> [inline] declared in test' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+            <R>: <unbound IrClassSymbolImpl>
+            jobO: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test2'
+                    GET_VAR 'val o1: <unbound IrClassSymbolImpl> [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl> origin=null
+            jobK: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test2'
+                    GET_VAR 'val k1: <unbound IrClassSymbolImpl> [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl> origin=null
+            param: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test2'
+                    GET_VAR 'val param: <unbound IrClassSymbolImpl> [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public abstract fun getO (): R of test.A declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.test2' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+              1: CALL 'public abstract fun getK (): R of test.A declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val result: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.test2' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'public final fun <get-param> (): R of test.A declared in test.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val result: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.test2' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun test1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK11"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail1 "
+                GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:result2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK11"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2 "
+                GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

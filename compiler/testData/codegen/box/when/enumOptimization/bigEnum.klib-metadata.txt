@@ -1,0 +1,65 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BigEnum
+
+    public final enum class BigEnum : kotlin/Enum<BigEnum> {
+
+      private constructor()
+
+      ITEM1,
+
+      ITEM2,
+
+      ITEM3,
+
+      ITEM4,
+
+      ITEM5,
+
+      ITEM6,
+
+      ITEM7,
+
+      ITEM8,
+
+      ITEM9,
+
+      ITEM10,
+
+      ITEM11,
+
+      ITEM12,
+
+      ITEM13,
+
+      ITEM14,
+
+      ITEM15,
+
+      ITEM16,
+
+      ITEM17,
+
+      ITEM18,
+
+      ITEM19,
+
+      ITEM20,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun bar1(x: BigEnum): kotlin/String
+
+      public final fun bar2(x: BigEnum): kotlin/String
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

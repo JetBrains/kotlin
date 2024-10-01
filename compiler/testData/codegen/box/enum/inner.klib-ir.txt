@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inner.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS ENUM_CLASS name:E signature:/A.E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A.E>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.E
+        CONSTRUCTOR signature:/A.E.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.E [primary]
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              <1>: <root>.A.E
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:/A.E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A.E>]'
+        ENUM_ENTRY name:OK signature:/A.E.OK|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.E'
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/A.E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A.E>
+          SYNTHETIC_BODY kind=ENUM_VALUES
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/A.E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.A.E
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          SYNTHETIC_BODY kind=ENUM_VALUEOF
+        PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/A.E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A.E>
+            correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+            SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:OK signature:/A.E.OK|null[0]' type=<root>.A.E

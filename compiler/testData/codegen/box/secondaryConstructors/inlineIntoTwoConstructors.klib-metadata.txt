@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public /* secondary */ constructor(y: kotlin/Int)
+
+      public /* secondary */ constructor(y: kotlin/String)
+
+      public final val x: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+
+      public final inline fun myRun(x: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+  }
+}

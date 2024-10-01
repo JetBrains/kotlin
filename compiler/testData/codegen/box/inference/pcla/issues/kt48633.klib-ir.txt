@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt48633.kt
+    CLASS CLASS name:TowerDataElementsForName signature:/TowerDataElementsForName|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TowerDataElementsForName
+      CONSTRUCTOR signature:/TowerDataElementsForName.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TowerDataElementsForName [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TowerDataElementsForName signature:/TowerDataElementsForName|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:reversedFilteredLocalScopes signature:/TowerDataElementsForName.reversedFilteredLocalScopes|{}reversedFilteredLocalScopes[0] visibility:public modality:FINAL [val]
+        annotations:
+          <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+        FIELD PROPERTY_BACKING_FIELD name:reversedFilteredLocalScopes signature:[ /TowerDataElementsForName.reversedFilteredLocalScopes|{}reversedFilteredLocalScopes[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:reversedFilteredLocalScopes type:kotlin.collections.List<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$buildList type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo
+                      CONSTRUCTOR visibility:public <> () returnType:<root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo [primary]
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                      PROPERTY name:reversedFilteredLocalScopes visibility:public modality:FINAL [val]
+                        FIELD PROPERTY_BACKING_FIELD name:reversedFilteredLocalScopes type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+                          EXPRESSION_BODY
+                            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo.reversedFilteredLocalScopes'
+                                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                      $this: GET_VAR '$this$buildList: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                                      1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reversedFilteredLocalScopes> visibility:public modality:FINAL <> ($this:<root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                          correspondingProperty: PROPERTY name:reversedFilteredLocalScopes visibility:public modality:FINAL [val]
+                          $this: VALUE_PARAMETER name:<this> type:<root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-reversedFilteredLocalScopes> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo'
+                              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:reversedFilteredLocalScopes type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                                receiver: GET_VAR '<this>: <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo declared in <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo.<get-reversedFilteredLocalScopes>' type=<root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo origin=null
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                        $this: CALL 'public final fun <get-reversedFilteredLocalScopes> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo' type=<root>.TowerDataElementsForName.reversedFilteredLocalScopes.<anonymous>.Foo origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reversedFilteredLocalScopes> signature:/TowerDataElementsForName.reversedFilteredLocalScopes.<get-reversedFilteredLocalScopes>|<get-reversedFilteredLocalScopes>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TowerDataElementsForName) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:reversedFilteredLocalScopes signature:/TowerDataElementsForName.reversedFilteredLocalScopes|{}reversedFilteredLocalScopes[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TowerDataElementsForName
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-reversedFilteredLocalScopes> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.TowerDataElementsForName'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:reversedFilteredLocalScopes signature:[ /TowerDataElementsForName.reversedFilteredLocalScopes|{}reversedFilteredLocalScopes[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:reversedFilteredLocalScopes type:kotlin.collections.List<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.TowerDataElementsForName declared in <root>.TowerDataElementsForName.<get-reversedFilteredLocalScopes>' type=<root>.TowerDataElementsForName origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: CALL 'public final fun <get-reversedFilteredLocalScopes> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.TowerDataElementsForName' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TowerDataElementsForName' type=<root>.TowerDataElementsForName origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: O
+
+    public abstract interface A : kotlin/Any {
+    }
+
+    public final object O : A {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(f: kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/String, kotlin/String> /* = F^<kotlin/String> */, kotlin/String> /* = F^<kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/String, kotlin/String> /* = F^<kotlin/String> */> */): kotlin/String
+
+      public typealias F<T#0 /* T */> = kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, T#0, kotlin/String> /* = kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, T#0, kotlin/String> */
+    }
+  }
+}

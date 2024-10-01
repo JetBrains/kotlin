@@ -1,0 +1,100 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/receiverInEquals.kt
+    PROPERTY name:a signature:test/a|{}a[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a signature:[ test/a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:test.A visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:test/a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> () returnType:test.A
+        correspondingProperty: PROPERTY name:a signature:test/a|{}a[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): test.A declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ test/a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:test.A visibility:private [final,static]' type=test.A origin=null
+    PROPERTY name:aa signature:test/aa|{}aa[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:aa signature:[ test/aa|{}aa[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:test.A visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aa> signature:test/aa.<get-aa>|<get-aa>(){}[0] visibility:public modality:FINAL <> () returnType:test.A
+        correspondingProperty: PROPERTY name:aa signature:test/aa|{}aa[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-aa> (): test.A declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aa signature:[ test/aa|{}aa[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:test.A visibility:private [final,static]' type=test.A origin=null
+    PROPERTY name:aFoo signature:test/aFoo|{}aFoo[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:aFoo signature:[ test/aFoo|{}aFoo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $this: CALL 'public final fun <get-a> (): test.A declared in test' type=test.A origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aFoo> signature:test/aFoo.<get-aFoo>|<get-aFoo>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:aFoo signature:test/aFoo|{}aFoo[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-aFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aFoo signature:[ test/aFoo|{}aFoo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:aBar signature:test/aBar|{}aBar[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:aBar signature:[ test/aBar|{}aBar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUNCTION_REFERENCE 'public final fun bar (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $this: CALL 'public final fun <get-a> (): test.A declared in test' type=test.A origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aBar> signature:test/aBar.<get-aBar>|<get-aBar>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:aBar signature:test/aBar|{}aBar[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-aBar> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aBar signature:[ test/aBar|{}aBar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:aaFoo signature:test/aaFoo|{}aaFoo[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:aaFoo signature:[ test/aaFoo|{}aaFoo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $this: CALL 'public final fun <get-aa> (): test.A declared in test' type=test.A origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aaFoo> signature:test/aaFoo.<get-aaFoo>|<get-aaFoo>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:aaFoo signature:test/aaFoo|{}aaFoo[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-aaFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aaFoo signature:[ test/aaFoo|{}aaFoo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:A_foo signature:test/A_foo|{}A_foo[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:A_foo signature:[ test/A_foo|{}A_foo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-A_foo> signature:test/A_foo.<get-A_foo>|<get-A_foo>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:A_foo signature:test/A_foo|{}A_foo[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-A_foo> (): <unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:A_foo signature:[ test/A_foo|{}A_foo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:test/A.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        BLOCK_BODY
+      FUN name:bar signature:test/A.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        BLOCK_BODY
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public final fun <get-aFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                  arg1: FUNCTION_REFERENCE 'public final fun foo (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                    $this: CALL 'public final fun <get-a> (): test.A declared in test' type=test.A origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Bound refs with same receiver SHOULD be equal"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-aFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'public final fun <get-aBar> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Bound refs to different members SHOULD NOT be equal"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-aFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'public final fun <get-aaFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Bound refs with different receiver SHOULD NOT be equal"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-aFoo> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'public final fun <get-A_foo> (): <unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> declared in test' type=<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Bound ref SHOULD NOT be equal to free ref"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

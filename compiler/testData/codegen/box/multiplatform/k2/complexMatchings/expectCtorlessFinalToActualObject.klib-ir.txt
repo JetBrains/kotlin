@@ -1,0 +1,108 @@
+MODULE_FRAGMENT name:<actual>
+  FILE fqName:<root> fileName:/actual.kt
+    CLASS OBJECT name:TestResult signature:/TestResult|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestResult
+      CONSTRUCTOR signature:/TestResult.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestResult [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestResult signature:/TestResult|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:doTest signature:/TestResult.doTest|doTest(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestResult) returnType:<root>.TestResult
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestResult
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun doTest (): <root>.TestResult declared in <root>.TestResult'
+            GET_VAR '<this>: <root>.TestResult declared in <root>.TestResult.doTest' type=<root>.TestResult origin=null
+    FUN name:createTestResult signature:/createTestResult|createTestResult(){}[0] visibility:public modality:FINAL <> () returnType:<root>.TestResult
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun createTestResult (): <root>.TestResult declared in <root>'
+          GET_OBJECT 'CLASS OBJECT name:TestResult signature:/TestResult|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.TestResult
+    FUN name:platformBox signature:/platformBox|platformBox(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:tr type:<root>.TestResult [val]
+          CALL 'public final fun createTestResult (): <root>.TestResult declared in <root>' type=<root>.TestResult origin=null
+        VAR name:tr2 type:<root>.TestResult [val]
+          WHEN type=<root>.TestResult origin=IF
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun createTestResult (): <root>.TestResult declared in <root>' type=<root>.TestResult origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+                arg1: GET_VAR 'val tr2: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun platformBox (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="p01"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr2: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun platformBox (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="p02"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr2: <root>.TestResult [val] declared in <root>.platformBox' type=<root>.TestResult origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun platformBox (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="p03"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun platformBox (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun platformBox (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/common.kt
+    FUN name:commonBox signature:/commonBox|commonBox(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:tr type:<root>.TestResult [val]
+          CALL 'public final fun createTestResult (): <root>.TestResult declared in <root>' type=<root>.TestResult origin=null
+        VAR name:tr2 type:<root>.TestResult [val]
+          WHEN type=<root>.TestResult origin=IF
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun createTestResult (): <root>.TestResult declared in <root>' type=<root>.TestResult origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+                arg1: GET_VAR 'val tr2: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="c01"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr2: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="c02"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val tr2: <root>.TestResult [val] declared in <root>.commonBox' type=<root>.TestResult origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="c03"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="O"

@@ -1,0 +1,316 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FunLiteral
+    // class name: Getter
+    // class name: GetterThis
+    // class name: InlineClass
+    // class name: InlineFun
+    // class name: InlineFunThis
+    // class name: Lambda
+    // class name: LocalClass
+    // class name: LocalFunction
+    // class name: Method
+    // class name: MethodThis
+    // class name: MultipleInitBlocks
+    // class name: MultipleInitBlocks2
+    // class name: ObjectLiteral
+    // class name: SingleInitBlock
+
+    public final value class FunLiteral<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class Getter<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ok: kotlin/String
+        public final /* non-default */ get
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class GetterThis<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ok: kotlin/String
+        public final /* non-default */ get
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class InlineClass<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class InlineFun<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final inline fun ok(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class InlineFunThis<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final inline fun ok(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class Lambda<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class LocalClass<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class LocalFunction<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class Method<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun ok(m: Method<T#0>): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class MethodThis<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun ok(m: MethodThis<T#0>): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class MultipleInitBlocks<T#0 /* T */> : kotlin/Any {
+
+      public constructor(a: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: T#0
+        public final get
+
+      // underlying property: a
+
+      // underlying type: T#0
+    }
+
+    public final value class MultipleInitBlocks2<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(a: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: T#0?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: T#0?
+    }
+
+    public final value class ObjectLiteral<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    public final value class SingleInitBlock<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: T#0
+        public final get
+
+      // underlying property: s
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var res: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

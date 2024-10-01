@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f1(): kotlin/Int?
+
+      public final fun f2(): kotlin/Unit?
+
+      public final fun f3(): kotlin/Nothing?
+
+      public final fun f4(): kotlin/Int?
+
+      public final fun f5(): kotlin/Unit?
+
+      public final fun f6(): kotlin/Nothing?
+
+      public final inline fun <T#0 /* T */> withCatch(block: kotlin/Function0<T#0?>): T#0?
+
+      public final inline fun <T#0 /* T */> withOutCatch(block: kotlin/Function0<T#0?>): T#0?
+    }
+  }
+}

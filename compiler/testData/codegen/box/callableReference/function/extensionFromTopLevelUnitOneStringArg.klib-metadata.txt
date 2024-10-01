@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun A.foo(newResult: kotlin/String): kotlin/Unit
+
+      public final fun run(arg1: A, arg2: kotlin/String, funRef: @kotlin/ExtensionFunctionType kotlin/Function2<A, kotlin/String, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

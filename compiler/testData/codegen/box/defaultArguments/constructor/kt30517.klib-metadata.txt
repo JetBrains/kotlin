@@ -1,0 +1,54 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Base
+    // class name: Foo
+    // class name: TF
+    // class name: TF2
+
+    public open class Bar : Base {
+
+      public constructor(arg: kotlin/Any /* = ... */)
+
+      public final val args: kotlin/String
+        public final get
+    }
+
+    public open class Base : kotlin/Any {
+
+      public constructor(baseArgs: kotlin/String)
+
+      public final val baseArgs: kotlin/String
+        public final get
+    }
+
+    public open class Foo : kotlin/Any {
+
+      public /* secondary */ constructor(arg: kotlin/Any /* = ... */)
+
+      public constructor(args: kotlin/String)
+
+      public final val args: kotlin/String
+        public final get
+    }
+
+    public final object TF : Foo {
+
+      private constructor()
+    }
+
+    public final object TF2 : Foo {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

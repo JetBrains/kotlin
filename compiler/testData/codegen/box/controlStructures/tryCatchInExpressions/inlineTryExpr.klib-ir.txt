@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inlineTryExpr.kt
+    FUN name:tryOrElse signature:/tryOrElse|tryOrElse(kotlin.Function0<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f1:<unbound IrClassSymbolImpl><T of <root>.tryOrElse>, f2:<unbound IrClassSymbolImpl><T of <root>.tryOrElse>) returnType:T of <root>.tryOrElse [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /tryOrElse|tryOrElse(kotlin.Function0<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f1 index:0 type:<unbound IrClassSymbolImpl><T of <root>.tryOrElse>
+      VALUE_PARAMETER name:f2 index:1 type:<unbound IrClassSymbolImpl><T of <root>.tryOrElse>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun tryOrElse <T> (f1: <unbound IrClassSymbolImpl><T of <root>.tryOrElse>, f2: <unbound IrClassSymbolImpl><T of <root>.tryOrElse>): T of <root>.tryOrElse [inline] declared in <root>'
+          TRY type=T of <root>.tryOrElse
+            try: BLOCK type=T of <root>.tryOrElse origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.tryOrElse origin=INVOKE
+                $this: GET_VAR 'f1: <unbound IrClassSymbolImpl><T of <root>.tryOrElse> declared in <root>.tryOrElse' type=<unbound IrClassSymbolImpl><T of <root>.tryOrElse> origin=VARIABLE_AS_FUNCTION
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.tryOrElse
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=T of <root>.tryOrElse origin=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.tryOrElse origin=INVOKE
+                  $this: GET_VAR 'f2: <unbound IrClassSymbolImpl><T of <root>.tryOrElse> declared in <root>.tryOrElse' type=<unbound IrClassSymbolImpl><T of <root>.tryOrElse> origin=VARIABLE_AS_FUNCTION
+    FUN name:testIt signature:/testIt|testIt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIt (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+              1: CALL 'public final fun tryOrElse <T> (f1: <unbound IrClassSymbolImpl><T of <root>.tryOrElse>, f2: <unbound IrClassSymbolImpl><T of <root>.tryOrElse>): T of <root>.tryOrElse [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                f1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.testIt'
+                        TRY type=<unbound IrClassSymbolImpl>
+                          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                            CONST String type=<unbound IrClassSymbolImpl> value="def"
+                          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.testIt.<anonymous>
+                            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+                            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              CONST String type=<unbound IrClassSymbolImpl> value="oops!"
+                f2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.testIt'
+                        CONST String type=<unbound IrClassSymbolImpl> value="hmmm..."
+            1: CONST String type=<unbound IrClassSymbolImpl> value="ghi"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:test type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun testIt (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val test: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="abcdefghi"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed, test=="
+                GET_VAR 'val test: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

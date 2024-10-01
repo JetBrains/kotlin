@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Context
+    // class name: Context.Companion
+    // class name: Context.Companion.OsType
+
+    public final class Context : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Context.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val operatingSystemType: Context.Companion.OsType
+        public final /* non-default */ get
+
+      // nested class: OsType
+    }
+
+    public final enum class Context.Companion.OsType : kotlin/Enum<Context.Companion.OsType> {
+
+      private constructor()
+
+      LINUX,
+
+      OTHER,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

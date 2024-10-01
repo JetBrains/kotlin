@@ -1,0 +1,64 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt42253.kt
+    FUN name:getValue signature:/getValue|getValue@kotlin.String(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, t:<unbound IrClassSymbolImpl>?, p:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl> [inline,operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:t index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl><*>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (t: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [inline,operator] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'p: <unbound IrClassSymbolImpl><*> declared in <root>.getValue' type=<unbound IrClassSymbolImpl><*> origin=null
+            1: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.getValue' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS OBJECT name:ForceOutOfOrder signature:/ForceOutOfOrder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ForceOutOfOrder
+      CONSTRUCTOR signature:/ForceOutOfOrder.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ForceOutOfOrder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ForceOutOfOrder signature:/ForceOutOfOrder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:callInline signature:/ForceOutOfOrder.callInline|callInline(){}[0] visibility:public modality:FINAL <> ($this:<root>.ForceOutOfOrder) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ForceOutOfOrder
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun callInline (): <unbound IrClassSymbolImpl> declared in <root>.ForceOutOfOrder'
+            CALL 'public final fun inlineFun (): <unbound IrClassSymbolImpl> [inline] declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.C
+    CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:inlineFun signature:/C.inlineFun|inlineFun(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun inlineFun (): <unbound IrClassSymbolImpl> [inline] declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    LOCAL_DELEGATED_PROPERTY name:O type:<unbound IrClassSymbolImpl> flags:val
+                      VAR PROPERTY_DELEGATE name:O$delegate type:<unbound IrClassSymbolImpl> [val]
+                        CONST String type=<unbound IrClassSymbolImpl> value="K"
+                      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-O> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-O> (): <unbound IrClassSymbolImpl> declared in <root>.C.inlineFun.<anonymous>'
+                            CALL 'public final fun getValue (t: <unbound IrClassSymbolImpl>?, p: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [inline,operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                              $receiver: GET_VAR 'val O$delegate: <unbound IrClassSymbolImpl> [val] declared in <root>.C.inlineFun.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                              p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val O: <unbound IrClassSymbolImpl> by (...)' delegate='val O$delegate: <unbound IrClassSymbolImpl> [val] declared in <root>.C.inlineFun.<anonymous>' getter='local final fun <get-O> (): <unbound IrClassSymbolImpl> declared in <root>.C.inlineFun.<anonymous>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.C.inlineFun'
+                      CALL 'local final fun <get-O> (): <unbound IrClassSymbolImpl> declared in <root>.C.inlineFun.<anonymous>' type=<unbound IrClassSymbolImpl> origin=GET_LOCAL_PROPERTY
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.C.inlineFun'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                        $this: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.C.inlineFun.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun callInline (): <unbound IrClassSymbolImpl> declared in <root>.ForceOutOfOrder' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:ForceOutOfOrder signature:/ForceOutOfOrder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ForceOutOfOrder

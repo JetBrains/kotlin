@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Integer
+
+    public final class Integer : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final operator fun plus(other: kotlin/Int): Integer
+
+      public open fun toString(): kotlin/String
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun bar(): kotlin/Function0<kotlin/Unit>
+
+      public final fun box(): kotlin/String
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

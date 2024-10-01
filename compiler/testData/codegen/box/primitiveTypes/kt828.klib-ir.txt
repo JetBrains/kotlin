@@ -1,0 +1,51 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:demo fileName:/kt828.kt
+    FUN name:box signature:demo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in demo.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in demo'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

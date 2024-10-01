@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(list: kotlin/collections/List<kotlin/Pair<kotlin/String, kotlin/String>>): kotlin/Unit
+
+      public final fun noop(): kotlin/Unit
+    }
+  }
+}

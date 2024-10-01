@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: demo_long
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Long?.inv(): kotlin/Long
+    }
+  }
+}

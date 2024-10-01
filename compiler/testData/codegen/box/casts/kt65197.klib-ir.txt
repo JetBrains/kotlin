@@ -1,0 +1,73 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt65197.kt
+    FUN name:some signature:[ File '/kt65197.kt' <- /some|some(){0§<kotlin.Any?>}[0] ] visibility:private modality:FINAL <T> () returnType:T of <root>.some
+      TYPE_PARAMETER name:T index:0 variance: signature:[ [ File '/kt65197.kt' <- /some|some(){0§<kotlin.Any?>}[0] ] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun some <T> (): T of <root>.some declared in <root>'
+          TYPE_OP type=T of <root>.some origin=CAST typeOperand=T of <root>.some
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Some1' type=<root>.Some1 origin=null
+    CLASS CLASS name:Some1 signature:[ File '/kt65197.kt' <- /Some1|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some1
+      CONSTRUCTOR signature:[ File '/kt65197.kt' <- /Some1.<init>|<init>(){}[0] ] visibility:public <> () returnType:<root>.Some1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some1 signature:[ File '/kt65197.kt' <- /Some1|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Some2 signature:[ File '/kt65197.kt' <- /Some2|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some2
+      CONSTRUCTOR signature:[ File '/kt65197.kt' <- /Some2.<init>|<init>(kotlin.String){}[0] ] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.Some2 [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some2 signature:[ File '/kt65197.kt' <- /Some2|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:[ File '/kt65197.kt' <- /Some2.s|{}s[0] ] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ [ File '/kt65197.kt' <- /Some2.s|{}s[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.Some2.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:[ File '/kt65197.kt' <- /Some2.s.<get-s>|<get-s>(){}[0] ] visibility:private modality:FINAL <> ($this:<root>.Some2) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:[ File '/kt65197.kt' <- /Some2.s|{}s[0] ] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Some2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.Some2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ [ File '/kt65197.kt' <- /Some2.s|{}s[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Some2 declared in <root>.Some2.<get-s>' type=<root>.Some2 origin=null
+      FUN name:foo signature:[ File '/kt65197.kt' <- /Some2.foo|foo(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.Some2) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Some2
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Some2'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Some2: "
+              CALL 'private final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.Some2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Some2 declared in <root>.Some2.foo' type=<root>.Some2 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:some2 type:<root>.Some2 [val]
+          TRY type=<root>.Some2
+            try: BLOCK type=<root>.Some2 origin=null
+              CALL 'private final fun some <T> (): T of <root>.some declared in <root>' type=<root>.Some2 origin=null
+                <T>: <root>.Some2
+            CATCH parameter=val cce: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+              VAR CATCH_PARAMETER name:cce type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:message type:<unbound IrClassSymbolImpl> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val cce: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          1: CONST String type=<unbound IrClassSymbolImpl> value=".*Some1 cannot be cast to .*Some2.*"
+                        1: GET_VAR 'val message: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: GET_VAR 'val message: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            CATCH parameter=val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+              VAR CATCH_PARAMETER name:t type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Some2' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val some2: <root>.Some2 [val] declared in <root>.box' type=<root>.Some2 origin=null

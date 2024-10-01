@@ -1,0 +1,560 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericClassWithGetSet.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A.<init>|<init>(1:0){}[0] visibility:public <> (value:T of <root>.A) returnType:<root>.A<T of <root>.A> [primary]
+        VALUE_PARAMETER name:value index:0 type:T of <root>.A
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/A.value|{}value[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.A visibility:private] ] type:T of <root>.A visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'value: T of <root>.A declared in <root>.A.<init>' type=T of <root>.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/A.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>) returnType:T of <root>.A
+          correspondingProperty: PROPERTY name:value signature:/A.value|{}value[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): T of <root>.A declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.A visibility:private] ] type:T of <root>.A visibility:private' type=T of <root>.A origin=null
+                receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<get-value>' type=<root>.A<T of <root>.A> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> signature:/A.value.<set-value>|<set-value>(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, <set-?>:T of <root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/A.value|{}value[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+          VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.A
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.A visibility:private] ] type:T of <root>.A visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<set-value>' type=<root>.A<T of <root>.A> origin=null
+              value: GET_VAR '<set-?>: T of <root>.A declared in <root>.A.<set-value>' type=T of <root>.A origin=null
+      FUN name:get signature:/A.get|get(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, i:<unbound IrClassSymbolImpl>) returnType:T of <root>.A [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A'
+            CALL 'public final fun <get-value> (): T of <root>.A declared in <root>.A' type=T of <root>.A origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.get' type=<root>.A<T of <root>.A> origin=null
+      FUN name:set signature:/A.set|set(kotlin.Int;1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, i:<unbound IrClassSymbolImpl>, newValue:T of <root>.A) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:newValue index:1 type:T of <root>.A
+        BLOCK_BODY
+          CALL 'public final fun <set-value> (<set-?>: T of <root>.A): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.set' type=<root>.A<T of <root>.A> origin=null
+            <set-?>: GET_VAR 'newValue: T of <root>.A declared in <root>.A.set' type=T of <root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:aByte type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            value: CONST Byte type=<unbound IrClassSymbolImpl> value=1
+        VAR name:bByte type:<unbound IrClassSymbolImpl> [var]
+          CONST Byte type=<unbound IrClassSymbolImpl> value=1
+        VAR name:aShort type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            value: CONST Short type=<unbound IrClassSymbolImpl> value=1
+        VAR name:bShort type:<unbound IrClassSymbolImpl> [var]
+          CONST Short type=<unbound IrClassSymbolImpl> value=1
+        VAR name:aInt type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            value: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:bInt type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:aLong type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            value: CONST Long type=<unbound IrClassSymbolImpl> value=1
+        VAR name:bLong type:<unbound IrClassSymbolImpl> [var]
+          CONST Long type=<unbound IrClassSymbolImpl> value=1
+        VAR name:aFloat type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            value: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+        VAR name:bFloat type:<unbound IrClassSymbolImpl> [var]
+          CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+        VAR name:aDouble type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            value: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        VAR name:bDouble type:<unbound IrClassSymbolImpl> [var]
+          CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aByte: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            SET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: GET_VAR 'val aByte: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-increment Byte: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aByte: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aByte: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            SET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: GET_VAR 'val aByte: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-decrement Byte: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aByte: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bByte: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aShort: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            SET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: GET_VAR 'val aShort: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-increment Short: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aShort: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aShort: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            SET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: GET_VAR 'val aShort: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-decrement Short: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aShort: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bShort: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aInt: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            SET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aInt: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-increment Int: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aInt: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aInt: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            SET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aInt: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-decrement Int: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aInt: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bInt: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aLong: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            SET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aLong: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-increment Long: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aLong: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aLong: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            SET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aLong: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-decrement Long: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aLong: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bLong: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aFloat: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            SET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aFloat: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-increment Float: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aFloat: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aFloat: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            SET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aFloat: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-decrement Float: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aFloat: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bFloat: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aDouble: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            SET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aDouble: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-increment Double: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aDouble: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.A<<unbound IrClassSymbolImpl>> [val]
+          GET_VAR 'val aDouble: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, newValue: T of <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+          $this: GET_VAR 'val <array>: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+            SET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aDouble: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: GET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed post-decrement Double: "
+                CALL 'public final fun get (i: <unbound IrClassSymbolImpl>): T of <root>.A [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'val aDouble: <root>.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var bDouble: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Child
+    // class name: Father
+    // class name: Father.InClass
+
+    public final class Child : Father {
+
+      public constructor()
+
+      public final val ChildInClass: Father.InClass
+        public final get
+    }
+
+    public abstract class Father : kotlin/Any {
+
+      public constructor()
+
+      // nested class: InClass
+    }
+
+    public abstract inner class Father.InClass : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun work(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

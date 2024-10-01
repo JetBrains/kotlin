@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SuspendingMutableMap
+
+    public final class SuspendingMutableMap<T#0 /* K */ : kotlin/Any, T#1 /* V */ : kotlin/Any> : kotlin/collections/Map<T#0, T#1> {
+
+      public constructor(map: kotlin/collections/MutableMap<T#0, T#1>)
+
+      public final suspend fun clear(): kotlin/Unit
+
+      public open fun containsKey(key: T#0): kotlin/Boolean
+
+      public open fun containsValue(value: T#1): kotlin/Boolean
+
+      public open operator fun get(key: T#0): T#1?
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open val entries: kotlin/collections/Set<kotlin/collections/Map.Entry<T#0, T#1>>
+        public open /* non-default */ get
+
+      public open val keys: kotlin/collections/Set<T#0>
+        public open /* non-default */ get
+
+      private final val map: kotlin/collections/MutableMap<T#0, T#1>
+        private final get
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      public open val values: kotlin/collections/Collection<T#1>
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Data
+    // class name: TestClass
+
+    public final class Data : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class TestClass : kotlin/Any {
+
+      public constructor()
+
+      public final val test: Data
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun newInit(f: @kotlin/ExtensionFunctionType kotlin/Function1<Data, Data>): Data
+    }
+  }
+}

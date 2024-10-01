@@ -1,0 +1,1138 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/reifiedSafeAsFunKBig.kt
+    PROPERTY name:fns signature:/fns|{}fns[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:fns signature:[ /fns|{}fns[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fns type:kotlin.Array<kotlin.Any> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              FUNCTION_REFERENCE 'public final fun fn0 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn1 (x0: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn2 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn3 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn4 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn5 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn6 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn7 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn8 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn9 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn10 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn11 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn12 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn13 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn14 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn15 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn16 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn17 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>, x16: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn18 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>, x16: <unbound IrClassSymbolImpl>, x17: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn19 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>, x16: <unbound IrClassSymbolImpl>, x17: <unbound IrClassSymbolImpl>, x18: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn20 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>, x16: <unbound IrClassSymbolImpl>, x17: <unbound IrClassSymbolImpl>, x18: <unbound IrClassSymbolImpl>, x19: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn21 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>, x16: <unbound IrClassSymbolImpl>, x17: <unbound IrClassSymbolImpl>, x18: <unbound IrClassSymbolImpl>, x19: <unbound IrClassSymbolImpl>, x20: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+              FUNCTION_REFERENCE 'public final fun fn22 (x0: <unbound IrClassSymbolImpl>, x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>, x3: <unbound IrClassSymbolImpl>, x4: <unbound IrClassSymbolImpl>, x5: <unbound IrClassSymbolImpl>, x6: <unbound IrClassSymbolImpl>, x7: <unbound IrClassSymbolImpl>, x8: <unbound IrClassSymbolImpl>, x9: <unbound IrClassSymbolImpl>, x10: <unbound IrClassSymbolImpl>, x11: <unbound IrClassSymbolImpl>, x12: <unbound IrClassSymbolImpl>, x13: <unbound IrClassSymbolImpl>, x14: <unbound IrClassSymbolImpl>, x15: <unbound IrClassSymbolImpl>, x16: <unbound IrClassSymbolImpl>, x17: <unbound IrClassSymbolImpl>, x18: <unbound IrClassSymbolImpl>, x19: <unbound IrClassSymbolImpl>, x20: <unbound IrClassSymbolImpl>, x21: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fns> signature:/fns.<get-fns>|<get-fns>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:fns signature:/fns|{}fns[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-fns> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fns signature:[ /fns|{}fns[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fns type:kotlin.Array<kotlin.Any> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:tests signature:/tests|{}tests[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:tests signature:[ /tests|{}tests[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fns type:kotlin.Array<kotlin.Any> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.TestFnBase> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.TestFnBase> origin=null
+            <1>: <root>.TestFnBase
+            1: VARARG type=<unbound IrClassSymbolImpl><out <root>.TestFnBase> varargElementType=<root>.TestFnBase
+              GET_OBJECT 'CLASS OBJECT name:TestFn0 signature:/TestFn0|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn0
+              GET_OBJECT 'CLASS OBJECT name:TestFn1 signature:/TestFn1|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn1
+              GET_OBJECT 'CLASS OBJECT name:TestFn2 signature:/TestFn2|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn2
+              GET_OBJECT 'CLASS OBJECT name:TestFn3 signature:/TestFn3|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn3
+              GET_OBJECT 'CLASS OBJECT name:TestFn4 signature:/TestFn4|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn4
+              GET_OBJECT 'CLASS OBJECT name:TestFn5 signature:/TestFn5|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn5
+              GET_OBJECT 'CLASS OBJECT name:TestFn6 signature:/TestFn6|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn6
+              GET_OBJECT 'CLASS OBJECT name:TestFn7 signature:/TestFn7|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn7
+              GET_OBJECT 'CLASS OBJECT name:TestFn8 signature:/TestFn8|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn8
+              GET_OBJECT 'CLASS OBJECT name:TestFn9 signature:/TestFn9|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn9
+              GET_OBJECT 'CLASS OBJECT name:TestFn10 signature:/TestFn10|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn10
+              GET_OBJECT 'CLASS OBJECT name:TestFn11 signature:/TestFn11|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn11
+              GET_OBJECT 'CLASS OBJECT name:TestFn12 signature:/TestFn12|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn12
+              GET_OBJECT 'CLASS OBJECT name:TestFn13 signature:/TestFn13|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn13
+              GET_OBJECT 'CLASS OBJECT name:TestFn14 signature:/TestFn14|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn14
+              GET_OBJECT 'CLASS OBJECT name:TestFn15 signature:/TestFn15|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn15
+              GET_OBJECT 'CLASS OBJECT name:TestFn16 signature:/TestFn16|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn16
+              GET_OBJECT 'CLASS OBJECT name:TestFn17 signature:/TestFn17|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn17
+              GET_OBJECT 'CLASS OBJECT name:TestFn18 signature:/TestFn18|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn18
+              GET_OBJECT 'CLASS OBJECT name:TestFn19 signature:/TestFn19|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn19
+              GET_OBJECT 'CLASS OBJECT name:TestFn20 signature:/TestFn20|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn20
+              GET_OBJECT 'CLASS OBJECT name:TestFn21 signature:/TestFn21|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn21
+              GET_OBJECT 'CLASS OBJECT name:TestFn22 signature:/TestFn22|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]' type=<root>.TestFn22
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tests> signature:/tests.<get-tests>|<get-tests>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.TestFnBase>
+        correspondingProperty: PROPERTY name:tests signature:/tests|{}tests[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-tests> (): <unbound IrClassSymbolImpl><<root>.TestFnBase> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tests signature:[ /tests|{}tests[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:fns type:kotlin.Array<kotlin.Any> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.TestFnBase> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<root>.TestFnBase> origin=null
+    FUN name:fn0 signature:/fn0|fn0(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn1 signature:/fn1|fn1(kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn2 signature:/fn2|fn2(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn3 signature:/fn3|fn3(kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn4 signature:/fn4|fn4(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn5 signature:/fn5|fn5(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn6 signature:/fn6|fn6(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn7 signature:/fn7|fn7(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn8 signature:/fn8|fn8(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn9 signature:/fn9|fn9(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn10 signature:/fn10|fn10(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn11 signature:/fn11|fn11(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn12 signature:/fn12|fn12(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn13 signature:/fn13|fn13(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn14 signature:/fn14|fn14(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn15 signature:/fn15|fn15(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn16 signature:/fn16|fn16(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn17 signature:/fn17|fn17(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>, x16:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x16 index:16 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn18 signature:/fn18|fn18(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>, x16:<unbound IrClassSymbolImpl>, x17:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x16 index:16 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x17 index:17 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn19 signature:/fn19|fn19(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>, x16:<unbound IrClassSymbolImpl>, x17:<unbound IrClassSymbolImpl>, x18:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x16 index:16 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x17 index:17 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x18 index:18 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn20 signature:/fn20|fn20(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>, x16:<unbound IrClassSymbolImpl>, x17:<unbound IrClassSymbolImpl>, x18:<unbound IrClassSymbolImpl>, x19:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x16 index:16 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x17 index:17 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x18 index:18 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x19 index:19 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn21 signature:/fn21|fn21(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>, x16:<unbound IrClassSymbolImpl>, x17:<unbound IrClassSymbolImpl>, x18:<unbound IrClassSymbolImpl>, x19:<unbound IrClassSymbolImpl>, x20:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x16 index:16 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x17 index:17 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x18 index:18 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x19 index:19 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x20 index:20 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:fn22 signature:/fn22|fn22(kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x0:<unbound IrClassSymbolImpl>, x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>, x3:<unbound IrClassSymbolImpl>, x4:<unbound IrClassSymbolImpl>, x5:<unbound IrClassSymbolImpl>, x6:<unbound IrClassSymbolImpl>, x7:<unbound IrClassSymbolImpl>, x8:<unbound IrClassSymbolImpl>, x9:<unbound IrClassSymbolImpl>, x10:<unbound IrClassSymbolImpl>, x11:<unbound IrClassSymbolImpl>, x12:<unbound IrClassSymbolImpl>, x13:<unbound IrClassSymbolImpl>, x14:<unbound IrClassSymbolImpl>, x15:<unbound IrClassSymbolImpl>, x16:<unbound IrClassSymbolImpl>, x17:<unbound IrClassSymbolImpl>, x18:<unbound IrClassSymbolImpl>, x19:<unbound IrClassSymbolImpl>, x20:<unbound IrClassSymbolImpl>, x21:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x0 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x1 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x2 index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x3 index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x4 index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x5 index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x6 index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x7 index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x8 index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x9 index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x10 index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x11 index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x12 index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x13 index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x14 index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x15 index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x16 index:16 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x17 index:17 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x18 index:18 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x19 index:19 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x20 index:20 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x21 index:21 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:reifiedSafeAsReturnsNonNull signature:/reifiedSafeAsReturnsNonNull|reifiedSafeAsReturnsNonNull(kotlin.Any?;kotlin.String){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>?, operation:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /reifiedSafeAsReturnsNonNull|reifiedSafeAsReturnsNonNull(kotlin.Any?;kotlin.String){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:operation index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:y type:T of <root>.reifiedSafeAsReturnsNonNull? [val]
+          TRY type=T of <root>.reifiedSafeAsReturnsNonNull?
+            try: BLOCK type=T of <root>.reifiedSafeAsReturnsNonNull? origin=null
+              TYPE_OP type=T of <root>.reifiedSafeAsReturnsNonNull? origin=SAFE_CAST typeOperand=T of <root>.reifiedSafeAsReturnsNonNull
+                GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.reifiedSafeAsReturnsNonNull' type=<unbound IrClassSymbolImpl>? origin=null
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.reifiedSafeAsReturnsNonNull
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                THROW type=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                      GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.reifiedSafeAsReturnsNonNull' type=<unbound IrClassSymbolImpl> origin=null
+                      CONST String type=<unbound IrClassSymbolImpl> value=": should not throw exceptions, got "
+                      GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.reifiedSafeAsReturnsNonNull' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'val y: T of <root>.reifiedSafeAsReturnsNonNull? [val] declared in <root>.reifiedSafeAsReturnsNonNull' type=T of <root>.reifiedSafeAsReturnsNonNull? origin=null
+              arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.reifiedSafeAsReturnsNonNull' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": should return non-null, got null"
+    FUN name:reifiedSafeAsReturnsNull signature:/reifiedSafeAsReturnsNull|reifiedSafeAsReturnsNull(kotlin.Any?;kotlin.String){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>?, operation:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /reifiedSafeAsReturnsNull|reifiedSafeAsReturnsNull(kotlin.Any?;kotlin.String){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:operation index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:y type:T of <root>.reifiedSafeAsReturnsNull? [val]
+          TRY type=T of <root>.reifiedSafeAsReturnsNull?
+            try: BLOCK type=T of <root>.reifiedSafeAsReturnsNull? origin=null
+              TYPE_OP type=T of <root>.reifiedSafeAsReturnsNull? origin=SAFE_CAST typeOperand=T of <root>.reifiedSafeAsReturnsNull
+                GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.reifiedSafeAsReturnsNull' type=<unbound IrClassSymbolImpl>? origin=null
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.reifiedSafeAsReturnsNull
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                THROW type=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                      GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.reifiedSafeAsReturnsNull' type=<unbound IrClassSymbolImpl> origin=null
+                      CONST String type=<unbound IrClassSymbolImpl> value=": should not throw exceptions, got "
+                      GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.reifiedSafeAsReturnsNull' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val y: T of <root>.reifiedSafeAsReturnsNull? [val] declared in <root>.reifiedSafeAsReturnsNull' type=T of <root>.reifiedSafeAsReturnsNull? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'operation: <unbound IrClassSymbolImpl> declared in <root>.reifiedSafeAsReturnsNull' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value=": should return null, got "
+                    GET_VAR 'val y: T of <root>.reifiedSafeAsReturnsNull? [val] declared in <root>.reifiedSafeAsReturnsNull' type=T of <root>.reifiedSafeAsReturnsNull? origin=null
+    CLASS INTERFACE name:TestFnBase signature:/TestFnBase|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFnBase
+      FUN name:testGood signature:/TestFnBase.testGood|testGood(kotlin.Any){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TestFnBase, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFnBase
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      FUN name:testBad signature:/TestFnBase.testBad|testBad(kotlin.Any){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TestFnBase, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFnBase
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+    CLASS OBJECT name:TestFn0 signature:/TestFn0|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn0
+      CONSTRUCTOR signature:/TestFn0.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn0 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn0 signature:/TestFn0|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn0.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn0, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn0
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn0'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn0.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function0<*>"
+      FUN name:testBad signature:/TestFn0.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn0, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn0
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn0'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn0.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function0<*>"
+    CLASS OBJECT name:TestFn1 signature:/TestFn1|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn1
+      CONSTRUCTOR signature:/TestFn1.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn1 signature:/TestFn1|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn1.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn1, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn1
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn1'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn1.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function1<*, *>"
+      FUN name:testBad signature:/TestFn1.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn1, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn1
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn1'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn1.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function1<*, *>"
+    CLASS OBJECT name:TestFn2 signature:/TestFn2|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn2
+      CONSTRUCTOR signature:/TestFn2.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn2 signature:/TestFn2|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn2.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn2, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn2
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn2'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn2.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function2<*, *, *>"
+      FUN name:testBad signature:/TestFn2.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn2, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn2
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn2'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn2.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function2<*, *, *>"
+    CLASS OBJECT name:TestFn3 signature:/TestFn3|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn3
+      CONSTRUCTOR signature:/TestFn3.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn3 signature:/TestFn3|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn3.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn3, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn3
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn3'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn3.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function3<*, *, *, *>"
+      FUN name:testBad signature:/TestFn3.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn3, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn3
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn3'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn3.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function3<*, *, *, *>"
+    CLASS OBJECT name:TestFn4 signature:/TestFn4|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn4
+      CONSTRUCTOR signature:/TestFn4.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn4 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn4 signature:/TestFn4|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn4.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn4, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn4
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn4'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn4.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function4<*, *, *, *, *>"
+      FUN name:testBad signature:/TestFn4.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn4, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn4
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn4'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn4.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function4<*, *, *, *, *>"
+    CLASS OBJECT name:TestFn5 signature:/TestFn5|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn5
+      CONSTRUCTOR signature:/TestFn5.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn5 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn5 signature:/TestFn5|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn5.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn5, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn5
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn5'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn5.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function5<*, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn5.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn5, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn5
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn5'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn5.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function5<*, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn6 signature:/TestFn6|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn6
+      CONSTRUCTOR signature:/TestFn6.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn6 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn6 signature:/TestFn6|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn6.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn6, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn6
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn6'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn6.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function6<*, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn6.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn6, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn6
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn6'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn6.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function6<*, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn7 signature:/TestFn7|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn7
+      CONSTRUCTOR signature:/TestFn7.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn7 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn7 signature:/TestFn7|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn7.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn7, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn7
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn7'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn7.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function7<*, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn7.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn7, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn7
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn7'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn7.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function7<*, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn8 signature:/TestFn8|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn8
+      CONSTRUCTOR signature:/TestFn8.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn8 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn8 signature:/TestFn8|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn8.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn8, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn8
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn8'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn8.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function8<*, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn8.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn8, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn8
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn8'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn8.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function8<*, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn9 signature:/TestFn9|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn9
+      CONSTRUCTOR signature:/TestFn9.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn9 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn9 signature:/TestFn9|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn9.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn9, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn9
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn9'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn9.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function9<*, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn9.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn9, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn9
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn9'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn9.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function9<*, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn10 signature:/TestFn10|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn10
+      CONSTRUCTOR signature:/TestFn10.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn10 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn10 signature:/TestFn10|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn10.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn10, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn10
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn10'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn10.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function10<*, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn10.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn10, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn10
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn10'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn10.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function10<*, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn11 signature:/TestFn11|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn11
+      CONSTRUCTOR signature:/TestFn11.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn11 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn11 signature:/TestFn11|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn11.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn11, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn11
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn11'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn11.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function11<*, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn11.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn11, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn11
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn11'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn11.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function11<*, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn12 signature:/TestFn12|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn12
+      CONSTRUCTOR signature:/TestFn12.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn12 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn12 signature:/TestFn12|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn12.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn12, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn12
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn12'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn12.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function12<*, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn12.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn12, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn12
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn12'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn12.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function12<*, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn13 signature:/TestFn13|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn13
+      CONSTRUCTOR signature:/TestFn13.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn13 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn13 signature:/TestFn13|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn13.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn13, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn13
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn13'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn13.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function13<*, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn13.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn13, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn13
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn13'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn13.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function13<*, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn14 signature:/TestFn14|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn14
+      CONSTRUCTOR signature:/TestFn14.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn14 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn14 signature:/TestFn14|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn14.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn14, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn14
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn14'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn14.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function14<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn14.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn14, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn14
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn14'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn14.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function14<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn15 signature:/TestFn15|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn15
+      CONSTRUCTOR signature:/TestFn15.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn15 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn15 signature:/TestFn15|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn15.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn15, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn15
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn15'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn15.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function15<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn15.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn15, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn15
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn15'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn15.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function15<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn16 signature:/TestFn16|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn16
+      CONSTRUCTOR signature:/TestFn16.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn16 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn16 signature:/TestFn16|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn16.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn16, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn16
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn16'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn16.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function16<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn16.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn16, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn16
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn16'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn16.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function16<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn17 signature:/TestFn17|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn17
+      CONSTRUCTOR signature:/TestFn17.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn17 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn17 signature:/TestFn17|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn17.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn17, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn17
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn17'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn17.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function17<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn17.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn17, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn17
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn17'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn17.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function17<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn18 signature:/TestFn18|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn18
+      CONSTRUCTOR signature:/TestFn18.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn18 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn18 signature:/TestFn18|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn18.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn18, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn18
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn18'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn18.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function18<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn18.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn18, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn18
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn18'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn18.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function18<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn19 signature:/TestFn19|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn19
+      CONSTRUCTOR signature:/TestFn19.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn19 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn19 signature:/TestFn19|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn19.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn19, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn19
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn19'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn19.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function19<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn19.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn19, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn19
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn19'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn19.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function19<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn20 signature:/TestFn20|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn20
+      CONSTRUCTOR signature:/TestFn20.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn20 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn20 signature:/TestFn20|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn20.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn20, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn20
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn20'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn20.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function20<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn20.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn20, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn20
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn20'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn20.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function20<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn21 signature:/TestFn21|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn21
+      CONSTRUCTOR signature:/TestFn21.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn21 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn21 signature:/TestFn21|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn21.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn21, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn21
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn21'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn21.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function21<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn21.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn21, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn21
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn21'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn21.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function21<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    CLASS OBJECT name:TestFn22 signature:/TestFn22|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFn22
+      CONSTRUCTOR signature:/TestFn22.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.TestFn22 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:TestFn22 signature:/TestFn22|null[0] modality:FINAL visibility:public superTypes:[<root>.TestFnBase]'
+      FUN name:testGood signature:/TestFn22.testGood|testGood(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn22, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn22
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn22'
+            CALL 'public final fun reifiedSafeAsReturnsNonNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn22.testGood' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function22<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+      FUN name:testBad signature:/TestFn22.testBad|testBad(kotlin.Any){}[0] visibility:public modality:OPEN <> ($this:<root>.TestFn22, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestFn22
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFn22'
+            CALL 'public final fun reifiedSafeAsReturnsNull <T> (x: <unbound IrClassSymbolImpl>?, operation: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.TestFn22.testBad' type=<unbound IrClassSymbolImpl> origin=null
+              operation: CONST String type=<unbound IrClassSymbolImpl> value="x as? Function22<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=22
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:fnI type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                        $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=22
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:testI type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                              arg0: GET_VAR 'val fnI: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                              arg1: GET_VAR 'val testI: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              CALL 'public abstract fun testGood (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase' type=<unbound IrClassSymbolImpl> origin=null
+                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.TestFnBase origin=GET_ARRAY_ELEMENT
+                                  $this: CALL 'public final fun <get-tests> (): <unbound IrClassSymbolImpl><<root>.TestFnBase> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.TestFnBase> origin=GET_PROPERTY
+                                  1: GET_VAR 'val testI: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                                x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                                  $this: CALL 'public final fun <get-fns> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                                  1: GET_VAR 'val fnI: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              CALL 'public abstract fun testBad (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TestFnBase' type=<unbound IrClassSymbolImpl> origin=null
+                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.TestFnBase origin=GET_ARRAY_ELEMENT
+                                  $this: CALL 'public final fun <get-tests> (): <unbound IrClassSymbolImpl><<root>.TestFnBase> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.TestFnBase> origin=GET_PROPERTY
+                                  1: GET_VAR 'val testI: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                                x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                                  $this: CALL 'public final fun <get-fns> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                                  1: GET_VAR 'val fnI: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

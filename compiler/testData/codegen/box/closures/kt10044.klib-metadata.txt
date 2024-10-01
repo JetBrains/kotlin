@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Example
+    // class name: Example2
+    // class name: JClass
+
+    public final class Example : JClass {
+
+      public /* secondary */ constructor()
+
+      private final var obj: JClass?
+        private final get
+        private final set
+
+      public final var result: kotlin/String?
+        public final get
+        public final set
+    }
+
+    public final class Example2 : JClass {
+
+      public /* secondary */ constructor()
+
+      private final var obj: JClass?
+        private final get
+        private final set
+
+      public final var result: kotlin/String?
+        public final get
+        public final set
+    }
+
+    public open class JClass : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

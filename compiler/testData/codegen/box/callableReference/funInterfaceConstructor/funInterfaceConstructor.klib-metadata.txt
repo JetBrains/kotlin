@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KSupplier
+
+    public abstract fun interface KSupplier<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun get(): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val ks: kotlin/Function1<kotlin/Function0<kotlin/String>, KSupplier<kotlin/String>>
+        public final get
+    }
+  }
+}

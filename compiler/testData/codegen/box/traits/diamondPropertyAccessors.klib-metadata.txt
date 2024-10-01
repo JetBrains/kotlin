@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: Impl
+
+    public abstract interface A : kotlin/Any {
+
+      public open var bar: kotlin/Boolean
+        public open /* non-default */ get
+        public open /* non-default */ set(value: kotlin/Boolean)
+    }
+
+    public abstract interface B : A {
+    }
+
+    public abstract interface C : A {
+
+      public open var bar: kotlin/Boolean
+        public open /* non-default */ get
+        public open /* non-default */ set(value: kotlin/Boolean)
+    }
+
+    public abstract interface D : B, C {
+    }
+
+    public final class Impl : D {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

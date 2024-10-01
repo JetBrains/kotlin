@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: GenericSuspendInterface
+    // class name: SuspendImpl
+    // class name: SuspendInterface
+
+    public abstract interface GenericSuspendInterface<T#0 /* T */> : kotlin/Any {
+
+      public abstract suspend fun execute(): T#0
+    }
+
+    public final class SuspendImpl : SuspendInterface {
+
+      public constructor()
+
+      public open suspend fun execute(): kotlin/Result<kotlin/String>
+    }
+
+    public abstract interface SuspendInterface : GenericSuspendInterface<kotlin/Result<kotlin/String>> {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:w_range fileName:/kt769.kt
+    FUN name:box signature:w_range/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                  VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                    GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                  SET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                      $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=null
+                  GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  SET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                    CONST Int type=<unbound IrClassSymbolImpl> value=2
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in w_range'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in w_range.box' type=<unbound IrClassSymbolImpl> origin=null

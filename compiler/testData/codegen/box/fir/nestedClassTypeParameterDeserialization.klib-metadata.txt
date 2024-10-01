@@ -1,0 +1,66 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/BaseRoot
+    // class name: lib/BaseRoot.BaseNested
+
+    public abstract class lib/BaseRoot<T#0 /* TNested */ : lib/BaseRoot.BaseNested<*>> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: BaseNested
+    }
+
+    public open class lib/BaseRoot.BaseNested<T#1 /* V */> : kotlin/Any {
+
+      public constructor(box: T#1)
+
+      public final val box: T#1
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: main
+
+    // class name: main/Foo
+    // class name: main/ImplRoot
+    // class name: main/ImplRoot.ImplNested
+
+    public final class main/Foo : kotlin/Any {
+
+      public constructor(v: kotlin/String)
+
+      public final val v: kotlin/String
+        public final get
+    }
+
+    public final class main/ImplRoot : lib/BaseRoot<main/ImplRoot.ImplNested> {
+
+      public constructor()
+
+      // nested class: ImplNested
+    }
+
+    public final class main/ImplRoot.ImplNested : lib/BaseRoot.BaseNested<main/Foo> {
+
+      public constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

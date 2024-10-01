@@ -1,0 +1,105 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: C
+    // class name: IA
+    // class name: Id
+    // class name: Name
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun fromBoth(id: Id): kotlin/Unit
+
+      public abstract fun fromBoth(name: Name): kotlin/Unit
+
+      public abstract fun fromClass(id: Id): kotlin/Unit
+
+      public abstract fun fromClass(name: Name): kotlin/Unit
+    }
+
+    public final class C : Base, IA {
+
+      public constructor()
+
+      public open fun fromBoth(id: Id): kotlin/Unit
+
+      public open fun fromBoth(name: Name): kotlin/Unit
+
+      public open fun fromClass(id: Id): kotlin/Unit
+
+      public open fun fromClass(name: Name): kotlin/Unit
+
+      public open fun fromInterface(id: Id): kotlin/Unit
+
+      public open fun fromInterface(name: Name): kotlin/Unit
+    }
+
+    public abstract interface IA : kotlin/Any {
+
+      public abstract fun fromBoth(id: Id): kotlin/Unit
+
+      public abstract fun fromBoth(name: Name): kotlin/Unit
+
+      public abstract fun fromInterface(id: Id): kotlin/Unit
+
+      public abstract fun fromInterface(name: Name): kotlin/Unit
+
+      public open fun withDefaultImpl(id: Id): kotlin/Unit
+
+      public open fun withDefaultImpl(name: Name): kotlin/Unit
+    }
+
+    public final value class Id : kotlin/Any {
+
+      public constructor(id: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val id: kotlin/String
+        public final get
+
+      // underlying property: id
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class Name : kotlin/Any {
+
+      public constructor(name: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val name: kotlin/String
+        public final get
+
+      // underlying property: name
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testBase(b: Base): kotlin/Unit
+
+      public final fun testC(c: C): kotlin/Unit
+
+      public final fun testIA(a: IA): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: O
+    // class name: O.Companion
+    // class name: Z
+
+    public final class O : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object O.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val instance: Z
+        public final /* non-default */ get
+
+      public final /* delegated */ val y: kotlin/String
+        public final /* non-default */ get
+    }
+
+    public final class Z : kotlin/Any {
+
+      public constructor(x: kotlin/String /* = ... */)
+
+      public final val x: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun Z.getValue(x: kotlin/Any?, y: kotlin/Any?): Z
+    }
+  }
+}

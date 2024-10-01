@@ -1,0 +1,215 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/MultiDeclFor.kt
+    CLASS CLASS name:Range signature:/Range|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Range
+      CONSTRUCTOR signature:/Range.<init>|<init>(C;C){}[0] visibility:public <> (from:<root>.C, to:<root>.C) returnType:<root>.Range [primary]
+        VALUE_PARAMETER name:from index:0 type:<root>.C
+        VALUE_PARAMETER name:to index:1 type:<root>.C
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Range signature:/Range|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:from signature:/Range.from|{}from[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:from signature:[ /Range.from|{}from[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'from: <root>.C declared in <root>.Range.<init>' type=<root>.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-from> signature:/Range.from.<get-from>|<get-from>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Range) returnType:<root>.C
+          correspondingProperty: PROPERTY name:from signature:/Range.from|{}from[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Range
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-from> (): <root>.C declared in <root>.Range'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:from signature:[ /Range.from|{}from[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.Range declared in <root>.Range.<get-from>' type=<root>.Range origin=null
+      PROPERTY name:to signature:/Range.to|{}to[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:to signature:[ /Range.to|{}to[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'to: <root>.C declared in <root>.Range.<init>' type=<root>.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-to> signature:/Range.to.<get-to>|<get-to>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Range) returnType:<root>.C
+          correspondingProperty: PROPERTY name:to signature:/Range.to|{}to[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Range
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-to> (): <root>.C declared in <root>.Range'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:to signature:[ /Range.to|{}to[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.Range declared in <root>.Range.<get-to>' type=<root>.Range origin=null
+      FUN name:iterator signature:/Range.iterator|iterator(){}[0] visibility:public modality:FINAL <> ($this:<root>.Range) returnType:<root>.It [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Range
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterator (): <root>.It [operator] declared in <root>.Range'
+            CONSTRUCTOR_CALL 'public constructor <init> (from: <root>.C, to: <root>.C) [primary] declared in <root>.It' type=<root>.It origin=null
+              from: CALL 'public final fun <get-from> (): <root>.C declared in <root>.Range' type=<root>.C origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Range declared in <root>.Range.iterator' type=<root>.Range origin=null
+              to: CALL 'public final fun <get-to> (): <root>.C declared in <root>.Range' type=<root>.C origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Range declared in <root>.Range.iterator' type=<root>.Range origin=null
+    CLASS CLASS name:It signature:/It|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.It
+      CONSTRUCTOR signature:/It.<init>|<init>(C;C){}[0] visibility:public <> (from:<root>.C, to:<root>.C) returnType:<root>.It [primary]
+        VALUE_PARAMETER name:from index:0 type:<root>.C
+        VALUE_PARAMETER name:to index:1 type:<root>.C
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:It signature:/It|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:from signature:/It.from|{}from[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:from signature:[ /It.from|{}from[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'from: <root>.C declared in <root>.It.<init>' type=<root>.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-from> signature:/It.from.<get-from>|<get-from>(){}[0] visibility:public modality:FINAL <> ($this:<root>.It) returnType:<root>.C
+          correspondingProperty: PROPERTY name:from signature:/It.from|{}from[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.It
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-from> (): <root>.C declared in <root>.It'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:from signature:[ /It.from|{}from[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.It declared in <root>.It.<get-from>' type=<root>.It origin=null
+      PROPERTY name:to signature:/It.to|{}to[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:to signature:[ /It.to|{}to[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'to: <root>.C declared in <root>.It.<init>' type=<root>.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-to> signature:/It.to.<get-to>|<get-to>(){}[0] visibility:public modality:FINAL <> ($this:<root>.It) returnType:<root>.C
+          correspondingProperty: PROPERTY name:to signature:/It.to|{}to[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.It
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-to> (): <root>.C declared in <root>.It'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:to signature:[ /It.to|{}to[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<root>.C visibility:private [final]' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.It declared in <root>.It.<get-to>' type=<root>.It origin=null
+      PROPERTY name:c signature:/It.c|{}c[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:c signature:[ /It.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-from> (): <root>.C declared in <root>.It' type=<root>.C origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.It declared in <root>.It' type=<root>.It origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> signature:/It.c.<get-c>|<get-c>(){}[0] visibility:public modality:FINAL <> ($this:<root>.It) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:c signature:/It.c|{}c[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.It
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.It'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c signature:[ /It.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.It declared in <root>.It.<get-c>' type=<root>.It origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> signature:/It.c.<set-c>|<set-c>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.It, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:c signature:/It.c|{}c[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.It
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c signature:[ /It.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.It declared in <root>.It.<set-c>' type=<root>.It origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.It.<set-c>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:next signature:/It.next|next(){}[0] visibility:public modality:FINAL <> ($this:<root>.It) returnType:<root>.C [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.It
+        BLOCK_BODY
+          VAR name:next type:<root>.C [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.C' type=<root>.C origin=null
+              i: CALL 'public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.It declared in <root>.It.next' type=<root>.It origin=null
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                CALL 'public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                  $this: GET_VAR '<this>: <root>.It declared in <root>.It.next' type=<root>.It origin=null
+              CALL 'public final fun <set-c> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                $this: GET_VAR '<this>: <root>.It declared in <root>.It.next' type=<root>.It origin=null
+                <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                  $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.It.next' type=<unbound IrClassSymbolImpl> origin=null
+              GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.It.next' type=<unbound IrClassSymbolImpl> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun next (): <root>.C [operator] declared in <root>.It'
+            GET_VAR 'val next: <root>.C [val] declared in <root>.It.next' type=<root>.C origin=null
+      FUN name:hasNext signature:/It.hasNext|hasNext(){}[0] visibility:public modality:FINAL <> ($this:<root>.It) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.It
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.It'
+            CALL 'public final fun lessOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LTEQ
+              arg0: CALL 'public final fun <get-c> (): <unbound IrClassSymbolImpl> declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.It declared in <root>.It.hasNext' type=<root>.It origin=null
+              arg1: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-to> (): <root>.C declared in <root>.It' type=<root>.C origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.It declared in <root>.It.hasNext' type=<root>.It origin=null
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(kotlin.Int){}[0] visibility:public <> (i:<unbound IrClassSymbolImpl>) returnType:<root>.C [primary]
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:i signature:/C.i|{}i[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ /C.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.C.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:/C.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:/C.i|{}i[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /C.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:from type:<root>.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-i>' type=<root>.C origin=null
+      FUN name:component1 signature:/C.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.C declared in <root>.C.component1' type=<root>.C origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:component2 signature:/C.component2|component2(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component2 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.C declared in <root>.C.component2' type=<root>.C origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+      FUN name:rangeTo signature:/C.rangeTo|rangeTo(C){}[0] visibility:public modality:FINAL <> ($this:<root>.C, c:<root>.C) returnType:<root>.Range [infix]
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:c index:0 type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun rangeTo (c: <root>.C): <root>.Range [infix] declared in <root>.C'
+            CONSTRUCTOR_CALL 'public constructor <init> (from: <root>.C, to: <root>.C) [primary] declared in <root>.Range' type=<root>.Range origin=null
+              from: GET_VAR '<this>: <root>.C declared in <root>.C.rangeTo' type=<root>.C origin=null
+              to: GET_VAR 'c: <root>.C declared in <root>.C.rangeTo' type=<root>.C origin=null
+    FUN name:doTest signature:/doTest|doTest(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<root>.It [val]
+            CALL 'public final fun iterator (): <root>.It [operator] declared in <root>.Range' type=<root>.It origin=null
+              $this: CALL 'public final fun rangeTo (c: <root>.C): <root>.Range [infix] declared in <root>.C' type=<root>.Range origin=RANGE
+                $this: CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.C' type=<root>.C origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                c: CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.C' type=<root>.C origin=null
+                  i: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'public final fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val <iterator>: <root>.It [val] declared in <root>.doTest' type=<root>.It origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<root>.C [val]
+                CALL 'public final fun next (): <root>.C [operator] declared in <root>.It' type=<root>.C origin=null
+                  $this: GET_VAR 'val <iterator>: <root>.It [val] declared in <root>.doTest' type=<root>.It origin=null
+              VAR name:a type:<unbound IrClassSymbolImpl> [val]
+                CALL 'public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=1)
+                  $this: GET_VAR 'val <destruct>: <root>.C [val] declared in <root>.doTest' type=<root>.C origin=null
+              VAR name:b type:<unbound IrClassSymbolImpl> [val]
+                CALL 'public final fun component2 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=2)
+                  $this: GET_VAR 'val <destruct>: <root>.C [val] declared in <root>.doTest' type=<root>.C origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.doTest' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.doTest' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                      GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.doTest' type=<unbound IrClassSymbolImpl> origin=null
+                      CONST String type=<unbound IrClassSymbolImpl> value=":"
+                      GET_VAR 'val b: <unbound IrClassSymbolImpl> [val] declared in <root>.doTest' type=<unbound IrClassSymbolImpl> origin=null
+                      CONST String type=<unbound IrClassSymbolImpl> value=";"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun doTest (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var s: <unbound IrClassSymbolImpl> [var] declared in <root>.doTest' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun doTest (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1:2;2:3;3:4;"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: "
+                GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

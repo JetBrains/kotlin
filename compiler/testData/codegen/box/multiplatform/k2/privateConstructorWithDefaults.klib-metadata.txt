@@ -1,0 +1,30 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Frame
+    // class name: Frame.Break
+
+    public open class Frame : kotlin/Any {
+
+      public constructor(disposableHandle: kotlin/String /* = ... */)
+
+      public final val disposableHandle: kotlin/String
+        public final get
+
+      // nested class: Break
+    }
+
+    public final class Frame.Break : Frame {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

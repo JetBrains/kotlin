@@ -1,0 +1,78 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flow
+    // class name: FlowCollector
+
+    public final class Flow<out T#0 /* R */> : kotlin/Any {
+
+      public constructor(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+
+      private final val block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>
+        private final get
+    }
+
+    public abstract interface FlowCollector<in T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* L */> flow(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): Flow<T#0>
+
+      public final fun poll0(): Flow<kotlin/String>
+
+      public final fun poll01(): Flow<kotlin/String>
+
+      public final fun poll1(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll11(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll12(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll13(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll2(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll21(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll22(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll23(flag: kotlin/Boolean): Flow<kotlin/String>
+
+      public final fun poll4(): Flow<kotlin/String>
+
+      public final fun poll41(): Flow<kotlin/String>
+
+      public final fun poll42(): Flow<kotlin/String>
+
+      public final fun poll43(): Flow<kotlin/String>
+
+      public final fun poll5(): Flow<kotlin/String>
+
+      public final fun poll7(): Flow<kotlin/String>
+
+      public final fun poll71(): Flow<kotlin/String>
+
+      public final fun poll72(): Flow<kotlin/String>
+
+      public final fun poll73(): Flow<kotlin/String>
+
+      public final fun poll81(): Flow<kotlin/String>
+
+      public final fun poll82(): Flow<kotlin/String>
+
+      public final fun poll83(): Flow<kotlin/String>
+
+      public final fun poll85(): Flow<kotlin/String>
+
+      public final fun poll86(): Flow<kotlin/String>
+
+      public final fun <T#0 /* R */> select(vararg x: T#0 /* kotlin/Array<out T#0> */): T#0
+    }
+  }
+}

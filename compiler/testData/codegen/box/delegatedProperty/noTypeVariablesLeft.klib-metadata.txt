@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: RwProperty
+
+    public final class RwProperty<T#0 /* V */> : kotlin/Any {
+
+      public constructor(v: T#0)
+
+      public final operator fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+
+      public final operator fun setValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>, value: T#0): kotlin/Unit
+
+      public final var v: T#0
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun <T#0 /* T */> property(initialValue: T#0): RwProperty<T#0>
+
+      public final /* delegated */ var foo: kotlin/Function0<kotlin/String>?
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Function0<kotlin/String>?)
+    }
+  }
+}

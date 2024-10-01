@@ -1,0 +1,67 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/reassignDestructured.kt
+    FUN name:getInt signature:/getInt|getInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getInt (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:test1 signature:/test1|test1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i1 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'public final fun getInt (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR name:i2 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'public final fun getInt (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            <2>: <unbound IrClassSymbolImpl>?
+            $receiver: GET_VAR 'val i1: <unbound IrClassSymbolImpl>? [val] declared in <root>.test1' type=<unbound IrClassSymbolImpl>? origin=null
+            1: GET_VAR 'val i2: <unbound IrClassSymbolImpl>? [val] declared in <root>.test1' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR name:int1 type:<unbound IrClassSymbolImpl>? [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.test1' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+        VAR name:int2 type:<unbound IrClassSymbolImpl>? [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.test1' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+        SET_VAR 'var int1: <unbound IrClassSymbolImpl>? [var] declared in <root>.test1' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:test2 signature:/test2|test2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i1 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'public final fun getInt (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR name:i2 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'public final fun getInt (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val i1: <unbound IrClassSymbolImpl>? [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val i2: <unbound IrClassSymbolImpl>? [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>'
+              GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val i1: <unbound IrClassSymbolImpl>? [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl>? origin=null
+            1: GET_VAR 'val i2: <unbound IrClassSymbolImpl>? [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR name:int1 type:<unbound IrClassSymbolImpl>? [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+        VAR name:int2 type:<unbound IrClassSymbolImpl>? [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.test2' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+        SET_VAR 'var int1: <unbound IrClassSymbolImpl>? [var] declared in <root>.test2' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun test2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Command
+    // class name: Command.Add
+    // class name: Command.InnerAdd
+
+    public final class Command : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Add
+
+      // nested class: InnerAdd
+    }
+
+    public final class Command.Add : kotlin/Any {
+
+      public constructor(arg: kotlin/String? /* = ... */)
+
+      public final val arg: kotlin/String?
+        public final get
+    }
+
+    public final inner class Command.InnerAdd : kotlin/Any {
+
+      public constructor(arg: kotlin/String? /* = ... */)
+
+      public final val arg: kotlin/String?
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun execute(func: kotlin/Function0<Command.Add>): Command.Add
+
+      public final fun execute(c: Command, func: kotlin/Function1<Command, Command.InnerAdd>): Command.InnerAdd
+    }
+  }
+}

@@ -1,0 +1,121 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IcAny
+    // class name: IcInt
+    // class name: IcLong
+    // class name: IcOverIc
+
+    public final value class IcAny : kotlin/Any {
+
+      public constructor(a: kotlin/Any?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun simple(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: kotlin/Any?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: kotlin/Any?
+    }
+
+    public final value class IcInt : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun simple(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val i: kotlin/Int
+        public final get
+
+      // underlying property: i
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class IcLong : kotlin/Any {
+
+      public constructor(l: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun simple(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val l: kotlin/Long
+        public final get
+
+      // underlying property: l
+
+      // underlying type: kotlin/Long
+    }
+
+    public final value class IcOverIc : kotlin/Any {
+
+      public constructor(o: IcLong)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun simple(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val o: IcLong
+        public final get
+
+      // underlying property: o
+
+      // underlying type: IcLong
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun foo(init: kotlin/Function0<kotlin/String>): kotlin/String
+
+      public final fun testBoxed(i: IcInt?, l: IcLong?, a: IcAny?, o: IcOverIc?): kotlin/String
+
+      public final fun testCapturedVars(): kotlin/String
+
+      public final fun testGlobalProperties(): kotlin/String
+
+      public final fun testLocalVars(): kotlin/String
+
+      public final fun testUnboxed(i: IcInt, l: IcLong, a: IcAny, o: IcOverIc): kotlin/String
+
+      public final val ap: IcAny
+        public final get
+
+      public final val ip: IcInt
+        public final get
+
+      public final val lp: IcLong
+        public final get
+
+      public final val op: IcOverIc
+        public final get
+    }
+  }
+}

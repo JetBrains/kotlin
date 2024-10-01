@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: AFabric
+    // class name: AImpl
+    // class name: AWrapperFabric
+
+    public abstract interface A : kotlin/Any {
+
+      public abstract fun foo(): kotlin/String
+    }
+
+    public open class AFabric : kotlin/Any {
+
+      public constructor()
+
+      public open fun createA(): A
+    }
+
+    public final class AImpl : A {
+
+      public constructor(z: kotlin/String)
+
+      public open fun foo(): kotlin/String
+
+      public final val z: kotlin/String
+        public final get
+    }
+
+    public final class AWrapperFabric : AFabric {
+
+      public constructor()
+
+      public open fun createA(): A
+
+      public final fun createMyA(): A
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

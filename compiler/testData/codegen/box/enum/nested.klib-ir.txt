@@ -1,0 +1,54 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nested.kt
+    CLASS ENUM_CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Foo>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Foo
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Foo>]'
+      ENUM_ENTRY name:A signature:/Foo.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Foo'
+      CLASS ENUM_CLASS name:Bar signature:/Foo.Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Foo.Bar>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo.Bar
+        CONSTRUCTOR signature:/Foo.Bar.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Foo.Bar [primary]
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              <1>: <root>.Foo.Bar
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Bar signature:/Foo.Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Foo.Bar>]'
+        ENUM_ENTRY name:C signature:/Foo.Bar.C|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Foo.Bar'
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Foo.Bar.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Foo.Bar>
+          SYNTHETIC_BODY kind=ENUM_VALUES
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Foo.Bar.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Foo.Bar
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          SYNTHETIC_BODY kind=ENUM_VALUEOF
+        PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Foo.Bar.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Foo.Bar.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Foo.Bar>
+            correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Foo.Bar.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+            SYNTHETIC_BODY kind=ENUM_ENTRIES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Foo.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Foo>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Foo.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Foo
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Foo.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Foo.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Foo>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Foo.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="A"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:A signature:/Foo.A|null[0]' type=<root>.Foo
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="C"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:C signature:/Foo.Bar.C|null[0]' type=<root>.Foo.Bar
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

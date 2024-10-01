@@ -1,0 +1,47 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/JsObject
+    // class name: lib/JsRunnable
+
+    public abstract interface lib/JsObject : kotlin/Any {
+
+      public open val isString: kotlin/Boolean
+        public open /* non-default */ get
+    }
+
+    public abstract fun interface lib/JsRunnable : lib/JsObject {
+
+      public abstract fun run(): kotlin/Unit
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ReactComponent
+
+    public final class ReactComponent : kotlin/Any {
+
+      public constructor()
+
+      public final fun forceUpdate(callback: lib/JsRunnable): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun forceUpdate(myNativeComponent: ReactComponent, callback: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

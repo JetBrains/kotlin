@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IC
+
+    public final value class IC<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun assertEquals(a: kotlin/String, b: kotlin/String): kotlin/Unit
+
+      public final fun <T#0 /* T */ : kotlin/String> IC<T#0>?.bar(): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String> IC<T#0>?.foo(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,59 @@
+MODULE_FRAGMENT name:<jvm>
+  FILE fqName:<root> fileName:/common.kt
+    CLASS INTERFACE name:OtherBase signature:/OtherBase|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OtherBase
+      FUN name:foo signature:/OtherBase.foo|foo(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.OtherBase, e:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.OtherBase
+        VALUE_PARAMETER name:e index:0 type:<unbound IrClassSymbolImpl>
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      FUN name:foo signature:/Base.foo|foo(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Base, e:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        VALUE_PARAMETER name:e index:0 type:<unbound IrClassSymbolImpl>
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Base; <root>.OtherBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+      CONSTRUCTOR signature:/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Derived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Base; <root>.OtherBase]'
+      FUN name:foo signature:/Derived.foo|foo(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.Derived, e:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (e: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Base
+          public abstract fun foo (e: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.OtherBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+        VALUE_PARAMETER name:e index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (e: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+            GET_VAR 'e: <unbound IrClassSymbolImpl> declared in <root>.Derived.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:bar signature:/bar|bar(Derived;kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> (d:<root>.Derived, e:<unbound IrClassSymbolImpl>, f:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Derived
+      VALUE_PARAMETER name:e index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun foo (e: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'd: <root>.Derived declared in <root>.bar' type=<root>.Derived origin=null
+            e: GET_VAR 'e: <unbound IrClassSymbolImpl> declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:b type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun foo (e: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Derived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'd: <root>.Derived declared in <root>.bar' type=<root>.Derived origin=null
+            e: GET_VAR 'f: <unbound IrClassSymbolImpl> declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (d: <root>.Derived, e: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            GET_VAR 'val a: <unbound IrClassSymbolImpl> [val] declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'val b: <unbound IrClassSymbolImpl> [val] declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/jvm.kt
+    CLASS CLASS name:Platform signature:/Platform|null[0] modality:FINAL visibility:public superTypes:[<root>.Derived]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Platform
+      CONSTRUCTOR signature:/Platform.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Platform [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Platform signature:/Platform|null[0] modality:FINAL visibility:public superTypes:[<root>.Derived]'
+    TYPEALIAS name:Expect signature:/Expect|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl>[actual]
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun bar (d: <root>.Derived, e: <unbound IrClassSymbolImpl>, f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            d: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Platform' type=<root>.Platform origin=null
+            e: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            f: CONST String type=<unbound IrClassSymbolImpl> value="K"

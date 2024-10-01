@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Cached
+
+    public final class Cached<T#0 /* K */, T#1 /* V */> : kotlin/Function1<T#0, T#1> {
+
+      public constructor(generate: kotlin/Function1<T#0, T#1>)
+
+      public open operator fun invoke(p1: T#0): T#1
+
+      private final val generate: kotlin/Function1<T#0, T#1>
+        private final get
+
+      public final val store: kotlin/collections/HashMap<T#0, T#1>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* K */, T#1 /* V */> kotlin/collections/MutableMap<T#0, T#1>.getOrPut(key: T#0, defaultValue: kotlin/Function0<T#1>): T#1
+    }
+  }
+}

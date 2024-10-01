@@ -1,0 +1,52 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/A
+    // class name: lib/A.B
+
+    internal final class lib/A : kotlin/Any {
+
+      public constructor()
+
+      internal final fun baz(a: kotlin/Int): kotlin/Int
+
+      internal final val foo: kotlin/Int /* = ... */
+        internal final get
+
+      // nested class: B
+    }
+
+    internal final inner class lib/A.B : kotlin/Any {
+
+      public constructor()
+
+      internal final fun foo(): kotlin/Int
+    }
+
+    package {
+
+      internal final fun foo(): kotlin/Int
+
+      internal final val bar: kotlin/Int /* = ... */
+        internal final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: main
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

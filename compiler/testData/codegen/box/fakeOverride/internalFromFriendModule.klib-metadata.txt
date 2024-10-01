@@ -1,0 +1,52 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: In
+
+    public open class Base : kotlin/Any {
+
+      public constructor()
+
+      internal final fun o(): kotlin/String
+    }
+
+    internal open class In : kotlin/Any {
+
+      public constructor()
+
+      public final fun k(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Derived
+    // class name: IDerived
+
+    public final class Derived : Base {
+
+      public constructor()
+    }
+
+    internal final class IDerived : In {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

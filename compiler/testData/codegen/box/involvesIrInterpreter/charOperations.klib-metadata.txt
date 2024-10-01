@@ -1,0 +1,128 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.id(): T#0
+
+      public final const val code1: kotlin/Int /* = 49 */
+        public final get
+
+      public final const val code2: kotlin/Int /* = 50 */
+        public final get
+
+      public final const val code3: kotlin/Int /* = 51 */
+        public final get
+
+      public final const val code4: kotlin/Int /* = 52 */
+        public final get
+
+      public final const val compareTo1: kotlin/Int /* = -1 */
+        public final get
+
+      public final const val compareTo2: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val compareTo3: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val compareTo4: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val convert1: kotlin/Byte /* = 49.toByte() */
+        public final get
+
+      public final const val convert2: kotlin/Char /* = '1' */
+        public final get
+
+      public final const val convert3: kotlin/Short /* = 49.toShort() */
+        public final get
+
+      public final const val convert4: kotlin/Int /* = 49 */
+        public final get
+
+      public final const val convert5: kotlin/Long /* = 49L */
+        public final get
+
+      public final const val convert6: kotlin/Float /* = 49.0f */
+        public final get
+
+      public final const val convert7: kotlin/Double /* = 49.0 */
+        public final get
+
+      public final const val equals1: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val equals2: kotlin/Boolean /* = true */
+        public final get
+
+      public final const val equals3: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val equals4: kotlin/Boolean /* = false */
+        public final get
+
+      public final const val fourVal: kotlin/Char /* = '4' */
+        public final get
+
+      public final const val intVal: kotlin/Int /* = 5 */
+        public final get
+
+      public final const val minusChar1: kotlin/Int /* = -1 */
+        public final get
+
+      public final const val minusChar2: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val minusChar3: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val minusChar4: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val minusInt1: kotlin/Char /* = ',' */
+        public final get
+
+      public final const val minusInt2: kotlin/Char /* = '-' */
+        public final get
+
+      public final const val minusInt3: kotlin/Char /* = '.' */
+        public final get
+
+      public final const val minusInt4: kotlin/Char /* = '/' */
+        public final get
+
+      public final const val oneVal: kotlin/Char /* = '1' */
+        public final get
+
+      public final const val plus1: kotlin/Char /* = '6' */
+        public final get
+
+      public final const val plus2: kotlin/Char /* = '7' */
+        public final get
+
+      public final const val plus3: kotlin/Char /* = '8' */
+        public final get
+
+      public final const val plus4: kotlin/Char /* = '9' */
+        public final get
+
+      public final const val threeVal: kotlin/Char /* = '3' */
+        public final get
+
+      public final const val toString1: kotlin/String /* = "1" */
+        public final get
+
+      public final const val toString2: kotlin/String /* = "2" */
+        public final get
+
+      public final const val twoVal: kotlin/Char /* = '2' */
+        public final get
+    }
+  }
+}

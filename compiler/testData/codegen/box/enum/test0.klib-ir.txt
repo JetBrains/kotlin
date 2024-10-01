@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/test0.kt
+    PROPERTY name:TOP_LEVEL signature:/TOP_LEVEL|{}TOP_LEVEL[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:TOP_LEVEL signature:[ /TOP_LEVEL|{}TOP_LEVEL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:TOP_LEVEL type:kotlin.Int visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=5
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-TOP_LEVEL> signature:/TOP_LEVEL.<get-TOP_LEVEL>|<get-TOP_LEVEL>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:TOP_LEVEL signature:/TOP_LEVEL|{}TOP_LEVEL[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-TOP_LEVEL> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:TOP_LEVEL signature:[ /TOP_LEVEL|{}TOP_LEVEL[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:TOP_LEVEL type:kotlin.Int visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS ENUM_CLASS name:MyEnum signature:/MyEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.MyEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
+      CONSTRUCTOR signature:/MyEnum.<init>|<init>(kotlin.Int){}[0] visibility:private <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.MyEnum [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.MyEnum
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum signature:/MyEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.MyEnum>]'
+      ENUM_ENTRY name:VALUE signature:/MyEnum.VALUE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.MyEnum'
+            value: CALL 'public final fun <get-TOP_LEVEL> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/MyEnum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.MyEnum>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/MyEnum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.MyEnum
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/MyEnum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.MyEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="VALUE"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:VALUE signature:/MyEnum.VALUE|null[0]' type=<root>.MyEnum
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

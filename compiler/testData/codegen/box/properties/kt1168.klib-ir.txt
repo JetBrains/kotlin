@@ -1,0 +1,77 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt1168.kt
+    CLASS CLASS name:BaseClass signature:/BaseClass|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseClass
+      CONSTRUCTOR signature:/BaseClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BaseClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseClass signature:/BaseClass|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:kind signature:/BaseClass.kind|{}kind[0] visibility:protected modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kind> signature:/BaseClass.kind.<get-kind>|<get-kind>(){}[0] visibility:protected modality:ABSTRACT <> ($this:<root>.BaseClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:kind signature:/BaseClass.kind|{}kind[0] visibility:protected modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
+      PROPERTY name:kind2 signature:/BaseClass.kind2|{}kind2[0] visibility:protected modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:kind2 signature:[ /BaseClass.kind2|{}kind2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kind2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=" kind1"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kind2> signature:/BaseClass.kind2.<get-kind2>|<get-kind2>(){}[0] visibility:protected modality:OPEN <> ($this:<root>.BaseClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:kind2 signature:/BaseClass.kind2|{}kind2[0] visibility:protected modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-kind2> (): <unbound IrClassSymbolImpl> declared in <root>.BaseClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kind2 signature:[ /BaseClass.kind2|{}kind2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kind2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseClass declared in <root>.BaseClass.<get-kind2>' type=<root>.BaseClass origin=null
+      FUN name:debug signature:/BaseClass.debug|debug(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseClass) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun debug (): <unbound IrClassSymbolImpl> declared in <root>.BaseClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'protected abstract fun <get-kind> (): <unbound IrClassSymbolImpl> declared in <root>.BaseClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.BaseClass declared in <root>.BaseClass.debug' type=<root>.BaseClass origin=null
+              1: CALL 'protected open fun <get-kind2> (): <unbound IrClassSymbolImpl> declared in <root>.BaseClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.BaseClass declared in <root>.BaseClass.debug' type=<root>.BaseClass origin=null
+    CLASS CLASS name:Subclass signature:/Subclass|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseClass]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Subclass
+      CONSTRUCTOR signature:/Subclass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Subclass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseClass'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Subclass signature:/Subclass|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseClass]'
+      PROPERTY name:kind signature:/Subclass.kind|{}kind[0] visibility:protected modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:kind signature:[ /Subclass.kind|{}kind[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kind2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="Physical"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kind> signature:/Subclass.kind.<get-kind>|<get-kind>(){}[0] visibility:protected modality:OPEN <> ($this:<root>.Subclass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:kind signature:/Subclass.kind|{}kind[0] visibility:protected modality:OPEN [val]
+          overridden:
+            protected abstract fun <get-kind> (): <unbound IrClassSymbolImpl> declared in <root>.BaseClass
+          $this: VALUE_PARAMETER name:<this> type:<root>.Subclass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-kind> (): <unbound IrClassSymbolImpl> declared in <root>.Subclass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kind signature:[ /Subclass.kind|{}kind[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kind2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Subclass declared in <root>.Subclass.<get-kind>' type=<root>.Subclass origin=null
+      PROPERTY name:kind2 signature:/Subclass.kind2|{}kind2[0] visibility:protected modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:kind2 signature:[ /Subclass.kind2|{}kind2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kind2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=" kind2"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kind2> signature:/Subclass.kind2.<get-kind2>|<get-kind2>(){}[0] visibility:protected modality:OPEN <> ($this:<root>.Subclass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:kind2 signature:/Subclass.kind2|{}kind2[0] visibility:protected modality:OPEN [val]
+          overridden:
+            protected open fun <get-kind2> (): <unbound IrClassSymbolImpl> declared in <root>.BaseClass
+          $this: VALUE_PARAMETER name:<this> type:<root>.Subclass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-kind2> (): <unbound IrClassSymbolImpl> declared in <root>.Subclass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kind2 signature:[ /Subclass.kind2|{}kind2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kind2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Subclass declared in <root>.Subclass.<get-kind2>' type=<root>.Subclass origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Subclass' type=<root>.Subclass origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Physical kind2"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun test1(): kotlin/Boolean
+
+      public final fun test2(): kotlin/Boolean
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+
+      public final fun kotlin/String.foo(): kotlin/Boolean
+
+      public final fun test3(): kotlin/Boolean
+
+      public final fun test4(): kotlin/Boolean
+
+      public final val foo: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/String, kotlin/Boolean>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

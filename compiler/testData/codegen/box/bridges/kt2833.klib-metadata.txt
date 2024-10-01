@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/FunDependencyEdge
+    // class name: test/FunDependencyEdgeImpl
+    // class name: test/FunctionNode
+    // class name: test/FunctionNodeImpl
+
+    public abstract interface test/FunDependencyEdge : kotlin/Any {
+
+      public abstract val from: test/FunctionNode
+        public abstract get
+    }
+
+    public final class test/FunDependencyEdgeImpl : test/FunDependencyEdge {
+
+      public constructor(from: test/FunctionNodeImpl)
+
+      public open val from: test/FunctionNodeImpl
+        public open get
+    }
+
+    public abstract interface test/FunctionNode : kotlin/Any {
+    }
+
+    public final class test/FunctionNodeImpl : test/FunctionNode {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

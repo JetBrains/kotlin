@@ -1,0 +1,137 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/vars.kt
+    PROPERTY name:globalRange signature:/globalRange|{}globalRange[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:globalRange signature:[ /globalRange|{}globalRange[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:globalRange type:kotlin.collections.Iterable<kotlin.Int> visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-globalRange> signature:/globalRange.<get-globalRange>|<get-globalRange>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:globalRange signature:/globalRange|{}globalRange[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-globalRange> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:globalRange signature:[ /globalRange|{}globalRange[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:globalRange type:kotlin.collections.Iterable<kotlin.Int> visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-globalRange> signature:/globalRange.<set-globalRange>|<set-globalRange>(kotlin.collections.Iterable<kotlin.Int>){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:globalRange signature:/globalRange|{}globalRange[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:globalRange signature:[ /globalRange|{}globalRange[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:globalRange type:kotlin.collections.Iterable<kotlin.Int> visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.<set-globalRange>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:changeRangeToListByFun signature:/changeRangeToListByFun|changeRangeToListByFun(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR name:range type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        FUN LOCAL_FUNCTION name:doTheChange visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_VAR 'var range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl> origin=EQ
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'local final fun doTheChange (): <unbound IrClassSymbolImpl> declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR 'var range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:x type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun changeRangeToListByFun (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeRangeToListByFun' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:changeRangeToListExplicit signature:/changeRangeToListExplicit|changeRangeToListExplicit(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR name:range type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+            $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        SET_VAR 'var range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONST Int type=<unbound IrClassSymbolImpl> value=3
+              CONST Int type=<unbound IrClassSymbolImpl> value=4
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+              $this: TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                GET_VAR 'var range: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:x type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun changeRangeToListExplicit (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeRangeToListExplicit' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:changeGlobalRangeToList signature:/changeGlobalRangeToList|changeGlobalRangeToList(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'public final fun <set-globalRange> (<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONST Int type=<unbound IrClassSymbolImpl> value=3
+              CONST Int type=<unbound IrClassSymbolImpl> value=4
+              CONST Int type=<unbound IrClassSymbolImpl> value=5
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'public final fun <get-globalRange> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.changeGlobalRangeToList' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:x type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.changeGlobalRangeToList' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeGlobalRangeToList' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeGlobalRangeToList' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.changeGlobalRangeToList' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun changeGlobalRangeToList (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.changeGlobalRangeToList' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+          2: CALL 'public final fun changeRangeToListByFun (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+          2: CALL 'public final fun changeRangeToListExplicit (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=15
+          2: CALL 'public final fun changeGlobalRangeToList (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

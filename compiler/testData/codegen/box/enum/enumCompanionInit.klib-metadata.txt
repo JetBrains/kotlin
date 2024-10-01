@@ -1,0 +1,85 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: E
+    // class name: E.Companion
+    // class name: F
+    // class name: F.Companion
+    // class name: G
+    // class name: G.O
+
+    public final enum class E : kotlin/Enum<E> {
+
+      private constructor(a: kotlin/String)
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      X,
+
+      Y,
+
+      // has Enum.entries
+    }
+
+    public final companion object E.Companion : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final enum class F : kotlin/Enum<F> {
+
+      private constructor(a: kotlin/String)
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      X,
+
+      Y,
+
+      // has Enum.entries
+    }
+
+    public final companion object F.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): kotlin/Unit
+    }
+
+    public final enum class G : kotlin/Enum<G> {
+
+      private constructor(a: kotlin/String)
+
+      // nested class: O
+
+      X,
+
+      Y,
+
+      // has Enum.entries
+    }
+
+    public final object G.O : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

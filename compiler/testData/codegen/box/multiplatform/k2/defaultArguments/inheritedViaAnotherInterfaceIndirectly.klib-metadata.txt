@@ -1,0 +1,49 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/A
+    // class name: foo/B
+    // class name: foo/H
+    // class name: foo/I
+    // class name: foo/J
+    // class name: foo/K
+
+    public final class foo/A : foo/I {
+
+      public constructor()
+    }
+
+    public final class foo/B : foo/K {
+
+      public constructor()
+    }
+
+    public abstract interface foo/H : kotlin/Any {
+
+      public abstract fun foo(x: kotlin/String /* = ... */): kotlin/String
+    }
+
+    public abstract interface foo/I : foo/H {
+
+      public open fun foo(x: kotlin/String): kotlin/String
+    }
+
+    public abstract interface foo/J : foo/I {
+
+      public abstract fun foo(x: kotlin/String): kotlin/String
+    }
+
+    public abstract interface foo/K : foo/J {
+
+      public open fun foo(x: kotlin/String): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

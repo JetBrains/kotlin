@@ -1,0 +1,8 @@
+// MODULE: InterfaceModule
+d0f416aa2d440d060200aa09c56586d5
+// MODULE: OpenClassModule
+5f2c5ec8c4fdb12bf246c5ad1eaeca29
+// MODULE: OpenClassWithOverrideModule
+11c35ae2d297127c1dfae835304da4b6
+// MODULE: main
+4b15923764ff4d8a6508fe82e78eb7a0

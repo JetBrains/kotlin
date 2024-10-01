@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyRunnable
+
+    public abstract fun interface MyRunnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(vararg rs: MyRunnable /* kotlin/Array<out MyRunnable> */): kotlin/Unit
+    }
+  }
+}

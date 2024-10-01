@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: FirstOwner
+    // class name: Holder
+    // class name: SecondOwner
+    // class name: StubElement
+
+    public final class A : FirstOwner<Holder<A>> {
+
+      public constructor()
+    }
+
+    public final class B : SecondOwner<Holder<B>> {
+
+      public constructor()
+    }
+
+    public abstract interface FirstOwner<T#0 /* T */ : StubElement<*>> : SecondOwner<T#0> {
+    }
+
+    public abstract interface Holder<T#0 /* T */> : StubElement<T#0> {
+    }
+
+    public abstract interface SecondOwner<T#0 /* T */ : StubElement<*>> : kotlin/Any {
+    }
+
+    public abstract interface StubElement<T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(a: A?, b: B): kotlin/Unit
+    }
+  }
+}

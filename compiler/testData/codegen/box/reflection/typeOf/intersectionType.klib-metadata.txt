@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: Inv
+    // class name: X
+    // class name: Y
+
+    public final object A : X, Y {
+
+      private constructor()
+    }
+
+    public final object B : X, Y {
+
+      private constructor()
+    }
+
+    public final class Inv<T#0 /* T */> : kotlin/Any {
+
+      public constructor(v: T#0)
+
+      public final val v: T#0
+        public final get
+    }
+
+    public abstract interface X : kotlin/Any {
+    }
+
+    public abstract interface Y : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> sel(a: T#0, b: T#0): T#0
+
+      public final inline fun <reified T#0 /* T */> T#0.valueTypeOf(): kotlin/reflect/KType
+    }
+  }
+}

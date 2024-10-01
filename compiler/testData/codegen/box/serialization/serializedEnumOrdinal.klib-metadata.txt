@@ -1,0 +1,48 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Color
+
+    public final enum class Color : kotlin/Enum<Color> {
+
+      private constructor()
+
+      RED,
+
+      GREEN,
+
+      BLUE,
+
+      CYAN,
+
+      MAGENTA,
+
+      YELLOW,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun determineColor(code: kotlin/Int): Color
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

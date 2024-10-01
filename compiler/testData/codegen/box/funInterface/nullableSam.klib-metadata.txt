@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KRunnable
+
+    public abstract fun interface KRunnable : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isNull(r: KRunnable?): kotlin/Boolean
+
+      public final fun nullableFun(fromNull: kotlin/Boolean): kotlin/Function0<kotlin/Unit>?
+    }
+  }
+}

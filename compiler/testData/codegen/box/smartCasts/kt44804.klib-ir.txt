@@ -1,0 +1,150 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt44804.kt
+    CLASS CLASS name:AbstractInsnNode signature:/AbstractInsnNode|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractInsnNode
+      CONSTRUCTOR signature:/AbstractInsnNode.<init>|<init>(AbstractInsnNode?){}[0] visibility:public <> (next:<root>.AbstractInsnNode?) returnType:<root>.AbstractInsnNode [primary]
+        VALUE_PARAMETER name:next index:0 type:<root>.AbstractInsnNode?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractInsnNode signature:/AbstractInsnNode|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:next signature:/AbstractInsnNode.next|{}next[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:next signature:[ /AbstractInsnNode.next|{}next[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:next type:<root>.AbstractInsnNode? visibility:private [final]] ] type:<root>.AbstractInsnNode? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'next: <root>.AbstractInsnNode? declared in <root>.AbstractInsnNode.<init>' type=<root>.AbstractInsnNode? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-next> signature:/AbstractInsnNode.next.<get-next>|<get-next>(){}[0] visibility:public modality:FINAL <> ($this:<root>.AbstractInsnNode) returnType:<root>.AbstractInsnNode?
+          correspondingProperty: PROPERTY name:next signature:/AbstractInsnNode.next|{}next[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.AbstractInsnNode
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-next> (): <root>.AbstractInsnNode? declared in <root>.AbstractInsnNode'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:next signature:[ /AbstractInsnNode.next|{}next[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:next type:<root>.AbstractInsnNode? visibility:private [final]] ] type:<root>.AbstractInsnNode? visibility:private [final]' type=<root>.AbstractInsnNode? origin=null
+                receiver: GET_VAR '<this>: <root>.AbstractInsnNode declared in <root>.AbstractInsnNode.<get-next>' type=<root>.AbstractInsnNode origin=null
+    CLASS CLASS name:LineNumberNode signature:/LineNumberNode|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractInsnNode]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LineNumberNode
+      CONSTRUCTOR signature:/LineNumberNode.<init>|<init>(AbstractInsnNode?){}[0] visibility:public <> (next:<root>.AbstractInsnNode?) returnType:<root>.LineNumberNode [primary]
+        VALUE_PARAMETER name:next index:0 type:<root>.AbstractInsnNode?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (next: <root>.AbstractInsnNode?) [primary] declared in <root>.AbstractInsnNode'
+            next: GET_VAR 'next: <root>.AbstractInsnNode? declared in <root>.LineNumberNode.<init>' type=<root>.AbstractInsnNode? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LineNumberNode signature:/LineNumberNode|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractInsnNode]'
+      PROPERTY name:line signature:/LineNumberNode.line|{}line[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:line signature:[ /LineNumberNode.line|{}line[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:next type:<root>.AbstractInsnNode? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-line> signature:/LineNumberNode.line.<get-line>|<get-line>(){}[0] visibility:public modality:FINAL <> ($this:<root>.LineNumberNode) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:line signature:/LineNumberNode.line|{}line[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LineNumberNode
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-line> (): <unbound IrClassSymbolImpl> declared in <root>.LineNumberNode'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:line signature:[ /LineNumberNode.line|{}line[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:next type:<root>.AbstractInsnNode? visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.LineNumberNode declared in <root>.LineNumberNode.<get-line>' type=<root>.LineNumberNode origin=null
+    CLASS CLASS name:LabelNode signature:/LabelNode|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractInsnNode]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LabelNode
+      CONSTRUCTOR signature:/LabelNode.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.LabelNode [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (next: <root>.AbstractInsnNode?) [primary] declared in <root>.AbstractInsnNode'
+            next: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LabelNode signature:/LabelNode|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractInsnNode]'
+    FUN name:isDeadLineNumber signature:/isDeadLineNumber|isDeadLineNumber(LineNumberNode;kotlin.Int;kotlin.Array<out|kotlin.Any?>){}[0] visibility:public modality:FINAL <> (insn:<root>.LineNumberNode, index:<unbound IrClassSymbolImpl>, frames:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:insn index:0 type:<root>.LineNumberNode
+      VALUE_PARAMETER name:index index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:frames index:2 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        VAR name:finger type:<root>.AbstractInsnNode [var]
+          GET_VAR 'insn: <root>.LineNumberNode declared in <root>.isDeadLineNumber' type=<root>.LineNumberNode origin=null
+        VAR name:fingerIndex type:<unbound IrClassSymbolImpl> [var]
+          GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:hasDeadInsn type:<unbound IrClassSymbolImpl> [var]
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        WHILE label=loop origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            SET_VAR 'var finger: <root>.AbstractInsnNode [var] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=EQ
+              BLOCK type=<root>.AbstractInsnNode origin=ELVIS
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<root>.AbstractInsnNode? [val]
+                  CALL 'public final fun <get-next> (): <root>.AbstractInsnNode? declared in <root>.AbstractInsnNode' type=<root>.AbstractInsnNode? origin=GET_PROPERTY
+                    $this: GET_VAR 'var finger: <root>.AbstractInsnNode [var] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode origin=null
+                WHEN type=<root>.AbstractInsnNode origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_elvis_lhs: <root>.AbstractInsnNode? [val] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: BREAK label=loop loop.label=loop
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: GET_VAR 'val tmp0_elvis_lhs: <root>.AbstractInsnNode? [val] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode? origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                  GET_VAR 'var fingerIndex: <unbound IrClassSymbolImpl> [var] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                SET_VAR 'var fingerIndex: <unbound IrClassSymbolImpl> [var] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=null
+                GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=null
+            BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+              VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:<root>.AbstractInsnNode [val]
+                GET_VAR 'var finger: <root>.AbstractInsnNode [var] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.LabelNode
+                    GET_VAR 'val tmp1_subject: <root>.AbstractInsnNode [val] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode origin=null
+                  then: CONTINUE label=loop loop.label=loop
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.LineNumberNode
+                    GET_VAR 'val tmp1_subject: <root>.AbstractInsnNode [val] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode origin=null
+                  then: WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: CALL 'public final fun <get-line> (): <unbound IrClassSymbolImpl> declared in <root>.LineNumberNode' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: TYPE_OP type=<root>.LineNumberNode origin=IMPLICIT_CAST typeOperand=<root>.LineNumberNode
+                              GET_VAR 'var finger: <root>.AbstractInsnNode [var] declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode origin=null
+                          arg1: CALL 'public final fun <get-line> (): <unbound IrClassSymbolImpl> declared in <root>.LineNumberNode' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR 'insn: <root>.LineNumberNode declared in <root>.isDeadLineNumber' type=<root>.LineNumberNode origin=null
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun isDeadLineNumber (insn: <root>.LineNumberNode, index: <unbound IrClassSymbolImpl>, frames: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>'
+                        GET_VAR 'var hasDeadInsn: <unbound IrClassSymbolImpl> [var] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                              $this: GET_VAR 'frames: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?> declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?> origin=null
+                              1: GET_VAR 'var fingerIndex: <unbound IrClassSymbolImpl> [var] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun isDeadLineNumber (insn: <root>.LineNumberNode, index: <unbound IrClassSymbolImpl>, frames: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>'
+                          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                    SET_VAR 'var hasDeadInsn: <unbound IrClassSymbolImpl> [var] declared in <root>.isDeadLineNumber' type=<unbound IrClassSymbolImpl> origin=EQ
+                      CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isDeadLineNumber (insn: <root>.LineNumberNode, index: <unbound IrClassSymbolImpl>, frames: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:node type:<root>.LineNumberNode [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (next: <root>.AbstractInsnNode?) [primary] declared in <root>.LineNumberNode' type=<root>.LineNumberNode origin=null
+            next: CONSTRUCTOR_CALL 'public constructor <init> (next: <root>.AbstractInsnNode?) [primary] declared in <root>.LineNumberNode' type=<root>.LineNumberNode origin=null
+              next: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.LabelNode' type=<root>.LabelNode origin=null
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun isDeadLineNumber (insn: <root>.LineNumberNode, index: <unbound IrClassSymbolImpl>, frames: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            insn: GET_VAR 'val node: <root>.LineNumberNode [val] declared in <root>.box' type=<root>.LineNumberNode origin=null
+            index: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            frames: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?> varargElementType=<unbound IrClassSymbolImpl>?
+                CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+                CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

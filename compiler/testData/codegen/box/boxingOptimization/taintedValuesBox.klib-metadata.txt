@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> put(x: T#0, maxExclusive: kotlin/Int, isEmpty: kotlin/Function1<kotlin/Int, kotlin/Boolean>, equals: kotlin/Function2<T#0, T#0, kotlin/Boolean>, fetch: kotlin/Function1<kotlin/Int, T#0>, store: kotlin/Function2<kotlin/Int, T#0, kotlin/Unit>): kotlin/Boolean
+
+      public final fun putNonNegInt(x: kotlin/Int): kotlin/Boolean
+
+      public final const val SIZE: kotlin/Int /* = 16 */
+        public final get
+
+      public final val arr: kotlin/IntArray
+        public final get
+    }
+  }
+}

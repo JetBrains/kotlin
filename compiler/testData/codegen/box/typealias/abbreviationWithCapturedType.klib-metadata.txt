@@ -1,0 +1,88 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DynamoColumn
+    // class name: DynamoColumnType
+    // class name: DynamoCompositeKey
+    // class name: DynamoKey
+    // class name: DynamoKeyColumnType
+    // class name: DynamoPartitionKey
+
+    public open class DynamoColumn<T#0 /* V */, T#1 /* T */ : DynamoColumnType<T#0>> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface DynamoColumnType<T#0 /* V */> : kotlin/Any {
+    }
+
+    public final data class DynamoCompositeKey<T#0 /* P */, T#1 /* S */> : DynamoKey {
+
+      public constructor(partitionKey: DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */, sortKey: DynamoColumn<T#1, out DynamoKeyColumnType<T#1>> /* = DKeyColumn^<T#1> */)
+
+      public final /* synthesized */ operator fun component1(): DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */
+
+      public final /* synthesized */ operator fun component2(): DynamoColumn<T#1, out DynamoKeyColumnType<T#1>> /* = DKeyColumn^<T#1> */
+
+      public final /* synthesized */ fun copy(partitionKey: DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */ /* = ... */, sortKey: DynamoColumn<T#1, out DynamoKeyColumnType<T#1>> /* = DKeyColumn^<T#1> */ /* = ... */): DynamoCompositeKey<T#0, T#1>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val partitionKey: DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */
+        public final get
+
+      public final val sortKey: DynamoColumn<T#1, out DynamoKeyColumnType<T#1>> /* = DKeyColumn^<T#1> */
+        public final get
+    }
+
+    public sealed class DynamoKey : kotlin/Any {
+
+      protected constructor()
+
+      // sealed subclass: DynamoCompositeKey
+
+      // sealed subclass: DynamoPartitionKey
+    }
+
+    public abstract interface DynamoKeyColumnType<T#0 /* V */> : DynamoColumnType<T#0> {
+    }
+
+    public final data class DynamoPartitionKey<T#0 /* P */> : DynamoKey {
+
+      public constructor(partitionKey: DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */)
+
+      public final /* synthesized */ operator fun component1(): DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */
+
+      public final /* synthesized */ fun copy(partitionKey: DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */ /* = ... */): DynamoPartitionKey<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val partitionKey: DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DKeyColumn^<T#0> */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val DynamoKey.columns: kotlin/collections/List<DynamoColumn<out kotlin/Any?, out DynamoKeyColumnType<out kotlin/Any?>>>
+        public final /* non-default */ get
+
+      public final val DynamoKey.columnsSet: kotlin/collections/MutableSet<DynamoColumn<out kotlin/Any?, out DynamoKeyColumnType<out kotlin/Any?>>>
+        public final /* non-default */ get
+
+      public typealias DKeyColumn<T#0 /* V */> = DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> /* = DynamoColumn<T#0, out DynamoKeyColumnType<T#0>> */
+    }
+  }
+}

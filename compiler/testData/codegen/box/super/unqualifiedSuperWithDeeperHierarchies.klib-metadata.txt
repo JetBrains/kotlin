@@ -1,0 +1,73 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DeepBase
+    // class name: DeepDerived
+    // class name: DeepInterface
+    // class name: DeeperBase
+    // class name: DeeperInterface
+
+    public open class DeepBase : DeeperBase {
+
+      public constructor()
+    }
+
+    public final class DeepDerived : DeepBase, DeepInterface {
+
+      public constructor()
+
+      public final fun callsSuperDeepInterfaceFun(): kotlin/String
+
+      public final fun callsSuperDeeperBaseFun(): kotlin/String
+
+      public final fun callsSuperDeeperInterfaceFun(): kotlin/String
+
+      public open fun deepInterfaceFun(): kotlin/String
+
+      public open fun deeperBaseFun(): kotlin/String
+
+      public open fun deeperInterfaceFun(): kotlin/String
+
+      public final fun getsSuperDeeperBaseProp(): kotlin/String
+
+      public final fun getsSuperDeeperInterfaceProp(): kotlin/String
+
+      public open val deeperBaseProp: kotlin/String
+        public open /* non-default */ get
+
+      public open val deeperInterfaceProp: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface DeepInterface : DeeperInterface {
+
+      public open fun deepInterfaceFun(): kotlin/String
+    }
+
+    public open class DeeperBase : kotlin/Any {
+
+      public constructor()
+
+      public open fun deeperBaseFun(): kotlin/String
+
+      public open val deeperBaseProp: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface DeeperInterface : kotlin/Any {
+
+      public open fun deeperInterfaceFun(): kotlin/String
+
+      public open val deeperInterfaceProp: kotlin/String
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

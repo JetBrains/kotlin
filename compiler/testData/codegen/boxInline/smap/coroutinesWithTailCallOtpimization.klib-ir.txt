@@ -1,0 +1,77 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/box.kt
+    CLASS CLASS name:EmptyContinuation signature:/EmptyContinuation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyContinuation
+      CONSTRUCTOR signature:/EmptyContinuation.<init>|<init>(kotlin.coroutines.CoroutineContext){}[0] visibility:public <> (context:<unbound IrClassSymbolImpl>) returnType:<root>.EmptyContinuation [primary]
+        VALUE_PARAMETER name:context index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:EmptyContinuation signature:/EmptyContinuation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>]'
+      PROPERTY name:context signature:/EmptyContinuation.context|{}context[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:context signature:[ /EmptyContinuation.context|{}context[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:kotlin.coroutines.CoroutineContext visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'context: <unbound IrClassSymbolImpl> declared in <root>.EmptyContinuation.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-context> signature:/EmptyContinuation.context.<get-context>|<get-context>(){}[0] visibility:public modality:OPEN <> ($this:<root>.EmptyContinuation) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:context signature:/EmptyContinuation.context|{}context[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.EmptyContinuation
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-context> (): <unbound IrClassSymbolImpl> declared in <root>.EmptyContinuation'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:context signature:[ /EmptyContinuation.context|{}context[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:kotlin.coroutines.CoroutineContext visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.EmptyContinuation declared in <root>.EmptyContinuation.<get-context>' type=<root>.EmptyContinuation origin=null
+      CLASS OBJECT name:Companion signature:/EmptyContinuation.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.EmptyContinuation]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyContinuation.Companion
+        CONSTRUCTOR signature:/EmptyContinuation.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EmptyContinuation.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (context: <unbound IrClassSymbolImpl>) [primary] declared in <root>.EmptyContinuation'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/EmptyContinuation.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.EmptyContinuation]'
+      FUN name:resumeWith signature:/EmptyContinuation.resumeWith|resumeWith(kotlin.Result<kotlin.Any?>){}[0] visibility:public modality:OPEN <> ($this:<root>.EmptyContinuation, result:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.EmptyContinuation
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: GET_VAR 'result: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.EmptyContinuation.resumeWith' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: GET_OBJECT 'CLASS OBJECT name:Companion signature:/EmptyContinuation.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.EmptyContinuation]' type=<root>.EmptyContinuation.Companion
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public final fun inlineMe14 (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>'
+                          GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/inline.kt
+    CLASS INTERFACE name:SuspendRunnable signature:/SuspendRunnable|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuspendRunnable
+      FUN name:run signature:/SuspendRunnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SuspendRunnable) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendRunnable
+    FUN name:inlineMe4 signature:/inlineMe4|inlineMe4(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline,suspend]
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.inlineMe4' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:inlineMe14 signature:/inlineMe14|inlineMe14(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline,suspend]
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun inlineMe14 (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>'
+          CALL 'public final fun inlineMe4 (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in <root>.inlineMe14' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null

@@ -1,0 +1,62 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+
+    public final data class Delegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(data: T#0)
+
+      public final /* synthesized */ operator fun component1(): T#0
+
+      public final /* synthesized */ fun copy(data: T#0 /* = ... */): Delegate<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val data: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun Delegate<*>.getValue(receiver: kotlin/Any?, p: kotlin/Any): kotlin/String
+
+      public final operator fun <T#0 /* T */> kotlin/String.provideDelegate(receiver: kotlin/Any?, p: kotlin/Any): Delegate<T#0>
+
+      public final operator fun <T#0 /* T */> Delegate<T#0>.setValue(receiver: kotlin/Any?, p: kotlin/Any, value: T#0): kotlin/Unit
+
+      public final var counter: kotlin/Int
+        public final get
+        public final set
+
+      public final /* delegated */ var test1: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+
+      public final /* delegated */ var test2: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+
+      public final /* delegated */ var test3: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+
+      public final /* delegated */ var test4: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+
+      public final /* delegated */ var test5: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+    }
+  }
+}

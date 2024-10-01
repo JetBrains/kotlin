@@ -1,0 +1,370 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/boxPrimitiveTypeInClinitOfClassObject.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Companion
+        CONSTRUCTOR signature:/A.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:xi signature:/A.Companion.xi|{}xi[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xi signature:[ /A.Companion.xi|{}xi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xi> signature:/A.Companion.xi.<get-xi>|<get-xi>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xi signature:/A.Companion.xi|{}xi[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xi> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xi signature:[ /A.Companion.xi|{}xi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xi>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xi> signature:/A.Companion.xi.<set-xi>|<set-xi>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xi signature:/A.Companion.xi|{}xi[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xi signature:[ /A.Companion.xi|{}xi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xi>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.A.Companion.<set-xi>' type=<unbound IrClassSymbolImpl> origin=null
+        PROPERTY name:xin signature:/A.Companion.xin|{}xin[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xin signature:[ /A.Companion.xin|{}xin[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xin> signature:/A.Companion.xin.<get-xin>|<get-xin>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xin signature:/A.Companion.xin|{}xin[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xin> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xin signature:[ /A.Companion.xin|{}xin[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xin>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xin> signature:/A.Companion.xin.<set-xin>|<set-xin>(kotlin.Int?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xin signature:/A.Companion.xin|{}xin[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xin signature:[ /A.Companion.xin|{}xin[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xin>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xin>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xinn signature:/A.Companion.xinn|{}xinn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xinn signature:[ /A.Companion.xinn|{}xinn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xinn> signature:/A.Companion.xinn.<get-xinn>|<get-xinn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xinn signature:/A.Companion.xinn|{}xinn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xinn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xinn signature:[ /A.Companion.xinn|{}xinn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xinn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xinn> signature:/A.Companion.xinn.<set-xinn>|<set-xinn>(kotlin.Int?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xinn signature:/A.Companion.xinn|{}xinn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xinn signature:[ /A.Companion.xinn|{}xinn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xinn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xinn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xl signature:/A.Companion.xl|{}xl[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xl signature:[ /A.Companion.xl|{}xl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xl> signature:/A.Companion.xl.<get-xl>|<get-xl>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xl signature:/A.Companion.xl|{}xl[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xl> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xl signature:[ /A.Companion.xl|{}xl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xl>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xl> signature:/A.Companion.xl.<set-xl>|<set-xl>(kotlin.Long){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xl signature:/A.Companion.xl|{}xl[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xl signature:[ /A.Companion.xl|{}xl[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xl>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.A.Companion.<set-xl>' type=<unbound IrClassSymbolImpl> origin=null
+        PROPERTY name:xln signature:/A.Companion.xln|{}xln[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xln signature:[ /A.Companion.xln|{}xln[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xln> signature:/A.Companion.xln.<get-xln>|<get-xln>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xln signature:/A.Companion.xln|{}xln[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xln> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xln signature:[ /A.Companion.xln|{}xln[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xln>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xln> signature:/A.Companion.xln.<set-xln>|<set-xln>(kotlin.Long?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xln signature:/A.Companion.xln|{}xln[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xln signature:[ /A.Companion.xln|{}xln[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xln>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xln>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xlnn signature:/A.Companion.xlnn|{}xlnn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xlnn signature:[ /A.Companion.xlnn|{}xlnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xlnn> signature:/A.Companion.xlnn.<get-xlnn>|<get-xlnn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xlnn signature:/A.Companion.xlnn|{}xlnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xlnn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xlnn signature:[ /A.Companion.xlnn|{}xlnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xlnn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xlnn> signature:/A.Companion.xlnn.<set-xlnn>|<set-xlnn>(kotlin.Long?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xlnn signature:/A.Companion.xlnn|{}xlnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xlnn signature:[ /A.Companion.xlnn|{}xlnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xlnn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xlnn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xb signature:/A.Companion.xb|{}xb[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xb signature:[ /A.Companion.xb|{}xb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xb> signature:/A.Companion.xb.<get-xb>|<get-xb>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xb signature:/A.Companion.xb|{}xb[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xb> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xb signature:[ /A.Companion.xb|{}xb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xb>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xb> signature:/A.Companion.xb.<set-xb>|<set-xb>(kotlin.Byte){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xb signature:/A.Companion.xb|{}xb[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xb signature:[ /A.Companion.xb|{}xb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xb>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.A.Companion.<set-xb>' type=<unbound IrClassSymbolImpl> origin=null
+        PROPERTY name:xbn signature:/A.Companion.xbn|{}xbn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xbn signature:[ /A.Companion.xbn|{}xbn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xbn> signature:/A.Companion.xbn.<get-xbn>|<get-xbn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xbn signature:/A.Companion.xbn|{}xbn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xbn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xbn signature:[ /A.Companion.xbn|{}xbn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xbn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xbn> signature:/A.Companion.xbn.<set-xbn>|<set-xbn>(kotlin.Byte?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xbn signature:/A.Companion.xbn|{}xbn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xbn signature:[ /A.Companion.xbn|{}xbn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xbn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xbn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xbnn signature:/A.Companion.xbnn|{}xbnn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xbnn signature:[ /A.Companion.xbnn|{}xbnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xbnn> signature:/A.Companion.xbnn.<get-xbnn>|<get-xbnn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xbnn signature:/A.Companion.xbnn|{}xbnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xbnn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xbnn signature:[ /A.Companion.xbnn|{}xbnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xbnn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xbnn> signature:/A.Companion.xbnn.<set-xbnn>|<set-xbnn>(kotlin.Byte?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xbnn signature:/A.Companion.xbnn|{}xbnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xbnn signature:[ /A.Companion.xbnn|{}xbnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xbnn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xbnn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xf signature:/A.Companion.xf|{}xf[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xf signature:[ /A.Companion.xf|{}xf[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xf> signature:/A.Companion.xf.<get-xf>|<get-xf>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xf signature:/A.Companion.xf|{}xf[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xf> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xf signature:[ /A.Companion.xf|{}xf[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xf>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xf> signature:/A.Companion.xf.<set-xf>|<set-xf>(kotlin.Float){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xf signature:/A.Companion.xf|{}xf[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xf signature:[ /A.Companion.xf|{}xf[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xf>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.A.Companion.<set-xf>' type=<unbound IrClassSymbolImpl> origin=null
+        PROPERTY name:xfn signature:/A.Companion.xfn|{}xfn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xfn signature:[ /A.Companion.xfn|{}xfn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xfn> signature:/A.Companion.xfn.<get-xfn>|<get-xfn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xfn signature:/A.Companion.xfn|{}xfn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xfn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xfn signature:[ /A.Companion.xfn|{}xfn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xfn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xfn> signature:/A.Companion.xfn.<set-xfn>|<set-xfn>(kotlin.Float?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xfn signature:/A.Companion.xfn|{}xfn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xfn signature:[ /A.Companion.xfn|{}xfn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xfn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xfn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xfnn signature:/A.Companion.xfnn|{}xfnn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xfnn signature:[ /A.Companion.xfnn|{}xfnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xfnn> signature:/A.Companion.xfnn.<get-xfnn>|<get-xfnn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xfnn signature:/A.Companion.xfnn|{}xfnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xfnn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xfnn signature:[ /A.Companion.xfnn|{}xfnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xfnn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xfnn> signature:/A.Companion.xfnn.<set-xfnn>|<set-xfnn>(kotlin.Float?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xfnn signature:/A.Companion.xfnn|{}xfnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xfnn signature:[ /A.Companion.xfnn|{}xfnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xfnn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xfnn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xd signature:/A.Companion.xd|{}xd[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xd signature:[ /A.Companion.xd|{}xd[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xd> signature:/A.Companion.xd.<get-xd>|<get-xd>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xd signature:/A.Companion.xd|{}xd[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xd> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xd signature:[ /A.Companion.xd|{}xd[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xd>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xd> signature:/A.Companion.xd.<set-xd>|<set-xd>(kotlin.Double){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xd signature:/A.Companion.xd|{}xd[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xd signature:[ /A.Companion.xd|{}xd[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xd>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.A.Companion.<set-xd>' type=<unbound IrClassSymbolImpl> origin=null
+        PROPERTY name:xdn signature:/A.Companion.xdn|{}xdn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xdn signature:[ /A.Companion.xdn|{}xdn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xdn> signature:/A.Companion.xdn.<get-xdn>|<get-xdn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xdn signature:/A.Companion.xdn|{}xdn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xdn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xdn signature:[ /A.Companion.xdn|{}xdn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xdn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xdn> signature:/A.Companion.xdn.<set-xdn>|<set-xdn>(kotlin.Double?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xdn signature:/A.Companion.xdn|{}xdn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xdn signature:[ /A.Companion.xdn|{}xdn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xdn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xdn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xdnn signature:/A.Companion.xdnn|{}xdnn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xdnn signature:[ /A.Companion.xdnn|{}xdnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xdnn> signature:/A.Companion.xdnn.<get-xdnn>|<get-xdnn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xdnn signature:/A.Companion.xdnn|{}xdnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xdnn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xdnn signature:[ /A.Companion.xdnn|{}xdnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xdnn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xdnn> signature:/A.Companion.xdnn.<set-xdnn>|<set-xdnn>(kotlin.Double?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xdnn signature:/A.Companion.xdnn|{}xdnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xdnn signature:[ /A.Companion.xdnn|{}xdnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xdnn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xdnn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xs signature:/A.Companion.xs|{}xs[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /A.Companion.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> signature:/A.Companion.xs.<get-xs>|<get-xs>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xs signature:/A.Companion.xs|{}xs[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xs> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /A.Companion.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xs>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xs> signature:/A.Companion.xs.<set-xs>|<set-xs>(kotlin.Short){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xs signature:/A.Companion.xs|{}xs[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /A.Companion.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xs>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.A.Companion.<set-xs>' type=<unbound IrClassSymbolImpl> origin=null
+        PROPERTY name:xsn signature:/A.Companion.xsn|{}xsn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xsn signature:[ /A.Companion.xsn|{}xsn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xsn> signature:/A.Companion.xsn.<get-xsn>|<get-xsn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xsn signature:/A.Companion.xsn|{}xsn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xsn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xsn signature:[ /A.Companion.xsn|{}xsn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xsn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xsn> signature:/A.Companion.xsn.<set-xsn>|<set-xsn>(kotlin.Short?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xsn signature:/A.Companion.xsn|{}xsn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xsn signature:[ /A.Companion.xsn|{}xsn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xsn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xsn>' type=<unbound IrClassSymbolImpl>? origin=null
+        PROPERTY name:xsnn signature:/A.Companion.xsnn|{}xsnn[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:xsnn signature:[ /A.Companion.xsnn|{}xsnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xsnn> signature:/A.Companion.xsnn.<get-xsnn>|<get-xsnn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>?
+            correspondingProperty: PROPERTY name:xsnn signature:/A.Companion.xsnn|{}xsnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xsnn> (): <unbound IrClassSymbolImpl>? declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xsnn signature:[ /A.Companion.xsnn|{}xsnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-xsnn>' type=<root>.A.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-xsnn> signature:/A.Companion.xsnn.<set-xsnn>|<set-xsnn>(kotlin.Short?){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:xsnn signature:/A.Companion.xsnn|{}xsnn[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xsnn signature:[ /A.Companion.xsnn|{}xsnn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xi type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<set-xsnn>' type=<root>.A.Companion origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.A.Companion.<set-xsnn>' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

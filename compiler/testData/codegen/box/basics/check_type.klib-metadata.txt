@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: I
+
+    public final class A : I {
+
+      public constructor()
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface I : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isNotTypeOf(a: kotlin/Any): kotlin/Boolean
+
+      public final fun isTypeNullableOf(a: kotlin/Any?): kotlin/Boolean
+
+      public final fun isTypeOf(a: kotlin/Any?): kotlin/Boolean
+
+      public final fun isTypeOfInterface(a: kotlin/Any): kotlin/Boolean
+    }
+  }
+}

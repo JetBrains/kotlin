@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:test fileName:/common.kt
+  FILE fqName:test fileName:/platform.kt
+    PROPERTY name:v signature:test/v|{}v[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:v signature:[ test/v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:test/v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:v signature:test/v|{}v[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ test/v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:extensionVal signature:test/extensionVal|@kotlin.Char{}extensionVal[0] visibility:public modality:FINAL [val]
+      FUN name:<get-extensionVal> signature:test/extensionVal.<get-extensionVal>|<get-extensionVal>@kotlin.Char(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:extensionVal signature:test/extensionVal|@kotlin.Char{}extensionVal[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-extensionVal> (): <unbound IrClassSymbolImpl> declared in test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in test.<get-extensionVal>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:extensionVar signature:test/extensionVar|@kotlin.String{}extensionVar[0] visibility:public modality:FINAL [var]
+      FUN name:<get-extensionVar> signature:test/extensionVar.<get-extensionVar>|<get-extensionVar>@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:extensionVar signature:test/extensionVar|@kotlin.String{}extensionVar[0] visibility:public modality:FINAL [var]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-extensionVar> (): <unbound IrClassSymbolImpl> declared in test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in test.<get-extensionVar>' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:<set-extensionVar> signature:test/extensionVar.<set-extensionVar>|<set-extensionVar>@kotlin.String(kotlin.Char){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:extensionVar signature:test/extensionVar|@kotlin.String{}extensionVar[0] visibility:public modality:FINAL [var]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CALL 'public final fun <get-extensionVal> (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $receiver: CONST Char type=<unbound IrClassSymbolImpl> value='O'
+            1: CALL 'public final fun <get-extensionVar> (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="K"

@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Path
+
+    public final class test/Path : kotlin/Any {
+
+      public constructor()
+
+      public final val events: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final inline fun doSomething(path: test/Path): kotlin/String
+    }
+  }
+}

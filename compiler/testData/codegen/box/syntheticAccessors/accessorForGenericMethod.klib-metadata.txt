@@ -1,0 +1,52 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+
+    public open class a/A<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      protected final fun getK(x: T#0): kotlin/String
+
+      protected final fun getO(x: T#0): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: b
+
+    // class name: b/B
+    // class name: b/B.Inner
+
+    public final class b/B : a/A<kotlin/Long> {
+
+      public constructor()
+
+      public final fun getOK(): kotlin/String
+
+      public final fun lambdaGetK(): kotlin/Function0<kotlin/String>
+
+      // nested class: Inner
+    }
+
+    public final inner class b/B.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun innerGetO(): kotlin/String
+    }
+  }
+}

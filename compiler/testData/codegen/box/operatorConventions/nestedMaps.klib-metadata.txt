@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Map1
+    // class name: Map2
+
+    public final object Map1 : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun get(i: kotlin/Int, j: kotlin/Int): Map2
+    }
+
+    public final object Map2 : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun get(i: kotlin/Int, j: kotlin/Int): kotlin/Int
+
+      public final operator fun set(i: kotlin/Int, j: kotlin/Int, newValue: kotlin/Int): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

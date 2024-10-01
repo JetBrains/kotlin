@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Season
+    // class name: Season.Cold
+    // class name: Season.Warm
+
+    public sealed class Season : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: Warm
+
+      // nested class: Cold
+
+      // sealed subclass: Season.Cold
+
+      // sealed subclass: Season.Warm
+    }
+
+    public final class Season.Cold : Season {
+
+      public constructor()
+    }
+
+    public final class Season.Warm : Season {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): Season
+    }
+  }
+}

@@ -1,0 +1,215 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/removeAtTwoSpecialBridges.kt
+    CLASS CLASS name:A0 signature:/A0|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><E of <root>.A0>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A0<E of <root>.A0>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /A0|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/A0.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A0<E of <root>.A0> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A0 signature:/A0|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><E of <root>.A0>]'
+      FUN name:add signature:/A0.add|add(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, element:E of <root>.A0) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:add signature:/A0.add|add(kotlin.Int;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, index:<unbound IrClassSymbolImpl>, element:E of <root>.A0) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:addAll signature:/A0.addAll|addAll(kotlin.Int;kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, index:<unbound IrClassSymbolImpl>, elements:<unbound IrClassSymbolImpl><E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:elements index:1 type:<unbound IrClassSymbolImpl><E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:addAll signature:/A0.addAll|addAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, elements:<unbound IrClassSymbolImpl><E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:clear signature:/A0.clear|clear(){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:listIterator signature:/A0.listIterator|listIterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>) returnType:<unbound IrClassSymbolImpl><E of <root>.A0>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:listIterator signature:/A0.listIterator|listIterator(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><E of <root>.A0>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:remove signature:/A0.remove|remove(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, element:E of <root>.A0) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:removeAll signature:/A0.removeAll|removeAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, elements:<unbound IrClassSymbolImpl><E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:removeAt signature:/A0.removeAt|removeAt(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, index:<unbound IrClassSymbolImpl>) returnType:E of <root>.A0
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAt (index: <unbound IrClassSymbolImpl>): E of <root>.A0 declared in <root>.A0'
+            TYPE_OP type=E of <root>.A0 origin=CAST typeOperand=E of <root>.A0
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+      FUN name:retainAll signature:/A0.retainAll|retainAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, elements:<unbound IrClassSymbolImpl><E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:/A0.set|set(kotlin.Int;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, index:<unbound IrClassSymbolImpl>, element:E of <root>.A0) returnType:E of <root>.A0 [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:subList signature:/A0.subList|subList(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, fromIndex:<unbound IrClassSymbolImpl>, toIndex:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><E of <root>.A0>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:fromIndex index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:toIndex index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:size signature:/A0.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/A0.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/A0.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:contains signature:/A0.contains|contains(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, element:E of <root>.A0) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:containsAll signature:/A0.containsAll|containsAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, elements:<unbound IrClassSymbolImpl><E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/A0.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, index:<unbound IrClassSymbolImpl>) returnType:E of <root>.A0 [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:indexOf signature:/A0.indexOf|indexOf(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, element:E of <root>.A0) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:isEmpty signature:/A0.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:lastIndexOf signature:/A0.lastIndexOf|lastIndexOf(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>, element:E of <root>.A0) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.A0
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:/A0.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.A0<E of <root>.A0>) returnType:<unbound IrClassSymbolImpl><E of <root>.A0> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A0<E of <root>.A0>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:A1 signature:/A1|null[0] modality:FINAL visibility:public superTypes:[<root>.A0<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A1
+      CONSTRUCTOR signature:/A1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A0'
+            <E>: <unbound IrClassSymbolImpl>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 signature:/A1|null[0] modality:FINAL visibility:public superTypes:[<root>.A0<<unbound IrClassSymbolImpl>>]'
+      FUN name:removeAt signature:/A1.removeAt|removeAt(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.A1, p0:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun removeAt (index: <unbound IrClassSymbolImpl>): E of <root>.A0 declared in <root>.A0
+        $this: VALUE_PARAMETER name:<this> type:<root>.A1
+        VALUE_PARAMETER name:p0 index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAt (p0: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A1'
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+    CLASS CLASS name:A2 signature:/A2|null[0] modality:FINAL visibility:public superTypes:[<root>.A0<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2
+      CONSTRUCTOR signature:/A2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A0'
+            <E>: <unbound IrClassSymbolImpl>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 signature:/A2|null[0] modality:FINAL visibility:public superTypes:[<root>.A0<<unbound IrClassSymbolImpl>>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a1 type:<root>.A1 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A1' type=<root>.A1 origin=null
+        VAR name:a2 type:<root>.A2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A2' type=<root>.A2 origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public open fun removeAt (p0: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.A1' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val a1: <root>.A1 [val] declared in <root>.box' type=<root>.A1 origin=null
+              p0: CONST Int type=<unbound IrClassSymbolImpl> value=123
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val a2: <root>.A2 [val] declared in <root>.box' type=<root>.A2 origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=456

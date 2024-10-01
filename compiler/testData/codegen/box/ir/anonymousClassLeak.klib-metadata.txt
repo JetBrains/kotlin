@@ -1,0 +1,101 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DelegateTest
+    // class name: FieldTest
+    // class name: FunTest
+
+    public final object DelegateTest : kotlin/Any {
+
+      private constructor()
+
+      public final fun bbb(): kotlin/Any
+
+      public final /* delegated */ val f: kotlin/Any
+        public final /* non-default */ get
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final object FieldTest : kotlin/Any {
+
+      private constructor()
+
+      public final val bbb: kotlin/Any
+        public final get
+
+      private final val qqq: kotlin/Any
+        private final get
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+
+      private final val test: kotlin/Any
+        private final get
+
+      private final val ttt: kotlin/Any
+        private final get
+    }
+
+    public final object FunTest : kotlin/Any {
+
+      private constructor()
+
+      private final fun bar(): kotlin/Any
+
+      public final fun bbb(): kotlin/Any
+
+      private final fun qqq(): kotlin/Any
+
+      private final fun ttt(): kotlin/Any
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final inline fun <T#0 /* T */> T#0.also(f: kotlin/Function1<T#0, kotlin/Unit>): T#0
+    }
+  }
+}
+
+// MODULE: lib2
+library {
+  // module name: <lib2>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun test1(): kotlin/String
+
+      public final fun test2(): kotlin/String
+
+      public final fun test3(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

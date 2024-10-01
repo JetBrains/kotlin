@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: CWithDefault
+    // class name: CWithVararg
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class CWithDefault : kotlin/Any {
+
+      public constructor(x: kotlin/Int /* = ... */)
+    }
+
+    public final class CWithVararg : kotlin/Any {
+
+      public constructor(vararg x: kotlin/Int /* kotlin/IntArray */)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun useUnit(fn: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final var cInit: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var cWithDefaultInit: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var cWithVarargInit: kotlin/Boolean
+        public final get
+        public final set
+    }
+  }
+}

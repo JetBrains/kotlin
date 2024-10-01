@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun use(fn: kotlin/Function1<kotlin/Array<kotlin/String>, kotlin/Array<kotlin/String>>): kotlin/Array<kotlin/String>
+    }
+  }
+}

@@ -1,0 +1,75 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Arguments
+    // class name: DefaultValue
+    // class name: GradleInputTypes
+    // class name: GradleOption
+    // class name: JvmArguments
+
+    public open class Arguments : kotlin/Any {
+
+      public constructor()
+
+      @GradleOption(value = DefaultValue.BOOLEAN_FALSE_DEFAULT, gradleInputType = GradleInputTypes.INPUT)
+      public final /* delegated */ val useK2: kotlin/Boolean
+        public final /* non-default */ get
+    }
+
+    public final enum class DefaultValue : kotlin/Enum<DefaultValue> {
+
+      private constructor()
+
+      BOOLEAN_FALSE_DEFAULT,
+
+      BOOLEAN_TRUE_DEFAULT,
+
+      // has Enum.entries
+    }
+
+    public final enum class GradleInputTypes : kotlin/Enum<GradleInputTypes> {
+
+      private constructor(typeAsString: kotlin/String)
+
+      public open fun toString(): kotlin/String
+
+      public final val typeAsString: kotlin/String
+        public final get
+
+      INPUT,
+
+      INTERNAL,
+
+      // has Enum.entries
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+    public final annotation class GradleOption : kotlin/Annotation {
+
+      public constructor(value: DefaultValue, gradleInputType: GradleInputTypes)
+
+      public final val gradleInputType: GradleInputTypes
+        public final get
+
+      public final val value: DefaultValue
+        public final get
+    }
+
+    public final class JvmArguments : Arguments {
+
+      public constructor()
+
+      @GradleOption(value = DefaultValue.BOOLEAN_FALSE_DEFAULT, gradleInputType = GradleInputTypes.INPUT)
+      public final /* delegated */ val specific: kotlin/Boolean
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

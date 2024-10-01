@@ -1,0 +1,310 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt39824.kt
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:diContext signature:/diContext|diContext(0:0){0§<kotlin.Any>}[0] visibility:public modality:FINAL <C> (context:C of <root>.diContext) returnType:<root>.DIContext<C of <root>.diContext>
+      TYPE_PARAMETER name:C index:0 variance: signature:[ /diContext|diContext(0:0){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:context index:0 type:C of <root>.diContext
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun diContext <C> (context: C of <root>.diContext): <root>.DIContext<C of <root>.diContext> declared in <root>'
+          CALL 'public final fun invoke <C> (type: <root>.TypeToken<C of <root>.DIContext.Companion.invoke>, value: C of <root>.DIContext.Companion.invoke): <root>.DIContext<C of <root>.DIContext.Companion.invoke> [operator] declared in <root>.DIContext.Companion' type=<root>.DIContext<C of <root>.diContext> origin=null
+            <C>: C of <root>.diContext
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/DIContext.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.DIContext.Companion
+            type: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TypeToken' type=<root>.TypeToken<C of <root>.diContext> origin=null
+              <class: T>: C of <root>.diContext
+            value: GET_VAR 'context: C of <root>.diContext declared in <root>.diContext' type=C of <root>.diContext origin=null
+    FUN name:diContext signature:/diContext|diContext(kotlin.Function0<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <C> (getContext:<unbound IrClassSymbolImpl><C of <root>.diContext>) returnType:<root>.DIContext<C of <root>.diContext>
+      TYPE_PARAMETER name:C index:0 variance: signature:[ /diContext|diContext(kotlin.Function0<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:getContext index:0 type:<unbound IrClassSymbolImpl><C of <root>.diContext>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun diContext <C> (getContext: <unbound IrClassSymbolImpl><C of <root>.diContext>): <root>.DIContext<C of <root>.diContext> declared in <root>'
+          CALL 'public final fun invoke <C> (type: <root>.TypeToken<C of <root>.DIContext.Companion.invoke>, getValue: <unbound IrClassSymbolImpl><C of <root>.DIContext.Companion.invoke>): <root>.DIContext<C of <root>.DIContext.Companion.invoke> [operator] declared in <root>.DIContext.Companion' type=<root>.DIContext<C of <root>.diContext> origin=null
+            <C>: C of <root>.diContext
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/DIContext.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.DIContext.Companion
+            type: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TypeToken' type=<root>.TypeToken<C of <root>.diContext> origin=null
+              <class: T>: C of <root>.diContext
+            getValue: FUN_EXPR type=<unbound IrClassSymbolImpl><C of <root>.diContext> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:C of <root>.diContext
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): C of <root>.diContext declared in <root>.diContext'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=C of <root>.diContext origin=INVOKE
+                      $this: GET_VAR 'getContext: <unbound IrClassSymbolImpl><C of <root>.diContext> declared in <root>.diContext' type=<unbound IrClassSymbolImpl><C of <root>.diContext> origin=VARIABLE_AS_FUNCTION
+    CLASS INTERFACE name:DIContext signature:/DIContext|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DIContext<C of <root>.DIContext>
+      TYPE_PARAMETER name:C index:0 variance: signature:[ /DIContext|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      PROPERTY name:type signature:/DIContext.type|{}type[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> signature:/DIContext.type.<get-type>|<get-type>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.DIContext<C of <root>.DIContext>) returnType:<root>.TypeToken<C of <root>.DIContext>
+          correspondingProperty: PROPERTY name:type signature:/DIContext.type|{}type[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext<C of <root>.DIContext>
+      PROPERTY name:value signature:/DIContext.value|{}value[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/DIContext.value.<get-value>|<get-value>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.DIContext<C of <root>.DIContext>) returnType:C of <root>.DIContext
+          correspondingProperty: PROPERTY name:value signature:/DIContext.value|{}value[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext<C of <root>.DIContext>
+      FUN name:print signature:/DIContext.print|print(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext<C of <root>.DIContext>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DIContext<C of <root>.DIContext>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public abstract fun <get-value> (): C of <root>.DIContext declared in <root>.DIContext' type=C of <root>.DIContext origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.DIContext<C of <root>.DIContext> declared in <root>.DIContext.print' type=<root>.DIContext<C of <root>.DIContext> origin=null
+      CLASS CLASS name:Value signature:/DIContext.Value|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.DIContext<C of <root>.DIContext.Value>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+        TYPE_PARAMETER name:C index:0 variance: signature:[ /DIContext.Value|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+        CONSTRUCTOR signature:/DIContext.Value.<init>|<init>(TypeToken<1:0>;1:0){}[0] visibility:public <> (type:<root>.TypeToken<C of <root>.DIContext.Value>, value:C of <root>.DIContext.Value) returnType:<root>.DIContext.Value<C of <root>.DIContext.Value> [primary]
+          VALUE_PARAMETER name:type index:0 type:<root>.TypeToken<C of <root>.DIContext.Value>
+          VALUE_PARAMETER name:value index:1 type:C of <root>.DIContext.Value
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Value signature:/DIContext.Value|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.DIContext<C of <root>.DIContext.Value>]'
+        PROPERTY name:type signature:/DIContext.Value.type|{}type[0] visibility:public modality:OPEN [val]
+          FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'type: <root>.TypeToken<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.<init>' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> signature:/DIContext.Value.type.<get-type>|<get-type>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>) returnType:<root>.TypeToken<C of <root>.DIContext.Value>
+            correspondingProperty: PROPERTY name:type signature:/DIContext.Value.type|{}type[0] visibility:public modality:OPEN [val]
+            overridden:
+              public abstract fun <get-type> (): <root>.TypeToken<C of <root>.DIContext> declared in <root>.DIContext
+            $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-type> (): <root>.TypeToken<C of <root>.DIContext.Value> declared in <root>.DIContext.Value'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.<get-type>' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+        PROPERTY name:value signature:/DIContext.Value.value|{}value[0] visibility:public modality:OPEN [val]
+          FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'value: C of <root>.DIContext.Value declared in <root>.DIContext.Value.<init>' type=C of <root>.DIContext.Value origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/DIContext.Value.value.<get-value>|<get-value>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>) returnType:C of <root>.DIContext.Value
+            correspondingProperty: PROPERTY name:value signature:/DIContext.Value.value|{}value[0] visibility:public modality:OPEN [val]
+            overridden:
+              public abstract fun <get-value> (): C of <root>.DIContext declared in <root>.DIContext
+            $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-value> (): C of <root>.DIContext.Value declared in <root>.DIContext.Value'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.<get-value>' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/DIContext.Value.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>) returnType:<root>.TypeToken<C of <root>.DIContext.Value> [operator]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <root>.TypeToken<C of <root>.DIContext.Value> [operator] declared in <root>.DIContext.Value'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.component1' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:component2 signature:/DIContext.Value.component2|component2(){}[0] visibility:public modality:FINAL <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>) returnType:C of <root>.DIContext.Value [operator]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun component2 (): C of <root>.DIContext.Value [operator] declared in <root>.DIContext.Value'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.component2' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/DIContext.Value.copy|copy(TypeToken<1:0>;1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>, type:<root>.TypeToken<C of <root>.DIContext.Value>, value:C of <root>.DIContext.Value) returnType:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          VALUE_PARAMETER name:type index:0 type:<root>.TypeToken<C of <root>.DIContext.Value>
+            EXPRESSION_BODY
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.copy' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+          VALUE_PARAMETER name:value index:1 type:C of <root>.DIContext.Value
+            EXPRESSION_BODY
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.copy' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (type: <root>.TypeToken<C of <root>.DIContext.Value>, value: C of <root>.DIContext.Value): <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value'
+              CONSTRUCTOR_CALL 'public constructor <init> (type: <root>.TypeToken<C of <root>.DIContext.Value>, value: C of <root>.DIContext.Value) [primary] declared in <root>.DIContext.Value' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                <class: C>: C of <root>.DIContext.Value
+                type: GET_VAR 'type: <root>.TypeToken<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.copy' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                value: GET_VAR 'value: C of <root>.DIContext.Value declared in <root>.DIContext.Value.copy' type=C of <root>.DIContext.Value origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/DIContext.Value.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.DIContext.Value'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Value("
+                CONST String type=<unbound IrClassSymbolImpl> value="type="
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.toString' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=", "
+                CONST String type=<unbound IrClassSymbolImpl> value="value="
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.toString' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=")"
+        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/DIContext.Value.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          BLOCK_BODY
+            VAR name:result type:<unbound IrClassSymbolImpl> [var]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.hashCode' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+            SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.DIContext.Value.hashCode' type=<unbound IrClassSymbolImpl> origin=EQ
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.DIContext.Value.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=31
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                    receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.hashCode' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.DIContext.Value'
+              GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.DIContext.Value.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/DIContext.Value.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Value<C of <root>.DIContext.Value>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Value<C of <root>.DIContext.Value>
+          VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                  arg0: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.equals' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                  arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DIContext.Value.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DIContext.Value'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.DIContext.Value<C of <root>.DIContext.Value>
+                  GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DIContext.Value.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DIContext.Value'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.DIContext.Value<C of <root>.DIContext.Value> [val]
+              TYPE_OP type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=CAST typeOperand=<root>.DIContext.Value<C of <root>.DIContext.Value>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DIContext.Value.equals' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                      receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.equals' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                    arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Value.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Value> origin=null
+                      receiver: GET_VAR 'val tmp0_other_with_cast: <root>.DIContext.Value<C of <root>.DIContext.Value> [val] declared in <root>.DIContext.Value.equals' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DIContext.Value'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                      receiver: GET_VAR '<this>: <root>.DIContext.Value<C of <root>.DIContext.Value> declared in <root>.DIContext.Value.equals' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                    arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /DIContext.Value.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:C of <root>.DIContext.Value visibility:private [final]' type=C of <root>.DIContext.Value origin=null
+                      receiver: GET_VAR 'val tmp0_other_with_cast: <root>.DIContext.Value<C of <root>.DIContext.Value> [val] declared in <root>.DIContext.Value.equals' type=<root>.DIContext.Value<C of <root>.DIContext.Value> origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DIContext.Value'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DIContext.Value'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      CLASS CLASS name:Lazy signature:/DIContext.Lazy|null[0] modality:FINAL visibility:public superTypes:[<root>.DIContext<C of <root>.DIContext.Lazy>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>
+        TYPE_PARAMETER name:C index:0 variance: signature:[ /DIContext.Lazy|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+        CONSTRUCTOR signature:/DIContext.Lazy.<init>|<init>(TypeToken<1:0>;kotlin.Function0<1:0>){}[0] visibility:public <> (type:<root>.TypeToken<C of <root>.DIContext.Lazy>, getValue:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy>) returnType:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy> [primary]
+          VALUE_PARAMETER name:type index:0 type:<root>.TypeToken<C of <root>.DIContext.Lazy>
+          VALUE_PARAMETER name:getValue index:1 type:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Lazy signature:/DIContext.Lazy|null[0] modality:FINAL visibility:public superTypes:[<root>.DIContext<C of <root>.DIContext.Lazy>]'
+        PROPERTY name:type signature:/DIContext.Lazy.type|{}type[0] visibility:public modality:OPEN [val]
+          FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Lazy.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Lazy> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'type: <root>.TypeToken<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy.<init>' type=<root>.TypeToken<C of <root>.DIContext.Lazy> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> signature:/DIContext.Lazy.type.<get-type>|<get-type>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>) returnType:<root>.TypeToken<C of <root>.DIContext.Lazy>
+            correspondingProperty: PROPERTY name:type signature:/DIContext.Lazy.type|{}type[0] visibility:public modality:OPEN [val]
+            overridden:
+              public abstract fun <get-type> (): <root>.TypeToken<C of <root>.DIContext> declared in <root>.DIContext
+            $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-type> (): <root>.TypeToken<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type signature:[ /DIContext.Lazy.type|{}type[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<root>.TypeToken<C of <root>.DIContext.Lazy> visibility:private [final]' type=<root>.TypeToken<C of <root>.DIContext.Lazy> origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Lazy<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy.<get-type>' type=<root>.DIContext.Lazy<C of <root>.DIContext.Lazy> origin=null
+        PROPERTY name:getValue signature:/DIContext.Lazy.getValue|{}getValue[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:getValue signature:[ /DIContext.Lazy.getValue|{}getValue[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'getValue: <unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy.<init>' type=<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-getValue> signature:/DIContext.Lazy.getValue.<get-getValue>|<get-getValue>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>) returnType:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy>
+            correspondingProperty: PROPERTY name:getValue signature:/DIContext.Lazy.getValue|{}getValue[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-getValue> (): <unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:getValue signature:[ /DIContext.Lazy.getValue|{}getValue[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> visibility:private [final]' type=<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> origin=null
+                  receiver: GET_VAR '<this>: <root>.DIContext.Lazy<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy.<get-getValue>' type=<root>.DIContext.Lazy<C of <root>.DIContext.Lazy> origin=null
+        PROPERTY name:value signature:/DIContext.Lazy.value|{}value[0] visibility:public modality:OPEN [delegated,val]
+          FIELD PROPERTY_DELEGATE name:value$delegate signature:[ /DIContext.Lazy.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> origin=null
+                <1>: C of <root>.DIContext.Lazy
+                1: CALL 'public final fun <get-getValue> (): <unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy' type=<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.DIContext.Lazy<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy' type=<root>.DIContext.Lazy<C of <root>.DIContext.Lazy> origin=null
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-value> signature:/DIContext.Lazy.value.<get-value>|<get-value>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>) returnType:C of <root>.DIContext.Lazy
+            correspondingProperty: PROPERTY name:value signature:/DIContext.Lazy.value|{}value[0] visibility:public modality:OPEN [delegated,val]
+            overridden:
+              public abstract fun <get-value> (): C of <root>.DIContext declared in <root>.DIContext
+            $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Lazy<C of <root>.DIContext.Lazy>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-value> (): C of <root>.DIContext.Lazy declared in <root>.DIContext.Lazy'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=C of <root>.DIContext.Lazy origin=null
+                  <1>: C of <root>.DIContext.Lazy
+                  $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:value$delegate signature:[ /DIContext.Lazy.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:type type:<root>.TypeToken<C of <root>.DIContext.Value> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> visibility:private [final] declared in <root>.DIContext.Lazy' type=<unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy> origin=null
+                    receiver: GET_VAR '<this>: <root>.DIContext.Lazy<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy.<get-value>' type=<root>.DIContext.Lazy<C of <root>.DIContext.Lazy> origin=null
+                  1: GET_VAR '<this>: <root>.DIContext.Lazy<C of <root>.DIContext.Lazy> declared in <root>.DIContext.Lazy.<get-value>' type=<root>.DIContext.Lazy<C of <root>.DIContext.Lazy> origin=null
+                  2: PROPERTY_REFERENCE 'public open value: C of <root>.DIContext.Lazy [delegated,val] declared in <root>.DIContext.Lazy' field=null getter='public open fun <get-value> (): C of <root>.DIContext.Lazy declared in <root>.DIContext.Lazy' setter=null type=<unbound IrClassSymbolImpl><<root>.DIContext.Lazy<*>, C of <root>.DIContext.Lazy> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      CLASS OBJECT name:Companion signature:/DIContext.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DIContext.Companion
+        CONSTRUCTOR signature:/DIContext.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.DIContext.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/DIContext.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:invoke signature:/DIContext.Companion.invoke|invoke(TypeToken<0:0>;0:0){0§<kotlin.Any>}[0] visibility:public modality:FINAL <C> ($this:<root>.DIContext.Companion, type:<root>.TypeToken<C of <root>.DIContext.Companion.invoke>, value:C of <root>.DIContext.Companion.invoke) returnType:<root>.DIContext<C of <root>.DIContext.Companion.invoke> [operator]
+          TYPE_PARAMETER name:C index:0 variance: signature:[ /DIContext.Companion.invoke|invoke(TypeToken<0:0>;0:0){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Companion
+          VALUE_PARAMETER name:type index:0 type:<root>.TypeToken<C of <root>.DIContext.Companion.invoke>
+          VALUE_PARAMETER name:value index:1 type:C of <root>.DIContext.Companion.invoke
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke <C> (type: <root>.TypeToken<C of <root>.DIContext.Companion.invoke>, value: C of <root>.DIContext.Companion.invoke): <root>.DIContext<C of <root>.DIContext.Companion.invoke> [operator] declared in <root>.DIContext.Companion'
+              CONSTRUCTOR_CALL 'public constructor <init> (type: <root>.TypeToken<C of <root>.DIContext.Value>, value: C of <root>.DIContext.Value) [primary] declared in <root>.DIContext.Value' type=<root>.DIContext.Value<C of <root>.DIContext.Companion.invoke> origin=null
+                <class: C>: C of <root>.DIContext.Companion.invoke
+                type: GET_VAR 'type: <root>.TypeToken<C of <root>.DIContext.Companion.invoke> declared in <root>.DIContext.Companion.invoke' type=<root>.TypeToken<C of <root>.DIContext.Companion.invoke> origin=null
+                value: GET_VAR 'value: C of <root>.DIContext.Companion.invoke declared in <root>.DIContext.Companion.invoke' type=C of <root>.DIContext.Companion.invoke origin=null
+        FUN name:invoke signature:/DIContext.Companion.invoke|invoke(TypeToken<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <C> ($this:<root>.DIContext.Companion, type:<root>.TypeToken<C of <root>.DIContext.Companion.invoke>, getValue:<unbound IrClassSymbolImpl><C of <root>.DIContext.Companion.invoke>) returnType:<root>.DIContext<C of <root>.DIContext.Companion.invoke> [operator]
+          TYPE_PARAMETER name:C index:0 variance: signature:[ /DIContext.Companion.invoke|invoke(TypeToken<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+          $this: VALUE_PARAMETER name:<this> type:<root>.DIContext.Companion
+          VALUE_PARAMETER name:type index:0 type:<root>.TypeToken<C of <root>.DIContext.Companion.invoke>
+          VALUE_PARAMETER name:getValue index:1 type:<unbound IrClassSymbolImpl><C of <root>.DIContext.Companion.invoke>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke <C> (type: <root>.TypeToken<C of <root>.DIContext.Companion.invoke>, getValue: <unbound IrClassSymbolImpl><C of <root>.DIContext.Companion.invoke>): <root>.DIContext<C of <root>.DIContext.Companion.invoke> [operator] declared in <root>.DIContext.Companion'
+              CONSTRUCTOR_CALL 'public constructor <init> (type: <root>.TypeToken<C of <root>.DIContext.Lazy>, getValue: <unbound IrClassSymbolImpl><C of <root>.DIContext.Lazy>) [primary] declared in <root>.DIContext.Lazy' type=<root>.DIContext.Lazy<C of <root>.DIContext.Companion.invoke> origin=null
+                <class: C>: C of <root>.DIContext.Companion.invoke
+                type: GET_VAR 'type: <root>.TypeToken<C of <root>.DIContext.Companion.invoke> declared in <root>.DIContext.Companion.invoke' type=<root>.TypeToken<C of <root>.DIContext.Companion.invoke> origin=null
+                getValue: GET_VAR 'getValue: <unbound IrClassSymbolImpl><C of <root>.DIContext.Companion.invoke> declared in <root>.DIContext.Companion.invoke' type=<unbound IrClassSymbolImpl><C of <root>.DIContext.Companion.invoke> origin=null
+    CLASS CLASS name:TypeToken signature:/TypeToken|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeToken<T of <root>.TypeToken>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /TypeToken|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/TypeToken.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TypeToken<T of <root>.TypeToken> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TypeToken signature:/TypeToken|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public open fun print (): <unbound IrClassSymbolImpl> declared in <root>.DIContext' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun diContext <C> (context: C of <root>.diContext): <root>.DIContext<C of <root>.diContext> declared in <root>' type=<root>.DIContext<<unbound IrClassSymbolImpl>> origin=null
+            <C>: <unbound IrClassSymbolImpl>
+            context: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        CALL 'public open fun print (): <unbound IrClassSymbolImpl> declared in <root>.DIContext' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun diContext <C> (getContext: <unbound IrClassSymbolImpl><C of <root>.diContext>): <root>.DIContext<C of <root>.diContext> declared in <root>' type=<root>.DIContext<<unbound IrClassSymbolImpl>> origin=null
+            <C>: <unbound IrClassSymbolImpl>
+            getContext: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CONST String type=<unbound IrClassSymbolImpl> value="K"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

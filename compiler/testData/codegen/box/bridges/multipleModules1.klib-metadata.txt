@@ -1,0 +1,44 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+    // class name: a/C
+
+    public abstract interface a/A<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun foo(): T#0
+    }
+
+    public open class a/C : a/A<kotlin/Int> {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Int
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public final class B : a/C {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

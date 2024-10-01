@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kClassEnumArgument.kt
+    CLASS ENUM_CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.E>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+      CONSTRUCTOR signature:/E.<init>|<init>(kotlin.reflect.KClass<*>?){}[0] visibility:private <> (arg:<unbound IrClassSymbolImpl><*>?) returnType:<root>.E [primary]
+        VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl><*>?
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.E
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.E>]'
+      PROPERTY name:arg signature:/E.arg|{}arg[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:arg signature:[ /E.arg|{}arg[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:arg type:kotlin.reflect.KClass<*>? visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*>? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'arg: <unbound IrClassSymbolImpl><*>? declared in <root>.E.<init>' type=<unbound IrClassSymbolImpl><*>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arg> signature:/E.arg.<get-arg>|<get-arg>(){}[0] visibility:public modality:FINAL <> ($this:<root>.E) returnType:<unbound IrClassSymbolImpl><*>?
+          correspondingProperty: PROPERTY name:arg signature:/E.arg|{}arg[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.E
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-arg> (): <unbound IrClassSymbolImpl><*>? declared in <root>.E'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arg signature:[ /E.arg|{}arg[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:arg type:kotlin.reflect.KClass<*>? visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*>? visibility:private [final]' type=<unbound IrClassSymbolImpl><*>? origin=null
+                receiver: GET_VAR '<this>: <root>.E declared in <root>.E.<get-arg>' type=<root>.E origin=null
+      ENUM_ENTRY name:A signature:/E.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: <unbound IrClassSymbolImpl><*>?) [primary] declared in <root>.E'
+            arg: TYPE_OP type=<unbound IrClassSymbolImpl><*>? origin=CAST typeOperand=<unbound IrClassSymbolImpl><*>?
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      ENUM_ENTRY name:B signature:/E.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: <unbound IrClassSymbolImpl><*>?) [primary] declared in <root>.E'
+            arg: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.E>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.E
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.E>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="String"
+          2: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl><*>? [val]
+              CALL 'public final fun <get-arg> (): <unbound IrClassSymbolImpl><*>? declared in <root>.E' type=<unbound IrClassSymbolImpl><*>? origin=GET_PROPERTY
+                $this: GET_ENUM 'ENUM_ENTRY name:B signature:/E.B|null[0]' type=<root>.E
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

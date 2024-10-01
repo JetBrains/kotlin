@@ -1,0 +1,90 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IFoo
+    // class name: L
+    // class name: S
+    // class name: Z
+
+    public abstract interface IFoo : kotlin/Any {
+
+      public abstract fun bar(): kotlin/String
+
+      public open fun kotlin/Long.foo(): kotlin/String
+    }
+
+    public final value class L : IFoo {
+
+      public constructor(x: kotlin/Long)
+
+      public open fun bar(): kotlin/String
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Long
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Long
+    }
+
+    public final value class S : IFoo {
+
+      public constructor(x: kotlin/String)
+
+      public open fun bar(): kotlin/String
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/String
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class Z : IFoo {
+
+      public constructor(x: kotlin/Int)
+
+      public open fun bar(): kotlin/String
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun L.testL(): kotlin/Unit
+
+      public final fun S.testS(): kotlin/Unit
+
+      public final fun Z.testZ(): kotlin/Unit
+    }
+  }
+}

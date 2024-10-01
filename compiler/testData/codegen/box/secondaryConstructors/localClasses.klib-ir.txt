@@ -1,0 +1,312 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/localClasses.kt
+    CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(kotlin.String){}[0] visibility:public <> (grandParentProp:<unbound IrClassSymbolImpl>) returnType:<root>.C [primary]
+        VALUE_PARAMETER name:grandParentProp index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:grandParentProp signature:/C.grandParentProp|{}grandParentProp[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:grandParentProp signature:[ /C.grandParentProp|{}grandParentProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:grandParentProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'grandParentProp: <unbound IrClassSymbolImpl> declared in <root>.C.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-grandParentProp> signature:/C.grandParentProp.<get-grandParentProp>|<get-grandParentProp>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:grandParentProp signature:/C.grandParentProp|{}grandParentProp[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-grandParentProp> (): <unbound IrClassSymbolImpl> declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:grandParentProp signature:[ /C.grandParentProp|{}grandParentProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:grandParentProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-grandParentProp>' type=<root>.C origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sideEffects type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:parentSideEffects type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:justForUsageInClosure type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=7
+        VAR name:justForUsageInParentClosure type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="parentCaptured"
+        CLASS CLASS name:B modality:ABSTRACT visibility:local superTypes:[<root>.C]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.B
+          PROPERTY name:parentProp visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:parentProp type:<unbound IrClassSymbolImpl> visibility:private [final]
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parentProp> visibility:public modality:FINAL <> ($this:<root>.box.B) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:parentProp visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.B
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-parentProp> (): <unbound IrClassSymbolImpl> declared in <root>.box.B'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentProp type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.B declared in <root>.box.B.<get-parentProp>' type=<root>.box.B origin=null
+          ANONYMOUS_INITIALIZER isStatic=false
+            BLOCK_BODY
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="minus-one#"
+              SET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          CONSTRUCTOR visibility:protected <> (arg:<unbound IrClassSymbolImpl>) returnType:<root>.box.B
+            VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (grandParentProp: <unbound IrClassSymbolImpl>) [primary] declared in <root>.C'
+                grandParentProp: GET_VAR 'val justForUsageInParentClosure: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:local superTypes:[<root>.C]'
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentProp type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> superQualifierSymbol=<root>.box.B origin=null
+                receiver: GET_VAR '<this>: <root>.box.B declared in <root>.box.B' type=<root>.box.B origin=null
+                value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.box.B.<init>' type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="0.5#"
+              SET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CONST String type=<unbound IrClassSymbolImpl> value="#"
+                    1: GET_VAR 'val justForUsageInParentClosure: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          CONSTRUCTOR visibility:protected <> (arg1:<unbound IrClassSymbolImpl>, arg2:<unbound IrClassSymbolImpl>) returnType:<root>.box.B
+            VALUE_PARAMETER name:arg1 index:0 type:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER name:arg2 index:1 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (grandParentProp: <unbound IrClassSymbolImpl>) [primary] declared in <root>.C'
+                grandParentProp: GET_VAR 'val justForUsageInParentClosure: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:local superTypes:[<root>.C]'
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentProp type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> superQualifierSymbol=<root>.box.B origin=null
+                receiver: GET_VAR '<this>: <root>.box.B declared in <root>.box.B' type=<root>.box.B origin=null
+                value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: GET_VAR 'arg1: <unbound IrClassSymbolImpl> declared in <root>.box.B.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                    1: GET_VAR 'arg2: <unbound IrClassSymbolImpl> declared in <root>.box.B.<init>' type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="0.7#"
+              SET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#3"
+          ANONYMOUS_INITIALIZER isStatic=false
+            BLOCK_BODY
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="zero#"
+              SET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#4"
+        CLASS CLASS name:A modality:FINAL visibility:local superTypes:[<root>.box.B]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.A
+          PROPERTY name:prop visibility:public modality:FINAL [var]
+            FIELD PROPERTY_BACKING_FIELD name:prop type:<unbound IrClassSymbolImpl> visibility:private
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value=""
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> visibility:public modality:FINAL <> ($this:<root>.box.A) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:prop visibility:public modality:FINAL [var]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.A
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.box.A'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.A declared in <root>.box.A.<get-prop>' type=<root>.box.A origin=null
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop> visibility:public modality:FINAL <> ($this:<root>.box.A, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:prop visibility:public modality:FINAL [var]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.A
+              VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.box.A declared in <root>.box.A.<set-prop>' type=<root>.box.A origin=null
+                  value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.box.A.<set-prop>' type=<unbound IrClassSymbolImpl> origin=null
+          ANONYMOUS_INITIALIZER isStatic=false
+            BLOCK_BODY
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A' type=<root>.box.A origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="first"
+          CONSTRUCTOR visibility:public <> (x1:<unbound IrClassSymbolImpl>, x2:<unbound IrClassSymbolImpl>) returnType:<root>.box.A
+            VALUE_PARAMETER name:x1 index:0 type:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER name:x2 index:1 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (arg1: <unbound IrClassSymbolImpl>, arg2: <unbound IrClassSymbolImpl>) declared in <root>.box.B'
+                arg1: GET_VAR 'x1: <unbound IrClassSymbolImpl> declared in <root>.box.A.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                arg2: GET_VAR 'x2: <unbound IrClassSymbolImpl> declared in <root>.box.A.<init>' type=<unbound IrClassSymbolImpl> origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local superTypes:[<root>.box.B]'
+              CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=EQ
+                $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A' type=<root>.box.A origin=null
+                <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'x1: <unbound IrClassSymbolImpl> declared in <root>.box.A.<init>' type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#third"
+          ANONYMOUS_INITIALIZER isStatic=false
+            BLOCK_BODY
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A' type=<root>.box.A origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="#second"
+          CONSTRUCTOR visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.box.A
+            VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (arg: <unbound IrClassSymbolImpl>) declared in <root>.box.B'
+                arg: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: GET_VAR 'val justForUsageInClosure: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.box.A.<init>' type=<unbound IrClassSymbolImpl> origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local superTypes:[<root>.box.B]'
+              CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A' type=<root>.box.A origin=null
+                <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A' type=<root>.box.A origin=null
+                  1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.box.A.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                    CONST String type=<unbound IrClassSymbolImpl> value="#int"
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#fourth"
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.A
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.box.A'
+                x: GET_VAR 'val justForUsageInClosure: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#fifth"
+          FUN name:toString visibility:public modality:OPEN <> ($this:<root>.box.A) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.box.A
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.box.A'
+                STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A.toString' type=<root>.box.A origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value="#"
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A.toString' type=<root>.box.A origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value="#"
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.box.A declared in <root>.box.A.toString' type=<root>.box.A origin=null
+        VAR name:a1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (x1: <unbound IrClassSymbolImpl>, x2: <unbound IrClassSymbolImpl>) declared in <root>.box.A' type=<root>.box.A origin=null
+              x1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+              x2: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val a1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="5#15#parentCaptured"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail1: "
+                GET_VAR 'val a1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="minus-one#zero#0.7#first#second#third"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2: "
+                GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1#4#3"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail3: "
+                GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        SET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:a2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.box.A' type=<root>.box.A origin=null
+              x: CONST Int type=<unbound IrClassSymbolImpl> value=123
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val a2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="123#int#130#parentCaptured"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail1: "
+                GET_VAR 'val a2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="minus-one#zero#0.5#first#second#fourth"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail4: "
+                GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1#4#parentCaptured"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail5: "
+                GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        SET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:a3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.box.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.box.A' type=<root>.box.A origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val a3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="7#int#14#parentCaptured"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail6: "
+                GET_VAR 'val a3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="minus-one#zero#0.5#first#second#fourth#fifth"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail7: "
+                GET_VAR 'var sideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1#4#parentCaptured"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail8: "
+                GET_VAR 'var parentSideEffects: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

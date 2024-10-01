@@ -1,0 +1,76 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Z1
+    // class name: Z2
+    // class name: ZN
+
+    public final value class Z1<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(x: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0?
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0?
+    }
+
+    public final value class Z2<T#0 /* T */ : Z1<kotlin/String>> : kotlin/Any {
+
+      public constructor(z: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val z: T#0
+        public final get
+
+      // underlying property: z
+
+      // underlying type: T#0
+    }
+
+    public final value class ZN<T#0 /* T */ : Z1<kotlin/String>?> : kotlin/Any {
+
+      public constructor(z: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val z: T#0
+        public final get
+
+      // underlying property: z
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun wrap1(x: kotlin/String): Z1<kotlin/String>?
+
+      public final fun wrap2(x: kotlin/String): Z2<Z1<kotlin/String>>?
+
+      public final fun wrapN(x: kotlin/String): ZN<Z1<kotlin/String>?>?
+    }
+  }
+}

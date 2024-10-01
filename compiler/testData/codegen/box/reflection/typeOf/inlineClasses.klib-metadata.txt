@@ -1,0 +1,34 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Z
+
+    public final value class test/Z : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/String
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(expected: kotlin/String, actual: kotlin/reflect/KType): kotlin/Unit
+    }
+  }
+}

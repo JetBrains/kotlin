@@ -1,0 +1,87 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Abstract
+    // class name: P1
+    // class name: P2
+    // class name: P3
+    // class name: P4
+    // class name: Point
+    // class name: X
+    // class name: Y
+    // class name: YImpl
+
+    public abstract interface Abstract : kotlin/Any {
+    }
+
+    public final class P1 : Abstract, X, Y {
+
+      public constructor(x: kotlin/Int, yy: Y)
+
+      public open /* delegation */ val y: kotlin/Int
+        public open get
+    }
+
+    public final class P2 : X, Abstract, Y {
+
+      public constructor(x: kotlin/Int, yy: Y)
+
+      public open /* delegation */ val y: kotlin/Int
+        public open get
+    }
+
+    public final class P3 : X, Y, Abstract {
+
+      public constructor(x: kotlin/Int, yy: Y)
+
+      public open /* delegation */ val y: kotlin/Int
+        public open get
+    }
+
+    public final class P4 : Y, Abstract, X {
+
+      public constructor(x: kotlin/Int, yy: Y)
+
+      public open /* delegation */ val y: kotlin/Int
+        public open get
+    }
+
+    public final class Point : X, Y {
+
+      public constructor(x: kotlin/Int, yy: kotlin/Int)
+
+      public open val y: kotlin/Int
+        public open get
+    }
+
+    public open class X : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    public abstract interface Y : kotlin/Any {
+
+      public abstract val y: kotlin/Int
+        public abstract get
+    }
+
+    public final class YImpl : Y {
+
+      public constructor(y: kotlin/Int)
+
+      public open val y: kotlin/Int
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

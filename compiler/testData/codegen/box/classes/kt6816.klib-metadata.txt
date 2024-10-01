@@ -1,0 +1,73 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CalculatorConstants
+
+    public final class CalculatorConstants : kotlin/Any {
+
+      public constructor(id: kotlin/Long /* = ... */, detour: kotlin/Double /* = ... */, taxi: kotlin/Double /* = ... */, loop: kotlin/Double /* = ... */, planeCondition: kotlin/Double /* = ... */, co2PerKerosene: kotlin/Double /* = ... */, freight: kotlin/Double /* = ... */, rfi: kotlin/Double /* = ... */, rfiAltitude: kotlin/Double /* = ... */, averageContribution: kotlin/Double /* = ... */, singleContribution: kotlin/Double /* = ... */, returnContribution: kotlin/Double /* = ... */, defraFactor: kotlin/Double /* = ... */, airCondMult: kotlin/Double /* = ... */, autoTransMult: kotlin/Double /* = ... */, hybridDefault: kotlin/String? /* = ... */, travelClassOne: kotlin/Double /* = ... */, status: kotlin/String /* = ... */)
+
+      public final val airCondMult: kotlin/Double
+        public final get
+
+      public final val autoTransMult: kotlin/Double
+        public final get
+
+      public final val averageContribution: kotlin/Double
+        public final get
+
+      public final val co2PerKerosene: kotlin/Double
+        public final get
+
+      public final val defraFactor: kotlin/Double
+        public final get
+
+      public final val detour: kotlin/Double
+        public final get
+
+      public final val freight: kotlin/Double
+        public final get
+
+      public final val hybridDefault: kotlin/String?
+        public final get
+
+      public final val id: kotlin/Long
+        public final get
+
+      public final val loop: kotlin/Double
+        public final get
+
+      public final val planeCondition: kotlin/Double
+        public final get
+
+      public final val returnContribution: kotlin/Double
+        public final get
+
+      public final val rfi: kotlin/Double
+        public final get
+
+      public final val rfiAltitude: kotlin/Double
+        public final get
+
+      public final val singleContribution: kotlin/Double
+        public final get
+
+      public final val status: kotlin/String
+        public final get
+
+      public final val taxi: kotlin/Double
+        public final get
+
+      public final val travelClassOne: kotlin/Double
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

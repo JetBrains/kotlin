@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(x: kotlin/Int): kotlin/String
+
+      public final fun baz(x: kotlin/Int): kotlin/String
+
+      public final fun beer(x: kotlin/Int?): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: kotlin/Int): kotlin/String
+
+      public final fun quux(x: kotlin/Int?): kotlin/String
+
+      public final fun test(p: kotlin/String?): kotlin/String
+    }
+  }
+}

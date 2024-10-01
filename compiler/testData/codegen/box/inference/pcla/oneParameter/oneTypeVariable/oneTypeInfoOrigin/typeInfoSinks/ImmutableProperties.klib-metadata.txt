@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buildee
+    // class name: UserKlass
+
+    public final class Buildee<T#0 /* CT */> : kotlin/Any {
+
+      public constructor()
+
+      public final val value: T#0
+        public final get
+    }
+
+    public final class UserKlass : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* FT */> build(instructions: @kotlin/ExtensionFunctionType kotlin/Function1<Buildee<T#0>, kotlin/Unit>): Buildee<T#0>
+
+      public final fun testMaterialize(): kotlin/Unit
+    }
+  }
+}

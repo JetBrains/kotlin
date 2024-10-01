@@ -1,0 +1,55 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/Event
+    // class name: lib/EventBase
+    // class name: lib/EventRo
+    // class name: lib/MouseEvent
+    // class name: lib/MouseEventRo
+    // class name: lib/Stoppable
+
+    public abstract interface lib/Event : lib/Stoppable {
+
+      public open fun isStopped(): kotlin/Boolean
+    }
+
+    public abstract class lib/EventBase : lib/Event {
+
+      public constructor()
+    }
+
+    public abstract interface lib/EventRo : lib/Stoppable {
+    }
+
+    public open class lib/MouseEvent : lib/EventBase, lib/MouseEventRo {
+
+      public constructor()
+    }
+
+    public abstract interface lib/MouseEventRo : lib/EventRo {
+    }
+
+    public abstract interface lib/Stoppable : kotlin/Any {
+
+      public abstract fun isStopped(): kotlin/Boolean
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: main
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

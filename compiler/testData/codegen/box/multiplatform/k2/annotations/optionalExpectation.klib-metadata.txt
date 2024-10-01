@@ -1,0 +1,87 @@
+// MODULE: library
+library {
+  // module name: <library>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+    // class name: a/B
+    // class name: a/B.C
+
+    public final annotation class a/A : kotlin/Annotation {
+
+      public constructor(x: kotlin/Int)
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    @kotlin/OptionalExpectation
+    public final expect annotation class a/B : kotlin/Annotation {
+
+      public constructor(s: kotlin/String)
+
+      public final expect val s: kotlin/String
+        public final get
+
+      // nested class: C
+    }
+
+    @kotlin/OptionalExpectation
+    public final expect annotation class a/B.C : kotlin/Annotation {
+
+      public constructor(a: kotlin/Boolean)
+
+      public final expect val a: kotlin/Boolean
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: usage
+
+    // class name: usage/AnnWithOptionalExpectation
+    // class name: usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation
+    // class name: usage/C
+
+    @kotlin/OptionalExpectation
+    public final expect annotation class usage/AnnWithOptionalExpectation : kotlin/Annotation {
+
+      public constructor(c: usage/C)
+
+      public final expect val c: usage/C
+        public final get
+
+      // nested class: NestedAnnWithOptionalExpectation
+    }
+
+    public final expect annotation class usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation : kotlin/Annotation {
+
+      public constructor(c2: usage/C)
+
+      public final expect val c2: usage/C
+        public final get
+    }
+
+    public final annotation class usage/C : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      @a/A(x = 42)
+      public final fun box(): kotlin/String
+
+      @a/B(s = "OK")
+      @a/B.C(a = true)
+      public final fun ok(): kotlin/String
+    }
+  }
+}

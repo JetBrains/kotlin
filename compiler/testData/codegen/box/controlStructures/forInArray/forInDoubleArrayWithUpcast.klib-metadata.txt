@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun testForInDoubleArrayWithUpcastToAny(): kotlin/Unit
+
+      private final fun testForInDoubleArrayWithUpcastToComparable(): kotlin/Unit
+
+      private final fun testForInFloatArrayWithUpcastToAny(): kotlin/Unit
+
+      private final fun useDoubleAsAny(a: kotlin/Any): kotlin/Unit
+
+      private final fun useDoubleAsComparable(a: kotlin/Comparable<*>): kotlin/Unit
+
+      private final fun useFloatAsAny(a: kotlin/Any): kotlin/Unit
+    }
+  }
+}

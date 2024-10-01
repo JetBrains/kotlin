@@ -1,0 +1,165 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/PrivatePropertyOfComplexGenericFunctionType.kt
+    CLASS CLASS name:State signature:/State|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+      TYPE_PARAMETER name:S index:0 variance: signature:[ /State|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:A index:1 variance:out signature:[ /State|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:A index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/State.<init>|<init>(kotlin.Function1<1:0,kotlin.Pair<1:1,1:0>>){}[0] visibility:public <> (action:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>) returnType:<root>.State<S of <root>.State, A of <root>.State> [primary]
+        VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:State signature:/State|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:action signature:/State.action|{}action[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> declared in <root>.State.<init>' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-action> signature:/State.action.<get-action>|<get-action>(){}[0] visibility:private modality:FINAL <> ($this:<root>.State<S of <root>.State, A of <root>.State>) returnType:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>
+          correspondingProperty: PROPERTY name:action signature:/State.action|{}action[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-action> (): <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> declared in <root>.State'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+                receiver: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.<get-action>' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+      FUN name:flatMap signature:/State.flatMap|flatMap(kotlin.Function1<1:1,State<1:0,0:0>>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <B> ($this:<root>.State<S of <root>.State, A of <root>.State>, f:<unbound IrClassSymbolImpl><A of <root>.State, <root>.State<S of <root>.State, B of <root>.State.flatMap>>) returnType:<root>.State<S of <root>.State, B of <root>.State.flatMap>
+        TYPE_PARAMETER name:B index:0 variance: signature:[ /State.flatMap|flatMap(kotlin.Function1<1:1,State<1:0,0:0>>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+        VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><A of <root>.State, <root>.State<S of <root>.State, B of <root>.State.flatMap>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun flatMap <B> (f: <unbound IrClassSymbolImpl><A of <root>.State, <root>.State<S of <root>.State, B of <root>.State.flatMap>>): <root>.State<S of <root>.State, B of <root>.State.flatMap> declared in <root>.State'
+            CONSTRUCTOR_CALL 'public constructor <init> (action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>) [primary] declared in <root>.State' type=<root>.State<S of <root>.State, B of <root>.State.flatMap> origin=null
+              <class: S>: S of <root>.State
+              <class: A>: B of <root>.State.flatMap
+              action: FUN_EXPR type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><B of <root>.State.flatMap, S of <root>.State>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s0:S of <root>.State) returnType:<unbound IrClassSymbolImpl><B of <root>.State.flatMap, S of <root>.State>
+                  VALUE_PARAMETER name:s0 index:0 type:S of <root>.State
+                  BLOCK_BODY
+                    VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State> [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State> origin=INVOKE
+                        $this: CALL 'private final fun <get-action> (): <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> declared in <root>.State' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.flatMap' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+                        1: GET_VAR 's0: S of <root>.State declared in <root>.State.flatMap.<anonymous>' type=S of <root>.State origin=null
+                    VAR name:a type:A of <root>.State [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=A of <root>.State origin=COMPONENT_N(index=1)
+                        $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State> [val] declared in <root>.State.flatMap.<anonymous>' type=<unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State> origin=null
+                    VAR name:s1 type:S of <root>.State [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=S of <root>.State origin=COMPONENT_N(index=2)
+                        $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State> [val] declared in <root>.State.flatMap.<anonymous>' type=<unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State> origin=null
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (s0: S of <root>.State): <unbound IrClassSymbolImpl><B of <root>.State.flatMap, S of <root>.State> declared in <root>.State.flatMap'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><B of <root>.State.flatMap, S of <root>.State> origin=INVOKE
+                        $this: CALL 'private final fun <get-action> (): <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> declared in <root>.State' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><B of <root>.State.flatMap, S of <root>.State>> origin=GET_PROPERTY
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.State<S of <root>.State, B of <root>.State.flatMap> origin=INVOKE
+                            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><A of <root>.State, <root>.State<S of <root>.State, B of <root>.State.flatMap>> declared in <root>.State.flatMap' type=<unbound IrClassSymbolImpl><A of <root>.State, <root>.State<S of <root>.State, B of <root>.State.flatMap>> origin=VARIABLE_AS_FUNCTION
+                            1: GET_VAR 'val a: A of <root>.State [val] declared in <root>.State.flatMap.<anonymous>' type=A of <root>.State origin=null
+                        1: GET_VAR 'val s1: S of <root>.State [val] declared in <root>.State.flatMap.<anonymous>' type=S of <root>.State origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/State.component1|component1(){}[0] visibility:private modality:FINAL <> ($this:<root>.State<S of <root>.State, A of <root>.State>) returnType:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun component1 (): <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> [operator] declared in <root>.State'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+              receiver: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.component1' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/State.copy|copy(kotlin.Function1<1:0,kotlin.Pair<1:1,1:0>>){}[0] visibility:public modality:FINAL <> ($this:<root>.State<S of <root>.State, A of <root>.State>, action:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>) returnType:<root>.State<S of <root>.State, A of <root>.State>
+        $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+        VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+              receiver: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.copy' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>): <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State'
+            CONSTRUCTOR_CALL 'public constructor <init> (action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>) [primary] declared in <root>.State' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+              <class: S>: S of <root>.State
+              <class: A>: A of <root>.State
+              action: GET_VAR 'action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> declared in <root>.State.copy' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/State.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.State<S of <root>.State, A of <root>.State>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.State'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="State("
+              CONST String type=<unbound IrClassSymbolImpl> value="action="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+                receiver: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.toString' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/State.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.State<S of <root>.State, A of <root>.State>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.State'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+                receiver: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.hashCode' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/State.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.State<S of <root>.State, A of <root>.State>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.State<S of <root>.State, A of <root>.State>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.equals' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.State.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.State'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.State<S of <root>.State, A of <root>.State>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.State.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.State'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.State<S of <root>.State, A of <root>.State> [val]
+            TYPE_OP type=<root>.State<S of <root>.State, A of <root>.State> origin=CAST typeOperand=<root>.State<S of <root>.State, A of <root>.State>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.State.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+                    receiver: GET_VAR '<this>: <root>.State<S of <root>.State, A of <root>.State> declared in <root>.State.equals' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action signature:[ /State.action|{}action[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<S of <root>.State, kotlin.Pair<A of <root>.State, S of <root>.State>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> visibility:private [final]' type=<unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.State<S of <root>.State, A of <root>.State> [val] declared in <root>.State.equals' type=<root>.State<S of <root>.State, A of <root>.State> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.State'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.State'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun flatMap <B> (f: <unbound IrClassSymbolImpl><A of <root>.State, <root>.State<S of <root>.State, B of <root>.State.flatMap>>): <root>.State<S of <root>.State, B of <root>.State.flatMap> declared in <root>.State' type=<root>.State<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <B>: <unbound IrClassSymbolImpl>
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>) [primary] declared in <root>.State' type=<root>.State<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <class: S>: <unbound IrClassSymbolImpl>
+              <class: A>: <unbound IrClassSymbolImpl>
+              action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.box'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                        <1>: <unbound IrClassSymbolImpl>
+                        <2>: <unbound IrClassSymbolImpl>
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                        1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.State<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<root>.State<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (i: <unbound IrClassSymbolImpl>): <root>.State<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.box'
+                    CONSTRUCTOR_CALL 'public constructor <init> (action: <unbound IrClassSymbolImpl><S of <root>.State, <unbound IrClassSymbolImpl><A of <root>.State, S of <root>.State>>) [primary] declared in <root>.State' type=<root>.State<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                      <class: S>: <unbound IrClassSymbolImpl>
+                      <class: A>: <unbound IrClassSymbolImpl>
+                      action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                          VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>'
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                                <1>: <unbound IrClassSymbolImpl>
+                                <2>: <unbound IrClassSymbolImpl>
+                                $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,64 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: zzz
+
+    // class name: zzz/A
+    // class name: zzz/B
+    // class name: zzz/I
+
+    public open class zzz/A : zzz/I {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Int
+    }
+
+    public open class zzz/B : zzz/I {
+
+      public constructor()
+
+      public open /* delegation */ fun foo(): kotlin/Int
+
+      public final val x: kotlin/Int /* = ... */
+        public final get
+
+      public final val y: kotlin/String /* = ... */
+        public final get
+    }
+
+    public abstract interface zzz/I : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Int
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : zzz/B {
+
+      public constructor()
+
+      public final val a: kotlin/String /* = ... */
+        public final get
+
+      public final val b: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,61 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/deprecatedScopes.kt
+    CLASS CLASS name:DeprecatedLexicalScope signature:/DeprecatedLexicalScope|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.LexicalScope]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DeprecatedLexicalScope
+      CONSTRUCTOR signature:/DeprecatedLexicalScope.<init>|<init>(LexicalScope){}[0] visibility:public <> (a:<root>.LexicalScope) returnType:<root>.DeprecatedLexicalScope [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.LexicalScope
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DeprecatedLexicalScope signature:/DeprecatedLexicalScope|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.LexicalScope]'
+      FIELD DELEGATE name:$$delegate_0 signature:/DeprecatedLexicalScope.$$delegate_0|[0] type:<root>.LexicalScope visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'a: <root>.LexicalScope declared in <root>.DeprecatedLexicalScope.<init>' type=<root>.LexicalScope origin=null
+      FUN DELEGATED_MEMBER name:getContributedDescriptors signature:/DeprecatedLexicalScope.getContributedDescriptors|getContributedDescriptors(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.DeprecatedLexicalScope, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeprecatedLexicalScope
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getContributedDescriptors (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.DeprecatedLexicalScope'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/DeprecatedLexicalScope.$$delegate_0|[0] type:<root>.LexicalScope visibility:private [final] declared in <root>.DeprecatedLexicalScope' type=<root>.LexicalScope origin=null
+                receiver: GET_VAR '<this>: <root>.DeprecatedLexicalScope declared in <root>.DeprecatedLexicalScope.getContributedDescriptors' type=<root>.DeprecatedLexicalScope origin=null
+              1: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.DeprecatedLexicalScope.getContributedDescriptors' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS INTERFACE name:ResolutionScope signature:/ResolutionScope|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResolutionScope
+      FUN name:getContributedDescriptors signature:/ResolutionScope.getContributedDescriptors|getContributedDescriptors(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ResolutionScope, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ResolutionScope
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:ScopeImpl signature:/ScopeImpl|null[0] modality:FINAL visibility:public superTypes:[<root>.LexicalScope]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ScopeImpl
+      CONSTRUCTOR signature:/ScopeImpl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ScopeImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ScopeImpl signature:/ScopeImpl|null[0] modality:FINAL visibility:public superTypes:[<root>.LexicalScope]'
+      FUN name:getContributedDescriptors signature:/ScopeImpl.getContributedDescriptors|getContributedDescriptors(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ScopeImpl, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ScopeImpl
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getContributedDescriptors (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ScopeImpl'
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.ScopeImpl.getContributedDescriptors' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.DeprecatedLexicalScope]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl
+      CONSTRUCTOR signature:/Impl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Impl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: <root>.LexicalScope) [primary] declared in <root>.DeprecatedLexicalScope'
+            a: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ScopeImpl' type=<root>.ScopeImpl origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.DeprecatedLexicalScope]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Impl' type=<root>.Impl origin=null
+  FILE fqName:<root> fileName:/scopes.kt
+    CLASS INTERFACE name:LexicalScope signature:/LexicalScope|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.ResolutionScope]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LexicalScope

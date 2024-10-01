@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericPropertyWithItself.kt
+    CLASS CLASS name:MPair signature:/MPair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MPair<A of <root>.MPair>
+      TYPE_PARAMETER name:A index:0 variance:out signature:[ /MPair|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/MPair.<init>|<init>(1:0){}[0] visibility:public <> (first:A of <root>.MPair) returnType:<root>.MPair<A of <root>.MPair> [primary]
+        VALUE_PARAMETER name:first index:0 type:A of <root>.MPair
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MPair signature:/MPair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:first signature:/MPair.first|{}first[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:first signature:[ /MPair.first|{}first[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.MPair visibility:private [final]] ] type:A of <root>.MPair visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'first: A of <root>.MPair declared in <root>.MPair.<init>' type=A of <root>.MPair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-first> signature:/MPair.first.<get-first>|<get-first>(){}[0] visibility:public modality:FINAL <> ($this:<root>.MPair<A of <root>.MPair>) returnType:A of <root>.MPair
+          correspondingProperty: PROPERTY name:first signature:/MPair.first|{}first[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MPair<A of <root>.MPair>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-first> (): A of <root>.MPair declared in <root>.MPair'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first signature:[ /MPair.first|{}first[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.MPair visibility:private [final]] ] type:A of <root>.MPair visibility:private [final]' type=A of <root>.MPair origin=null
+                receiver: GET_VAR '<this>: <root>.MPair<A of <root>.MPair> declared in <root>.MPair.<get-first>' type=<root>.MPair<A of <root>.MPair> origin=null
+      FUN name:equals signature:/MPair.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.MPair<A of <root>.MPair>, o:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MPair<A of <root>.MPair>
+        VALUE_PARAMETER name:o index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          VAR name:t type:<root>.MPair<*> [val]
+            TYPE_OP type=<root>.MPair<*> origin=CAST typeOperand=<root>.MPair<*>
+              GET_VAR 'o: <unbound IrClassSymbolImpl>? declared in <root>.MPair.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.MPair'
+            CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'public final fun <get-first> (): A of <root>.MPair declared in <root>.MPair' type=A of <root>.MPair origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MPair<A of <root>.MPair> declared in <root>.MPair.equals' type=<root>.MPair<A of <root>.MPair> origin=null
+              arg1: CALL 'public final fun <get-first> (): A of <root>.MPair declared in <root>.MPair' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                $this: GET_VAR 'val t: <root>.MPair<*> [val] declared in <root>.MPair.equals' type=<root>.MPair<*> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<root>.MPair<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (first: A of <root>.MPair) [primary] declared in <root>.MPair' type=<root>.MPair<<unbound IrClassSymbolImpl>> origin=null
+            <class: A>: <unbound IrClassSymbolImpl>
+            first: CONST String type=<unbound IrClassSymbolImpl> value="O"
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public open fun equals (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.MPair' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val a: <root>.MPair<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.MPair<<unbound IrClassSymbolImpl>> origin=null
+            o: GET_VAR 'val a: <root>.MPair<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.MPair<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

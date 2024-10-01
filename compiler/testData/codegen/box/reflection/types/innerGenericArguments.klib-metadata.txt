@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Inner
+    // class name: Outer.Inner.Innermost
+
+    public final class Outer<T#0 /* A */, T#1 /* B */> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner<T#2 /* C */, T#3 /* D */> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Innermost
+    }
+
+    public final inner class Outer.Inner.Innermost<T#4 /* E */, T#5 /* F */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): Outer<kotlin/Int, kotlin/Number>.Inner<kotlin/String, kotlin/Float>.Innermost<kotlin/Any, kotlin/Any?>
+    }
+  }
+}

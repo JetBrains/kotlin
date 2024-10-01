@@ -1,0 +1,29 @@
+// MODULE: a
+library {
+  // module name: <a>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      internal final fun foo(s: kotlin/String): kotlin/String
+
+      internal final fun foo(s: kotlin/String, x: kotlin/Any): kotlin/String
+    }
+  }
+}
+
+// MODULE: b
+library {
+  // module name: <b>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

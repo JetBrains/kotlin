@@ -1,0 +1,43 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+    // class name: FooDerived
+
+    public abstract interface Foo<T#0 /* T */> : kotlin/Any {
+
+      public open fun test(p: T#0): T#0
+
+      public open val T#0.prop: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface FooDerived : Foo<kotlin/String> {
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: UnspecializedFromDerived
+
+    public open class UnspecializedFromDerived : FooDerived {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

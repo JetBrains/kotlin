@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Pair
+
+    public final class test/Pair<T#0 /* A */, T#1 /* B */> : kotlin/Any {
+
+      public constructor(x: T#0, y: T#1)
+
+      public final val x: T#0
+        public final get
+
+      public final val y: T#1
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T2 */, T#1 /* T3 */> typeOfPair(x: T#0, y: T#1): kotlin/reflect/KType
+
+      public final inline fun <T#0 /* T4 */, T#1 /* T5 */> typeOfPair2(x: T#0, y: T#1): kotlin/reflect/KType
+
+      public final inline fun <reified T#0 /* T1 */> typeOfX(x: T#0): kotlin/reflect/KType
+    }
+  }
+}

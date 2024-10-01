@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ComplexClass
+    // class name: SimpleClass
+    // class name: Trait
+
+    public final class ComplexClass : Trait {
+
+      public constructor()
+
+      public open /* delegation */ fun bar(): kotlin/String
+
+      public open /* delegation */ fun foo(): kotlin/String
+
+      public final fun qux(): kotlin/String
+    }
+
+    public final class SimpleClass : Trait {
+
+      public constructor()
+
+      public open fun bar(): kotlin/String
+    }
+
+    public abstract interface Trait : kotlin/Any {
+
+      public abstract fun bar(): kotlin/String
+
+      public open fun foo(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

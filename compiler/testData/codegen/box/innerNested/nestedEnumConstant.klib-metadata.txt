@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Nested
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Nested
+    }
+
+    public final enum class Outer.Nested : kotlin/Enum<Outer.Nested> {
+
+      private constructor()
+
+      O,
+
+      K,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

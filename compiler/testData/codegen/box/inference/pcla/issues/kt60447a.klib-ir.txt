@@ -1,0 +1,132 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt60447a.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:buildee type:<root>.Buildee<<root>.box.<anonymous>.TargetType> [val]
+          CALL 'public final fun build <PTV> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<PTV of <root>.build> declared in <root>' type=<root>.Buildee<<root>.box.<anonymous>.TargetType> origin=null
+            <PTV>: <root>.box.<anonymous>.TargetType
+            instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.box.<anonymous>.TargetType>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.box.<anonymous>.TargetType>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.box.<anonymous>.TargetType>
+                BLOCK_BODY
+                  CLASS CLASS name:ConcreteType modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.ConcreteType
+                    CONSTRUCTOR visibility:public <> () returnType:<root>.box.<anonymous>.ConcreteType [primary]
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ConcreteType modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                  CLASS CLASS name:TargetType modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.TargetType
+                    CONSTRUCTOR visibility:public <> () returnType:<root>.box.<anonymous>.TargetType [primary]
+                      BLOCK_BODY
+                        DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TargetType modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                    FUN name:consumeConcreteType visibility:public modality:FINAL <> ($this:<root>.box.<anonymous>.TargetType, value:<root>.box.<anonymous>.ConcreteType) returnType:<unbound IrClassSymbolImpl>
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TargetType
+                      VALUE_PARAMETER name:value index:0 type:<root>.box.<anonymous>.ConcreteType
+                      BLOCK_BODY
+                  CALL 'public final fun setTypeVariableProducerFunction (producer: <unbound IrClassSymbolImpl><TV of <root>.Buildee>): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$build: <root>.Buildee<<root>.box.<anonymous>.TargetType> declared in <root>.box.<anonymous>' type=<root>.Buildee<<root>.box.<anonymous>.TargetType> origin=null
+                    producer: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.box.<anonymous>.TargetType> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.box.<anonymous>.TargetType
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.box.<anonymous>.TargetType declared in <root>.box.<anonymous>'
+                            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<anonymous>.TargetType' type=<root>.box.<anonymous>.TargetType origin=null
+                  CALL 'public final fun setTypeVariableConsumerFunction (consumer: <unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$build: <root>.Buildee<<root>.box.<anonymous>.TargetType> declared in <root>.box.<anonymous>' type=<root>.Buildee<<root>.box.<anonymous>.TargetType> origin=null
+                    consumer: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.box.<anonymous>.TargetType, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.box.<anonymous>.TargetType) returnType:<unbound IrClassSymbolImpl>
+                        VALUE_PARAMETER name:it index:0 type:<root>.box.<anonymous>.TargetType
+                        BLOCK_BODY
+                          CALL 'public final fun consumeConcreteType (value: <root>.box.<anonymous>.ConcreteType): <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.TargetType' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'it: <root>.box.<anonymous>.TargetType declared in <root>.box.<anonymous>.<anonymous>' type=<root>.box.<anonymous>.TargetType origin=null
+                            value: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<anonymous>.ConcreteType' type=<root>.box.<anonymous>.ConcreteType origin=null
+        VAR name:targetType type:<root>.box.<anonymous>.TargetType [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.box.<anonymous>.TargetType origin=INVOKE
+            $this: CALL 'public final fun <get-typeVariableProducer> (): <unbound IrClassSymbolImpl><TV of <root>.Buildee> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl><<root>.box.<anonymous>.TargetType> origin=GET_PROPERTY
+              $this: GET_VAR 'val buildee: <root>.Buildee<<root>.box.<anonymous>.TargetType> [val] declared in <root>.box' type=<root>.Buildee<<root>.box.<anonymous>.TargetType> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: CALL 'public final fun <get-typeVariableConsumer> (): <unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl><<root>.box.<anonymous>.TargetType, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+            $this: GET_VAR 'val buildee: <root>.Buildee<<root>.box.<anonymous>.TargetType> [val] declared in <root>.box' type=<root>.Buildee<<root>.box.<anonymous>.TargetType> origin=null
+          1: GET_VAR 'val targetType: <root>.box.<anonymous>.TargetType [val] declared in <root>.box' type=<root>.box.<anonymous>.TargetType origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+      TYPE_PARAMETER name:TV index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<TV of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:typeVariableConsumer signature:/Buildee.typeVariableConsumer|{}typeVariableConsumer[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer signature:[ /Buildee.typeVariableConsumer|{}typeVariableConsumer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer type:kotlin.Function1<TV of <root>.Buildee, kotlin.Unit> visibility:private] ] type:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> visibility:private
+          EXPRESSION_BODY
+            FUN_EXPR type=<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:TV of <root>.Buildee) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:TV of <root>.Buildee
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: TV of <root>.Buildee): <unbound IrClassSymbolImpl> declared in <root>.Buildee.typeVariableConsumer'
+                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-typeVariableConsumer> signature:/Buildee.typeVariableConsumer.<get-typeVariableConsumer>|<get-typeVariableConsumer>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<TV of <root>.Buildee>) returnType:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:typeVariableConsumer signature:/Buildee.typeVariableConsumer|{}typeVariableConsumer[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-typeVariableConsumer> (): <unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> declared in <root>.Buildee'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer signature:[ /Buildee.typeVariableConsumer|{}typeVariableConsumer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer type:kotlin.Function1<TV of <root>.Buildee, kotlin.Unit> visibility:private] ] type:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> visibility:private' type=<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Buildee<TV of <root>.Buildee> declared in <root>.Buildee.<get-typeVariableConsumer>' type=<root>.Buildee<TV of <root>.Buildee> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-typeVariableConsumer> signature:/Buildee.typeVariableConsumer.<set-typeVariableConsumer>|<set-typeVariableConsumer>(kotlin.Function1<1:0,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<TV of <root>.Buildee>, <set-?>:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:typeVariableConsumer signature:/Buildee.typeVariableConsumer|{}typeVariableConsumer[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer signature:[ /Buildee.typeVariableConsumer|{}typeVariableConsumer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer type:kotlin.Function1<TV of <root>.Buildee, kotlin.Unit> visibility:private] ] type:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Buildee<TV of <root>.Buildee> declared in <root>.Buildee.<set-typeVariableConsumer>' type=<root>.Buildee<TV of <root>.Buildee> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> declared in <root>.Buildee.<set-typeVariableConsumer>' type=<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> origin=null
+      PROPERTY name:typeVariableProducer signature:/Buildee.typeVariableProducer|{}typeVariableProducer[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:typeVariableProducer signature:[ /Buildee.typeVariableProducer|{}typeVariableProducer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer type:kotlin.Function1<TV of <root>.Buildee, kotlin.Unit> visibility:private] ] type:<unbound IrClassSymbolImpl><TV of <root>.Buildee> visibility:private
+          EXPRESSION_BODY
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+                    <T0>: <unbound IrClassSymbolImpl>
+                    arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-typeVariableProducer> signature:/Buildee.typeVariableProducer.<get-typeVariableProducer>|<get-typeVariableProducer>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<TV of <root>.Buildee>) returnType:<unbound IrClassSymbolImpl><TV of <root>.Buildee>
+          correspondingProperty: PROPERTY name:typeVariableProducer signature:/Buildee.typeVariableProducer|{}typeVariableProducer[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-typeVariableProducer> (): <unbound IrClassSymbolImpl><TV of <root>.Buildee> declared in <root>.Buildee'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:typeVariableProducer signature:[ /Buildee.typeVariableProducer|{}typeVariableProducer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer type:kotlin.Function1<TV of <root>.Buildee, kotlin.Unit> visibility:private] ] type:<unbound IrClassSymbolImpl><TV of <root>.Buildee> visibility:private' type=<unbound IrClassSymbolImpl><TV of <root>.Buildee> origin=null
+                receiver: GET_VAR '<this>: <root>.Buildee<TV of <root>.Buildee> declared in <root>.Buildee.<get-typeVariableProducer>' type=<root>.Buildee<TV of <root>.Buildee> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-typeVariableProducer> signature:/Buildee.typeVariableProducer.<set-typeVariableProducer>|<set-typeVariableProducer>(kotlin.Function0<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<TV of <root>.Buildee>, <set-?>:<unbound IrClassSymbolImpl><TV of <root>.Buildee>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:typeVariableProducer signature:/Buildee.typeVariableProducer|{}typeVariableProducer[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><TV of <root>.Buildee>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:typeVariableProducer signature:[ /Buildee.typeVariableProducer|{}typeVariableProducer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:typeVariableConsumer type:kotlin.Function1<TV of <root>.Buildee, kotlin.Unit> visibility:private] ] type:<unbound IrClassSymbolImpl><TV of <root>.Buildee> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Buildee<TV of <root>.Buildee> declared in <root>.Buildee.<set-typeVariableProducer>' type=<root>.Buildee<TV of <root>.Buildee> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl><TV of <root>.Buildee> declared in <root>.Buildee.<set-typeVariableProducer>' type=<unbound IrClassSymbolImpl><TV of <root>.Buildee> origin=null
+      FUN name:setTypeVariableConsumerFunction signature:/Buildee.setTypeVariableConsumerFunction|setTypeVariableConsumerFunction(kotlin.Function1<1:0,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<TV of <root>.Buildee>, consumer:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+        VALUE_PARAMETER name:consumer index:0 type:<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          CALL 'public final fun <set-typeVariableConsumer> (<set-?>: <unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Buildee<TV of <root>.Buildee> declared in <root>.Buildee.setTypeVariableConsumerFunction' type=<root>.Buildee<TV of <root>.Buildee> origin=null
+            <set-?>: GET_VAR 'consumer: <unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> declared in <root>.Buildee.setTypeVariableConsumerFunction' type=<unbound IrClassSymbolImpl><TV of <root>.Buildee, <unbound IrClassSymbolImpl>> origin=null
+      FUN name:setTypeVariableProducerFunction signature:/Buildee.setTypeVariableProducerFunction|setTypeVariableProducerFunction(kotlin.Function0<1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<TV of <root>.Buildee>, producer:<unbound IrClassSymbolImpl><TV of <root>.Buildee>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+        VALUE_PARAMETER name:producer index:0 type:<unbound IrClassSymbolImpl><TV of <root>.Buildee>
+        BLOCK_BODY
+          CALL 'public final fun <set-typeVariableProducer> (<set-?>: <unbound IrClassSymbolImpl><TV of <root>.Buildee>): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Buildee<TV of <root>.Buildee> declared in <root>.Buildee.setTypeVariableProducerFunction' type=<root>.Buildee<TV of <root>.Buildee> origin=null
+            <set-?>: GET_VAR 'producer: <unbound IrClassSymbolImpl><TV of <root>.Buildee> declared in <root>.Buildee.setTypeVariableProducerFunction' type=<unbound IrClassSymbolImpl><TV of <root>.Buildee> origin=null
+    FUN name:build signature:/build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <PTV> (instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<PTV of <root>.build>
+      TYPE_PARAMETER name:PTV index:0 variance: signature:[ /build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructions index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <PTV> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<PTV of <root>.build> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<PTV of <root>.build> origin=null
+            <1>: <root>.Buildee<PTV of <root>.build>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<PTV of <root>.build> origin=null
+              <class: TV>: PTV of <root>.build
+            1: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.build>, <unbound IrClassSymbolImpl>> declared in <root>.build' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.build>, <unbound IrClassSymbolImpl>> origin=null

@@ -1,0 +1,40 @@
+// MODULE: m1
+library {
+  // module name: <m1>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Info
+
+    internal final class Info : kotlin/Any {
+
+      public constructor()
+
+      public final val status: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final val info: kotlin/Any?
+        public final get
+    }
+  }
+}
+
+// MODULE: m2
+library {
+  // module name: <m2>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getStatus(param: kotlin/Any?): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ContentType
+
+    public final enum class ContentType : kotlin/Enum<ContentType> {
+
+      private constructor()
+
+      public abstract fun convert(text: kotlin/String, targetType: ContentType): kotlin/String
+
+      PLAIN_TEXT,
+
+      MARKDOWN,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

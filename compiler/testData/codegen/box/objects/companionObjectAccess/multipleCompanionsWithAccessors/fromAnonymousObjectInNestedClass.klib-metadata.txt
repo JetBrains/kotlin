@@ -1,0 +1,70 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+    // class name: a/A.Companion
+
+    public open class a/A : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    protected final companion object a/A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun getO(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: outer
+
+    // class name: outer/Outer
+    // class name: outer/Outer.Companion
+    // class name: outer/Outer.Nested
+
+    public final class outer/Outer : a/A {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: Nested
+    }
+
+    private final companion object outer/Outer.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun getK(): kotlin/String
+    }
+
+    public final class outer/Outer.Nested : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/Any
+    }
+  }
+}

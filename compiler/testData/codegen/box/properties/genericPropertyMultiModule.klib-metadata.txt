@@ -1,0 +1,56 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: G
+
+    public final class C<T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0)
+
+      public final var t: T#0
+        public final get
+        public final set
+    }
+
+    public final class G<T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0)
+
+      public final var t: T#0
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final var <T#0 /* T */> C<T#0>.live: T#0
+        public final /* non-default */ get
+        public final /* non-default */ set(value: T#0)
+
+      public final var <T#0 /* T */> G<T#0>.live: T#0
+        public final /* non-default */ get
+        public final /* non-default */ set(value: T#0)
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun qux(text: kotlin/reflect/KMutableProperty0<kotlin/String>, s: kotlin/String): kotlin/String
+    }
+  }
+}

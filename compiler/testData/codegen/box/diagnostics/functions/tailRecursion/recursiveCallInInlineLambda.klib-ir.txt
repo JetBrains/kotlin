@@ -1,0 +1,95 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/recursiveCallInInlineLambda.kt
+    CLASS CLASS name:TailInline signature:/TailInline|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TailInline
+      CONSTRUCTOR signature:/TailInline.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TailInline [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TailInline signature:/TailInline|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:act signature:/TailInline.act|act(kotlin.Function0<kotlin.Unit>){}[0] visibility:private modality:FINAL <> ($this:<root>.TailInline, action:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.TailInline
+        VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun act (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.TailInline'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.TailInline.act' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+      PROPERTY name:countDown signature:/TailInline.countDown|{}countDown[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:countDown signature:[ /TailInline.countDown|{}countDown[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:countDown type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=100000
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-countDown> signature:/TailInline.countDown.<get-countDown>|<get-countDown>(){}[0] visibility:private modality:FINAL <> ($this:<root>.TailInline) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:countDown signature:/TailInline.countDown|{}countDown[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TailInline
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:countDown signature:[ /TailInline.countDown|{}countDown[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:countDown type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.<get-countDown>' type=<root>.TailInline origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-countDown> signature:/TailInline.countDown.<set-countDown>|<set-countDown>(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.TailInline, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:countDown signature:/TailInline.countDown|{}countDown[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TailInline
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:countDown signature:[ /TailInline.countDown|{}countDown[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:countDown type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.<set-countDown>' type=<root>.TailInline origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.TailInline.<set-countDown>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:test signature:/TailInline.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.TailInline) returnType:<unbound IrClassSymbolImpl> [tailrec]
+        $this: VALUE_PARAMETER name:<this> type:<root>.TailInline
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                arg0: CALL 'private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.TailInline'
+                CALL 'private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+          CALL 'private final fun act (action: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+            action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                      VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                          $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+                      CALL 'private final fun <set-countDown> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                        $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+                        <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                          $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.TailInline.test.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.TailInline.test.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                        arg0: CALL 'private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.TailInline'
+                        CALL 'private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.TailInline'
+                        CALL 'public final fun test (): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.TailInline'
+            CALL 'private final fun <get-countDown> (): <unbound IrClassSymbolImpl> declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.TailInline declared in <root>.TailInline.test' type=<root>.TailInline origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun test (): <unbound IrClassSymbolImpl> [tailrec] declared in <root>.TailInline' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TailInline' type=<root>.TailInline origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

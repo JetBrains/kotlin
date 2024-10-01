@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: C.B
+
+    public final class C : kotlin/Any {
+
+      public constructor(value: kotlin/String /* = ... */)
+
+      public final fun cReceiver(): C.B
+
+      public final fun classReceiver(): C.B
+
+      public final fun extReceiver(): C.B
+
+      public final fun C.extReceiver1(): C.B
+
+      public final fun newCReceiver(): C.B
+
+      public final val value: kotlin/String
+        public final get
+
+      // nested class: B
+    }
+
+    public final inner class C.B : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final val result: kotlin/String
+        public final get
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

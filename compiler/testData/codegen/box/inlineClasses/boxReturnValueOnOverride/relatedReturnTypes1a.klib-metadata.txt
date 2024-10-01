@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IFoo1
+    // class name: IFoo2
+    // class name: IQ
+    // class name: OK
+    // class name: Test
+    // class name: X
+
+    public abstract interface IFoo1 : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Any
+    }
+
+    public abstract interface IFoo2 : kotlin/Any {
+
+      public abstract fun foo(): IQ
+    }
+
+    public abstract interface IQ : kotlin/Any {
+
+      public abstract fun ok(): kotlin/String
+    }
+
+    public final object OK : IQ {
+
+      private constructor()
+
+      public open fun ok(): kotlin/String
+    }
+
+    public final class Test : IFoo1, IFoo2 {
+
+      public constructor()
+
+      public open fun foo(): X
+    }
+
+    public final value class X : IQ {
+
+      public constructor(t: IQ)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun ok(): kotlin/String
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val t: IQ
+        public final get
+
+      // underlying property: t
+
+      // underlying type: IQ
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

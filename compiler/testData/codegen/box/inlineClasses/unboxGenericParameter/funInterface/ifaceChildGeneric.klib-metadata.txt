@@ -1,0 +1,67 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+    // class name: FooHolder
+    // class name: FunIFace
+    // class name: IC
+
+    public abstract interface Foo : kotlin/Any {
+    }
+
+    public final class FooHolder : Foo {
+
+      public constructor(value: kotlin/Any)
+
+      public final val value: kotlin/Any
+        public final get
+    }
+
+    public abstract fun interface FunIFace<T#0 /* T */, T#1 /* R */> : kotlin/Any {
+
+      public abstract fun call(ic: T#0): T#1
+    }
+
+    public final value class IC<T#0 /* T */ : FooHolder> : Foo {
+
+      public constructor(value: T#0)
+
+      public final fun <T#1 /* T */> dispatchValue(): T#1
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: T#0
+        public final get
+
+      // underlying property: value
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun <T#0 /* T */, T#1 /* R */> bar(value: T#0, f: FunIFace<T#0, T#1>): T#1
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> dispatch(a: IC<FooHolder>): T#0
+
+      public final fun <T#0 /* T */> extension(a: IC<FooHolder>): T#0
+
+      public final fun <T#0 /* T */> IC<FooHolder>.extensionValue(): T#0
+
+      public final fun <T#0 /* T */> normal(a: IC<FooHolder>): T#0
+
+      public final fun <T#0 /* T */> normalValue(ic: IC<FooHolder>): T#0
+
+      public final fun <T#0 /* T */> underlying(a: IC<FooHolder>): T#0
+    }
+  }
+}

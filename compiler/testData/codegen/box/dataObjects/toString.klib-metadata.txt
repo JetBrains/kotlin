@@ -1,0 +1,145 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: com.example
+
+    // class name: com/example/C
+    // class name: com/example/C.CC
+    // class name: com/example/DataObject
+    // class name: com/example/DataObject.Nested
+    // class name: com/example/Declared
+    // class name: com/example/Foo
+    // class name: com/example/Foo.Inner
+    // class name: com/example/InheritedFromClassWithAbstractToString
+    // class name: com/example/InheritedFromClassWithFinalToString
+    // class name: com/example/InheritedFromClassWithOpenToString
+    // class name: com/example/WithAbstractToString
+    // class name: com/example/WithFinalToString
+    // class name: com/example/WithOpenToString
+
+    public final class com/example/C : kotlin/Any {
+
+      public constructor()
+
+      // companion object: CC
+
+      // nested class: CC
+    }
+
+    public final companion object com/example/C.CC : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final data object com/example/DataObject : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // nested class: Nested
+    }
+
+    public final data object com/example/DataObject.Nested : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+
+    public final data object com/example/Declared : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun toString(): kotlin/String
+    }
+
+    public final class com/example/Foo : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final data object com/example/Foo.Inner : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+
+    public final data object com/example/InheritedFromClassWithAbstractToString : com/example/WithAbstractToString {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+
+    public final data object com/example/InheritedFromClassWithFinalToString : com/example/WithFinalToString {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+    }
+
+    public final data object com/example/InheritedFromClassWithOpenToString : com/example/WithOpenToString {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+
+    public abstract class com/example/WithAbstractToString : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun toString(): kotlin/String
+    }
+
+    public open class com/example/WithFinalToString : kotlin/Any {
+
+      public constructor()
+
+      public final fun toString(): kotlin/String
+    }
+
+    public open class com/example/WithOpenToString : kotlin/Any {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

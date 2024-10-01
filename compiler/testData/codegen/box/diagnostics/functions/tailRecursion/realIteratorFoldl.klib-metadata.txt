@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final tailrec fun <T#0 /* T */, T#1 /* A */> kotlin/collections/Iterator<T#0>.foldl(acc: T#1, foldFunction: kotlin/Function2<@kotlin/ParameterName(name = "e") T#0, @kotlin/ParameterName(name = "acc") T#1, T#1>): T#1
+    }
+  }
+}

@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Another
+    // class name: Outer.Inner
+    // class name: Outer.Other
+
+    public open class Outer : kotlin/Any {
+
+      private constructor(s: kotlin/String, vararg i: kotlin/Int /* kotlin/IntArray */)
+
+      public final val s: kotlin/String
+        public final get
+
+      // nested class: Inner
+
+      // nested class: Other
+
+      // nested class: Another
+    }
+
+    public final class Outer.Another : Outer {
+
+      public constructor()
+    }
+
+    public final class Outer.Inner : Outer {
+
+      public constructor()
+    }
+
+    public final class Outer.Other : Outer {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

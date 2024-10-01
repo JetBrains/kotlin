@@ -1,0 +1,69 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/objectLiteralConstructor.kt
+    CLASS CLASS name:LockFreeLinkedListNode signature:/LockFreeLinkedListNode|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LockFreeLinkedListNode
+      CONSTRUCTOR signature:/LockFreeLinkedListNode.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.LockFreeLinkedListNode [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LockFreeLinkedListNode signature:/LockFreeLinkedListNode|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/LockFreeLinkedListNode.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /LockFreeLinkedListNode.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.LockFreeLinkedListNode.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/LockFreeLinkedListNode.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.LockFreeLinkedListNode) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/LockFreeLinkedListNode.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LockFreeLinkedListNode
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.LockFreeLinkedListNode'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /LockFreeLinkedListNode.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.LockFreeLinkedListNode declared in <root>.LockFreeLinkedListNode.<get-s>' type=<root>.LockFreeLinkedListNode origin=null
+    CLASS CLASS name:SendBuffered signature:[ File '/objectLiteralConstructor.kt' <- /SendBuffered|null[0] ] modality:FINAL visibility:private superTypes:[<root>.LockFreeLinkedListNode]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SendBuffered
+      CONSTRUCTOR signature:[ File '/objectLiteralConstructor.kt' <- /SendBuffered.<init>|<init>(kotlin.String){}[0] ] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.SendBuffered [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.LockFreeLinkedListNode'
+            s: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.SendBuffered.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SendBuffered signature:[ File '/objectLiteralConstructor.kt' <- /SendBuffered|null[0] ] modality:FINAL visibility:private superTypes:[<root>.LockFreeLinkedListNode]'
+    CLASS CLASS name:AddLastDesc2 signature:/AddLastDesc2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AddLastDesc2<T of <root>.AddLastDesc2>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /AddLastDesc2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[<root>.LockFreeLinkedListNode] reified:false] ] superTypes:[<root>.LockFreeLinkedListNode] reified:false
+      CONSTRUCTOR signature:/AddLastDesc2.<init>|<init>(1:0){}[0] visibility:public <> (node:T of <root>.AddLastDesc2) returnType:<root>.AddLastDesc2<T of <root>.AddLastDesc2> [primary]
+        VALUE_PARAMETER name:node index:0 type:T of <root>.AddLastDesc2
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AddLastDesc2 signature:/AddLastDesc2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:node signature:/AddLastDesc2.node|{}node[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:node signature:[ /AddLastDesc2.node|{}node[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:T of <root>.AddLastDesc2 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'node: T of <root>.AddLastDesc2 declared in <root>.AddLastDesc2.<init>' type=T of <root>.AddLastDesc2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-node> signature:/AddLastDesc2.node.<get-node>|<get-node>(){}[0] visibility:public modality:FINAL <> ($this:<root>.AddLastDesc2<T of <root>.AddLastDesc2>) returnType:T of <root>.AddLastDesc2
+          correspondingProperty: PROPERTY name:node signature:/AddLastDesc2.node|{}node[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.AddLastDesc2<T of <root>.AddLastDesc2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-node> (): T of <root>.AddLastDesc2 declared in <root>.AddLastDesc2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:node signature:[ /AddLastDesc2.node|{}node[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:T of <root>.AddLastDesc2 visibility:private [final]' type=T of <root>.AddLastDesc2 origin=null
+                receiver: GET_VAR '<this>: <root>.AddLastDesc2<T of <root>.AddLastDesc2> declared in <root>.AddLastDesc2.<get-node>' type=<root>.AddLastDesc2<T of <root>.AddLastDesc2> origin=null
+    TYPEALIAS name:AddLastDesc signature:/AddLastDesc|null[0] visibility:public expandedType:<root>.AddLastDesc2<T of <root>.AddLastDesc>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /AddLastDesc|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[<root>.LockFreeLinkedListNode] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:describeSendBuffered signature:/describeSendBuffered|describeSendBuffered(){}[0] visibility:public modality:FINAL <> () returnType:<root>.AddLastDesc2<*>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun describeSendBuffered (): <root>.AddLastDesc2<*> declared in <root>'
+          BLOCK type=<root>.describeSendBuffered.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.AddLastDesc2<<root>.SendBuffered>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.describeSendBuffered.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.describeSendBuffered.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (node: T of <root>.AddLastDesc2) [primary] declared in <root>.AddLastDesc2'
+                    <T>: <root>.SendBuffered
+                    node: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.SendBuffered' type=<root>.SendBuffered origin=null
+                      s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.AddLastDesc2<<root>.SendBuffered>]'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.describeSendBuffered.<no name provided>' type=<root>.describeSendBuffered.<no name provided> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.LockFreeLinkedListNode' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-node> (): T of <root>.AddLastDesc2 declared in <root>.AddLastDesc2' type=<root>.LockFreeLinkedListNode origin=GET_PROPERTY
+              $this: CALL 'public final fun describeSendBuffered (): <root>.AddLastDesc2<*> declared in <root>' type=<root>.AddLastDesc2<*> origin=null

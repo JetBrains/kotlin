@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inv
+
+    public final class Inv<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> bar(x: @kotlin/ExtensionFunctionType kotlin/Function1<Inv<T#0>, kotlin/Unit>): @kotlin/ExtensionFunctionType kotlin/Function1<Inv<T#0>, kotlin/Unit>
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

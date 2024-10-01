@@ -1,0 +1,34 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt15871.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun getAndCheck <T> (getFirst: <unbound IrClassSymbolImpl><T of <root>.getAndCheck>, getSecond: <unbound IrClassSymbolImpl><T of <root>.getAndCheck>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                getFirst: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                        CONST Int type=<unbound IrClassSymbolImpl> value=42
+                getSecond: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                        CONST Int type=<unbound IrClassSymbolImpl> value=42
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+    FUN name:getAndCheck signature:/getAndCheck|getAndCheck(kotlin.Function0<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (getFirst:<unbound IrClassSymbolImpl><T of <root>.getAndCheck>, getSecond:<unbound IrClassSymbolImpl><T of <root>.getAndCheck>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /getAndCheck|getAndCheck(kotlin.Function0<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:getFirst index:0 type:<unbound IrClassSymbolImpl><T of <root>.getAndCheck>
+      VALUE_PARAMETER name:getSecond index:1 type:<unbound IrClassSymbolImpl><T of <root>.getAndCheck>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getAndCheck <T> (getFirst: <unbound IrClassSymbolImpl><T of <root>.getAndCheck>, getSecond: <unbound IrClassSymbolImpl><T of <root>.getAndCheck>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.getAndCheck origin=INVOKE
+              $this: GET_VAR 'getFirst: <unbound IrClassSymbolImpl><T of <root>.getAndCheck> declared in <root>.getAndCheck' type=<unbound IrClassSymbolImpl><T of <root>.getAndCheck> origin=VARIABLE_AS_FUNCTION
+            arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.getAndCheck origin=INVOKE
+              $this: GET_VAR 'getSecond: <unbound IrClassSymbolImpl><T of <root>.getAndCheck> declared in <root>.getAndCheck' type=<unbound IrClassSymbolImpl><T of <root>.getAndCheck> origin=VARIABLE_AS_FUNCTION

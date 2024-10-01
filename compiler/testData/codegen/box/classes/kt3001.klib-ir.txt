@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3001.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      PROPERTY name:result signature:/A.result|{}result[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/A.result.<get-result>|<get-result>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/A.result|{}result[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+    CLASS CLASS name:Base signature:/Base|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      CONSTRUCTOR signature:/Base.<init>|<init>(kotlin.String){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:<root>.Base [primary]
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:/Base|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+      PROPERTY name:result signature:/Base.result|{}result[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ /Base.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'result: <unbound IrClassSymbolImpl> declared in <root>.Base.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/Base.result.<get-result>|<get-result>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Base) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:/Base.result|{}result[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.A
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.Base'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /Base.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-result>' type=<root>.Base origin=null
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:OPEN visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+      CONSTRUCTOR signature:/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Derived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:OPEN visibility:public superTypes:[<root>.A]'
+      FIELD DELEGATE name:$$delegate_0 signature:/Derived.$$delegate_0|[0] type:<root>.Base visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Base' type=<root>.Base origin=null
+            result: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      PROPERTY DELEGATED_MEMBER name:result signature:/Derived.result|{}result[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-result> signature:/Derived.result.<get-result>|<get-result>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:result signature:/Derived.result|{}result[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.A
+          $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+              CALL 'public open fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.Base' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/Derived.$$delegate_0|[0] type:<root>.Base visibility:private [final] declared in <root>.Derived' type=<root>.Base origin=null
+                  receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-result>' type=<root>.Derived origin=null
+    CLASS CLASS name:Z signature:/Z|null[0] modality:FINAL visibility:public superTypes:[<root>.Derived]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
+      CONSTRUCTOR signature:/Z.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Z [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z signature:/Z|null[0] modality:FINAL visibility:public superTypes:[<root>.Derived]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Z' type=<root>.Z origin=null

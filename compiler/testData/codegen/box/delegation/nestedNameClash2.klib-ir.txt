@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:second fileName:/nestedNameClash2.kt
+    FUN name:box signature:second/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:data type:second.MyClass [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (prop: second.Base) [primary] declared in second.MyClass' type=second.MyClass origin=null
+            prop: BLOCK type=second.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[second.Base]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:second.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[second.Base]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in second.box.<no name provided>' type=second.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in second'
+          CALL 'public open fun foo (): <unbound IrClassSymbolImpl> declared in second.MyClass' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val data: second.MyClass [val] declared in second.box' type=second.MyClass origin=null
+    CLASS INTERFACE name:Base signature:second/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.Base
+      FUN name:foo signature:second/Base.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:second.Base) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:second.Base
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in second.Base'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:MyClass signature:second/MyClass|null[0] modality:FINAL visibility:public superTypes:[second.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.MyClass
+      CONSTRUCTOR signature:second/MyClass.<init>|<init>(second.Base){}[0] visibility:public <> (prop:second.Base) returnType:second.MyClass [primary]
+        VALUE_PARAMETER name:prop index:0 type:second.Base
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass signature:second/MyClass|null[0] modality:FINAL visibility:public superTypes:[second.Base]'
+      PROPERTY name:prop signature:second/MyClass.prop|{}prop[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:prop signature:[ second/MyClass.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:second.Base visibility:private [final]] ] type:second.Base visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'prop: second.Base declared in second.MyClass.<init>' type=second.Base origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:second/MyClass.prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> ($this:second.MyClass) returnType:second.Base
+          correspondingProperty: PROPERTY name:prop signature:second/MyClass.prop|{}prop[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:second.MyClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): second.Base declared in second.MyClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ second/MyClass.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:second.Base visibility:private [final]] ] type:second.Base visibility:private [final]' type=second.Base origin=null
+                receiver: GET_VAR '<this>: second.MyClass declared in second.MyClass.<get-prop>' type=second.MyClass origin=null
+      CLASS INTERFACE name:Base signature:second/MyClass.Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.MyClass.Base
+      FUN DELEGATED_MEMBER name:foo signature:second/MyClass.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:second.MyClass) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun foo (): <unbound IrClassSymbolImpl> declared in second.Base
+        $this: VALUE_PARAMETER name:<this> type:second.MyClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in second.MyClass'
+            CALL 'public open fun foo (): <unbound IrClassSymbolImpl> declared in second.Base' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ second/MyClass.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:second.Base visibility:private [final]] ] type:second.Base visibility:private [final]' type=second.Base origin=null
+                receiver: GET_VAR '<this>: second.MyClass declared in second.MyClass.foo' type=second.MyClass origin=null

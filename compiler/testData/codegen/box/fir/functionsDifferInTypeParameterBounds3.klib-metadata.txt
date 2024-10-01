@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: Inv
+    // class name: K
+    // class name: X
+    // class name: Y
+
+    public abstract interface A : kotlin/Any {
+    }
+
+    public abstract interface B : kotlin/Any {
+    }
+
+    public abstract interface C : kotlin/Any {
+    }
+
+    public abstract interface D : kotlin/Any {
+    }
+
+    public abstract interface Inv<T#0 /* T */> : kotlin/Any {
+    }
+
+    public open class K : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface X : kotlin/Any {
+
+      public abstract fun <T#0 /* T */ : A & B & C & D> foo(t: T#0): kotlin/String
+
+      public abstract fun <T#0 /* T */ : K & Inv<B> & A?> foo(t: T#0): kotlin/String
+
+      public abstract fun <T#0 /* T */ : Inv<out Inv<in C>> & kotlin/Any> foo(t: T#0): kotlin/String
+    }
+
+    public final class Y : X {
+
+      public constructor()
+
+      public open fun <T#0 /* T */ : A & C & B & D> foo(t: T#0): kotlin/String
+
+      public open fun <T#0 /* T */ : K & A? & Inv<B>> foo(t: T#0): kotlin/String
+
+      public open fun <T#0 /* T */ : kotlin/Any & Inv<out Inv<in C>>> foo(t: T#0): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

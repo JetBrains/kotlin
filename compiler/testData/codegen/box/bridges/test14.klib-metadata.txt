@@ -1,0 +1,54 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: I1
+    // class name: I2
+
+    public open class A<T#0 /* T */, T#1 /* U */> : kotlin/Any {
+
+      public constructor()
+
+      public open fun foo(x: T#0, y: T#1): kotlin/Unit
+    }
+
+    public final class B : A<kotlin/Int, kotlin/Int>, I1<kotlin/Int>, I2<kotlin/Int> {
+
+      public constructor()
+
+      public open fun foo(x: kotlin/Int, y: kotlin/Int): kotlin/Unit
+
+      public final var q: kotlin/Int
+        public final get
+        public final set
+
+      public final var z: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public abstract interface I1<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun foo(x: kotlin/Int, y: T#0): kotlin/Unit
+    }
+
+    public abstract interface I2<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun foo(x: T#0, y: kotlin/Int): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun zzz(a: A<kotlin/Int, kotlin/Int>): kotlin/Unit
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

@@ -1,0 +1,93 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/customReadOnlyIterator.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:size signature:/A.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/A.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/A.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:contains signature:/A.contains|contains(kotlin.Char){}[0] visibility:public modality:OPEN <> ($this:<root>.A, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="not implemented"
+      FUN name:containsAll signature:/A.containsAll|containsAll(kotlin.collections.Collection<kotlin.Char>){}[0] visibility:public modality:OPEN <> ($this:<root>.A, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="not implemented"
+      FUN name:isEmpty signature:/A.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="not implemented"
+      FUN name:iterator signature:/A.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.A) returnType:<root>.MyIterator [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <root>.MyIterator [operator] declared in <root>.A'
+            GET_OBJECT 'CLASS OBJECT name:MyIterator signature:/MyIterator|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]' type=<root>.MyIterator
+    CLASS OBJECT name:MyIterator signature:/MyIterator|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyIterator
+      CONSTRUCTOR signature:/MyIterator.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.MyIterator [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:MyIterator signature:/MyIterator|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+      FUN name:hasNext signature:/MyIterator.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyIterator) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyIterator
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyIterator'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:next signature:/MyIterator.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyIterator) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyIterator
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyIterator'
+            CONST Char type=<unbound IrClassSymbolImpl> value='a'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:it type:<root>.MyIterator [val]
+          CALL 'public open fun iterator (): <root>.MyIterator [operator] declared in <root>.A' type=<root>.MyIterator origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyIterator' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val it: <root>.MyIterator [val] declared in <root>.box' type=<root>.MyIterator origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public open fun next (): <unbound IrClassSymbolImpl> [operator] declared in <root>.MyIterator' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val it: <root>.MyIterator [val] declared in <root>.box' type=<root>.MyIterator origin=null
+                arg1: CONST Char type=<unbound IrClassSymbolImpl> value='a'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

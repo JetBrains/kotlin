@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SampleClass
+    // class name: TransformedConfigPropertyString
+
+    public final class SampleClass : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ val ignoreStringsRegex: kotlin/text/Regex
+        public final /* non-default */ get
+    }
+
+    private final class TransformedConfigPropertyString : kotlin/properties/ReadOnlyProperty<SampleClass, kotlin/text/Regex> {
+
+      public constructor(defaultValue: kotlin/String, transform: kotlin/Function1<kotlin/String, kotlin/text/Regex>)
+
+      public open operator fun getValue(thisRef: SampleClass, property: kotlin/reflect/KProperty<*>): kotlin/text/Regex
+
+      private final val transform: kotlin/Function1<kotlin/String, kotlin/text/Regex>
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

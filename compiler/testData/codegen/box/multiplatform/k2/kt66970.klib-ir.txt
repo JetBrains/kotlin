@@ -1,0 +1,176 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib-common.kt
+    CLASS OBJECT name:JvmStaticTest signature:/JvmStaticTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JvmStaticTest
+      CONSTRUCTOR signature:/JvmStaticTest.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.JvmStaticTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:JvmStaticTest signature:/JvmStaticTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:annotatedFunction signature:/JvmStaticTest.annotatedFunction|annotatedFunction(){}[0] visibility:public modality:FINAL <> ($this:<root>.JvmStaticTest) returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          <unbound>
+        $this: VALUE_PARAMETER name:<this> type:<root>.JvmStaticTest
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun annotatedFunction (): <unbound IrClassSymbolImpl> declared in <root>.JvmStaticTest'
+            CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic function"
+      PROPERTY name:annotatedProperty signature:/JvmStaticTest.annotatedProperty|{}annotatedProperty[0] visibility:public modality:FINAL [val]
+        annotations:
+          <unbound>
+        FIELD PROPERTY_BACKING_FIELD name:annotatedProperty signature:[ /JvmStaticTest.annotatedProperty|{}annotatedProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic property"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-annotatedProperty> signature:/JvmStaticTest.annotatedProperty.<get-annotatedProperty>|<get-annotatedProperty>(){}[0] visibility:public modality:FINAL <> ($this:<root>.JvmStaticTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:annotatedProperty signature:/JvmStaticTest.annotatedProperty|{}annotatedProperty[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.JvmStaticTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-annotatedProperty> (): <unbound IrClassSymbolImpl> declared in <root>.JvmStaticTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotatedProperty signature:[ /JvmStaticTest.annotatedProperty|{}annotatedProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.JvmStaticTest declared in <root>.JvmStaticTest.<get-annotatedProperty>' type=<root>.JvmStaticTest origin=null
+      PROPERTY name:annotatedGetter signature:/JvmStaticTest.annotatedGetter|{}annotatedGetter[0] visibility:public modality:FINAL [val]
+        FUN name:<get-annotatedGetter> signature:/JvmStaticTest.annotatedGetter.<get-annotatedGetter>|<get-annotatedGetter>(){}[0] visibility:public modality:FINAL <> ($this:<root>.JvmStaticTest) returnType:<unbound IrClassSymbolImpl>
+          annotations:
+            <unbound>
+          correspondingProperty: PROPERTY name:annotatedGetter signature:/JvmStaticTest.annotatedGetter|{}annotatedGetter[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.JvmStaticTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-annotatedGetter> (): <unbound IrClassSymbolImpl> declared in <root>.JvmStaticTest'
+              CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic property getter"
+      PROPERTY name:annotatedSetter signature:/JvmStaticTest.annotatedSetter|{}annotatedSetter[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:annotatedSetter signature:[ /JvmStaticTest.annotatedSetter|{}annotatedSetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="JvmStaticTest.annotatedSetter default value"
+        FUN name:<get-annotatedSetter> signature:/JvmStaticTest.annotatedSetter.<get-annotatedSetter>|<get-annotatedSetter>(){}[0] visibility:public modality:FINAL <> ($this:<root>.JvmStaticTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:annotatedSetter signature:/JvmStaticTest.annotatedSetter|{}annotatedSetter[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.JvmStaticTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-annotatedSetter> (): <unbound IrClassSymbolImpl> declared in <root>.JvmStaticTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotatedSetter signature:[ /JvmStaticTest.annotatedSetter|{}annotatedSetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.JvmStaticTest declared in <root>.JvmStaticTest.<get-annotatedSetter>' type=<root>.JvmStaticTest origin=null
+        FUN name:<set-annotatedSetter> signature:/JvmStaticTest.annotatedSetter.<set-annotatedSetter>|<set-annotatedSetter>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.JvmStaticTest, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          annotations:
+            <unbound>
+          correspondingProperty: PROPERTY name:annotatedSetter signature:/JvmStaticTest.annotatedSetter|{}annotatedSetter[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.JvmStaticTest
+          VALUE_PARAMETER name:newValue index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotatedSetter signature:[ /JvmStaticTest.annotatedSetter|{}annotatedSetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=EQ
+              receiver: GET_VAR '<this>: <root>.JvmStaticTest declared in <root>.JvmStaticTest.<set-annotatedSetter>' type=<root>.JvmStaticTest origin=null
+              value: GET_VAR 'newValue: <unbound IrClassSymbolImpl> declared in <root>.JvmStaticTest.<set-annotatedSetter>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:JsStaticTest signature:/JsStaticTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsStaticTest
+      CONSTRUCTOR signature:/JsStaticTest.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JsStaticTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsStaticTest signature:/JsStaticTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/JsStaticTest.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsStaticTest.Companion
+        CONSTRUCTOR signature:/JsStaticTest.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.JsStaticTest.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/JsStaticTest.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:annotatedFunction signature:/JsStaticTest.Companion.annotatedFunction|annotatedFunction(){}[0] visibility:public modality:FINAL <> ($this:<root>.JsStaticTest.Companion) returnType:<unbound IrClassSymbolImpl>
+          annotations:
+            <unbound>
+          $this: VALUE_PARAMETER name:<this> type:<root>.JsStaticTest.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun annotatedFunction (): <unbound IrClassSymbolImpl> declared in <root>.JsStaticTest.Companion'
+              CONST String type=<unbound IrClassSymbolImpl> value="JsStatic function"
+        PROPERTY name:annotatedProperty signature:/JsStaticTest.Companion.annotatedProperty|{}annotatedProperty[0] visibility:public modality:FINAL [val]
+          annotations:
+            <unbound>
+          FIELD PROPERTY_BACKING_FIELD name:annotatedProperty signature:[ /JsStaticTest.Companion.annotatedProperty|{}annotatedProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="JsStatic property"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-annotatedProperty> signature:/JsStaticTest.Companion.annotatedProperty.<get-annotatedProperty>|<get-annotatedProperty>(){}[0] visibility:public modality:FINAL <> ($this:<root>.JsStaticTest.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:annotatedProperty signature:/JsStaticTest.Companion.annotatedProperty|{}annotatedProperty[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.JsStaticTest.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-annotatedProperty> (): <unbound IrClassSymbolImpl> declared in <root>.JsStaticTest.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotatedProperty signature:[ /JsStaticTest.Companion.annotatedProperty|{}annotatedProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.JsStaticTest.Companion declared in <root>.JsStaticTest.Companion.<get-annotatedProperty>' type=<root>.JsStaticTest.Companion origin=null
+        PROPERTY name:annotatedGetter signature:/JsStaticTest.Companion.annotatedGetter|{}annotatedGetter[0] visibility:public modality:FINAL [val]
+          FUN name:<get-annotatedGetter> signature:/JsStaticTest.Companion.annotatedGetter.<get-annotatedGetter>|<get-annotatedGetter>(){}[0] visibility:public modality:FINAL <> ($this:<root>.JsStaticTest.Companion) returnType:<unbound IrClassSymbolImpl>
+            annotations:
+              <unbound>
+            correspondingProperty: PROPERTY name:annotatedGetter signature:/JsStaticTest.Companion.annotatedGetter|{}annotatedGetter[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.JsStaticTest.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-annotatedGetter> (): <unbound IrClassSymbolImpl> declared in <root>.JsStaticTest.Companion'
+                CONST String type=<unbound IrClassSymbolImpl> value="JsStatic property getter"
+        PROPERTY name:annotatedSetter signature:/JsStaticTest.Companion.annotatedSetter|{}annotatedSetter[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:annotatedSetter signature:[ /JsStaticTest.Companion.annotatedSetter|{}annotatedSetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="JsStaticTest.Companion.annotatedSetter default value"
+          FUN name:<get-annotatedSetter> signature:/JsStaticTest.Companion.annotatedSetter.<get-annotatedSetter>|<get-annotatedSetter>(){}[0] visibility:public modality:FINAL <> ($this:<root>.JsStaticTest.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:annotatedSetter signature:/JsStaticTest.Companion.annotatedSetter|{}annotatedSetter[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.JsStaticTest.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-annotatedSetter> (): <unbound IrClassSymbolImpl> declared in <root>.JsStaticTest.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotatedSetter signature:[ /JsStaticTest.Companion.annotatedSetter|{}annotatedSetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.JsStaticTest.Companion declared in <root>.JsStaticTest.Companion.<get-annotatedSetter>' type=<root>.JsStaticTest.Companion origin=null
+          FUN name:<set-annotatedSetter> signature:/JsStaticTest.Companion.annotatedSetter.<set-annotatedSetter>|<set-annotatedSetter>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.JsStaticTest.Companion, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            annotations:
+              <unbound>
+            correspondingProperty: PROPERTY name:annotatedSetter signature:/JsStaticTest.Companion.annotatedSetter|{}annotatedSetter[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.JsStaticTest.Companion
+            VALUE_PARAMETER name:newValue index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotatedSetter signature:[ /JsStaticTest.Companion.annotatedSetter|{}annotatedSetter[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:annotatedProperty type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=EQ
+                receiver: GET_VAR '<this>: <root>.JsStaticTest.Companion declared in <root>.JsStaticTest.Companion.<set-annotatedSetter>' type=<root>.JsStaticTest.Companion origin=null
+                value: GET_VAR 'newValue: <unbound IrClassSymbolImpl> declared in <root>.JsStaticTest.Companion.<set-annotatedSetter>' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/lib.kt
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic function"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic property"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic property getter"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic property setter"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JvmStatic property setter"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JsStatic function"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JsStatic property"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JsStatic property getter"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="JsStatic property setter"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CONST String type=<unbound IrClassSymbolImpl> value="JsStatic property setter"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

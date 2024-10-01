@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseFragment
+    // class name: BaseViewModel
+    // class name: DerivedFragment
+    // class name: DerivedViewModel
+
+    public abstract class BaseFragment<T#0 /* T */ : BaseViewModel> : kotlin/Any {
+
+      public constructor()
+
+      public open fun onActivityCreated(): kotlin/String
+
+      public abstract fun retrieveViewModel(): T#0
+
+      public final lateinit var viewModel: T#0
+        public final get
+        public final set
+    }
+
+    public abstract class BaseViewModel : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class DerivedFragment : BaseFragment<DerivedViewModel> {
+
+      public constructor()
+
+      public final inline fun <T#0 /* T */> bind(crossinline viewModelGet: kotlin/Function0<T#0?>): kotlin/String
+
+      public open fun onActivityCreated(): kotlin/String
+
+      public open fun retrieveViewModel(): DerivedViewModel
+
+      public final fun setOnFocusChangeListener(l: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+
+    public final class DerivedViewModel : BaseViewModel {
+
+      public constructor()
+
+      public final var property: kotlin/String?
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ITest
+    // class name: Test
+    // class name: Z
+
+    public abstract interface ITest : kotlin/Any {
+
+      public open fun testDefault(z: Z<kotlin/Int> /* = ... */): kotlin/Int
+
+      public abstract fun testOverridden(z: Z<kotlin/Int> /* = ... */): kotlin/Int
+    }
+
+    public final class Test : ITest {
+
+      public constructor()
+
+      public open fun testOverridden(z: Z<kotlin/Int>): kotlin/Int
+    }
+
+    public final value class Z<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(z: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val z: T#0
+        public final get
+
+      // underlying property: z
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

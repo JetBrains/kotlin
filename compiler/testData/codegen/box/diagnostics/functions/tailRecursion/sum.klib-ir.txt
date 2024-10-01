@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/sum.kt
+    FUN name:sum signature:/sum|sum(kotlin.Long;kotlin.Long){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, sum:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [tailrec]
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:sum index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.sum' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun sum (x: <unbound IrClassSymbolImpl>, sum: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>'
+              GET_VAR 'sum: <unbound IrClassSymbolImpl> declared in <root>.sum' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun sum (x: <unbound IrClassSymbolImpl>, sum: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>'
+          CALL 'public final fun sum (x: <unbound IrClassSymbolImpl>, sum: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+              $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.sum' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            sum: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: GET_VAR 'sum: <unbound IrClassSymbolImpl> declared in <root>.sum' type=<unbound IrClassSymbolImpl> origin=null
+              1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.sum' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun sum (x: <unbound IrClassSymbolImpl>, sum: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [tailrec] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST Long type=<unbound IrClassSymbolImpl> value=1000000
+            sum: CONST Long type=<unbound IrClassSymbolImpl> value=0
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val sum: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Long type=<unbound IrClassSymbolImpl> value=500000500000
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail "
+                GET_VAR 'val sum: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

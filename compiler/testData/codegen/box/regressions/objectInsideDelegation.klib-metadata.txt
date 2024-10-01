@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: First
+    // class name: Second
+
+    public abstract interface First : kotlin/Any {
+    }
+
+    public abstract interface Second : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ val b: First
+        public final /* non-default */ get
+
+      private final /* delegated */ val withTwoSupertypes: kotlin/Any
+        private final /* non-default */ get
+
+      private final /* delegated */ val withoutType: kotlin/Any
+        private final /* non-default */ get
+    }
+  }
+}

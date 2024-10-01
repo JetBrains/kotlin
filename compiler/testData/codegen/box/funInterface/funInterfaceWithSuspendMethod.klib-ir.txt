@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceWithSuspendMethod.kt
+    CLASS INTERFACE name:SuspendFun signature:/SuspendFun|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuspendFun
+      FUN name:method signature:/SuspendFun.method|method(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SuspendFun) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendFun
+    FUN name:runBlocking signature:/runBlocking|runBlocking(kotlin.coroutines.SuspendFunction0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (c:<unbound IrClassSymbolImpl><T of <root>.runBlocking>) returnType:T of <root>.runBlocking
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /runBlocking|runBlocking(kotlin.coroutines.SuspendFunction0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><T of <root>.runBlocking>
+      BLOCK_BODY
+        VAR name:res type:T of <root>.runBlocking? [var]
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: T of <root>.runBlocking
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><T of <root>.runBlocking> declared in <root>.runBlocking' type=<unbound IrClassSymbolImpl><T of <root>.runBlocking> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.runBlocking> origin=null
+            <1>: T of <root>.runBlocking
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.runBlocking>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><T of <root>.runBlocking>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><T of <root>.runBlocking>
+                BLOCK_BODY
+                  SET_VAR 'var res: T of <root>.runBlocking? [var] declared in <root>.runBlocking' type=<unbound IrClassSymbolImpl> origin=EQ
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.runBlocking origin=null
+                      <1>: T of <root>.runBlocking
+                      $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><T of <root>.runBlocking> declared in <root>.runBlocking.<anonymous>' type=<unbound IrClassSymbolImpl><T of <root>.runBlocking> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runBlocking <T> (c: <unbound IrClassSymbolImpl><T of <root>.runBlocking>): T of <root>.runBlocking declared in <root>'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.runBlocking & Any} origin=EXCLEXCL
+            <T0>: {T of <root>.runBlocking & Any}
+            arg0: GET_VAR 'var res: T of <root>.runBlocking? [var] declared in <root>.runBlocking' type=T of <root>.runBlocking? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:impl type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        VAR name:suspendImpl type:<root>.SuspendFun [val]
+          TYPE_OP type=<root>.SuspendFun origin=SAM_CONVERSION typeOperand=<root>.SuspendFun
+            BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=SUSPEND_CONVERSION
+              FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:$callee type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun suspendConversion0 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$callee: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.box.suspendConversion0' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              FUNCTION_REFERENCE 'local final fun suspendConversion0 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=SUSPEND_CONVERSION reflectionTarget=null
+                $receiver: GET_VAR 'val impl: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun runBlocking <T> (c: <unbound IrClassSymbolImpl><T of <root>.runBlocking>): T of <root>.runBlocking declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box'
+                    CALL 'public abstract fun method (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.SuspendFun' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'val suspendImpl: <root>.SuspendFun [val] declared in <root>.box' type=<root>.SuspendFun origin=null

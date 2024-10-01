@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bottom
+    // class name: DefaultImpl
+    // class name: Top
+
+    public final class Bottom : DefaultImpl {
+
+      public constructor(data: kotlin/Int)
+
+      public open fun getData(): kotlin/Int
+
+      public final val data: kotlin/Int
+        public final get
+    }
+
+    public abstract class DefaultImpl : Top<kotlin/Int> {
+
+      public constructor()
+
+      public open fun toString(data: kotlin/Int): kotlin/String
+    }
+
+    public abstract interface Top<T#0 /* D */> : kotlin/Any {
+
+      public abstract fun getData(): T#0
+
+      public abstract fun toString(data: T#0): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* D */> Top<T#0>.getString(): kotlin/String
+    }
+  }
+}

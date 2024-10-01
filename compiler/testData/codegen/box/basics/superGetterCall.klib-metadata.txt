@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: C1
+    // class name: C2
+    // class name: C3
+
+    public open class C : kotlin/Any {
+
+      public constructor()
+
+      public open val p1: kotlin/String /* = ... */
+        public open get
+    }
+
+    public final class C1 : C {
+
+      public constructor()
+
+      public open val p1: kotlin/String
+        public open get
+    }
+
+    public open class C2 : C {
+
+      public constructor()
+    }
+
+    public final class C3 : C2 {
+
+      public constructor()
+
+      public open val p1: kotlin/String
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

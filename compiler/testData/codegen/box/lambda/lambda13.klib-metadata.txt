@@ -1,0 +1,17 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun apply(str: kotlin/String, block: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/String, kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

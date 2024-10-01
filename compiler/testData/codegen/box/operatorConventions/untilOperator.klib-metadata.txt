@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: ARange
+
+    public final class A : kotlin/Comparable<A> {
+
+      public constructor(x: kotlin/Int)
+
+      public open operator fun compareTo(other: A): kotlin/Int
+
+      public final operator fun rangeTo(other: A): kotlin/collections/Iterable<A>
+
+      public final operator fun rangeUntil(other: A): kotlin/collections/Iterable<A>
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    public final class ARange : kotlin/ranges/ClosedRange<A>, kotlin/collections/Iterable<A> {
+
+      public constructor(_start: A, _end: A)
+
+      public open operator fun iterator(): kotlin/collections/Iterator<A>
+
+      public open val endInclusive: A
+        public open get
+
+      private final val finalElement: kotlin/Int
+        private final get
+
+      private final var hasNext: kotlin/Boolean
+        private final get
+        private final set
+
+      private final var next: kotlin/Int
+        private final get
+        private final set
+
+      public open val start: A
+        public open get
+
+      private final val step: kotlin/Int /* = ... */
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base_1
+    // class name: Base_2
+    // class name: Derived_1
+    // class name: Derived_2
+    // class name: Impl_2
+
+    public open class Base_1 : kotlin/Any {
+
+      public constructor()
+
+      public final val x: kotlin/Any?
+        public final get
+
+      public final val y: kotlin/Any?
+        public final get
+    }
+
+    public open class Base_2 : kotlin/Any {
+
+      public constructor()
+
+      public final val x: kotlin/Any?
+        public final get
+
+      public final val y: kotlin/Any?
+        public final get
+    }
+
+    public final class Derived_1 : Base_1 {
+
+      public constructor()
+    }
+
+    public open class Derived_2 : Base_2 {
+
+      public constructor()
+    }
+
+    public final class Impl_2 : Derived_2 {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

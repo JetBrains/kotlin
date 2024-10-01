@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: demo_range
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun kotlin/Int?.dec(): kotlin/Int
+
+      public final operator fun kotlin/Int?.inc(): kotlin/Int
+
+      public final operator fun kotlin/Int?.unaryMinus(): kotlin/Int
+
+      public final operator fun kotlin/Int?.unaryPlus(): kotlin/Int
+    }
+  }
+}

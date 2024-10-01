@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> mutate(x: kotlin/collections/MutableList<T#0>): kotlin/collections/MutableList<T#0>
+    }
+  }
+}

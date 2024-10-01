@@ -1,0 +1,21 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt57487.kt
+    FUN name:arrayData signature:/arrayData|arrayData(kotlin.Array<out|0:0>...;kotlin.Function1<kotlin.Array<0:0>,kotlin.Unit>){0§<kotlin.Comparable<0:0>>}[0] visibility:public modality:FINAL <T> (values:<unbound IrClassSymbolImpl><out T of <root>.arrayData>, toArray:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.arrayData>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /arrayData|arrayData(kotlin.Array<out|0:0>...;kotlin.Function1<kotlin.Array<0:0>,kotlin.Unit>){0§<kotlin.Comparable<0:0>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.arrayData>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of <root>.arrayData>] reified:false
+      VALUE_PARAMETER name:values index:0 type:<unbound IrClassSymbolImpl><out T of <root>.arrayData> varargElementType:T of <root>.arrayData [vararg]
+      VALUE_PARAMETER name:toArray index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.arrayData>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun arrayData <T> (vararg values: T of <root>.arrayData, toArray: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.arrayData>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          values: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+          toArray: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$arrayData type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

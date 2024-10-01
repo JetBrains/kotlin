@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/Container
+
+    public final class test/C<T#0 /* INV */, in T#1 /* IN */, out T#2 /* OUT */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun getIn(): kotlin/reflect/KTypeParameter
+
+      public final fun getInv(): kotlin/reflect/KTypeParameter
+
+      public final fun getOut(): kotlin/reflect/KTypeParameter
+    }
+
+    public final class test/Container<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* X */, T#1 /* Y */ : T#0> getY(): kotlin/reflect/KTypeParameter
+
+      public final val isJS: kotlin/Boolean
+        public final get
+    }
+  }
+}

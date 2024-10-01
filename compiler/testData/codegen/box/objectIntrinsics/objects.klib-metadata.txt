@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    package {
+
+      public final fun kotlin/Int.Companion.TopFun(): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> myAssertEquals(a: T#0, b: T#0): kotlin/Unit
+
+      public final fun test(a: kotlin/Any): kotlin/Unit
+
+      public final fun testCompanionObjectAccess(): kotlin/Unit
+
+      public final fun testDoubleConstants(): kotlin/Unit
+
+      public final fun testFloatConstants(): kotlin/Unit
+
+      public final fun testInCall(): kotlin/Unit
+
+      public final fun testLocalFun(): kotlin/Unit
+
+      public final fun testTopLevelFun(): kotlin/Unit
+
+      public final fun testVarTopField(): kotlin/Unit
+
+      public final var kotlin/Int.Companion.TopField: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(value: kotlin/Int)
+
+      public final var _field: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

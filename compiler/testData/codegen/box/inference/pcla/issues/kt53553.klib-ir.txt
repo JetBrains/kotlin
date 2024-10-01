@@ -1,0 +1,78 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt53553.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:buildee type:<root>.Buildee<<root>.TargetType> [val]
+          CALL 'public final fun parallelBuild <PTV> (instructionsA: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>, instructionsB: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>): <root>.Buildee<PTV of <root>.parallelBuild> declared in <root>' type=<root>.Buildee<<root>.TargetType> origin=null
+            <PTV>: <root>.TargetType
+            instructionsA: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.TargetType>, <root>.TargetType, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.TargetType>, it:<root>.TargetType) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$parallelBuild type:<root>.Buildee<<root>.TargetType>
+                VALUE_PARAMETER name:it index:0 type:<root>.TargetType
+                BLOCK_BODY
+                  CALL 'public final fun consumeTargetTypeBase (value: <root>.TargetTypeBase): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    value: GET_VAR 'it: <root>.TargetType declared in <root>.box.<anonymous>' type=<root>.TargetType origin=null
+            instructionsB: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.TargetType>, <root>.TargetType, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.TargetType>, it:<root>.TargetType) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$parallelBuild type:<root>.Buildee<<root>.TargetType>
+                VALUE_PARAMETER name:it index:0 type:<root>.TargetType
+                BLOCK_BODY
+                  CALL 'public final fun consumeTargetType (value: <root>.TargetType): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    value: GET_VAR 'it: <root>.TargetType declared in <root>.box.<anonymous>' type=<root>.TargetType origin=null
+        CALL 'public final fun consumeTargetTypeBuildee (value: <root>.Buildee<<root>.TargetType>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          value: GET_VAR 'val buildee: <root>.Buildee<<root>.TargetType> [val] declared in <root>.box' type=<root>.Buildee<<root>.TargetType> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:TargetTypeBase signature:/TargetTypeBase|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TargetTypeBase
+      CONSTRUCTOR signature:/TargetTypeBase.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TargetTypeBase [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TargetTypeBase signature:/TargetTypeBase|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:TargetType signature:/TargetType|null[0] modality:FINAL visibility:public superTypes:[<root>.TargetTypeBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TargetType
+      CONSTRUCTOR signature:/TargetType.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TargetType [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TargetTypeBase'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TargetType signature:/TargetType|null[0] modality:FINAL visibility:public superTypes:[<root>.TargetTypeBase]'
+    FUN name:consumeTargetTypeBase signature:/consumeTargetTypeBase|consumeTargetTypeBase(TargetTypeBase){}[0] visibility:public modality:FINAL <> (value:<root>.TargetTypeBase) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:value index:0 type:<root>.TargetTypeBase
+      BLOCK_BODY
+    FUN name:consumeTargetType signature:/consumeTargetType|consumeTargetType(TargetType){}[0] visibility:public modality:FINAL <> (value:<root>.TargetType) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:value index:0 type:<root>.TargetType
+      BLOCK_BODY
+    FUN name:consumeTargetTypeBuildee signature:/consumeTargetTypeBuildee|consumeTargetTypeBuildee(Buildee<TargetType>){}[0] visibility:public modality:FINAL <> (value:<root>.Buildee<<root>.TargetType>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:value index:0 type:<root>.Buildee<<root>.TargetType>
+      BLOCK_BODY
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+      TYPE_PARAMETER name:TV index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<TV of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:parallelBuild signature:/parallelBuild|parallelBuild(kotlin.Function2<Buildee<0:0>,0:0,kotlin.Unit>;kotlin.Function2<Buildee<0:0>,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <PTV> (instructionsA:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>, instructionsB:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<PTV of <root>.parallelBuild>
+      TYPE_PARAMETER name:PTV index:0 variance: signature:[ /parallelBuild|parallelBuild(kotlin.Function2<Buildee<0:0>,0:0,kotlin.Unit>;kotlin.Function2<Buildee<0:0>,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructionsA index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:instructionsB index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:value type:PTV of <root>.parallelBuild [val]
+          TYPE_OP type=PTV of <root>.parallelBuild origin=CAST typeOperand=PTV of <root>.parallelBuild
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TargetType' type=<root>.TargetType origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun parallelBuild <PTV> (instructionsA: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>, instructionsB: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>>): <root>.Buildee<PTV of <root>.parallelBuild> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<PTV of <root>.parallelBuild> origin=null
+            <1>: <root>.Buildee<PTV of <root>.parallelBuild>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<PTV of <root>.parallelBuild> origin=null
+              <class: TV>: PTV of <root>.parallelBuild
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<PTV of <root>.parallelBuild>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$apply type:<root>.Buildee<PTV of <root>.parallelBuild>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'instructionsA: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>> declared in <root>.parallelBuild' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                    1: GET_VAR '$this$apply: <root>.Buildee<PTV of <root>.parallelBuild> declared in <root>.parallelBuild.<anonymous>' type=<root>.Buildee<PTV of <root>.parallelBuild> origin=null
+                    2: GET_VAR 'val value: PTV of <root>.parallelBuild [val] declared in <root>.parallelBuild' type=PTV of <root>.parallelBuild origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'instructionsB: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>> declared in <root>.parallelBuild' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.parallelBuild>, PTV of <root>.parallelBuild, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                    1: GET_VAR '$this$apply: <root>.Buildee<PTV of <root>.parallelBuild> declared in <root>.parallelBuild.<anonymous>' type=<root>.Buildee<PTV of <root>.parallelBuild> origin=null
+                    2: GET_VAR 'val value: PTV of <root>.parallelBuild [val] declared in <root>.parallelBuild' type=PTV of <root>.parallelBuild origin=null

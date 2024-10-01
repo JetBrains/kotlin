@@ -1,0 +1,78 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:Sample signature:/Sample|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sample
+      CONSTRUCTOR signature:/Sample.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Sample [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sample signature:/Sample|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:SS signature:/Sample.SS|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sample.SS
+        CONSTRUCTOR signature:/Sample.SS.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Sample) returnType:<root>.Sample.SS [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Sample
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SS signature:/Sample.SS|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Checker signature:/Checker|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Checker
+      CONSTRUCTOR signature:/Checker.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Checker [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Checker signature:/Checker|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:check signature:/Checker.check|check(){}[0] visibility:public modality:FINAL <> ($this:<root>.Checker) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Checker
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun check (): <unbound IrClassSymbolImpl> declared in <root>.Checker'
+            CALL 'public abstract fun run <T1, T2> (method: <unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run>, fn: <unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Checker' type=<unbound IrClassSymbolImpl> origin=null
+              <T1>: <root>.Sample
+              <T2>: <root>.Sample.SS
+              $this: GET_VAR '<this>: <root>.Checker declared in <root>.Checker.check' type=<root>.Checker origin=null
+              method: FUNCTION_REFERENCE 'public constructor <init> () [primary] declared in <root>.Sample.SS' type=<unbound IrClassSymbolImpl><<root>.Sample, <root>.Sample.SS> origin=null reflectionTarget=<same>
+              fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Sample, <root>.Sample.SS, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:<root>.Sample, y:<root>.Sample.SS) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:x index:0 type:<root>.Sample
+                  VALUE_PARAMETER name:y index:1 type:<root>.Sample.SS
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (x: <root>.Sample, y: <root>.Sample.SS): <unbound IrClassSymbolImpl> declared in <root>.Checker.check'
+                      WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'x: <root>.Sample declared in <root>.Checker.check.<anonymous>' type=<root>.Sample origin=null
+                            arg1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'y: <root>.Sample.SS declared in <root>.Checker.check.<anonymous>' type=<root>.Sample.SS origin=null
+                            arg1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN name:run signature:/Checker.run|run(kotlin.reflect.KFunction1<0:0,0:1>;kotlin.Function2<0:0,0:1,kotlin.Boolean>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:ABSTRACT <T1, T2> ($this:<root>.Checker, method:<unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run>, fn:<unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:T1 index:0 variance: signature:[ /Checker.run|run(kotlin.reflect.KFunction1<0:0,0:1>;kotlin.Function2<0:0,0:1,kotlin.Boolean>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:T2 index:1 variance: signature:[ /Checker.run|run(kotlin.reflect.KFunction1<0:0,0:1>;kotlin.Function2<0:0,0:1,kotlin.Boolean>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Checker
+        VALUE_PARAMETER name:method index:0 type:<unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run>
+        VALUE_PARAMETER name:fn index:1 type:<unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run, <unbound IrClassSymbolImpl>>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Checker]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Checker'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Checker]'
+                FUN name:run visibility:public modality:OPEN <T1, T2> ($this:<root>.box.<no name provided>, method:<unbound IrClassSymbolImpl><T1 of <root>.box.<no name provided>.run, T2 of <root>.box.<no name provided>.run>, fn:<unbound IrClassSymbolImpl><T1 of <root>.box.<no name provided>.run, T2 of <root>.box.<no name provided>.run, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public abstract fun run <T1, T2> (method: <unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run>, fn: <unbound IrClassSymbolImpl><T1 of <root>.Checker.run, T2 of <root>.Checker.run, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Checker
+                  TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                  TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                  $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                  VALUE_PARAMETER name:method index:0 type:<unbound IrClassSymbolImpl><T1 of <root>.box.<no name provided>.run, T2 of <root>.box.<no name provided>.run>
+                  VALUE_PARAMETER name:fn index:1 type:<unbound IrClassSymbolImpl><T1 of <root>.box.<no name provided>.run, T2 of <root>.box.<no name provided>.run, <unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun run <T1, T2> (method: <unbound IrClassSymbolImpl><T1 of <root>.box.<no name provided>.run, T2 of <root>.box.<no name provided>.run>, fn: <unbound IrClassSymbolImpl><T1 of <root>.box.<no name provided>.run, T2 of <root>.box.<no name provided>.run, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

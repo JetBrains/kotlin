@@ -1,0 +1,94 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nothingValueException.kt
+    FUN name:something signature:/something|something(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:T of <root>.something
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /something|something(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun something <T> (): T of <root>.something declared in <root>'
+          TYPE_OP type=T of <root>.something origin=CAST typeOperand=T of <root>.something
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Context signature:/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Context<T of <root>.Context>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Context|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Context.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Context<T of <root>.Context> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Context signature:/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:decodeIn signature:/decodeIn|decodeIn@kotlin.Any(Context<in|0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl>, typeFrom:<root>.Context<in T of <root>.decodeIn>) returnType:T of <root>.decodeIn
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /decodeIn|decodeIn@kotlin.Any(Context<in|0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:typeFrom index:0 type:<root>.Context<in T of <root>.decodeIn>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun decodeIn <T> (typeFrom: <root>.Context<in T of <root>.decodeIn>): T of <root>.decodeIn declared in <root>'
+          CALL 'public final fun something <T> (): T of <root>.something declared in <root>' type=T of <root>.decodeIn origin=null
+            <T>: T of <root>.decodeIn
+    FUN name:decodeOut signature:/decodeOut|decodeOut@kotlin.Any?(Context<out|0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl>?, typeFrom:<root>.Context<out T of <root>.decodeOut>) returnType:T of <root>.decodeOut
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /decodeOut|decodeOut@kotlin.Any?(Context<out|0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:typeFrom index:0 type:<root>.Context<out T of <root>.decodeOut>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun decodeOut <T> (typeFrom: <root>.Context<out T of <root>.decodeOut>): T of <root>.decodeOut declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                  GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in <root>.decodeOut' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.decodeOut' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun decodeIn <T> (typeFrom: <root>.Context<in T of <root>.decodeIn>): T of <root>.decodeIn declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      <T>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.decodeOut' type=<unbound IrClassSymbolImpl>? origin=null
+                      typeFrom: GET_VAR 'typeFrom: <root>.Context<out T of <root>.decodeOut> declared in <root>.decodeOut' type=<root>.Context<out T of <root>.decodeOut> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.decodeOut' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: THROW type=<unbound IrClassSymbolImpl>
+                  CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value=""
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.decodeOut' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun decodeOut <T> (typeFrom: <root>.Context<out T of <root>.decodeOut>): T of <root>.decodeOut declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                $receiver: CONST String type=<unbound IrClassSymbolImpl> value="str"
+                typeFrom: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Context' type=<root>.Context<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:exceptionClassName type:<unbound IrClassSymbolImpl>? [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                    $this: GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+                      GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'val exceptionClassName: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="KotlinNothingValueException"
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      THROW type=<unbound IrClassSymbolImpl>
+                        CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                            CONST String type=<unbound IrClassSymbolImpl> value="Unexpected exception: "
+                            GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                        CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        THROW type=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="Should fail with exception"

@@ -1,0 +1,81 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/throwableImpl.kt
+    CLASS CLASS name:MyThrowable signature:/MyThrowable|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyThrowable
+      CONSTRUCTOR signature:/MyThrowable.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>?, cause:<unbound IrClassSymbolImpl>?) returnType:<root>.MyThrowable [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:cause index:1 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            1: GET_VAR 'message: <unbound IrClassSymbolImpl>? declared in <root>.MyThrowable.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+            2: GET_VAR 'cause: <unbound IrClassSymbolImpl>? declared in <root>.MyThrowable.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyThrowable signature:/MyThrowable|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:message signature:/MyThrowable.message|{}message[0] visibility:public modality:OPEN [val]
+        FUN name:<get-message> signature:/MyThrowable.message.<get-message>|<get-message>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyThrowable) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:message signature:/MyThrowable.message|{}message[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyThrowable
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-message> (): <unbound IrClassSymbolImpl>? declared in <root>.MyThrowable'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CONST String type=<unbound IrClassSymbolImpl> value="My message: "
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.MyThrowable declared in <root>.MyThrowable.<get-message>' type=<root>.MyThrowable origin=null
+      PROPERTY name:cause signature:/MyThrowable.cause|{}cause[0] visibility:public modality:OPEN [val]
+        FUN name:<get-cause> signature:/MyThrowable.cause.<get-cause>|<get-cause>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyThrowable) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:cause signature:/MyThrowable.cause|{}cause[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyThrowable
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-cause> (): <unbound IrClassSymbolImpl>? declared in <root>.MyThrowable'
+              BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.MyThrowable declared in <root>.MyThrowable.<get-cause>' type=<root>.MyThrowable origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.MyThrowable.<get-cause>' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: GET_VAR '<this>: <root>.MyThrowable declared in <root>.MyThrowable.<get-cause>' type=<root>.MyThrowable origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.MyThrowable.<get-cause>' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.MyThrowable' type=<root>.MyThrowable origin=null
+                message: CONST String type=<unbound IrClassSymbolImpl> value="test"
+          CATCH parameter=val t: <root>.MyThrowable [val] declared in <root>.box
+            VAR CATCH_PARAMETER name:t type:<root>.MyThrowable [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: CALL 'public open fun <get-cause> (): <unbound IrClassSymbolImpl>? declared in <root>.MyThrowable' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                        $this: GET_VAR 'val t: <root>.MyThrowable [val] declared in <root>.box' type=<root>.MyThrowable origin=null
+                      arg1: GET_VAR 'val t: <root>.MyThrowable [val] declared in <root>.box' type=<root>.MyThrowable origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="fail t.cause"
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: CALL 'public open fun <get-message> (): <unbound IrClassSymbolImpl>? declared in <root>.MyThrowable' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                        $this: GET_VAR 'val t: <root>.MyThrowable [val] declared in <root>.box' type=<root>.MyThrowable origin=null
+                      arg1: CONST String type=<unbound IrClassSymbolImpl> value="My message: test"
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="fail t.message"
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="fail: MyThrowable wasn't caught."

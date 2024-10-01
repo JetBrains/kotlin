@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun almostEqual(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun box(): kotlin/String
+
+      public final val imax: kotlin/Int /* = ... */
+        public final get
+
+      public final val lmax: kotlin/Long /* = ... */
+        public final get
+
+      public final val ulmax: kotlin/ULong /* = ... */
+        public final get
+
+      public final val umax: kotlin/UInt /* = ... */
+        public final get
+    }
+  }
+}

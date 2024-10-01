@@ -1,0 +1,99 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Abstract1
+    // class name: Abstract2
+    // class name: I
+    // class name: Outer
+    // class name: Outer.Nested1
+    // class name: Outer.Nested2
+    // class name: TopLevel1
+    // class name: TopLevel2
+
+    public abstract class Abstract1 : suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+
+      public constructor()
+    }
+
+    public abstract class Abstract2 : suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+
+      public constructor()
+
+      public open operator suspend fun invoke(p: kotlin/String): kotlin/Int
+    }
+
+    public abstract interface I : suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+    }
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Nested1
+
+      // nested class: Nested2
+    }
+
+    public final class Outer.Nested1 : suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+
+      public constructor()
+
+      public open operator suspend fun invoke(): kotlin/Int
+    }
+
+    public final class Outer.Nested2 : suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+
+      public constructor()
+
+      public open operator suspend fun invoke(p: kotlin/String): kotlin/Int
+    }
+
+    public final class TopLevel1 : suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+
+      public constructor()
+
+      public open operator suspend fun invoke(): kotlin/Int
+    }
+
+    public final class TopLevel2 : suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?> {
+
+      public constructor()
+
+      public open operator suspend fun invoke(p: kotlin/String): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun inherited1(): kotlin/String?
+
+      public final fun inherited2(): kotlin/String?
+
+      public final fun inherited3(): kotlin/String?
+
+      public final fun localClass1(): kotlin/String?
+
+      public final fun localClass2(): kotlin/String?
+
+      public final fun nestedClass1(): kotlin/String?
+
+      public final fun nestedClass2(): kotlin/String?
+
+      public final fun objectLiteral1(): kotlin/String?
+
+      public final fun objectLiteral2(): kotlin/String?
+
+      public final fun topLevelClass1(): kotlin/String?
+
+      public final fun topLevelClass2(): kotlin/String?
+
+      public final var failure: kotlin/String?
+        public final get
+        public final set
+    }
+  }
+}

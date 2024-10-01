@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt4172.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun main (args: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          args: CALL 'public final fun array <T> (vararg t: T of <root>.array): <unbound IrClassSymbolImpl><T of <root>.array> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:main signature:/main|main(kotlin.Array<kotlin.String>){}[0] visibility:public modality:FINAL <> (args:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:args index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'args: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.main' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun foo (array: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> declared in <root>.D' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.D
+            array: CALL 'public final fun array <T> (vararg t: T of <root>.array): <unbound IrClassSymbolImpl><T of <root>.array> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+    CLASS OBJECT name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+      CONSTRUCTOR signature:/D.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.D [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:/D.foo|foo(kotlin.Array<out|kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.D, array:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.D
+        VALUE_PARAMETER name:array index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (array: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> declared in <root>.D'
+            GET_VAR 'array: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> declared in <root>.D.foo' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+    FUN name:array signature:/array|array(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (t:<unbound IrClassSymbolImpl><out T of <root>.array>) returnType:<unbound IrClassSymbolImpl><T of <root>.array> [inline]
+      annotations:
+        <unbound>(1 = ["UNCHECKED_CAST"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /array|array(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:t index:0 type:<unbound IrClassSymbolImpl><out T of <root>.array> varargElementType:T of <root>.array [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun array <T> (vararg t: T of <root>.array): <unbound IrClassSymbolImpl><T of <root>.array> [inline] declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl><T of <root>.array> origin=CAST typeOperand=<unbound IrClassSymbolImpl><T of <root>.array>
+            GET_VAR 't: <unbound IrClassSymbolImpl><out T of <root>.array> [vararg] declared in <root>.array' type=<unbound IrClassSymbolImpl><out T of <root>.array> origin=null

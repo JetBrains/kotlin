@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: M
+    // class name: N
+    // class name: N.C
+
+    public open class M : kotlin/Any {
+
+      public constructor()
+
+      public open var y: kotlin/Int
+        public open get
+        public open set
+    }
+
+    public open class N : M {
+
+      public constructor()
+
+      public open var y: kotlin/Int
+        public open get
+        public open set
+
+      // nested class: C
+    }
+
+    public open inner class N.C : kotlin/Any {
+
+      public constructor()
+
+      public final fun test5(): kotlin/Int
+
+      public final fun test6(): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

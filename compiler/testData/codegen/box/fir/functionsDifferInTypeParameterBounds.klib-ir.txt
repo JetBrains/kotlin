@@ -1,0 +1,95 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/functionsDifferInTypeParameterBounds.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:OPEN visibility:public superTypes:[<root>.A]'
+    CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<root>.A]'
+    CLASS CLASS name:X signature:/X|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+      CONSTRUCTOR signature:/X.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.X [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X signature:/X|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:/X.foo|foo(0:0){0§<A>}[0] visibility:public modality:FINAL <S1> ($this:<root>.X, s:S1 of <root>.X.foo) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:S1 index:0 variance: signature:[ /X.foo|foo(0:0){0§<A>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:S1 index:0 variance: superTypes:[<root>.A] reified:false] ] superTypes:[<root>.A] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.X
+        VALUE_PARAMETER name:s index:0 type:S1 of <root>.X.foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <S1> (s: S1 of <root>.X.foo): <unbound IrClassSymbolImpl> declared in <root>.X'
+            BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:S1 of <root>.X.foo [val]
+                GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.B
+                    GET_VAR 'val tmp0_subject: S1 of <root>.X.foo [val] declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+                  then: CALL 'public abstract fun foo <S2> (s: S2 of <root>.X.foo): <unbound IrClassSymbolImpl> declared in <root>.X' type=<unbound IrClassSymbolImpl> origin=null
+                    <S2>: <root>.B
+                    $this: GET_VAR '<this>: <root>.X declared in <root>.X.foo' type=<root>.X origin=null
+                    s: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.C
+                    GET_VAR 'val tmp0_subject: S1 of <root>.X.foo [val] declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+                  then: CALL 'public abstract fun foo <S3> (s: S3 of <root>.X.foo): <unbound IrClassSymbolImpl> declared in <root>.X' type=<unbound IrClassSymbolImpl> origin=null
+                    <S3>: <root>.C
+                    $this: GET_VAR '<this>: <root>.X declared in <root>.X.foo' type=<root>.X origin=null
+                    s: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: THROW type=<unbound IrClassSymbolImpl>
+                    CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+      FUN name:foo signature:/X.foo|foo(0:0){0§<B>}[0] visibility:public modality:ABSTRACT <S2> ($this:<root>.X, s:S2 of <root>.X.foo) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:S2 index:0 variance: signature:[ /X.foo|foo(0:0){0§<B>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:S1 index:0 variance: superTypes:[<root>.A] reified:false] ] superTypes:[<root>.B] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.X
+        VALUE_PARAMETER name:s index:0 type:S2 of <root>.X.foo
+      FUN name:foo signature:/X.foo|foo(0:0){0§<C>}[0] visibility:public modality:ABSTRACT <S3> ($this:<root>.X, s:S3 of <root>.X.foo) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:S3 index:0 variance: signature:[ /X.foo|foo(0:0){0§<C>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:S1 index:0 variance: superTypes:[<root>.A] reified:false] ] superTypes:[<root>.C] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.X
+        VALUE_PARAMETER name:s index:0 type:S3 of <root>.X.foo
+    CLASS CLASS name:Y signature:/Y|null[0] modality:FINAL visibility:public superTypes:[<root>.X]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Y
+      CONSTRUCTOR signature:/Y.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Y [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.X'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Y signature:/Y|null[0] modality:FINAL visibility:public superTypes:[<root>.X]'
+      FUN name:foo signature:/Y.foo|foo(0:0){0§<B>}[0] visibility:public modality:OPEN <S4> ($this:<root>.Y, s:S4 of <root>.Y.foo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo <S2> (s: S2 of <root>.X.foo): <unbound IrClassSymbolImpl> declared in <root>.X
+        TYPE_PARAMETER name:S4 index:0 variance: signature:[ /Y.foo|foo(0:0){0§<B>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:S1 index:0 variance: superTypes:[<root>.A] reified:false] ] superTypes:[<root>.B] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Y
+        VALUE_PARAMETER name:s index:0 type:S4 of <root>.Y.foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo <S4> (s: S4 of <root>.Y.foo): <unbound IrClassSymbolImpl> declared in <root>.Y'
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+      FUN name:foo signature:/Y.foo|foo(0:0){0§<C>}[0] visibility:public modality:OPEN <S5> ($this:<root>.Y, s:S5 of <root>.Y.foo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo <S3> (s: S3 of <root>.X.foo): <unbound IrClassSymbolImpl> declared in <root>.X
+        TYPE_PARAMETER name:S5 index:0 variance: signature:[ /Y.foo|foo(0:0){0§<C>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:S1 index:0 variance: superTypes:[<root>.A] reified:false] ] superTypes:[<root>.C] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Y
+        VALUE_PARAMETER name:s index:0 type:S5 of <root>.Y.foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo <S5> (s: S5 of <root>.Y.foo): <unbound IrClassSymbolImpl> declared in <root>.Y'
+            CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public open fun foo <S4> (s: S4 of <root>.Y.foo): <unbound IrClassSymbolImpl> declared in <root>.Y' type=<unbound IrClassSymbolImpl> origin=null
+              <S4>: <root>.B
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Y' type=<root>.Y origin=null
+              s: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+            1: CALL 'public open fun foo <S5> (s: S5 of <root>.Y.foo): <unbound IrClassSymbolImpl> declared in <root>.Y' type=<unbound IrClassSymbolImpl> origin=null
+              <S5>: <root>.C
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Y' type=<root>.Y origin=null
+              s: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null

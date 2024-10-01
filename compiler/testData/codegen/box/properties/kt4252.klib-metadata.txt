@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CallbackBlock
+    // class name: Foo
+    // class name: Foo.Companion
+
+    public final class CallbackBlock : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final fun getBar(): kotlin/Int
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Foo.Companion : kotlin/Any {
+
+      private constructor()
+
+      private final var bar: kotlin/Int
+        private final get
+        private final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

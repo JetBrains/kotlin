@@ -1,0 +1,100 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Problem
+    // class name: Status
+    // class name: Status.Error
+    // class name: Status.Loading
+    // class name: Status.Ok
+
+    public final enum class Problem : kotlin/Enum<Problem> {
+
+      private constructor()
+
+      CONNECTION,
+
+      AUTHENTICATION,
+
+      UNKNOWN,
+
+      // has Enum.entries
+    }
+
+    public sealed interface Status : kotlin/Any {
+
+      // nested class: Loading
+
+      // nested class: Error
+
+      // nested class: Ok
+
+      // sealed subclass: Status.Error
+
+      // sealed subclass: Status.Loading
+
+      // sealed subclass: Status.Ok
+    }
+
+    public final data class Status.Error : Status {
+
+      public constructor(problem: Problem, isCritical: kotlin/Boolean)
+
+      public final /* synthesized */ operator fun component1(): Problem
+
+      public final /* synthesized */ operator fun component2(): kotlin/Boolean
+
+      public final /* synthesized */ fun copy(problem: Problem /* = ... */, isCritical: kotlin/Boolean /* = ... */): Status.Error
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val isCritical: kotlin/Boolean
+        public final get
+
+      public final val problem: Problem
+        public final get
+    }
+
+    public final data object Status.Loading : Status {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+
+    public final data class Status.Ok : Status {
+
+      public constructor(info: kotlin/collections/List<kotlin/String>)
+
+      public final /* synthesized */ operator fun component1(): kotlin/collections/List<kotlin/String>
+
+      public final /* synthesized */ fun copy(info: kotlin/collections/List<kotlin/String> /* = ... */): Status.Ok
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val info: kotlin/collections/List<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun render(status: Status): kotlin/String
+    }
+  }
+}

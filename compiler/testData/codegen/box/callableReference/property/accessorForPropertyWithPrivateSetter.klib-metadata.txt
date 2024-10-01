@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+
+      public final fun getValue(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+
+    public final class a/A : kotlin/Any {
+
+      public constructor()
+
+      public final var value: kotlin/String
+        public final get
+        private final /* non-default */ set(value: kotlin/String)
+    }
+  }
+}

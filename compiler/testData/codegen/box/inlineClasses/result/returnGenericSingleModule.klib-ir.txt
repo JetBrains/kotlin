@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS INTERFACE name:Operation signature:/Operation|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Operation<T of <root>.Operation>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Operation|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:performOperation signature:/Operation.performOperation|performOperation(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Operation<T of <root>.Operation>) returnType:T of <root>.Operation
+        $this: VALUE_PARAMETER name:<this> type:<root>.Operation<T of <root>.Operation>
+    CLASS OBJECT name:ResultOperation signature:/ResultOperation|null[0] modality:FINAL visibility:public superTypes:[<root>.Operation<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResultOperation
+      CONSTRUCTOR signature:/ResultOperation.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ResultOperation [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ResultOperation signature:/ResultOperation|null[0] modality:FINAL visibility:public superTypes:[<root>.Operation<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>]'
+      FUN name:performOperation signature:/ResultOperation.performOperation|performOperation(){}[0] visibility:public modality:OPEN <> ($this:<root>.ResultOperation) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          public abstract fun performOperation (): T of <root>.Operation declared in <root>.Operation
+        $this: VALUE_PARAMETER name:<this> type:<root>.ResultOperation
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun performOperation (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ResultOperation'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public open fun performOperation (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ResultOperation' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:ResultOperation signature:/ResultOperation|null[0] modality:FINAL visibility:public superTypes:[<root>.Operation<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>]' type=<root>.ResultOperation
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Success(1)"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                GET_VAR 'val x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

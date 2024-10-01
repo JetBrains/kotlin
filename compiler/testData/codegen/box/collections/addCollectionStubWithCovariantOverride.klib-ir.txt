@@ -1,0 +1,94 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/addCollectionStubWithCovariantOverride.kt
+    CLASS CLASS name:AbstractAdd signature:/AbstractAdd|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractAdd
+      CONSTRUCTOR signature:/AbstractAdd.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AbstractAdd [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractAdd signature:/AbstractAdd|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:add signature:/AbstractAdd.add|add(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.AbstractAdd, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AbstractAdd
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+    CLASS CLASS name:AbstractStringCollection signature:/AbstractStringCollection|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.AbstractAdd; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractStringCollection
+      CONSTRUCTOR signature:/AbstractStringCollection.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AbstractStringCollection [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AbstractAdd'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractStringCollection signature:/AbstractStringCollection|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.AbstractAdd; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>]'
+    CLASS CLASS name:StringCollection signature:/StringCollection|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractStringCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringCollection
+      CONSTRUCTOR signature:/StringCollection.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.StringCollection [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AbstractStringCollection'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringCollection signature:/StringCollection|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractStringCollection]'
+      FUN name:add signature:/StringCollection.add|add(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollection, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringCollection
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun add (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.StringCollection'
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.StringCollection.add' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:size signature:/StringCollection.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/StringCollection.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollection) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/StringCollection.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.StringCollection
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.StringCollection'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:contains signature:/StringCollection.contains|contains(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollection, element:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringCollection
+        VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.StringCollection'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:containsAll signature:/StringCollection.containsAll|containsAll(kotlin.collections.Collection<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollection, elements:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringCollection
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.StringCollection'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:isEmpty signature:/StringCollection.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollection) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.StringCollection'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:/StringCollection.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.StringCollection) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringCollection
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.StringCollection'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:test1 signature:/test1|test1(AbstractAdd){}[0] visibility:public modality:FINAL <> (a:<root>.AbstractAdd) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<root>.AbstractAdd
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (a: <root>.AbstractAdd): <unbound IrClassSymbolImpl> declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'public abstract fun add (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.AbstractAdd' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'a: <root>.AbstractAdd declared in <root>.test1' type=<root>.AbstractAdd origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+    FUN name:test2 signature:/test2|test2(AbstractStringCollection){}[0] visibility:public modality:FINAL <> (a:<root>.AbstractStringCollection) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<root>.AbstractStringCollection
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test2 (a: <root>.AbstractStringCollection): <unbound IrClassSymbolImpl> declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'a: <root>.AbstractStringCollection declared in <root>.test2' type=<root>.AbstractStringCollection origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun test1 (a: <root>.AbstractAdd): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              a: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.StringCollection' type=<root>.StringCollection origin=null
+            1: CALL 'public final fun test2 (a: <root>.AbstractStringCollection): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              a: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.StringCollection' type=<root>.StringCollection origin=null

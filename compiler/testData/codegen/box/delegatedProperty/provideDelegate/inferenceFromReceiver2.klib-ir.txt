@@ -1,0 +1,106 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inferenceFromReceiver2.kt
+    CLASS OBJECT name:Inference2 signature:/Inference2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inference2
+      CONSTRUCTOR signature:/Inference2.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Inference2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Inference2 signature:/Inference2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS INTERFACE name:Foo signature:/Inference2.Foo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inference2.Foo<T of <root>.Inference2.Foo>
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /Inference2.Foo|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:delegate signature:/Inference2.delegate|delegate(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.Inference2) returnType:<root>.Inference2.Foo<T of <root>.Inference2.delegate>
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /Inference2.delegate|delegate(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Inference2
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun delegate <T> (): <root>.Inference2.Foo<T of <root>.Inference2.delegate> declared in <root>.Inference2'
+            BLOCK type=<root>.Inference2.delegate.<no name provided><T of <root>.Inference2.delegate> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Inference2.Foo<T of <root>.Inference2.delegate>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inference2.delegate.<no name provided><T of <root>.Inference2.delegate>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.Inference2.delegate.<no name provided><T of <root>.Inference2.delegate> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Inference2.Foo<T of <root>.Inference2.delegate>]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Inference2.delegate.<no name provided>' type=<root>.Inference2.delegate.<no name provided><T of <root>.Inference2.delegate> origin=OBJECT_LITERAL
+      FUN name:provideDelegate signature:/Inference2.provideDelegate|provideDelegate@Inference2.Foo<0:0>(0:0;kotlin.Any?){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.Inference2, $receiver:<root>.Inference2.Foo<T of <root>.Inference2.provideDelegate>, host:T of <root>.Inference2.provideDelegate, p:<unbound IrClassSymbolImpl>?) returnType:<root>.Inference2.Foo<T of <root>.Inference2.provideDelegate> [operator]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /Inference2.provideDelegate|provideDelegate@Inference2.Foo<0:0>(0:0;kotlin.Any?){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Inference2
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.Inference2.Foo<T of <root>.Inference2.provideDelegate>
+        VALUE_PARAMETER name:host index:0 type:T of <root>.Inference2.provideDelegate
+        VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDelegate <T> (host: T of <root>.Inference2.provideDelegate, p: <unbound IrClassSymbolImpl>?): <root>.Inference2.Foo<T of <root>.Inference2.provideDelegate> [operator] declared in <root>.Inference2'
+            GET_VAR '<this>: <root>.Inference2.Foo<T of <root>.Inference2.provideDelegate> declared in <root>.Inference2.provideDelegate' type=<root>.Inference2.Foo<T of <root>.Inference2.provideDelegate> origin=null
+      FUN name:getValue signature:/Inference2.getValue|getValue@Inference2.Foo<0:0>(Inference2;kotlin.Any?){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.Inference2, $receiver:<root>.Inference2.Foo<T of <root>.Inference2.getValue>, receiver:<root>.Inference2, p:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /Inference2.getValue|getValue@Inference2.Foo<0:0>(Inference2;kotlin.Any?){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Inference2
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.Inference2.Foo<T of <root>.Inference2.getValue>
+        VALUE_PARAMETER name:receiver index:0 type:<root>.Inference2
+        VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue <T> (receiver: <root>.Inference2, p: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Inference2'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      PROPERTY name:test1 signature:/Inference2.test1|{}test1[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:test1$delegate signature:[ /Inference2.test1|{}test1[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final]] ] type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun provideDelegate <T> (host: T of <root>.Inference2.provideDelegate, p: <unbound IrClassSymbolImpl>?): <root>.Inference2.Foo<T of <root>.Inference2.provideDelegate> [operator] declared in <root>.Inference2' type=<root>.Inference2.Foo<<root>.Inference2> origin=null
+              <T>: <root>.Inference2
+              $this: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2' type=<root>.Inference2 origin=null
+              $receiver: CALL 'public final fun delegate <T> (): <root>.Inference2.Foo<T of <root>.Inference2.delegate> declared in <root>.Inference2' type=<root>.Inference2.Foo<<root>.Inference2> origin=null
+                <T>: <root>.Inference2
+                $this: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2' type=<root>.Inference2 origin=null
+              host: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2' type=<root>.Inference2 origin=null
+              p: PROPERTY_REFERENCE 'public final test1: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.Inference2' field=null getter='public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2' setter=null type=<unbound IrClassSymbolImpl><<root>.Inference2, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> signature:/Inference2.test1.<get-test1>|<get-test1>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Inference2) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test1 signature:/Inference2.test1|{}test1[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Inference2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2'
+              CALL 'public final fun getValue <T> (receiver: <root>.Inference2, p: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Inference2' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <root>.Inference2
+                $this: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2.<get-test1>' type=<root>.Inference2 origin=null
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test1$delegate signature:[ /Inference2.test1|{}test1[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final]] ] type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final] declared in <root>.Inference2' type=<root>.Inference2.Foo<<root>.Inference2> origin=null
+                  receiver: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2.<get-test1>' type=<root>.Inference2 origin=null
+                receiver: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2.<get-test1>' type=<root>.Inference2 origin=null
+                p: PROPERTY_REFERENCE 'public final test1: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.Inference2' field=null getter='public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2' setter=null type=<unbound IrClassSymbolImpl><<root>.Inference2, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:test2 signature:/Inference2.test2|{}test2[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:test2$delegate signature:[ /Inference2.test2|{}test2[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final]] ] type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun provideDelegate <T> (host: T of <root>.Inference2.provideDelegate, p: <unbound IrClassSymbolImpl>?): <root>.Inference2.Foo<T of <root>.Inference2.provideDelegate> [operator] declared in <root>.Inference2' type=<root>.Inference2.Foo<<root>.Inference2> origin=null
+              <T>: <root>.Inference2
+              $this: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2' type=<root>.Inference2 origin=null
+              $receiver: CALL 'public final fun delegate <T> (): <root>.Inference2.Foo<T of <root>.Inference2.delegate> declared in <root>.Inference2' type=<root>.Inference2.Foo<<root>.Inference2> origin=null
+                <T>: <root>.Inference2
+                $this: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2' type=<root>.Inference2 origin=null
+              host: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2' type=<root>.Inference2 origin=null
+              p: PROPERTY_REFERENCE 'public final test2: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.Inference2' field=null getter='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2' setter=null type=<unbound IrClassSymbolImpl><<root>.Inference2, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test2> signature:/Inference2.test2.<get-test2>|<get-test2>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Inference2) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test2 signature:/Inference2.test2|{}test2[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Inference2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2'
+              CALL 'public final fun getValue <T> (receiver: <root>.Inference2, p: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Inference2' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <root>.Inference2
+                $this: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2.<get-test2>' type=<root>.Inference2 origin=null
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate signature:[ /Inference2.test2|{}test2[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final]] ] type:<root>.Inference2.Foo<<root>.Inference2> visibility:private [final] declared in <root>.Inference2' type=<root>.Inference2.Foo<<root>.Inference2> origin=null
+                  receiver: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2.<get-test2>' type=<root>.Inference2 origin=null
+                receiver: GET_VAR '<this>: <root>.Inference2 declared in <root>.Inference2.<get-test2>' type=<root>.Inference2 origin=null
+                p: PROPERTY_REFERENCE 'public final test2: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.Inference2' field=null getter='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2' setter=null type=<unbound IrClassSymbolImpl><<root>.Inference2, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Inference2 signature:/Inference2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Inference2
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.Inference2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Inference2 signature:/Inference2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Inference2
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

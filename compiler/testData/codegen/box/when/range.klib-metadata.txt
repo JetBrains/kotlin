@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun assertDigit(i: kotlin/Int, expected: kotlin/String): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final fun isDigit(a: kotlin/Int): kotlin/String
+    }
+  }
+}

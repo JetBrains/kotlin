@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractCollectionSerializer
+    // class name: PrimitiveArrayBuilder
+    // class name: PrimitiveArraySerializer
+    // class name: UByteArrayBuilder
+    // class name: UByteArraySerializer
+
+    public abstract class AbstractCollectionSerializer<T#0 /* Collection */, T#1 /* Builder */> : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun builder(): T#1
+
+      public open fun deserialize(): T#0
+
+      public abstract fun T#0.toBuilder(): T#1
+
+      public abstract fun T#1.toResult(): T#0
+    }
+
+    public abstract class PrimitiveArrayBuilder<T#0 /* Array */> : kotlin/Any {
+
+      public constructor()
+
+      internal abstract fun build(): T#0
+    }
+
+    public abstract class PrimitiveArraySerializer<T#0 /* Array */, T#1 /* Builder */ : PrimitiveArrayBuilder<T#0>> : AbstractCollectionSerializer<T#0, T#1> {
+
+      public constructor()
+
+      public final fun builder(): T#1
+
+      public abstract fun empty(): T#0
+
+      public final fun T#1.toResult(): T#0
+    }
+
+    public final class UByteArrayBuilder : PrimitiveArrayBuilder<kotlin/UByteArray> {
+
+      public constructor(buffer: kotlin/UByteArray)
+
+      internal open fun build(): kotlin/UByteArray
+
+      public final val buffer: kotlin/UByteArray
+        public final get
+    }
+
+    public final object UByteArraySerializer : PrimitiveArraySerializer<kotlin/UByteArray, UByteArrayBuilder> {
+
+      private constructor()
+
+      public open fun empty(): kotlin/UByteArray
+
+      public open fun kotlin/UByteArray.toBuilder(): UByteArrayBuilder
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

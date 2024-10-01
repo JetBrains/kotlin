@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/KFunction
+
+    public abstract interface test/A<out T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public abstract val t: T#0
+        public abstract get
+    }
+
+    public abstract interface test/KFunction<out T#0 /* R */> : kotlin/Any {
+    }
+
+    package {
+
+      public final inline fun <reified T#0 /* T */ : test/KFunction<T#1>, T#1 /* E */ : kotlin/Any> bar(w: test/A<T#1>): kotlin/Pair<kotlin/reflect/KType, test/KFunction<T#1>>
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* Q */> typeOfValue(q: T#0): kotlin/reflect/KType
+
+      public final val <T#0 /* T */ : kotlin/Any> kotlin/reflect/KClass<T#0>.primaryConstructor0: test/KFunction<T#0>
+        public final /* non-default */ get
+    }
+  }
+}

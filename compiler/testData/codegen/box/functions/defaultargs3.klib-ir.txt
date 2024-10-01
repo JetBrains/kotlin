@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/defaultargs3.kt
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toMyPrefixedString signature:/C.toMyPrefixedString|toMyPrefixedString@kotlin.Any(kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.C, $receiver:<unbound IrClassSymbolImpl>, prefix:<unbound IrClassSymbolImpl>, suffix:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:prefix index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+        VALUE_PARAMETER name:suffix index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun toMyPrefixedString (prefix: <unbound IrClassSymbolImpl>, suffix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR 'prefix: <unbound IrClassSymbolImpl> declared in <root>.C.toMyPrefixedString' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value=" "
+              1: GET_VAR 'suffix: <unbound IrClassSymbolImpl> declared in <root>.C.toMyPrefixedString' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:testReceiver signature:/C.testReceiver|testReceiver(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          VAR name:res type:<unbound IrClassSymbolImpl> [val]
+            CALL 'public final fun toMyPrefixedString (prefix: <unbound IrClassSymbolImpl>, suffix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.testReceiver' type=<root>.C origin=null
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="mama"
+              prefix: CONST String type=<unbound IrClassSymbolImpl> value="111"
+              suffix: CONST String type=<unbound IrClassSymbolImpl> value="222"
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun testReceiver (): <unbound IrClassSymbolImpl> declared in <root>.C'
+            GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.C.testReceiver' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testReceiver (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="111 222"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

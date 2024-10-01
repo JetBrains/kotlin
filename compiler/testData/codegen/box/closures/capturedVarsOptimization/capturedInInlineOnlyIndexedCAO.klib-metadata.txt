@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Host
+
+    public final class Host : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public final operator fun get(i: kotlin/Int, j: kotlin/Int, k: kotlin/Int): kotlin/String
+
+      public final operator fun set(i: kotlin/Int, j: kotlin/Int, k: kotlin/Int, newValue: kotlin/String): kotlin/Unit
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

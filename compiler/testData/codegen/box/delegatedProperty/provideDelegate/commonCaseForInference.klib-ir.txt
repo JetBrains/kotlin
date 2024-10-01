@@ -1,0 +1,140 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/commonCaseForInference.kt
+    CLASS OBJECT name:CommonCase signature:/CommonCase|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CommonCase
+      CONSTRUCTOR signature:/CommonCase.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.CommonCase [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:CommonCase signature:/CommonCase|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS INTERFACE name:Fas signature:/CommonCase.Fas|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CommonCase.Fas<D of <root>.CommonCase.Fas, E of <root>.CommonCase.Fas, R of <root>.CommonCase.Fas>
+        TYPE_PARAMETER name:D index:0 variance: signature:[ /CommonCase.Fas|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:E index:1 variance: signature:[ /CommonCase.Fas|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:E index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:R index:2 variance: signature:[ /CommonCase.Fas|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:delegate signature:/CommonCase.delegate|delegate(){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] visibility:public modality:FINAL <D, E, R> ($this:<root>.CommonCase) returnType:<root>.CommonCase.Fas<D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate>
+        TYPE_PARAMETER name:D index:0 variance: signature:[ /CommonCase.delegate|delegate(){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:E index:1 variance: signature:[ /CommonCase.delegate|delegate(){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:E index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:R index:2 variance: signature:[ /CommonCase.delegate|delegate(){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.CommonCase
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun delegate <D, E, R> (): <root>.CommonCase.Fas<D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate> declared in <root>.CommonCase'
+            BLOCK type=<root>.CommonCase.delegate.<no name provided><D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.CommonCase.Fas<D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CommonCase.delegate.<no name provided><D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.CommonCase.delegate.<no name provided><D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.CommonCase.Fas<D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate>]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CommonCase.delegate.<no name provided>' type=<root>.CommonCase.delegate.<no name provided><D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate> origin=OBJECT_LITERAL
+      FUN name:provideDelegate signature:/CommonCase.provideDelegate|provideDelegate@CommonCase.Fas<0:0,0:1,0:2>(0:0;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] visibility:public modality:FINAL <D, E, R> ($this:<root>.CommonCase, $receiver:<root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate>, host:D of <root>.CommonCase.provideDelegate, p:<unbound IrClassSymbolImpl>?) returnType:<root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate> [operator]
+        TYPE_PARAMETER name:D index:0 variance: signature:[ /CommonCase.provideDelegate|provideDelegate@CommonCase.Fas<0:0,0:1,0:2>(0:0;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:E index:1 variance: signature:[ /CommonCase.provideDelegate|provideDelegate@CommonCase.Fas<0:0,0:1,0:2>(0:0;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:E index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:R index:2 variance: signature:[ /CommonCase.provideDelegate|provideDelegate@CommonCase.Fas<0:0,0:1,0:2>(0:0;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.CommonCase
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate>
+        VALUE_PARAMETER name:host index:0 type:D of <root>.CommonCase.provideDelegate
+        VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDelegate <D, E, R> (host: D of <root>.CommonCase.provideDelegate, p: <unbound IrClassSymbolImpl>?): <root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate> [operator] declared in <root>.CommonCase'
+            GET_VAR '<this>: <root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate> declared in <root>.CommonCase.provideDelegate' type=<root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate> origin=null
+      FUN name:getValue signature:/CommonCase.getValue|getValue@CommonCase.Fas<0:0,0:1,0:2>(0:1;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] visibility:public modality:FINAL <D, E, R> ($this:<root>.CommonCase, $receiver:<root>.CommonCase.Fas<D of <root>.CommonCase.getValue, E of <root>.CommonCase.getValue, R of <root>.CommonCase.getValue>, receiver:E of <root>.CommonCase.getValue, p:<unbound IrClassSymbolImpl>?) returnType:R of <root>.CommonCase.getValue [operator]
+        TYPE_PARAMETER name:D index:0 variance: signature:[ /CommonCase.getValue|getValue@CommonCase.Fas<0:0,0:1,0:2>(0:1;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:E index:1 variance: signature:[ /CommonCase.getValue|getValue@CommonCase.Fas<0:0,0:1,0:2>(0:1;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:E index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:R index:2 variance: signature:[ /CommonCase.getValue|getValue@CommonCase.Fas<0:0,0:1,0:2>(0:1;kotlin.Any?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.CommonCase
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.CommonCase.Fas<D of <root>.CommonCase.getValue, E of <root>.CommonCase.getValue, R of <root>.CommonCase.getValue>
+        VALUE_PARAMETER name:receiver index:0 type:E of <root>.CommonCase.getValue
+        VALUE_PARAMETER name:p index:1 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue <D, E, R> (receiver: E of <root>.CommonCase.getValue, p: <unbound IrClassSymbolImpl>?): R of <root>.CommonCase.getValue [operator] declared in <root>.CommonCase'
+            TYPE_OP type=R of <root>.CommonCase.getValue origin=CAST typeOperand=R of <root>.CommonCase.getValue
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      PROPERTY name:test1 signature:/CommonCase.test1|@kotlin.Long{}test1[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:test1$delegate signature:[ /CommonCase.test1|@kotlin.Long{}test1[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.CommonCase.Fas<<root>.CommonCase, kotlin.Long, kotlin.String> visibility:private [final]] ] type:<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun provideDelegate <D, E, R> (host: D of <root>.CommonCase.provideDelegate, p: <unbound IrClassSymbolImpl>?): <root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate> [operator] declared in <root>.CommonCase' type=<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <D>: <root>.CommonCase
+              <E>: <unbound IrClassSymbolImpl>
+              <R>: <unbound IrClassSymbolImpl>
+              $this: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase' type=<root>.CommonCase origin=null
+              $receiver: CALL 'public final fun delegate <D, E, R> (): <root>.CommonCase.Fas<D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate> declared in <root>.CommonCase' type=<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <D>: <root>.CommonCase
+                <E>: <unbound IrClassSymbolImpl>
+                <R>: <unbound IrClassSymbolImpl>
+                $this: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase' type=<root>.CommonCase origin=null
+              host: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase' type=<root>.CommonCase origin=null
+              p: PROPERTY_REFERENCE 'public final test1: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.CommonCase' field=null getter='public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.CommonCase, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> signature:/CommonCase.test1.<get-test1>|<get-test1>@kotlin.Long(){}[0] visibility:public modality:FINAL <> ($this:<root>.CommonCase, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test1 signature:/CommonCase.test1|@kotlin.Long{}test1[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CommonCase
+          $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase'
+              CALL 'public final fun getValue <D, E, R> (receiver: E of <root>.CommonCase.getValue, p: <unbound IrClassSymbolImpl>?): R of <root>.CommonCase.getValue [operator] declared in <root>.CommonCase' type=<unbound IrClassSymbolImpl> origin=null
+                <D>: <root>.CommonCase
+                <E>: <unbound IrClassSymbolImpl>
+                <R>: <unbound IrClassSymbolImpl>
+                $this: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase.<get-test1>' type=<root>.CommonCase origin=null
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test1$delegate signature:[ /CommonCase.test1|@kotlin.Long{}test1[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.CommonCase.Fas<<root>.CommonCase, kotlin.Long, kotlin.String> visibility:private [final]] ] type:<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.CommonCase' type=<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase.<get-test1>' type=<root>.CommonCase origin=null
+                receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.CommonCase.<get-test1>' type=<unbound IrClassSymbolImpl> origin=null
+                p: PROPERTY_REFERENCE 'public final test1: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.CommonCase' field=null getter='public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.CommonCase, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY name:test2 signature:/CommonCase.test2|@kotlin.Long{}test2[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:test2$delegate signature:[ /CommonCase.test2|@kotlin.Long{}test2[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.CommonCase.Fas<<root>.CommonCase, kotlin.Long, kotlin.String> visibility:private [final]] ] type:<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun provideDelegate <D, E, R> (host: D of <root>.CommonCase.provideDelegate, p: <unbound IrClassSymbolImpl>?): <root>.CommonCase.Fas<D of <root>.CommonCase.provideDelegate, E of <root>.CommonCase.provideDelegate, R of <root>.CommonCase.provideDelegate> [operator] declared in <root>.CommonCase' type=<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <D>: <root>.CommonCase
+              <E>: <unbound IrClassSymbolImpl>
+              <R>: <unbound IrClassSymbolImpl>
+              $this: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase' type=<root>.CommonCase origin=null
+              $receiver: CALL 'public final fun delegate <D, E, R> (): <root>.CommonCase.Fas<D of <root>.CommonCase.delegate, E of <root>.CommonCase.delegate, R of <root>.CommonCase.delegate> declared in <root>.CommonCase' type=<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <D>: <root>.CommonCase
+                <E>: <unbound IrClassSymbolImpl>
+                <R>: <unbound IrClassSymbolImpl>
+                $this: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase' type=<root>.CommonCase origin=null
+              host: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase' type=<root>.CommonCase origin=null
+              p: PROPERTY_REFERENCE 'public final test2: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.CommonCase' field=null getter='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.CommonCase, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test2> signature:/CommonCase.test2.<get-test2>|<get-test2>@kotlin.Long(){}[0] visibility:public modality:FINAL <> ($this:<root>.CommonCase, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:test2 signature:/CommonCase.test2|@kotlin.Long{}test2[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CommonCase
+          $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase'
+              CALL 'public final fun getValue <D, E, R> (receiver: E of <root>.CommonCase.getValue, p: <unbound IrClassSymbolImpl>?): R of <root>.CommonCase.getValue [operator] declared in <root>.CommonCase' type=<unbound IrClassSymbolImpl> origin=null
+                <D>: <root>.CommonCase
+                <E>: <unbound IrClassSymbolImpl>
+                <R>: <unbound IrClassSymbolImpl>
+                $this: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase.<get-test2>' type=<root>.CommonCase origin=null
+                $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate signature:[ /CommonCase.test2|@kotlin.Long{}test2[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:<root>.CommonCase.Fas<<root>.CommonCase, kotlin.Long, kotlin.String> visibility:private [final]] ] type:<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.CommonCase' type=<root>.CommonCase.Fas<<root>.CommonCase, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.CommonCase declared in <root>.CommonCase.<get-test2>' type=<root>.CommonCase origin=null
+                receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.CommonCase.<get-test2>' type=<unbound IrClassSymbolImpl> origin=null
+                p: PROPERTY_REFERENCE 'public final test2: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.CommonCase' field=null getter='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.CommonCase, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <root>.CommonCase
+            <2>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'CLASS OBJECT name:CommonCase signature:/CommonCase|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.CommonCase
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.CommonCase, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CommonCase) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$with type:<root>.CommonCase
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: CALL 'public final fun <get-test1> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '$this$with: <root>.CommonCase declared in <root>.box.<anonymous>' type=<root>.CommonCase origin=null
+                            $receiver: CONST Long type=<unbound IrClassSymbolImpl> value=3
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                        then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: CALL 'public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>.CommonCase' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '$this$with: <root>.CommonCase declared in <root>.box.<anonymous>' type=<root>.CommonCase origin=null
+                            $receiver: CONST Long type=<unbound IrClassSymbolImpl> value=3
+                          arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"

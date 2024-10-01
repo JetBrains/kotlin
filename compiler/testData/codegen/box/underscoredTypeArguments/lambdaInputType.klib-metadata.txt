@@ -1,0 +1,67 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyResult
+    // class name: MyResult.Failure
+    // class name: MyResult.Success
+
+    public sealed class MyResult<out T#0 /* T */> : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: Success
+
+      // nested class: Failure
+
+      // sealed subclass: MyResult.Failure
+
+      // sealed subclass: MyResult.Success
+    }
+
+    public final data class MyResult.Failure : MyResult<kotlin/Nothing> {
+
+      public constructor(exception: kotlin/Throwable)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Throwable
+
+      public final /* synthesized */ fun copy(exception: kotlin/Throwable /* = ... */): MyResult.Failure
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val exception: kotlin/Throwable
+        public final get
+    }
+
+    public final data class MyResult.Success<T#1 /* T */> : MyResult<T#1> {
+
+      public constructor(value: T#1)
+
+      public final /* synthesized */ operator fun component1(): T#1
+
+      public final /* synthesized */ fun copy(value: T#1 /* = ... */): MyResult.Success<T#1>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: T#1
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* E */ : kotlin/Throwable, T#1 /* T */> MyResult<T#1>.catch(result: kotlin/Function1<T#0, T#1>): kotlin/String
+    }
+  }
+}

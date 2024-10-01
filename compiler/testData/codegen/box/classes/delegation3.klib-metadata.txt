@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: One
+    // class name: OneImpl
+    // class name: Test2
+    // class name: Two
+    // class name: TwoImpl
+
+    public abstract interface One : kotlin/Any {
+
+      public open fun faz(): kotlin/Int
+
+      public abstract fun foo(): kotlin/Int
+    }
+
+    public final class OneImpl : One {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Int
+    }
+
+    public final class Test2 : Two, One {
+
+      public constructor(a: One, b: Two)
+
+      public open /* delegation */ fun faz(): kotlin/Int
+
+      public open fun foo(): kotlin/Int
+
+      public open /* delegation */ fun quux(): kotlin/Int
+    }
+
+    public abstract interface Two : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Int
+
+      public open fun quux(): kotlin/Int
+    }
+
+    public final class TwoImpl : Two {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

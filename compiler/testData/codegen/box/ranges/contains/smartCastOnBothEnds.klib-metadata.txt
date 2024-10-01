@@ -1,0 +1,34 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkByte(a: kotlin/Byte?, b: kotlin/Byte?, c: kotlin/Byte): kotlin/Boolean
+
+      public final fun checkChar(a: kotlin/Char?, b: kotlin/Char?, c: kotlin/Char): kotlin/Boolean
+
+      public final fun checkDouble(a: kotlin/Double?, b: kotlin/Double?, c: kotlin/Double): kotlin/Boolean
+
+      public final fun checkFloat(a: kotlin/Float?, b: kotlin/Float?, c: kotlin/Float): kotlin/Boolean
+
+      public final fun checkInt(a: kotlin/Int?, b: kotlin/Int?, c: kotlin/Int): kotlin/Boolean
+
+      public final fun checkLong(a: kotlin/Long?, b: kotlin/Long?, c: kotlin/Long): kotlin/Boolean
+
+      public final fun checkShort(a: kotlin/Short?, b: kotlin/Short?, c: kotlin/Short): kotlin/Boolean
+
+      public final fun checkUByte(a: kotlin/UByte?, b: kotlin/UByte?, c: kotlin/UByte): kotlin/Boolean
+
+      public final fun checkUInt(a: kotlin/UInt?, b: kotlin/UInt?, c: kotlin/UInt): kotlin/Boolean
+
+      public final fun checkULong(a: kotlin/ULong?, b: kotlin/ULong?, c: kotlin/ULong): kotlin/Boolean
+
+      public final fun checkUShort(a: kotlin/UShort?, b: kotlin/UShort?, c: kotlin/UShort): kotlin/Boolean
+    }
+  }
+}

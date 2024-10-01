@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Reproducer
+
+    public final class Reproducer : kotlin/Any {
+
+      public constructor()
+
+      public final fun repro(): kotlin/Double
+
+      private final var someListOfLongs: kotlin/collections/MutableList<kotlin/Long>
+        private final get
+        private final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Number> kotlin/collections/Collection<T#0>.median(): kotlin/Double
+
+      public final operator inline fun <reified T#0 /* T */ : kotlin/Number> T#0.plus(other: T#0): T#0
+
+      public final val kotlin/Int.isEven: kotlin/Boolean
+        public final /* non-default */ get
+    }
+  }
+}

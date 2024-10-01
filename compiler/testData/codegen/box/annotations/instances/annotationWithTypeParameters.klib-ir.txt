@@ -1,0 +1,144 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/annotationWithTypeParameters.kt
+    CLASS ANNOTATION_CLASS name:One signature:test/One|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.One<T of test.One>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/One|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/One.<init>|<init>(){}[0] visibility:public <> () returnType:test.One<T of test.One> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:One signature:test/One|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS ANNOTATION_CLASS name:Two signature:test/Two|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Two<K of test.Two, V of test.Two>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ test/Two|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ test/Two|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/Two.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:test.Two<K of test.Two, V of test.Two> [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Two signature:test/Two|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:test/Two.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/Two.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in test.Two.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:test/Two.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:test.Two<K of test.Two, V of test.Two>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:test/Two.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Two<K of test.Two, V of test.Two>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in test.Two'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/Two.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Two<K of test.Two, V of test.Two> declared in test.Two.<get-s>' type=test.Two<K of test.Two, V of test.Two> origin=null
+    CLASS ANNOTATION_CLASS name:Nesting signature:test/Nesting|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Nesting
+      CONSTRUCTOR signature:test/Nesting.<init>|<init>(test.One<kotlin.Int>;test.Two<kotlin.String,kotlin.collections.List<kotlin.String>>){}[0] visibility:public <> (a1:test.One<<unbound IrClassSymbolImpl>>, a2:test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) returnType:test.Nesting [primary]
+        VALUE_PARAMETER name:a1 index:0 type:test.One<<unbound IrClassSymbolImpl>>
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.One' type=test.One<<unbound IrClassSymbolImpl>> origin=null
+              <class: T>: <unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:a2 index:1 type:test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in test.Two' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+              <class: K>: <unbound IrClassSymbolImpl>
+              <class: V>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              s: CONST String type=<unbound IrClassSymbolImpl> value="two"
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Nesting signature:test/Nesting|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a1 signature:test/Nesting.a1|{}a1[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a1 signature:[ test/Nesting.a1|{}a1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:test.One<<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a1: test.One<<unbound IrClassSymbolImpl>> declared in test.Nesting.<init>' type=test.One<<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a1> signature:test/Nesting.a1.<get-a1>|<get-a1>(){}[0] visibility:public modality:FINAL <> ($this:test.Nesting) returnType:test.One<<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:a1 signature:test/Nesting.a1|{}a1[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Nesting
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a1> (): test.One<<unbound IrClassSymbolImpl>> declared in test.Nesting'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 signature:[ test/Nesting.a1|{}a1[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:test.One<<unbound IrClassSymbolImpl>> visibility:private [final]' type=test.One<<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: test.Nesting declared in test.Nesting.<get-a1>' type=test.Nesting origin=null
+      PROPERTY name:a2 signature:test/Nesting.a2|{}a2[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a2 signature:[ test/Nesting.a2|{}a2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a2: test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> declared in test.Nesting.<init>' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a2> signature:test/Nesting.a2.<get-a2>|<get-a2>(){}[0] visibility:public modality:FINAL <> ($this:test.Nesting) returnType:test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY name:a2 signature:test/Nesting.a2|{}a2[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Nesting
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a2> (): test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> declared in test.Nesting'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a2 signature:[ test/Nesting.a2|{}a2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> visibility:private [final]' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                receiver: GET_VAR '<this>: test.Nesting declared in test.Nesting.<get-a2>' type=test.Nesting origin=null
+    CLASS ANNOTATION_CLASS name:WithKClass signature:test/WithKClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.WithKClass<K of test.WithKClass>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ test/WithKClass|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:test/WithKClass.<init>|<init>(kotlin.reflect.KClass<1:0>){}[0] visibility:public <> (k:<unbound IrClassSymbolImpl><K of test.WithKClass>) returnType:test.WithKClass<K of test.WithKClass> [primary]
+        VALUE_PARAMETER name:k index:0 type:<unbound IrClassSymbolImpl><K of test.WithKClass>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:WithKClass signature:test/WithKClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:k signature:test/WithKClass.k|{}k[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:k signature:[ test/WithKClass.k|{}k[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of test.WithKClass> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'k: <unbound IrClassSymbolImpl><K of test.WithKClass> declared in test.WithKClass.<init>' type=<unbound IrClassSymbolImpl><K of test.WithKClass> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-k> signature:test/WithKClass.k.<get-k>|<get-k>(){}[0] visibility:public modality:FINAL <> ($this:test.WithKClass<K of test.WithKClass>) returnType:<unbound IrClassSymbolImpl><K of test.WithKClass>
+          correspondingProperty: PROPERTY name:k signature:test/WithKClass.k|{}k[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.WithKClass<K of test.WithKClass>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-k> (): <unbound IrClassSymbolImpl><K of test.WithKClass> declared in test.WithKClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k signature:[ test/WithKClass.k|{}k[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of test.WithKClass> visibility:private [final]' type=<unbound IrClassSymbolImpl><K of test.WithKClass> origin=null
+                receiver: GET_VAR '<this>: test.WithKClass<K of test.WithKClass> declared in test.WithKClass.<get-k>' type=test.WithKClass<K of test.WithKClass> origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:test.One<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.One' type=test.One<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val a: test.One<<unbound IrClassSymbolImpl>> [val] declared in test.box' type=test.One<<unbound IrClassSymbolImpl>> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="test.One()"
+        VAR name:t type:test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in test.Two' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <class: K>: <unbound IrClassSymbolImpl>
+            <class: V>: <unbound IrClassSymbolImpl>
+            s: CONST String type=<unbound IrClassSymbolImpl> value="two"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="two"
+          2: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in test.Two' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val t: test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in test.box' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+        VAR name:n type:test.Nesting [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (a1: test.One<<unbound IrClassSymbolImpl>>, a2: test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>) [primary] declared in test.Nesting' type=test.Nesting origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="two"
+          2: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in test.Two' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-a2> (): test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> declared in test.Nesting' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+              $this: GET_VAR 'val n: test.Nesting [val] declared in test.box' type=test.Nesting origin=null
+        VAR name:wk type:test.WithKClass<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (k: <unbound IrClassSymbolImpl><K of test.WithKClass>) [primary] declared in test.WithKClass' type=test.WithKClass<<unbound IrClassSymbolImpl>> origin=null
+            <class: K>: <unbound IrClassSymbolImpl>
+            k: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            arg1: CALL 'public final fun <get-k> (): <unbound IrClassSymbolImpl><K of test.WithKClass> declared in test.WithKClass' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val wk: test.WithKClass<<unbound IrClassSymbolImpl>> [val] declared in test.box' type=test.WithKClass<<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in test.Two' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <class: K>: <unbound IrClassSymbolImpl>
+              <class: V>: <unbound IrClassSymbolImpl>
+              s: CONST String type=<unbound IrClassSymbolImpl> value="two"
+            arg1: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in test.Two' type=test.Two<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <class: K>: <unbound IrClassSymbolImpl>
+              <class: V>: <unbound IrClassSymbolImpl>
+              s: CONST String type=<unbound IrClassSymbolImpl> value="two"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              arg0: CONSTRUCTOR_CALL 'public constructor <init> (k: <unbound IrClassSymbolImpl><K of test.WithKClass>) [primary] declared in test.WithKClass' type=test.WithKClass<<unbound IrClassSymbolImpl>> origin=null
+                <class: K>: <unbound IrClassSymbolImpl>
+                k: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              arg1: CONSTRUCTOR_CALL 'public constructor <init> (k: <unbound IrClassSymbolImpl><K of test.WithKClass>) [primary] declared in test.WithKClass' type=test.WithKClass<<unbound IrClassSymbolImpl>> origin=null
+                <class: K>: <unbound IrClassSymbolImpl>
+                k: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

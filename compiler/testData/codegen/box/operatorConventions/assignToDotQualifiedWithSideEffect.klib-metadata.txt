@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/A
+
+    public final class foo/A : kotlin/Any {
+
+      public constructor()
+
+      public final var prop: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun assertEquals(first: kotlin/Any?, second: kotlin/Any?): kotlin/Unit
+
+      public final fun bar(s: kotlin/String, a: foo/A): foo/A
+
+      public final fun box(): kotlin/String
+
+      public final var global: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,71 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:takeT signature:test/takeT|takeT(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (t:T of test.takeT) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/takeT|takeT(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:t index:0 type:T of test.takeT
+      BLOCK_BODY
+    FUN name:takeTSuperAny signature:test/takeTSuperAny|takeTSuperAny(0:0){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (t:T of test.takeTSuperAny) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/takeTSuperAny|takeTSuperAny(0:0){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:t index:0 type:T of test.takeTSuperAny
+      BLOCK_BODY
+    FUN name:takeU signature:test/takeU|takeU(0:1){0§<kotlin.Any?>;1§<0:0>}[0] visibility:public modality:FINAL <T, U> (u:U of test.takeU) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/takeU|takeU(0:1){0§<kotlin.Any?>;1§<0:0>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:U index:1 variance: signature:[ test/takeU|takeU(0:1){0§<kotlin.Any?>;1§<0:0>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:U index:1 variance: superTypes:[T of test.takeU] reified:false] ] superTypes:[T of test.takeU] reified:false
+      VALUE_PARAMETER name:u index:0 type:U of test.takeU
+      BLOCK_BODY
+    FUN name:takeR signature:test/takeR|takeR(0:2){0§<kotlin.Any?>;1§<0:0>;2§<0:1>}[0] visibility:public modality:FINAL <T, U, R> (r:R of test.takeR) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/takeR|takeR(0:2){0§<kotlin.Any?>;1§<0:0>;2§<0:1>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:U index:1 variance: signature:[ test/takeR|takeR(0:2){0§<kotlin.Any?>;1§<0:0>;2§<0:1>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:U index:1 variance: superTypes:[T of test.takeU] reified:false] ] superTypes:[T of test.takeR] reified:false
+      TYPE_PARAMETER name:R index:2 variance: signature:[ test/takeR|takeR(0:2){0§<kotlin.Any?>;1§<0:0>;2§<0:1>}[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[U of test.takeR] reified:false] ] superTypes:[U of test.takeR] reified:false
+      VALUE_PARAMETER name:r index:0 type:R of test.takeR
+      BLOCK_BODY
+    FUN name:takeTWithMap signature:test/takeTWithMap|takeTWithMap(0:2){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.collections.Map<0:0,kotlin.collections.List<0:1>>>}[0] visibility:public modality:FINAL <A, B, T> (t:T of test.takeTWithMap) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:A index:0 variance: signature:[ test/takeTWithMap|takeTWithMap(0:2){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.collections.Map<0:0,kotlin.collections.List<0:1>>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ test/takeTWithMap|takeTWithMap(0:2){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.collections.Map<0:0,kotlin.collections.List<0:1>>>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:U index:1 variance: superTypes:[T of test.takeU] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T index:2 variance: signature:[ test/takeTWithMap|takeTWithMap(0:2){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.collections.Map<0:0,kotlin.collections.List<0:1>>>}[0] <- Local[<TP>,2|TYPE_PARAMETER name:R index:2 variance: superTypes:[U of test.takeR] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><A of test.takeTWithMap, <unbound IrClassSymbolImpl><B of test.takeTWithMap>>] reified:false
+      VALUE_PARAMETER name:t index:0 type:T of test.takeTWithMap
+      BLOCK_BODY
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:f type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                    CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'public final fun takeT <T> (t: T of test.takeT): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          t: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        CALL 'public final fun takeTSuperAny <T> (t: T of test.takeTSuperAny): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          t: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        CALL 'public final fun takeU <T, U> (u: U of test.takeU): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <U>: <unbound IrClassSymbolImpl>
+          u: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        CALL 'public final fun takeR <T, U, R> (r: R of test.takeR): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <U>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          r: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+        VAR name:g type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                    CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'public final fun takeTWithMap <A, B, T> (t: T of test.takeTWithMap): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>
+          <B>: <unbound IrClassSymbolImpl>
+          <T>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+          t: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=INVOKE
+            $this: GET_VAR 'val g: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=VARIABLE_AS_FUNCTION
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

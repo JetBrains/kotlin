@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/enumInheritedFromTrait.kt
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_ENUM 'ENUM_ENTRY name:E1 signature:test/MyEnum.E1|null[0]' type=test.MyEnum
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_ENUM 'ENUM_ENTRY name:E2 signature:test/MyEnum.E2|null[0]' type=test.MyEnum
+    CLASS ENUM_CLASS name:MyEnum signature:test/MyEnum|null[0] modality:ABSTRACT visibility:public superTypes:[test.T; <unbound IrClassSymbolImpl><test.MyEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.MyEnum
+      CONSTRUCTOR signature:test/MyEnum.<init>|<init>(){}[0] visibility:private <> () returnType:test.MyEnum [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.MyEnum
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum signature:test/MyEnum|null[0] modality:ABSTRACT visibility:public superTypes:[test.T; <unbound IrClassSymbolImpl><test.MyEnum>]'
+      ENUM_ENTRY name:E1 signature:test/MyEnum.E1|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.MyEnum.E1'
+        class: CLASS ENUM_ENTRY name:E1 signature:test/MyEnum.E1.<EEC>|null[0] modality:FINAL visibility:private superTypes:[test.MyEnum]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.MyEnum.E1
+          CONSTRUCTOR signature:test/MyEnum.E1.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:test.MyEnum.E1 [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.MyEnum'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:E1 signature:test/MyEnum.E1.<EEC>|null[0] modality:FINAL visibility:private superTypes:[test.MyEnum]'
+          FUN name:f signature:test/MyEnum.E1.<EEC>.f|f(){}[0] visibility:public modality:OPEN <> ($this:test.MyEnum.E1) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:test.MyEnum.E1
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun f (): <unbound IrClassSymbolImpl> declared in test.MyEnum.E1'
+                CONST String type=<unbound IrClassSymbolImpl> value="O"
+      ENUM_ENTRY name:E2 signature:test/MyEnum.E2|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.MyEnum.E2'
+        class: CLASS ENUM_ENTRY name:E2 signature:test/MyEnum.E2.<EEC>|null[0] modality:FINAL visibility:private superTypes:[test.MyEnum]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.MyEnum.E2
+          CONSTRUCTOR signature:test/MyEnum.E2.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:test.MyEnum.E2 [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.MyEnum'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:E2 signature:test/MyEnum.E2.<EEC>|null[0] modality:FINAL visibility:private superTypes:[test.MyEnum]'
+          FUN name:f signature:test/MyEnum.E2.<EEC>.f|f(){}[0] visibility:public modality:OPEN <> ($this:test.MyEnum.E2) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:test.MyEnum.E2
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun f (): <unbound IrClassSymbolImpl> declared in test.MyEnum.E2'
+                CONST String type=<unbound IrClassSymbolImpl> value="K"
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/MyEnum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.MyEnum>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/MyEnum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.MyEnum
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/MyEnum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.MyEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS INTERFACE name:T signature:test/T|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.T
+      FUN name:f signature:test/T.f|f(){}[0] visibility:public modality:ABSTRACT <> ($this:test.T) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.T

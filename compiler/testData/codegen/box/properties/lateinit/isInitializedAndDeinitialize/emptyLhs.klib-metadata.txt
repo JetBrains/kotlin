@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Bar
+    // class name: test/Foo
+
+    public final object test/Bar : kotlin/Any {
+
+      private constructor()
+
+      public final fun test(): kotlin/Boolean
+
+      public final lateinit var p: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class test/Foo : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/Boolean
+
+      public final lateinit var p: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

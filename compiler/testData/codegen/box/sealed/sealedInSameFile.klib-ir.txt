@@ -1,0 +1,100 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/sealedInSameFile.kt
+    CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+    CLASS CLASS name:A signature:/A|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CONSTRUCTOR signature:/A.<init>|<init>(kotlin.Int){}[0] visibility:protected <> (i:<unbound IrClassSymbolImpl>) returnType:<root>.A
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.A'
+      CLASS CLASS name:C signature:/A.C|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.C
+        CONSTRUCTOR signature:/A.C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A.C [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.A'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/A.C|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+    CLASS OBJECT name:T signature:/T|null[0] modality:FINAL visibility:public superTypes:[<root>.Y]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.T
+      CONSTRUCTOR signature:/T.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.T [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Y'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:T signature:/T|null[0] modality:FINAL visibility:public superTypes:[<root>.Y]'
+    CLASS CLASS name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+      CONSTRUCTOR signature:/D.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.D [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (i: <unbound IrClassSymbolImpl>) declared in <root>.A'
+            i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+    CLASS CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+      CONSTRUCTOR signature:/E.<init>|<init>(kotlin.Int){}[0] visibility:public <> (i:<unbound IrClassSymbolImpl>) returnType:<root>.E
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (i: <unbound IrClassSymbolImpl>) declared in <root>.A'
+            i: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.E.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+      CONSTRUCTOR signature:/E.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.E
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<root>.A]'
+    CLASS OBJECT name:S signature:/S|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.S
+      CONSTRUCTOR signature:/S.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.S [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Z'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:S signature:/S|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]'
+    CLASS CLASS name:Y signature:/Y|null[0] modality:SEALED visibility:public superTypes:[<root>.X]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Y
+      CONSTRUCTOR signature:/Y.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.Y [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.X'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Y signature:/Y|null[0] modality:SEALED visibility:public superTypes:[<root>.X]'
+    CLASS CLASS name:Z signature:/Z|null[0] modality:SEALED visibility:public superTypes:[<root>.Y]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
+      CONSTRUCTOR signature:/Z.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.Z [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Y'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z signature:/Z|null[0] modality:SEALED visibility:public superTypes:[<root>.Y]'
+    CLASS CLASS name:X signature:/X|null[0] modality:SEALED visibility:public superTypes:[<root>.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+      CONSTRUCTOR signature:/X.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.X [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X signature:/X|null[0] modality:SEALED visibility:public superTypes:[<root>.A]'
+    CLASS CLASS name:Q signature:/Q|null[0] modality:FINAL visibility:public superTypes:[<root>.Y]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q
+      CONSTRUCTOR signature:/Q.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Q [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Y'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Q signature:/Q|null[0] modality:FINAL visibility:public superTypes:[<root>.Y]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.C' type=<root>.A.C origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.D' type=<root>.D origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.E' type=<root>.E origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) declared in <root>.E' type=<root>.E origin=null
+            i: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_OBJECT 'CLASS OBJECT name:T signature:/T|null[0] modality:FINAL visibility:public superTypes:[<root>.Y]' type=<root>.T
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_OBJECT 'CLASS OBJECT name:S signature:/S|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]' type=<root>.S
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Q' type=<root>.Q origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

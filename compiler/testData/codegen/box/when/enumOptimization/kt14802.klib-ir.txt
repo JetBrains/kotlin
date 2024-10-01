@@ -1,0 +1,117 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt14802.kt
+    PROPERTY name:res signature:/res|{}res[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:res signature:[ /res|{}res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-res> signature:/res.<get-res>|<get-res>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:res signature:/res|{}res[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-res> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:res signature:[ /res|{}res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-res> signature:/res.<set-res>|<set-res>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:res signature:/res|{}res[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:res signature:[ /res|{}res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-res>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:EncapsulatedEnum signature:/EncapsulatedEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EncapsulatedEnum<T of <root>.EncapsulatedEnum>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /EncapsulatedEnum|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Enum<T of <root>.EncapsulatedEnum>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of <root>.EncapsulatedEnum>] reified:false
+      CONSTRUCTOR signature:/EncapsulatedEnum.<init>|<init>(1:0){}[0] visibility:public <> (value:T of <root>.EncapsulatedEnum) returnType:<root>.EncapsulatedEnum<T of <root>.EncapsulatedEnum> [primary]
+        VALUE_PARAMETER name:value index:0 type:T of <root>.EncapsulatedEnum
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:EncapsulatedEnum signature:/EncapsulatedEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/EncapsulatedEnum.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /EncapsulatedEnum.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:T of <root>.EncapsulatedEnum visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: T of <root>.EncapsulatedEnum declared in <root>.EncapsulatedEnum.<init>' type=T of <root>.EncapsulatedEnum origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/EncapsulatedEnum.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.EncapsulatedEnum<T of <root>.EncapsulatedEnum>) returnType:T of <root>.EncapsulatedEnum
+          correspondingProperty: PROPERTY name:value signature:/EncapsulatedEnum.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.EncapsulatedEnum<T of <root>.EncapsulatedEnum>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): T of <root>.EncapsulatedEnum declared in <root>.EncapsulatedEnum'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /EncapsulatedEnum.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:T of <root>.EncapsulatedEnum visibility:private [final]' type=T of <root>.EncapsulatedEnum origin=null
+                receiver: GET_VAR '<this>: <root>.EncapsulatedEnum<T of <root>.EncapsulatedEnum> declared in <root>.EncapsulatedEnum.<get-value>' type=<root>.EncapsulatedEnum<T of <root>.EncapsulatedEnum> origin=null
+    CLASS ENUM_CLASS name:MyEnum signature:/MyEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.MyEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
+      CONSTRUCTOR signature:/MyEnum.<init>|<init>(kotlin.String){}[0] visibility:private <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.MyEnum [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.MyEnum
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum signature:/MyEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.MyEnum>]'
+      PROPERTY name:value signature:/MyEnum.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /MyEnum.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.MyEnum.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/MyEnum.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/MyEnum.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.MyEnum'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /MyEnum.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.EncapsulatedEnum visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyEnum declared in <root>.MyEnum.<get-value>' type=<root>.MyEnum origin=null
+      ENUM_ENTRY name:VALUE_A signature:/MyEnum.VALUE_A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.MyEnum'
+            value: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      ENUM_ENTRY name:VALUE_B signature:/MyEnum.VALUE_B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.MyEnum'
+            value: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/MyEnum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.MyEnum>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/MyEnum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.MyEnum
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/MyEnum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.MyEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/MyEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:crash signature:[ File '/kt14802.kt' <- /crash|crash(EncapsulatedEnum<*>){}[0] ] visibility:private modality:FINAL <> (encapsulated:<root>.EncapsulatedEnum<*>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:encapsulated index:0 type:<root>.EncapsulatedEnum<*>
+      BLOCK_BODY
+        VAR name:myEnum type:<unbound IrClassSymbolImpl><*> [val]
+          CALL 'public final fun <get-value> (): T of <root>.EncapsulatedEnum declared in <root>.EncapsulatedEnum' type=<unbound IrClassSymbolImpl><*> origin=GET_PROPERTY
+            $this: GET_VAR 'encapsulated: <root>.EncapsulatedEnum<*> declared in <root>.crash' type=<root>.EncapsulatedEnum<*> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.MyEnum
+              GET_VAR 'val myEnum: <unbound IrClassSymbolImpl><*> [val] declared in <root>.crash' type=<unbound IrClassSymbolImpl><*> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun crash (encapsulated: <root>.EncapsulatedEnum<*>): <unbound IrClassSymbolImpl> declared in <root>'
+                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.MyEnum [val]
+            TYPE_OP type=<root>.MyEnum origin=IMPLICIT_CAST typeOperand=<root>.MyEnum
+              GET_VAR 'val myEnum: <unbound IrClassSymbolImpl><*> [val] declared in <root>.crash' type=<unbound IrClassSymbolImpl><*> origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <root>.MyEnum [val] declared in <root>.crash' type=<root>.MyEnum origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:VALUE_A signature:/MyEnum.VALUE_A|null[0]' type=<root>.MyEnum
+              then: CALL 'public final fun <set-res> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                <set-?>: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.MyEnum' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: TYPE_OP type=<root>.MyEnum origin=IMPLICIT_CAST typeOperand=<root>.MyEnum
+                    GET_VAR 'val myEnum: <unbound IrClassSymbolImpl><*> [val] declared in <root>.crash' type=<unbound IrClassSymbolImpl><*> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <root>.MyEnum [val] declared in <root>.crash' type=<root>.MyEnum origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:VALUE_B signature:/MyEnum.VALUE_B|null[0]' type=<root>.MyEnum
+              then: CALL 'public final fun <set-res> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                <set-?>: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.MyEnum' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: TYPE_OP type=<root>.MyEnum origin=IMPLICIT_CAST typeOperand=<root>.MyEnum
+                    GET_VAR 'val myEnum: <unbound IrClassSymbolImpl><*> [val] declared in <root>.crash' type=<unbound IrClassSymbolImpl><*> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'private final fun crash (encapsulated: <root>.EncapsulatedEnum<*>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          encapsulated: CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.EncapsulatedEnum) [primary] declared in <root>.EncapsulatedEnum' type=<root>.EncapsulatedEnum<<root>.MyEnum> origin=null
+            <class: T>: <root>.MyEnum
+            value: GET_ENUM 'ENUM_ENTRY name:VALUE_A signature:/MyEnum.VALUE_A|null[0]' type=<root>.MyEnum
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-res> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

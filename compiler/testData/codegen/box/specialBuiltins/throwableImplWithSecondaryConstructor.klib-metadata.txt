@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyThrowable
+
+    public final class MyThrowable : kotlin/Throwable {
+
+      public /* secondary */ constructor(x: kotlin/String, message: kotlin/String, cause: kotlin/Throwable? /* = ... */)
+
+      public final val x: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

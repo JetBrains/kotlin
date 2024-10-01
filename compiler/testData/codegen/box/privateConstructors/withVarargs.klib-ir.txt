@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/withVarargs.kt
+    CLASS CLASS name:Outer signature:/Outer|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+      CONSTRUCTOR signature:/Outer.<init>|<init>(kotlin.String;kotlin.IntArray...){}[0] visibility:private <> (s:<unbound IrClassSymbolImpl>, i:<unbound IrClassSymbolImpl>) returnType:<root>.Outer [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:i index:1 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:/Outer|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/Outer.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Outer.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.Outer.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/Outer.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/Outer.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.Outer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Outer.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.<get-s>' type=<root>.Outer origin=null
+      CLASS CLASS name:Inner signature:/Outer.Inner|null[0] modality:FINAL visibility:public superTypes:[<root>.Outer]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
+        CONSTRUCTOR signature:/Outer.Inner.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer.Inner [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (s: <unbound IrClassSymbolImpl>, vararg i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Outer'
+              s: CONST String type=<unbound IrClassSymbolImpl> value="xyz"
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner signature:/Outer.Inner|null[0] modality:FINAL visibility:public superTypes:[<root>.Outer]'
+      CLASS CLASS name:Other signature:/Outer.Other|null[0] modality:FINAL visibility:public superTypes:[<root>.Outer]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Other
+        CONSTRUCTOR signature:/Outer.Other.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer.Other [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (s: <unbound IrClassSymbolImpl>, vararg i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Outer'
+              s: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+              i: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+                CONST Int type=<unbound IrClassSymbolImpl> value=3
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Other signature:/Outer.Other|null[0] modality:FINAL visibility:public superTypes:[<root>.Outer]'
+      CLASS CLASS name:Another signature:/Outer.Another|null[0] modality:FINAL visibility:public superTypes:[<root>.Outer]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Another
+        CONSTRUCTOR signature:/Outer.Another.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer.Another [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (s: <unbound IrClassSymbolImpl>, vararg i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Outer'
+              s: CONST String type=<unbound IrClassSymbolImpl> value=""
+              i: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=42
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Another signature:/Outer.Another|null[0] modality:FINAL visibility:public superTypes:[<root>.Outer]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:outer type:<root>.Outer.Inner [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner origin=null
+        VAR name:other type:<root>.Outer.Other [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Other' type=<root>.Outer.Other origin=null
+        VAR name:another type:<root>.Outer.Another [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Another' type=<root>.Outer.Another origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

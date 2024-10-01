@@ -1,0 +1,106 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt25784.kt
+    CLASS CLASS name:ByteDelegate signature:/ByteDelegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ByteDelegate
+      CONSTRUCTOR signature:/ByteDelegate.<init>|<init>(kotlin.Int;kotlin.reflect.KProperty0<kotlin.UInt>){}[0] visibility:public <> (position:<unbound IrClassSymbolImpl>, uIntValue:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.ByteDelegate [primary]
+        VALUE_PARAMETER name:position index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:uIntValue index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ByteDelegate signature:/ByteDelegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:position signature:/ByteDelegate.position|{}position[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:position signature:[ /ByteDelegate.position|{}position[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'position: <unbound IrClassSymbolImpl> declared in <root>.ByteDelegate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-position> signature:/ByteDelegate.position.<get-position>|<get-position>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ByteDelegate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:position signature:/ByteDelegate.position|{}position[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ByteDelegate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-position> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:position signature:[ /ByteDelegate.position|{}position[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ByteDelegate declared in <root>.ByteDelegate.<get-position>' type=<root>.ByteDelegate origin=null
+      PROPERTY name:uIntValue signature:/ByteDelegate.uIntValue|{}uIntValue[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:uIntValue signature:[ /ByteDelegate.uIntValue|{}uIntValue[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'uIntValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ByteDelegate.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-uIntValue> signature:/ByteDelegate.uIntValue.<get-uIntValue>|<get-uIntValue>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ByteDelegate) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:uIntValue signature:/ByteDelegate.uIntValue|{}uIntValue[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ByteDelegate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-uIntValue> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ByteDelegate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:uIntValue signature:[ /ByteDelegate.uIntValue|{}uIntValue[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ByteDelegate declared in <root>.ByteDelegate.<get-uIntValue>' type=<root>.ByteDelegate origin=null
+      FUN name:getValue signature:/ByteDelegate.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($this:<root>.ByteDelegate, any:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteDelegate
+        VALUE_PARAMETER name:any index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          VAR name:uInt type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'private final fun <get-uIntValue> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ByteDelegate' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ByteDelegate declared in <root>.ByteDelegate.getValue' type=<root>.ByteDelegate origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                  $this: CALL 'private final fun <get-position> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ByteDelegate declared in <root>.ByteDelegate.getValue' type=<root>.ByteDelegate origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=8
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=255
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (any: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ByteDelegate'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val uInt: <unbound IrClassSymbolImpl> [val] declared in <root>.ByteDelegate.getValue' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:ByteDelegateTest signature:/ByteDelegateTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ByteDelegateTest
+      CONSTRUCTOR signature:/ByteDelegateTest.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ByteDelegateTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ByteDelegateTest signature:/ByteDelegateTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:uInt signature:/ByteDelegateTest.uInt|{}uInt[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:uInt signature:[ /ByteDelegateTest.uInt|{}uInt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=10597059
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-uInt> signature:/ByteDelegateTest.uInt.<get-uInt>|<get-uInt>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ByteDelegateTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:uInt signature:/ByteDelegateTest.uInt|{}uInt[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ByteDelegateTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-uInt> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegateTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:uInt signature:[ /ByteDelegateTest.uInt|{}uInt[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ByteDelegateTest declared in <root>.ByteDelegateTest.<get-uInt>' type=<root>.ByteDelegateTest origin=null
+      PROPERTY name:uByte signature:/ByteDelegateTest.uByte|{}uByte[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:uByte$delegate signature:[ /ByteDelegateTest.uByte|{}uByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<root>.ByteDelegate visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> (position: <unbound IrClassSymbolImpl>, uIntValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in <root>.ByteDelegate' type=<root>.ByteDelegate origin=null
+              position: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              uIntValue: PROPERTY_REFERENCE 'public final uInt: <unbound IrClassSymbolImpl> [val] declared in <root>.ByteDelegateTest' field=null getter='public final fun <get-uInt> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegateTest' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: <root>.ByteDelegateTest declared in <root>.ByteDelegateTest' type=<root>.ByteDelegateTest origin=null
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-uByte> signature:/ByteDelegateTest.uByte.<get-uByte>|<get-uByte>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ByteDelegateTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:uByte signature:/ByteDelegateTest.uByte|{}uByte[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ByteDelegateTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-uByte> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegateTest'
+              CALL 'public final fun getValue (any: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ByteDelegate' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:uByte$delegate signature:[ /ByteDelegateTest.uByte|{}uByte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:position type:kotlin.Int visibility:private [final]] ] type:<root>.ByteDelegate visibility:private [final] declared in <root>.ByteDelegateTest' type=<root>.ByteDelegate origin=null
+                  receiver: GET_VAR '<this>: <root>.ByteDelegateTest declared in <root>.ByteDelegateTest.<get-uByte>' type=<root>.ByteDelegateTest origin=null
+                any: GET_VAR '<this>: <root>.ByteDelegateTest declared in <root>.ByteDelegateTest.<get-uByte>' type=<root>.ByteDelegateTest origin=null
+                property: PROPERTY_REFERENCE 'public final uByte: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.ByteDelegateTest' field=null getter='public final fun <get-uByte> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegateTest' setter=null type=<unbound IrClassSymbolImpl><<root>.ByteDelegateTest, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN name:test signature:/ByteDelegateTest.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.ByteDelegateTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ByteDelegateTest
+        BLOCK_BODY
+          VAR name:actual type:<unbound IrClassSymbolImpl> [val]
+            CALL 'public final fun <get-uByte> (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegateTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ByteDelegateTest declared in <root>.ByteDelegateTest.test' type=<root>.ByteDelegateTest origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=195
+                  arg1: GET_VAR 'val actual: <unbound IrClassSymbolImpl> [val] declared in <root>.ByteDelegateTest.test' type=<unbound IrClassSymbolImpl> origin=null
+              then: THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.ByteDelegateTest' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ByteDelegateTest' type=<root>.ByteDelegateTest origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

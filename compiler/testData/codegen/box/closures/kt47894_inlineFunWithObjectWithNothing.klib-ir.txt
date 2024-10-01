@@ -1,0 +1,88 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt47894_inlineFunWithObjectWithNothing.kt
+    CLASS INTERFACE name:Kla6 signature:/Kla6|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Kla6
+      FUN name:fu32 signature:/Kla6.fu32|fu32(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Kla6) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Kla6
+    CLASS CLASS name:Kla7 signature:/Kla7|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Kla7
+      CONSTRUCTOR signature:/Kla7.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Kla7 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Kla7 signature:/Kla7|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:fu33 signature:/Kla7.fu33|fu33(kotlin.Function1<kotlin.Int,kotlin.Any>){}[0] visibility:public modality:FINAL <> ($this:<root>.Kla7, f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Kla7
+        VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun fu33 (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Kla7'
+            CALL 'public open fun fu32 (): <unbound IrClassSymbolImpl> declared in <root>.Kla7.fu33.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+              $this: BLOCK type=<root>.Kla7.fu33.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Kla6]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Kla7.fu33.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.Kla7.fu33.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Kla6]'
+                  FUN name:fu32 visibility:public modality:OPEN <> ($this:<root>.Kla7.fu33.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                    overridden:
+                      public abstract fun fu32 (): <unbound IrClassSymbolImpl> declared in <root>.Kla6
+                    $this: VALUE_PARAMETER name:<this> type:<root>.Kla7.fu33.<no name provided>
+                    BLOCK_BODY
+                      TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                          $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.Kla7.fu33' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  PROPERTY name:ttmh visibility:public modality:FINAL [var]
+                    FIELD PROPERTY_BACKING_FIELD name:ttmh type:<unbound IrClassSymbolImpl> visibility:private
+                      EXPRESSION_BODY
+                        THROW type=<unbound IrClassSymbolImpl>
+                          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ttmh> visibility:public modality:FINAL <> ($this:<root>.Kla7.fu33.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                      correspondingProperty: PROPERTY name:ttmh visibility:public modality:FINAL [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.Kla7.fu33.<no name provided>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ttmh> (): <unbound IrClassSymbolImpl> declared in <root>.Kla7.fu33.<no name provided>'
+                          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ttmh type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                            receiver: GET_VAR '<this>: <root>.Kla7.fu33.<no name provided> declared in <root>.Kla7.fu33.<no name provided>.<get-ttmh>' type=<root>.Kla7.fu33.<no name provided> origin=null
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-ttmh> visibility:public modality:FINAL <> ($this:<root>.Kla7.fu33.<no name provided>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      correspondingProperty: PROPERTY name:ttmh visibility:public modality:FINAL [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.Kla7.fu33.<no name provided>
+                      VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ttmh type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                          receiver: GET_VAR '<this>: <root>.Kla7.fu33.<no name provided> declared in <root>.Kla7.fu33.<no name provided>.<set-ttmh>' type=<root>.Kla7.fu33.<no name provided> origin=null
+                          value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Kla7.fu33.<no name provided>.<set-ttmh>' type=<unbound IrClassSymbolImpl> origin=null
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Kla7.fu33.<no name provided>' type=<root>.Kla7.fu33.<no name provided> origin=OBJECT_LITERAL
+      FUN name:fu34 signature:/Kla7.fu34|fu34(kotlin.Function1<kotlin.Int,kotlin.Any>){}[0] visibility:public modality:FINAL <> ($this:<root>.Kla7, f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Kla7
+        VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun fu34 (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Kla7'
+            CALL 'public final fun fu33 (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Kla7' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.Kla7 declared in <root>.Kla7.fu34' type=<root>.Kla7 origin=null
+              f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Kla7.fu34'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                        $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.Kla7.fu34' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun fu34 (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.Kla7' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Kla7' type=<root>.Kla7 origin=null
+                f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                        GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"

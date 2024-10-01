@@ -1,0 +1,72 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+    // class name: a/B
+    // class name: a/Delegate
+
+    public open class a/A : kotlin/Any {
+
+      public constructor()
+
+      public open val x: kotlin/Int /* = ... */
+        public open get
+    }
+
+    public open class a/B : a/A {
+
+      public constructor()
+
+      public final fun bar(): kotlin/Unit
+
+      public open /* delegated */ val x: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final class a/Delegate : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun getValue(receiver: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/Int
+
+      public final val f: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public open class C : a/B {
+
+      public constructor()
+
+      public final fun foo(): kotlin/Unit
+
+      public open val x: kotlin/Int /* = ... */
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

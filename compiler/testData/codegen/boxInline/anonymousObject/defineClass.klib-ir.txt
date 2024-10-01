@@ -1,0 +1,117 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS INTERFACE name:Run signature:test/Run|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Run
+      FUN name:run signature:test/Run.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:test.Run) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Run
+    FUN name:i2 signature:test/i2|i2(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:test.Run [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun i2 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in test'
+          CALL 'public final fun i1 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in test' type=test.Run origin=null
+            s: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in test.i2'
+                    CALL 'public open fun run (): <unbound IrClassSymbolImpl> declared in test.i2.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: BLOCK type=test.i2.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.i2.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:test.i2.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]'
+                          FUN name:run visibility:public modality:OPEN <> ($this:test.i2.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                            overridden:
+                              public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Run
+                            $this: VALUE_PARAMETER name:<this> type:test.i2.<anonymous>.<no name provided>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='public open fun run (): <unbound IrClassSymbolImpl> declared in test.i2.<anonymous>.<no name provided>'
+                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                                  $this: GET_VAR 's: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in test.i2' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.i2.<anonymous>.<no name provided>' type=test.i2.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+    FUN name:i1 signature:test/i1|i1(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:test.Run [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun i1 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in test'
+          BLOCK type=test.i1.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.i1.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:test.i1.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]'
+              FUN name:run visibility:public modality:OPEN <> ($this:test.i1.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Run
+                $this: VALUE_PARAMETER name:<this> type:test.i1.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun run (): <unbound IrClassSymbolImpl> declared in test.i1.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 's: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in test.i1' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.i1.<no name provided>' type=test.i1.<no name provided> origin=OBJECT_LITERAL
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:i4 signature:/i4|i4(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:test.Run [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun i4 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in <root>'
+          CALL 'public final fun i3 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in <root>' type=test.Run origin=null
+            s: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.i4'
+                    CALL 'public open fun run (): <unbound IrClassSymbolImpl> declared in <root>.i4.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: BLOCK type=<root>.i4.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.i4.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:<root>.i4.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]'
+                          FUN name:run visibility:public modality:OPEN <> ($this:<root>.i4.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                            overridden:
+                              public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Run
+                            $this: VALUE_PARAMETER name:<this> type:<root>.i4.<anonymous>.<no name provided>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='public open fun run (): <unbound IrClassSymbolImpl> declared in <root>.i4.<anonymous>.<no name provided>'
+                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                                  $this: GET_VAR 's: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in <root>.i4' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.i4.<anonymous>.<no name provided>' type=<root>.i4.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+    FUN name:i3 signature:/i3|i3(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:test.Run [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun i3 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in <root>'
+          CALL 'public final fun i2 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in test' type=test.Run origin=null
+            s: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.i3'
+                    CALL 'public open fun run (): <unbound IrClassSymbolImpl> declared in <root>.i3.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: BLOCK type=<root>.i3.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.i3.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:<root>.i3.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Run]'
+                          FUN name:run visibility:public modality:OPEN <> ($this:<root>.i3.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                            overridden:
+                              public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Run
+                            $this: VALUE_PARAMETER name:<this> type:<root>.i3.<anonymous>.<no name provided>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='public open fun run (): <unbound IrClassSymbolImpl> declared in <root>.i3.<anonymous>.<no name provided>'
+                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                                  $this: GET_VAR 's: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in <root>.i3' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.i3.<anonymous>.<no name provided>' type=<root>.i3.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i4 type:test.Run [val]
+          CALL 'public final fun i4 (s: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.Run [inline] declared in <root>' type=test.Run origin=null
+            s: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Run' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val i4: test.Run [val] declared in <root>.box' type=test.Run origin=null

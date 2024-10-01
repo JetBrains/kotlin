@@ -1,0 +1,332 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:pckg fileName:/enumEntriesCompatibilityCheck.kt
+    PROPERTY name:e03Res signature:pckg/e03Res|{}e03Res[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:e03Res signature:[ pckg/e03Res|{}e03Res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [static]
+        EXPRESSION_BODY
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e03Res> signature:pckg/e03Res.<get-e03Res>|<get-e03Res>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:e03Res signature:pckg/e03Res|{}e03Res[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-e03Res> (): <unbound IrClassSymbolImpl>? declared in pckg'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e03Res signature:[ pckg/e03Res|{}e03Res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [static]' type=<unbound IrClassSymbolImpl>? origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-e03Res> signature:pckg/e03Res.<set-e03Res>|<set-e03Res>(kotlin.String?){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:e03Res signature:pckg/e03Res|{}e03Res[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e03Res signature:[ pckg/e03Res|{}e03Res[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl>? visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in pckg.<set-e03Res>' type=<unbound IrClassSymbolImpl>? origin=null
+    CLASS ENUM_CLASS name:EBasic signature:pckg/EBasic|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.EBasic>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.EBasic
+      CONSTRUCTOR signature:pckg/EBasic.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.EBasic [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.EBasic
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EBasic signature:pckg/EBasic|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.EBasic>]'
+      ENUM_ENTRY name:A0 signature:pckg/EBasic.A0|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in pckg.EBasic'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/EBasic.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.EBasic>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/EBasic.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.EBasic
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/EBasic.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/EBasic.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.EBasic>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/EBasic.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:E0 signature:pckg/E0|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E0>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E0
+      CONSTRUCTOR signature:pckg/E0.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.E0 [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.E0
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E0 signature:pckg/E0|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E0>]'
+      ENUM_ENTRY name:A1 signature:pckg/E0.A1|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in pckg.E0'
+      CLASS OBJECT name:Companion signature:pckg/E0.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E0.Companion
+        CONSTRUCTOR signature:pckg/E0.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.E0.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:pckg/E0.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:entries signature:pckg/E0.Companion.entries|{}entries[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/E0.Companion.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> signature:pckg/E0.Companion.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:FINAL <> ($this:pckg.E0.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:entries signature:pckg/E0.Companion.entries|{}entries[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:pckg.E0.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.E0.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/E0.Companion.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: pckg.E0.Companion declared in pckg.E0.Companion.<get-entries>' type=pckg.E0.Companion origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/E0.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E0>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/E0.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.E0
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E0.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/E0.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E0>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E0.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS OBJECT name:Shadowing signature:pckg/Shadowing|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.Shadowing
+      CONSTRUCTOR signature:pckg/Shadowing.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.Shadowing [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Shadowing signature:pckg/Shadowing|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:entries signature:pckg/Shadowing.entries|{}entries[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/Shadowing.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> signature:pckg/Shadowing.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:FINAL <> ($this:pckg.Shadowing) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:entries signature:pckg/Shadowing.entries|{}entries[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:pckg.Shadowing
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.Shadowing'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/Shadowing.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: pckg.Shadowing declared in pckg.Shadowing.<get-entries>' type=pckg.Shadowing origin=null
+      CLASS ENUM_CLASS name:E0 signature:pckg/Shadowing.E0|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.Shadowing.E0>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.Shadowing.E0
+        CONSTRUCTOR signature:pckg/Shadowing.E0.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.Shadowing.E0 [primary]
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              <1>: pckg.Shadowing.E0
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E0 signature:pckg/Shadowing.E0|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.Shadowing.E0>]'
+        ENUM_ENTRY name:E signature:pckg/Shadowing.E0.E|null[0]
+          init: EXPRESSION_BODY
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in pckg.Shadowing.E0'
+        FUN name:test signature:pckg/Shadowing.E0.test|test(){}[0] visibility:public modality:FINAL <> ($this:pckg.Shadowing.E0) returnType:<unbound IrClassSymbolImpl><pckg.Shadowing.E0>
+          $this: VALUE_PARAMETER name:<this> type:pckg.Shadowing.E0
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl><pckg.Shadowing.E0> declared in pckg.Shadowing.E0'
+              CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl><pckg.Shadowing.E0> declared in pckg.Shadowing.E0' type=<unbound IrClassSymbolImpl><pckg.Shadowing.E0> origin=GET_PROPERTY
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/Shadowing.E0.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.Shadowing.E0>
+          SYNTHETIC_BODY kind=ENUM_VALUES
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/Shadowing.E0.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.Shadowing.E0
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          SYNTHETIC_BODY kind=ENUM_VALUEOF
+        PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/Shadowing.E0.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/Shadowing.E0.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.Shadowing.E0>
+            correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/Shadowing.E0.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+            SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:E01 signature:pckg/E01|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E01>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E01
+      CONSTRUCTOR signature:pckg/E01.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.E01 [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.E01
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E01 signature:pckg/E01|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E01>]'
+      CLASS OBJECT name:entries signature:pckg/E01.entries|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E01.entries
+        CONSTRUCTOR signature:pckg/E01.entries.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.E01.entries [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:entries signature:pckg/E01.entries|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:toString signature:pckg/E01.entries.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:pckg.E01.entries) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:pckg.E01.entries
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in pckg.E01.entries'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/E01.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E01>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/E01.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.E01
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E01.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/E01.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E01>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E01.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:E02 signature:pckg/E02|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E02>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E02
+      CONSTRUCTOR signature:pckg/E02.<init>|<init>(kotlin.String){}[0] visibility:private <> (entries:<unbound IrClassSymbolImpl>) returnType:pckg.E02 [primary]
+        VALUE_PARAMETER name:entries index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.E02
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E02 signature:pckg/E02|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E02>]'
+      PROPERTY name:entries signature:pckg/E02.entries|{}entries[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/E02.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'entries: <unbound IrClassSymbolImpl> declared in pckg.E02.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> signature:pckg/E02.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:FINAL <> ($this:pckg.E02) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:entries signature:pckg/E02.entries|{}entries[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:pckg.E02
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.E02'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/E02.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: pckg.E02 declared in pckg.E02.<get-entries>' type=pckg.E02 origin=null
+      ENUM_ENTRY name:E signature:pckg/E02.E|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (entries: <unbound IrClassSymbolImpl>) [primary] declared in pckg.E02'
+            entries: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:test signature:pckg/E02.test|test(){}[0] visibility:public modality:FINAL <> ($this:pckg.E02) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:pckg.E02
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in pckg.E02'
+            CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.E02' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: pckg.E02 declared in pckg.E02.test' type=pckg.E02 origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/E02.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E02>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/E02.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.E02
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E02.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/E02.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E02>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E02.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:E03 signature:pckg/E03|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E03>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E03
+      ENUM_ENTRY name:E signature:pckg/E03.E|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (entries: <unbound IrClassSymbolImpl>) declared in pckg.E03'
+            entries: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      CONSTRUCTOR signature:pckg/E03.<init>|<init>(kotlin.String){}[0] visibility:private <> (entries:<unbound IrClassSymbolImpl>) returnType:pckg.E03
+        VALUE_PARAMETER name:entries index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.E03
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E03 signature:pckg/E03|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E03>]'
+          CALL 'public final fun <set-e03Res> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in pckg' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: GET_VAR 'entries: <unbound IrClassSymbolImpl> declared in pckg.E03.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/E03.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E03>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/E03.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.E03
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E03.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/E03.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E03>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E03.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:E04 signature:pckg/E04|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E04>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E04
+      CONSTRUCTOR signature:pckg/E04.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.E04 [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.E04
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E04 signature:pckg/E04|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><pckg.E04>]'
+      ENUM_ENTRY name:E signature:pckg/E04.E|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in pckg.E04'
+      PROPERTY name:entries signature:pckg/E04.entries|{}entries[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/E04.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> signature:pckg/E04.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:FINAL <> ($this:pckg.E04) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:entries signature:pckg/E04.entries|{}entries[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:pckg.E04
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.E04'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:entries signature:[ pckg/E04.entries|{}entries[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: pckg.E04 declared in pckg.E04.<get-entries>' type=pckg.E04 origin=null
+      FUN name:test signature:pckg/E04.test|test(){}[0] visibility:public modality:FINAL <> ($this:pckg.E04) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:pckg.E04
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in pckg.E04'
+            CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.E04' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: pckg.E04 declared in pckg.E04.test' type=pckg.E04 origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/E04.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E04>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/E04.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.E04
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E04.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/E04.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E04>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E04.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS INTERFACE name:I05 signature:pckg/I05|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.I05
+      PROPERTY name:entries signature:pckg/I05.entries|{}entries[0] visibility:public modality:OPEN [val]
+        FUN name:<get-entries> signature:pckg/I05.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:OPEN <> ($this:pckg.I05) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:entries signature:pckg/I05.entries|{}entries[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:pckg.I05
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.I05'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS ENUM_CLASS name:E05 signature:pckg/E05|null[0] modality:FINAL visibility:public superTypes:[pckg.I05; <unbound IrClassSymbolImpl><pckg.E05>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pckg.E05
+      CONSTRUCTOR signature:pckg/E05.<init>|<init>(){}[0] visibility:private <> () returnType:pckg.E05 [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: pckg.E05
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E05 signature:pckg/E05|null[0] modality:FINAL visibility:public superTypes:[pckg.I05; <unbound IrClassSymbolImpl><pckg.E05>]'
+      ENUM_ENTRY name:E signature:pckg/E05.E|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in pckg.E05'
+      FUN name:test signature:pckg/E05.test|test(){}[0] visibility:public modality:FINAL <> ($this:pckg.E05) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:pckg.E05
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in pckg.E05'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: pckg.E05 declared in pckg.E05.test' type=pckg.E05 origin=null
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:pckg/E05.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E05>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:pckg/E05.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:pckg.E05
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E05.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:pckg/E05.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><pckg.E05>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:pckg/E05.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:pckg/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=pckg.EBasic origin=null
+              <1>: pckg.EBasic
+              $receiver: CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl><pckg.EBasic> declared in pckg.EBasic' type=<unbound IrClassSymbolImpl><pckg.EBasic> origin=GET_PROPERTY
+          2: CONST String type=<unbound IrClassSymbolImpl> value="A0"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=pckg.E0 origin=null
+              <1>: pckg.E0
+              $receiver: CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl><pckg.E0> declared in pckg.E0' type=<unbound IrClassSymbolImpl><pckg.E0> origin=GET_PROPERTY
+          2: CONST String type=<unbound IrClassSymbolImpl> value="A1"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=pckg.Shadowing.E0 origin=null
+              <1>: pckg.Shadowing.E0
+              $receiver: CALL 'public final fun test (): <unbound IrClassSymbolImpl><pckg.Shadowing.E0> declared in pckg.Shadowing.E0' type=<unbound IrClassSymbolImpl><pckg.Shadowing.E0> origin=null
+                $this: GET_ENUM 'ENUM_ENTRY name:E signature:pckg/Shadowing.E0.E|null[0]' type=pckg.Shadowing.E0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="E"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in pckg.E01.entries' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:entries signature:pckg/E01.entries|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=pckg.E01.entries
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in pckg.E02' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:E signature:pckg/E02.E|null[0]' type=pckg.E02
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_ENUM 'ENUM_ENTRY name:E signature:pckg/E03.E|null[0]' type=pckg.E03
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CALL 'public final fun <get-e03Res> (): <unbound IrClassSymbolImpl>? declared in pckg' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-entries> (): <unbound IrClassSymbolImpl> declared in pckg.E04' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:E signature:pckg/E04.E|null[0]' type=pckg.E04
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in pckg.E04' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:E signature:pckg/E04.E|null[0]' type=pckg.E04
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in pckg.E05' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:E signature:pckg/E05.E|null[0]' type=pckg.E05
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in pckg'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

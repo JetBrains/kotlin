@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: second
+
+    // class name: second/Base
+    // class name: second/MyClass
+    // class name: second/MyClass.Base
+
+    public abstract interface second/Base : kotlin/Any {
+
+      public open fun foo(): kotlin/String
+    }
+
+    public final class second/MyClass : second/Base {
+
+      public constructor(prop: second/Base)
+
+      public open /* delegation */ fun foo(): kotlin/String
+
+      public final val prop: second/Base
+        public final get
+
+      // nested class: Base
+    }
+
+    public abstract interface second/MyClass.Base : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,61 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/recursion.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:f signature:/A.f|{}f[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:f signature:[ /A.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:<root>.A? visibility:private] ] type:<root>.A? visibility:private
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-f> signature:/A.f.<get-f>|<get-f>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.A?
+          correspondingProperty: PROPERTY name:f signature:/A.f|{}f[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-f> (): <root>.A? declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f signature:[ /A.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:<root>.A? visibility:private] ] type:<root>.A? visibility:private' type=<root>.A? origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-f>' type=<root>.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-f> signature:/A.f.<set-f>|<set-f>(A?){}[0] visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:<root>.A?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:f signature:/A.f|{}f[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          VALUE_PARAMETER name:<set-?> index:0 type:<root>.A?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f signature:[ /A.f|{}f[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:f type:<root>.A? visibility:private] ] type:<root>.A? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-f>' type=<root>.A origin=null
+              value: GET_VAR '<set-?>: <root>.A? declared in <root>.A.<set-f>' type=<root>.A? origin=null
+    FUN name:foo signature:/foo|foo(kotlin.Int;A;A){}[0] visibility:public modality:FINAL <> (k:<unbound IrClassSymbolImpl>, a1:<root>.A, a2:<root>.A) returnType:<root>.A
+      VALUE_PARAMETER name:k index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a1 index:1 type:<root>.A
+      VALUE_PARAMETER name:a2 index:2 type:<root>.A
+      BLOCK_BODY
+        VAR name:a3 type:<root>.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'k: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (k: <unbound IrClassSymbolImpl>, a1: <root>.A, a2: <root>.A): <root>.A declared in <root>'
+              GET_VAR 'a1: <root>.A declared in <root>.foo' type=<root>.A origin=null
+        CALL 'public final fun <set-f> (<set-?>: <root>.A?): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val a3: <root>.A [val] declared in <root>.foo' type=<root>.A origin=null
+          <set-?>: GET_VAR 'a1: <root>.A declared in <root>.foo' type=<root>.A origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (k: <unbound IrClassSymbolImpl>, a1: <root>.A, a2: <root>.A): <root>.A declared in <root>'
+          CALL 'public final fun foo (k: <unbound IrClassSymbolImpl>, a1: <root>.A, a2: <root>.A): <root>.A declared in <root>' type=<root>.A origin=null
+            k: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+              $this: GET_VAR 'k: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            a1: GET_VAR 'a2: <root>.A declared in <root>.foo' type=<root>.A origin=null
+            a2: GET_VAR 'val a3: <root>.A [val] declared in <root>.foo' type=<root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun foo (k: <unbound IrClassSymbolImpl>, a1: <root>.A, a2: <root>.A): <root>.A declared in <root>' type=<root>.A origin=null
+              k: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              a1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+              a2: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

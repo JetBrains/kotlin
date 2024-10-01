@@ -1,0 +1,47 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/abstractMethodInEnum.kt
+    CLASS ENUM_CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.A
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]'
+      ENUM_ENTRY name:ENTRY signature:/A.ENTRY|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.ENTRY'
+        class: CLASS ENUM_ENTRY name:ENTRY signature:/A.ENTRY.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.A]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.ENTRY
+          CONSTRUCTOR signature:/A.ENTRY.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.ENTRY [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY signature:/A.ENTRY.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.A]'
+          FUN name:t signature:/A.ENTRY.<EEC>.t|t(){}[0] visibility:public modality:OPEN <> ($this:<root>.A.ENTRY) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              public abstract fun t (): <unbound IrClassSymbolImpl> declared in <root>.A
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.ENTRY
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun t (): <unbound IrClassSymbolImpl> declared in <root>.A.ENTRY'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:t signature:/A.t|t(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/A.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/A.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.A
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/A.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.A>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/A.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:f signature:/f|f(A){}[0] visibility:public modality:FINAL <> (a:<root>.A) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<root>.A
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (a: <root>.A): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun t (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.f' type=<root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun f (a: <root>.A): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: GET_ENUM 'ENUM_ENTRY name:ENTRY signature:/A.ENTRY|null[0]' type=<root>.A

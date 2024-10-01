@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun tryZap(string: kotlin/String, fn: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String
+
+      public final fun zap(s: kotlin/String): kotlin/String
+    }
+  }
+}

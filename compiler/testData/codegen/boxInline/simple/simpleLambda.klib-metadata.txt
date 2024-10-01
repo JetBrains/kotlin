@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Z
+
+    public final class Z : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): kotlin/Int
+
+      public final fun test2(): kotlin/Int
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Data
+
+    public final class test/Data : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> T#0.use(block: kotlin/Function1<T#0, T#1>): T#1
+
+      public final inline fun use2(): kotlin/Int
+    }
+  }
+}

@@ -1,0 +1,85 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt25405.kt
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:tableView signature:/tableView|tableView(kotlin.Function1<Table<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (init:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table<T of <root>.tableView>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /tableView|tableView(kotlin.Function1<Table<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:init index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table<T of <root>.tableView>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'init: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Table<T of <root>.tableView>, <unbound IrClassSymbolImpl>> declared in <root>.tableView' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table<T of <root>.tableView>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Table' type=<root>.Table<T of <root>.tableView> origin=null
+            <class: T>: T of <root>.tableView
+    CLASS CLASS name:Table signature:/Table|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Table<T of <root>.Table>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Table|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Table.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Table<T of <root>.Table> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Table signature:/Table|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:TableColumn signature:/Table.TableColumn|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Table.TableColumn<T of <root>.Table>
+        CONSTRUCTOR signature:/Table.TableColumn.<init>|<init>(kotlin.String){}[0] visibility:public <> ($this:<root>.Table<T of <root>.Table>, name:<unbound IrClassSymbolImpl>) returnType:<root>.Table.TableColumn<T of <root>.Table> [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Table<T of <root>.Table>
+          VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TableColumn signature:/Table.TableColumn|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:name signature:/Table.TableColumn.name|{}name[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:name signature:[ /Table.TableColumn.name|{}name[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.Table.TableColumn.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> signature:/Table.TableColumn.name.<get-name>|<get-name>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Table.TableColumn<T of <root>.Table>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:name signature:/Table.TableColumn.name|{}name[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Table.TableColumn<T of <root>.Table>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-name> (): <unbound IrClassSymbolImpl> declared in <root>.Table.TableColumn'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name signature:[ /Table.TableColumn.name|{}name[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Table.TableColumn<T of <root>.Table> declared in <root>.Table.TableColumn.<get-name>' type=<root>.Table.TableColumn<T of <root>.Table> origin=null
+      FUN name:column signature:/Table.column|column(kotlin.String;kotlin.Function1<Table.TableColumn<1:0>,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.Table<T of <root>.Table>, name:<unbound IrClassSymbolImpl>, init:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table.TableColumn<T of <root>.Table>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Table<T of <root>.Table>
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:init index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table.TableColumn<T of <root>.Table>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          VAR name:column type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'init: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Table.TableColumn<T of <root>.Table>, <unbound IrClassSymbolImpl>> declared in <root>.Table.column' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table.TableColumn<T of <root>.Table>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+              1: CONSTRUCTOR_CALL 'public constructor <init> (name: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Table.TableColumn' type=<root>.Table.TableColumn<T of <root>.Table> origin=null
+                $outer: GET_VAR '<this>: <root>.Table<T of <root>.Table> declared in <root>.Table.column' type=<root>.Table<T of <root>.Table> origin=null
+                name: GET_VAR 'name: <unbound IrClassSymbolImpl> declared in <root>.Table.column' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:foo signature:/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun tableView <T> (init: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Table<T of <root>.tableView>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          init: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Table<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$tableView type:<root>.Table<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'public final fun column (name: <unbound IrClassSymbolImpl>, init: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Table.TableColumn<T of <root>.Table>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Table' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$tableView: <root>.Table<<unbound IrClassSymbolImpl>> declared in <root>.foo.<anonymous>' type=<root>.Table<<unbound IrClassSymbolImpl>> origin=null
+                  name: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  init: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Table.TableColumn<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Table.TableColumn<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                      $receiver: VALUE_PARAMETER name:$this$column type:<root>.Table.TableColumn<<unbound IrClassSymbolImpl>>
+                      BLOCK_BODY
+                        CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                          <set-?>: CALL 'public final fun <get-name> (): <unbound IrClassSymbolImpl> declared in <root>.Table.TableColumn' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '$this$column: <root>.Table.TableColumn<<unbound IrClassSymbolImpl>> declared in <root>.foo.<anonymous>.<anonymous>' type=<root>.Table.TableColumn<<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final tailrec fun <T#0 /* T */> foo(vararg items: kotlin/String /* kotlin/Array<out kotlin/String> */, fn: kotlin/Function1<kotlin/String, T#0>): T#0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(xs: kotlin/collections/List<kotlin/String>, flag: kotlin/Boolean /* = ... */): kotlin/collections/Map<kotlin/String, kotlin/String>
+
+      public final fun kotlin/String.zap(y: kotlin/String, flag: kotlin/Boolean /* = ... */): kotlin/String?
+    }
+  }
+}

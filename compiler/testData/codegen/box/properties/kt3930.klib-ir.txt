@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3930.kt
+    CLASS CLASS name:Foo signature:/Foo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:/Foo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:isOpen signature:/Foo.isOpen|{}isOpen[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isOpen signature:[ /Foo.isOpen|{}isOpen[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isOpen type:kotlin.Boolean visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isOpen> signature:/Foo.isOpen.<get-isOpen>|<get-isOpen>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isOpen signature:/Foo.isOpen|{}isOpen[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isOpen> (): <unbound IrClassSymbolImpl> declared in <root>.Foo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isOpen signature:[ /Foo.isOpen|{}isOpen[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isOpen type:kotlin.Boolean visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-isOpen>' type=<root>.Foo origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isOpen> signature:/Foo.isOpen.<set-isOpen>|<set-isOpen>(kotlin.Boolean){}[0] visibility:private modality:FINAL <> ($this:<root>.Foo, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isOpen signature:/Foo.isOpen|{}isOpen[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isOpen signature:[ /Foo.isOpen|{}isOpen[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isOpen type:kotlin.Boolean visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<set-isOpen>' type=<root>.Foo origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Foo.<set-isOpen>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<root>.Foo]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar
+      CONSTRUCTOR signature:/Bar.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Bar [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Foo'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<root>.Foo]'
+      CLASS CLASS name:Baz signature:/Bar.Baz|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar.Baz
+        CONSTRUCTOR signature:/Bar.Baz.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Bar) returnType:<root>.Bar.Baz [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Bar
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Baz signature:/Bar.Baz|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:call signature:/Bar.Baz.call|call(){}[0] visibility:public modality:FINAL <> ($this:<root>.Bar.Baz) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Bar.Baz
+          BLOCK_BODY
+            VAR name:s type:<root>.Bar [val]
+              GET_VAR '<this>: <root>.Bar declared in <root>.Bar' type=<root>.Bar origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'val s: <root>.Bar [val] declared in <root>.Bar.Baz.call' type=<root>.Bar origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Bar.Baz' type=<root>.Bar.Baz origin=null
+            $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Bar' type=<root>.Bar origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

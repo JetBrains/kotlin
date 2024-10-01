@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    public final object A : kotlin/Any {
+
+      private constructor()
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final object B : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun A.invoke(x: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final operator fun <T#0 /* K */, T#1 /* V */> kotlin/Pair<T#0, T#1>.invoke(f: kotlin/Function2<@kotlin/ParameterName(name = "x") T#0, @kotlin/ParameterName(name = "y") T#1, kotlin/Boolean>): kotlin/Boolean
+
+      public final inline fun <reified T#0 /* T */> kotlin/Any.isType(): kotlin/Boolean
+
+      public final fun test1(): kotlin/Unit
+
+      public final fun test2(): kotlin/Boolean
+    }
+  }
+}

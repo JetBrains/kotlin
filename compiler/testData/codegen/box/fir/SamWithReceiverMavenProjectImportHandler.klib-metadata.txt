@@ -1,0 +1,56 @@
+// MODULE: maven
+library {
+  // module name: <maven>
+
+  library fragment {
+    // package name: maven
+
+    // class name: maven/MavenProject
+
+    public abstract interface maven/MavenProject : kotlin/Any {
+    }
+  }
+}
+
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractMavenImportHandler
+
+    public abstract class AbstractMavenImportHandler : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun getOptions(enabledCompilerPlugins: kotlin/collections/List<kotlin/String>, compilerPluginOptions: kotlin/collections/List<kotlin/String>): kotlin/collections/List<kotlin/String>?
+
+      protected open fun getOptions(mavenProject: maven/MavenProject, enabledCompilerPlugins: kotlin/collections/List<kotlin/String>, compilerPluginOptions: kotlin/collections/List<kotlin/String>): kotlin/collections/List<kotlin/String>?
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SamWithReceiverMavenProjectImportHandler
+
+    public final class SamWithReceiverMavenProjectImportHandler : AbstractMavenImportHandler {
+
+      public constructor()
+
+      public open fun getOptions(enabledCompilerPlugins: kotlin/collections/List<kotlin/String>, compilerPluginOptions: kotlin/collections/List<kotlin/String>): kotlin/collections/List<kotlin/String>?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

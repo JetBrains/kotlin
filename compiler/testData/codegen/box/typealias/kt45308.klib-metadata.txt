@@ -1,0 +1,41 @@
+// MODULE: a
+library {
+  // module name: <a>
+
+  library fragment {
+    // package name: a
+
+    package {
+
+      public typealias A = kotlin/String /* = kotlin/String */
+    }
+  }
+}
+
+// MODULE: b
+library {
+  // module name: <b>
+
+  library fragment {
+    // package name: b
+
+    package {
+
+      public final fun foo(f: kotlin/Function0<kotlin/String /* = a/A^ */>): kotlin/String /* = a/A^ */
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Anno
+
+    public final annotation class Anno : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @Anno
+      public final val kotlin/Int.foo: kotlin/Int
+        public final /* non-default */ get
+
+      @Anno
+      public final val kotlin/String.foo: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+}

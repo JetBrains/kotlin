@@ -1,0 +1,36 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceConstructor.kt
+    PROPERTY name:ks signature:/ks|{}ks[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:ks signature:[ /ks|{}ks[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ks type:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+            FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.KSupplier<<unbound IrClassSymbolImpl>>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun KSupplier (function: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <root>.KSupplier<<unbound IrClassSymbolImpl>> declared in <root>.ks'
+                  TYPE_OP type=<root>.KSupplier<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.KSupplier<<unbound IrClassSymbolImpl>>
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      arg0: GET_VAR 'function: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ks.KSupplier' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            FUNCTION_REFERENCE 'local final fun KSupplier (function: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <root>.KSupplier<<unbound IrClassSymbolImpl>> declared in <root>.ks' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ks> signature:/ks.<get-ks>|<get-ks>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>>
+        correspondingProperty: PROPERTY name:ks signature:/ks|{}ks[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ks> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ks signature:[ /ks|{}ks[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ks type:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> origin=null
+    CLASS INTERFACE name:KSupplier signature:/KSupplier|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /KSupplier|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:get signature:/KSupplier.get|get(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.KSupplier<T of <root>.KSupplier>) returnType:T of <root>.KSupplier
+        $this: VALUE_PARAMETER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun get (): T of <root>.KSupplier declared in <root>.KSupplier' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.KSupplier<<unbound IrClassSymbolImpl>> origin=INVOKE
+              $this: CALL 'public final fun <get-ks> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <root>.KSupplier<<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"

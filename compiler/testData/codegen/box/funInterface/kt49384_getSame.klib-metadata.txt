@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Foo
+
+    public abstract interface A<T#0 /* T */> : kotlin/Any {
+    }
+
+    public abstract fun interface Foo<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun same(obj: T#0): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getSame(obj: A<out kotlin/Any>, foo: Foo<A<out kotlin/Any>>): A<out kotlin/Any>
+    }
+  }
+}

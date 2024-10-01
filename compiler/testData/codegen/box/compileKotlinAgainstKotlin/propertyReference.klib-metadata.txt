@@ -1,0 +1,32 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    package {
+
+      public final val kotlin/String.extension: kotlin/Long
+        public final /* non-default */ get
+
+      public final var topLevel: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

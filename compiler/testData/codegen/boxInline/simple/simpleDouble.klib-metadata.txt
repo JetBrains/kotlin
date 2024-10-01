@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: InlineDouble
+
+    public final class InlineDouble : kotlin/Any {
+
+      public constructor(res: kotlin/Double)
+
+      public final inline fun foo(s: kotlin/Function0<kotlin/Double>): kotlin/Double
+
+      public final inline fun foo11(s: kotlin/Function1<@kotlin/ParameterName(name = "l") kotlin/Double, kotlin/Double>): kotlin/Double
+
+      public final inline fun fooRes(s: kotlin/Function1<@kotlin/ParameterName(name = "l") kotlin/Double, kotlin/Double>): kotlin/Double
+
+      public final inline fun fooRes2(s: kotlin/Function2<@kotlin/ParameterName(name = "l") kotlin/Double, @kotlin/ParameterName(name = "t") kotlin/Double, kotlin/Double>): kotlin/Double
+
+      public final val res: kotlin/Double
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test0Param(): kotlin/Double
+
+      public final fun test1Param(): kotlin/Double
+
+      public final fun test1ParamCaptured(): kotlin/Double
+
+      public final fun test1ParamFromCallContext(): kotlin/Double
+
+      public final fun test1ParamMissed(): kotlin/Double
+
+      public final fun test2Params(): kotlin/Double
+
+      public final fun test2ParamsWithCaptured(): kotlin/Double
+    }
+  }
+}

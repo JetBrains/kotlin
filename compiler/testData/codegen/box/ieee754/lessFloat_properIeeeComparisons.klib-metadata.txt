@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun less1(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun less2(a: kotlin/Float?, b: kotlin/Float?): kotlin/Boolean
+
+      public final fun less3(a: kotlin/Float?, b: kotlin/Float?): kotlin/Boolean
+
+      public final fun less4(a: kotlin/Float?, b: kotlin/Float?): kotlin/Boolean
+
+      public final fun less5(a: kotlin/Any?, b: kotlin/Any?): kotlin/Boolean
+    }
+  }
+}

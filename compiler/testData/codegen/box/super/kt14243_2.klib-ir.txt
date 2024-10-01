@@ -1,0 +1,45 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt14243_2.kt
+    CLASS INTERFACE name:Z signature:/Z|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z<T of <root>.Z>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Z|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:test signature:/Z.test|test(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Z<T of <root>.Z>, p:T of <root>.Z) returnType:T of <root>.Z
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+        VALUE_PARAMETER name:p index:0 type:T of <root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (p: T of <root>.Z): T of <root>.Z declared in <root>.Z'
+            GET_VAR 'p: T of <root>.Z declared in <root>.Z.test' type=T of <root>.Z origin=null
+    CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl
+      CONSTRUCTOR signature:/ZImpl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>]'
+    CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>; <root>.ZImpl]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl2
+      CONSTRUCTOR signature:/ZImpl2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>; <root>.ZImpl]'
+    CLASS CLASS name:ZImpl3 signature:/ZImpl3|null[0] modality:FINAL visibility:public superTypes:[<root>.ZImpl2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl3
+      CONSTRUCTOR signature:/ZImpl3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl2'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl3 signature:/ZImpl3|null[0] modality:FINAL visibility:public superTypes:[<root>.ZImpl2]'
+      FUN name:test signature:/ZImpl3.test|test(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ZImpl3, p:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZImpl3
+        VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ZImpl3'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>; <root>.ZImpl]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.ZImpl3 declared in <root>.ZImpl3.test' type=<root>.ZImpl3 origin=null
+              1: GET_VAR 'p: <unbound IrClassSymbolImpl> declared in <root>.ZImpl3.test' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun test (p: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ZImpl3' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl3' type=<root>.ZImpl3 origin=null
+            p: CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public open class Foo<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public final val x: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val test: Foo<kotlin/String> /* = FooStr^ */
+        public final get
+
+      public typealias FooStr = Foo<kotlin/String> /* = Foo<kotlin/String> */
+    }
+  }
+}

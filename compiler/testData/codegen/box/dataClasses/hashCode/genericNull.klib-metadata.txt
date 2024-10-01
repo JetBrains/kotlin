@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final data class A<T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0)
+
+      public final /* synthesized */ operator fun component1(): T#0
+
+      public final /* synthesized */ fun copy(t: T#0 /* = ... */): A<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val t: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

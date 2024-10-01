@@ -1,0 +1,51 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:library fileName:/A.kt
+    CLASS ENUM_CLASS name:EnumClass signature:library/EnumClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><library.EnumClass>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:library.EnumClass
+      CONSTRUCTOR signature:library/EnumClass.<init>|<init>(){}[0] visibility:private <> () returnType:library.EnumClass [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: library.EnumClass
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EnumClass signature:library/EnumClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><library.EnumClass>]'
+      ENUM_ENTRY name:ENTRY signature:library/EnumClass.ENTRY|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in library.EnumClass'
+      CLASS OBJECT name:Companion signature:library/EnumClass.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:library.EnumClass.Companion
+        CONSTRUCTOR signature:library/EnumClass.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:library.EnumClass.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:library/EnumClass.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:entry signature:library/EnumClass.Companion.entry|entry(){}[0] visibility:public modality:FINAL <> ($this:library.EnumClass.Companion) returnType:library.EnumClass
+          $this: VALUE_PARAMETER name:<this> type:library.EnumClass.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun entry (): library.EnumClass declared in library.EnumClass.Companion'
+              GET_ENUM 'ENUM_ENTRY name:ENTRY signature:library/EnumClass.ENTRY|null[0]' type=library.EnumClass
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:library/EnumClass.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><library.EnumClass>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:library/EnumClass.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:library.EnumClass
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:library/EnumClass.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:library/EnumClass.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><library.EnumClass>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:library/EnumClass.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/B.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  arg1: GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

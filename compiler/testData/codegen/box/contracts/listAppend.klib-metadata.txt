@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final val value: kotlin/collections/ArrayList<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+        contract {
+          callsInPlace(p#1, InvocationKind.EXACTLY_ONCE)
+        }
+    }
+  }
+}

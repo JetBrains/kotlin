@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MethodReferenceNPE
+
+    public final class MethodReferenceNPE : kotlin/Any {
+
+      public constructor()
+
+      private final fun myMethod(): kotlin/Unit
+
+      public final fun run(): kotlin/Unit
+
+      private final val singleRef: kotlin/Function0<kotlin/Unit>
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

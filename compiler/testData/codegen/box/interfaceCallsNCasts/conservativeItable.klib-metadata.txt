@@ -1,0 +1,1101 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Bar2
+    // class name: I0
+    // class name: I1
+    // class name: I10
+    // class name: I11
+    // class name: I12
+    // class name: I13
+    // class name: I14
+    // class name: I15
+    // class name: I16
+    // class name: I17
+    // class name: I18
+    // class name: I19
+    // class name: I2
+    // class name: I20
+    // class name: I21
+    // class name: I22
+    // class name: I23
+    // class name: I24
+    // class name: I25
+    // class name: I26
+    // class name: I27
+    // class name: I28
+    // class name: I29
+    // class name: I3
+    // class name: I30
+    // class name: I31
+    // class name: I32
+    // class name: I33
+    // class name: I34
+    // class name: I35
+    // class name: I36
+    // class name: I37
+    // class name: I38
+    // class name: I39
+    // class name: I4
+    // class name: I40
+    // class name: I41
+    // class name: I42
+    // class name: I42_Impl1
+    // class name: I42_Impl2
+    // class name: I42_Impl3
+    // class name: I42_Impl4
+    // class name: I42_Impl5
+    // class name: I42_Impl6
+    // class name: I42_Impl7
+    // class name: I42_Impl8
+    // class name: I43
+    // class name: I44
+    // class name: I45
+    // class name: I46
+    // class name: I47
+    // class name: I48
+    // class name: I49
+    // class name: I5
+    // class name: I50
+    // class name: I51
+    // class name: I52
+    // class name: I53
+    // class name: I54
+    // class name: I55
+    // class name: I56
+    // class name: I57
+    // class name: I58
+    // class name: I59
+    // class name: I6
+    // class name: I60
+    // class name: I61
+    // class name: I62
+    // class name: I63
+    // class name: I64
+    // class name: I65
+    // class name: I66
+    // class name: I67
+    // class name: I68
+    // class name: I69
+    // class name: I7
+    // class name: I70
+    // class name: I71
+    // class name: I72
+    // class name: I73
+    // class name: I74
+    // class name: I75
+    // class name: I76
+    // class name: I77
+    // class name: I78
+    // class name: I79
+    // class name: I8
+    // class name: I80
+    // class name: I81
+    // class name: I82
+    // class name: I83
+    // class name: I84
+    // class name: I85
+    // class name: I86
+    // class name: I87
+    // class name: I88
+    // class name: I89
+    // class name: I9
+    // class name: I90
+    // class name: I91
+    // class name: I92
+    // class name: I93
+    // class name: I94
+    // class name: I95
+    // class name: I96
+    // class name: I97
+    // class name: I98
+    // class name: I99
+    // class name: I_M1
+
+    public final class Bar : I0, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, I21, I22, I23, I24, I25, I26, I27, I28, I29, I30, I31, I32, I33, I34, I35, I36, I37, I38, I39, I40, I41, I42, I43, I44, I45, I46, I47, I48, I49, I50, I51, I52, I53, I54, I55, I56, I57, I58, I59, I60, I61, I62, I63, I64, I65, I66, I67, I68, I69, I70, I71, I72, I73, I74, I75, I76, I77, I78, I79, I80, I81, I82, I83, I84, I85, I86, I87, I88, I89, I90, I91, I92, I93, I94, I95, I96, I97, I98, I99 {
+
+      public constructor()
+
+      public open fun foo0(x: kotlin/Int): kotlin/Int
+
+      public open fun foo1(x: kotlin/Int): kotlin/Int
+
+      public open fun foo10(x: kotlin/Int): kotlin/Int
+
+      public open fun foo11(x: kotlin/Int): kotlin/Int
+
+      public open fun foo12(x: kotlin/Int): kotlin/Int
+
+      public open fun foo13(x: kotlin/Int): kotlin/Int
+
+      public open fun foo14(x: kotlin/Int): kotlin/Int
+
+      public open fun foo15(x: kotlin/Int): kotlin/Int
+
+      public open fun foo16(x: kotlin/Int): kotlin/Int
+
+      public open fun foo17(x: kotlin/Int): kotlin/Int
+
+      public open fun foo18(x: kotlin/Int): kotlin/Int
+
+      public open fun foo19(x: kotlin/Int): kotlin/Int
+
+      public open fun foo2(x: kotlin/Int): kotlin/Int
+
+      public open fun foo20(x: kotlin/Int): kotlin/Int
+
+      public open fun foo21(x: kotlin/Int): kotlin/Int
+
+      public open fun foo22(x: kotlin/Int): kotlin/Int
+
+      public open fun foo23(x: kotlin/Int): kotlin/Int
+
+      public open fun foo24(x: kotlin/Int): kotlin/Int
+
+      public open fun foo25(x: kotlin/Int): kotlin/Int
+
+      public open fun foo26(x: kotlin/Int): kotlin/Int
+
+      public open fun foo27(x: kotlin/Int): kotlin/Int
+
+      public open fun foo28(x: kotlin/Int): kotlin/Int
+
+      public open fun foo29(x: kotlin/Int): kotlin/Int
+
+      public open fun foo3(x: kotlin/Int): kotlin/Int
+
+      public open fun foo30(x: kotlin/Int): kotlin/Int
+
+      public open fun foo31(x: kotlin/Int): kotlin/Int
+
+      public open fun foo32(x: kotlin/Int): kotlin/Int
+
+      public open fun foo33(x: kotlin/Int): kotlin/Int
+
+      public open fun foo34(x: kotlin/Int): kotlin/Int
+
+      public open fun foo35(x: kotlin/Int): kotlin/Int
+
+      public open fun foo36(x: kotlin/Int): kotlin/Int
+
+      public open fun foo37(x: kotlin/Int): kotlin/Int
+
+      public open fun foo38(x: kotlin/Int): kotlin/Int
+
+      public open fun foo39(x: kotlin/Int): kotlin/Int
+
+      public open fun foo4(x: kotlin/Int): kotlin/Int
+
+      public open fun foo40(x: kotlin/Int): kotlin/Int
+
+      public open fun foo41(x: kotlin/Int): kotlin/Int
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+
+      public open fun foo43(x: kotlin/Int): kotlin/Int
+
+      public open fun foo44(x: kotlin/Int): kotlin/Int
+
+      public open fun foo45(x: kotlin/Int): kotlin/Int
+
+      public open fun foo46(x: kotlin/Int): kotlin/Int
+
+      public open fun foo47(x: kotlin/Int): kotlin/Int
+
+      public open fun foo48(x: kotlin/Int): kotlin/Int
+
+      public open fun foo49(x: kotlin/Int): kotlin/Int
+
+      public open fun foo5(x: kotlin/Int): kotlin/Int
+
+      public open fun foo50(x: kotlin/Int): kotlin/Int
+
+      public open fun foo51(x: kotlin/Int): kotlin/Int
+
+      public open fun foo52(x: kotlin/Int): kotlin/Int
+
+      public open fun foo53(x: kotlin/Int): kotlin/Int
+
+      public open fun foo54(x: kotlin/Int): kotlin/Int
+
+      public open fun foo55(x: kotlin/Int): kotlin/Int
+
+      public open fun foo56(x: kotlin/Int): kotlin/Int
+
+      public open fun foo57(x: kotlin/Int): kotlin/Int
+
+      public open fun foo58(x: kotlin/Int): kotlin/Int
+
+      public open fun foo59(x: kotlin/Int): kotlin/Int
+
+      public open fun foo6(x: kotlin/Int): kotlin/Int
+
+      public open fun foo60(x: kotlin/Int): kotlin/Int
+
+      public open fun foo61(x: kotlin/Int): kotlin/Int
+
+      public open fun foo62(x: kotlin/Int): kotlin/Int
+
+      public open fun foo63(x: kotlin/Int): kotlin/Int
+
+      public open fun foo64(x: kotlin/Int): kotlin/Int
+
+      public open fun foo65(x: kotlin/Int): kotlin/Int
+
+      public open fun foo66(x: kotlin/Int): kotlin/Int
+
+      public open fun foo67(x: kotlin/Int): kotlin/Int
+
+      public open fun foo68(x: kotlin/Int): kotlin/Int
+
+      public open fun foo69(x: kotlin/Int): kotlin/Int
+
+      public open fun foo7(x: kotlin/Int): kotlin/Int
+
+      public open fun foo70(x: kotlin/Int): kotlin/Int
+
+      public open fun foo71(x: kotlin/Int): kotlin/Int
+
+      public open fun foo72(x: kotlin/Int): kotlin/Int
+
+      public open fun foo73(x: kotlin/Int): kotlin/Int
+
+      public open fun foo74(x: kotlin/Int): kotlin/Int
+
+      public open fun foo75(x: kotlin/Int): kotlin/Int
+
+      public open fun foo76(x: kotlin/Int): kotlin/Int
+
+      public open fun foo77(x: kotlin/Int): kotlin/Int
+
+      public open fun foo78(x: kotlin/Int): kotlin/Int
+
+      public open fun foo79(x: kotlin/Int): kotlin/Int
+
+      public open fun foo8(x: kotlin/Int): kotlin/Int
+
+      public open fun foo80(x: kotlin/Int): kotlin/Int
+
+      public open fun foo81(x: kotlin/Int): kotlin/Int
+
+      public open fun foo82(x: kotlin/Int): kotlin/Int
+
+      public open fun foo83(x: kotlin/Int): kotlin/Int
+
+      public open fun foo84(x: kotlin/Int): kotlin/Int
+
+      public open fun foo85(x: kotlin/Int): kotlin/Int
+
+      public open fun foo86(x: kotlin/Int): kotlin/Int
+
+      public open fun foo87(x: kotlin/Int): kotlin/Int
+
+      public open fun foo88(x: kotlin/Int): kotlin/Int
+
+      public open fun foo89(x: kotlin/Int): kotlin/Int
+
+      public open fun foo9(x: kotlin/Int): kotlin/Int
+
+      public open fun foo90(x: kotlin/Int): kotlin/Int
+
+      public open fun foo91(x: kotlin/Int): kotlin/Int
+
+      public open fun foo92(x: kotlin/Int): kotlin/Int
+
+      public open fun foo93(x: kotlin/Int): kotlin/Int
+
+      public open fun foo94(x: kotlin/Int): kotlin/Int
+
+      public open fun foo95(x: kotlin/Int): kotlin/Int
+
+      public open fun foo96(x: kotlin/Int): kotlin/Int
+
+      public open fun foo97(x: kotlin/Int): kotlin/Int
+
+      public open fun foo98(x: kotlin/Int): kotlin/Int
+
+      public open fun foo99(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class Bar2 : I_M1 {
+
+      public constructor()
+
+      public open fun bar(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I0 : kotlin/Any {
+
+      public abstract fun foo0(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I1 : kotlin/Any {
+
+      public abstract fun foo1(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I10 : kotlin/Any {
+
+      public abstract fun foo10(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I11 : kotlin/Any {
+
+      public abstract fun foo11(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I12 : kotlin/Any {
+
+      public abstract fun foo12(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I13 : kotlin/Any {
+
+      public abstract fun foo13(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I14 : kotlin/Any {
+
+      public abstract fun foo14(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I15 : kotlin/Any {
+
+      public abstract fun foo15(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I16 : kotlin/Any {
+
+      public abstract fun foo16(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I17 : kotlin/Any {
+
+      public abstract fun foo17(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I18 : kotlin/Any {
+
+      public abstract fun foo18(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I19 : kotlin/Any {
+
+      public abstract fun foo19(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I2 : kotlin/Any {
+
+      public abstract fun foo2(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I20 : kotlin/Any {
+
+      public abstract fun foo20(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I21 : kotlin/Any {
+
+      public abstract fun foo21(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I22 : kotlin/Any {
+
+      public abstract fun foo22(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I23 : kotlin/Any {
+
+      public abstract fun foo23(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I24 : kotlin/Any {
+
+      public abstract fun foo24(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I25 : kotlin/Any {
+
+      public abstract fun foo25(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I26 : kotlin/Any {
+
+      public abstract fun foo26(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I27 : kotlin/Any {
+
+      public abstract fun foo27(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I28 : kotlin/Any {
+
+      public abstract fun foo28(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I29 : kotlin/Any {
+
+      public abstract fun foo29(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I3 : kotlin/Any {
+
+      public abstract fun foo3(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I30 : kotlin/Any {
+
+      public abstract fun foo30(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I31 : kotlin/Any {
+
+      public abstract fun foo31(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I32 : kotlin/Any {
+
+      public abstract fun foo32(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I33 : kotlin/Any {
+
+      public abstract fun foo33(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I34 : kotlin/Any {
+
+      public abstract fun foo34(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I35 : kotlin/Any {
+
+      public abstract fun foo35(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I36 : kotlin/Any {
+
+      public abstract fun foo36(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I37 : kotlin/Any {
+
+      public abstract fun foo37(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I38 : kotlin/Any {
+
+      public abstract fun foo38(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I39 : kotlin/Any {
+
+      public abstract fun foo39(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I4 : kotlin/Any {
+
+      public abstract fun foo4(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I40 : kotlin/Any {
+
+      public abstract fun foo40(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I41 : kotlin/Any {
+
+      public abstract fun foo41(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I42 : kotlin/Any {
+
+      public abstract fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl1 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl2 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl3 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl4 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl5 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl6 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl7 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public final class I42_Impl8 : I42 {
+
+      public constructor()
+
+      public open fun foo42(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I43 : kotlin/Any {
+
+      public abstract fun foo43(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I44 : kotlin/Any {
+
+      public abstract fun foo44(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I45 : kotlin/Any {
+
+      public abstract fun foo45(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I46 : kotlin/Any {
+
+      public abstract fun foo46(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I47 : kotlin/Any {
+
+      public abstract fun foo47(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I48 : kotlin/Any {
+
+      public abstract fun foo48(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I49 : kotlin/Any {
+
+      public abstract fun foo49(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I5 : kotlin/Any {
+
+      public abstract fun foo5(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I50 : kotlin/Any {
+
+      public abstract fun foo50(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I51 : kotlin/Any {
+
+      public abstract fun foo51(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I52 : kotlin/Any {
+
+      public abstract fun foo52(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I53 : kotlin/Any {
+
+      public abstract fun foo53(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I54 : kotlin/Any {
+
+      public abstract fun foo54(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I55 : kotlin/Any {
+
+      public abstract fun foo55(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I56 : kotlin/Any {
+
+      public abstract fun foo56(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I57 : kotlin/Any {
+
+      public abstract fun foo57(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I58 : kotlin/Any {
+
+      public abstract fun foo58(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I59 : kotlin/Any {
+
+      public abstract fun foo59(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I6 : kotlin/Any {
+
+      public abstract fun foo6(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I60 : kotlin/Any {
+
+      public abstract fun foo60(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I61 : kotlin/Any {
+
+      public abstract fun foo61(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I62 : kotlin/Any {
+
+      public abstract fun foo62(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I63 : kotlin/Any {
+
+      public abstract fun foo63(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I64 : kotlin/Any {
+
+      public abstract fun foo64(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I65 : kotlin/Any {
+
+      public abstract fun foo65(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I66 : kotlin/Any {
+
+      public abstract fun foo66(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I67 : kotlin/Any {
+
+      public abstract fun foo67(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I68 : kotlin/Any {
+
+      public abstract fun foo68(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I69 : kotlin/Any {
+
+      public abstract fun foo69(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I7 : kotlin/Any {
+
+      public abstract fun foo7(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I70 : kotlin/Any {
+
+      public abstract fun foo70(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I71 : kotlin/Any {
+
+      public abstract fun foo71(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I72 : kotlin/Any {
+
+      public abstract fun foo72(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I73 : kotlin/Any {
+
+      public abstract fun foo73(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I74 : kotlin/Any {
+
+      public abstract fun foo74(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I75 : kotlin/Any {
+
+      public abstract fun foo75(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I76 : kotlin/Any {
+
+      public abstract fun foo76(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I77 : kotlin/Any {
+
+      public abstract fun foo77(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I78 : kotlin/Any {
+
+      public abstract fun foo78(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I79 : kotlin/Any {
+
+      public abstract fun foo79(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I8 : kotlin/Any {
+
+      public abstract fun foo8(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I80 : kotlin/Any {
+
+      public abstract fun foo80(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I81 : kotlin/Any {
+
+      public abstract fun foo81(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I82 : kotlin/Any {
+
+      public abstract fun foo82(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I83 : kotlin/Any {
+
+      public abstract fun foo83(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I84 : kotlin/Any {
+
+      public abstract fun foo84(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I85 : kotlin/Any {
+
+      public abstract fun foo85(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I86 : kotlin/Any {
+
+      public abstract fun foo86(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I87 : kotlin/Any {
+
+      public abstract fun foo87(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I88 : kotlin/Any {
+
+      public abstract fun foo88(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I89 : kotlin/Any {
+
+      public abstract fun foo89(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I9 : kotlin/Any {
+
+      public abstract fun foo9(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I90 : kotlin/Any {
+
+      public abstract fun foo90(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I91 : kotlin/Any {
+
+      public abstract fun foo91(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I92 : kotlin/Any {
+
+      public abstract fun foo92(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I93 : kotlin/Any {
+
+      public abstract fun foo93(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I94 : kotlin/Any {
+
+      public abstract fun foo94(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I95 : kotlin/Any {
+
+      public abstract fun foo95(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I96 : kotlin/Any {
+
+      public abstract fun foo96(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I97 : kotlin/Any {
+
+      public abstract fun foo97(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I98 : kotlin/Any {
+
+      public abstract fun foo98(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I99 : kotlin/Any {
+
+      public abstract fun foo99(x: kotlin/Int): kotlin/Int
+    }
+
+    public abstract interface I_M1 : kotlin/Any {
+
+      public abstract fun bar(x: kotlin/Int): kotlin/Int
+    }
+
+    package {
+
+      public final fun bar(i_m1: I_M1, x: kotlin/Int): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final fun check_is_I0(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I1(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I10(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I11(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I12(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I13(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I14(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I15(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I16(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I17(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I18(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I19(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I2(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I20(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I21(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I22(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I23(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I24(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I25(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I26(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I27(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I28(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I29(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I3(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I30(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I31(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I32(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I33(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I34(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I35(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I36(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I37(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I38(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I39(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I4(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I40(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I41(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I42(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I43(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I44(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I45(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I46(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I47(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I48(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I49(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I5(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I50(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I51(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I52(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I53(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I54(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I55(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I56(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I57(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I58(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I59(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I6(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I60(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I61(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I62(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I63(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I64(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I65(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I66(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I67(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I68(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I69(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I7(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I70(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I71(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I72(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I73(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I74(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I75(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I76(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I77(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I78(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I79(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I8(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I80(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I81(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I82(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I83(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I84(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I85(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I86(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I87(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I88(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I89(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I9(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I90(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I91(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I92(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I93(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I94(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I95(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I96(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I97(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I98(x: kotlin/Any): kotlin/Boolean
+
+      public final fun check_is_I99(x: kotlin/Any): kotlin/Boolean
+
+      public final fun foo(i42: I42, x: kotlin/Int): kotlin/Int
+    }
+  }
+}

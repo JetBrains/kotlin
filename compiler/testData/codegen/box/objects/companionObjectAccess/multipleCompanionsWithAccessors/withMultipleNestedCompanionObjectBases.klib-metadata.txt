@@ -1,0 +1,119 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A1
+    // class name: a/A1.Companion
+    // class name: a/A2
+    // class name: a/A2.Companion
+
+    public open class a/A1 : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    protected final companion object a/A1.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun getO(): kotlin/String
+    }
+
+    public open class a/A2 : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    protected final companion object a/A2.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun getK(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: b
+
+    // class name: b/B
+    // class name: b/B.B1
+    // class name: b/B.B1.B2
+    // class name: b/B.B1.B2.Companion
+    // class name: b/B.B1.Companion
+    // class name: b/B.Companion
+
+    public final class b/B : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: B1
+
+      // nested class: Companion
+    }
+
+    public final class b/B.B1 : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: B2
+    }
+
+    public final class b/B.B1.B2 : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object b/B.B1.B2.Companion : a/A2 {
+
+      private constructor()
+
+      public final val vk: kotlin/String
+        public final get
+    }
+
+    public final companion object b/B.B1.Companion : a/A1 {
+
+      private constructor()
+
+      public final val vo: kotlin/String
+        public final get
+    }
+
+    public final companion object b/B.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val vok: kotlin/String
+        public final get
+    }
+  }
+}

@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+    // class name: B.C
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+
+      public final fun h2(x: kotlin/Any): kotlin/Unit
+
+      public final fun makeC(): B.C
+
+      // nested class: C
+    }
+
+    public final inner class B.C : kotlin/Any {
+
+      public constructor()
+
+      public final tailrec fun h(counter: kotlin/Int): kotlin/Unit
+
+      public final tailrec fun h2(x: kotlin/Any): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

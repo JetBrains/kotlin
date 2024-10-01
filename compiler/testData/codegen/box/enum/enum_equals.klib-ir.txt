@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/enum_equals.kt
+    CLASS ENUM_CLASS name:EnumA signature:/EnumA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumA>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EnumA
+      CONSTRUCTOR signature:/EnumA.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EnumA [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.EnumA
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EnumA signature:/EnumA|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumA>]'
+      ENUM_ENTRY name:A signature:/EnumA.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumA'
+      ENUM_ENTRY name:B signature:/EnumA.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumA'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/EnumA.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumA>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/EnumA.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.EnumA
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumA.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/EnumA.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumA>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumA.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:EnumB signature:/EnumB|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumB>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EnumB
+      CONSTRUCTOR signature:/EnumB.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EnumB [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.EnumB
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EnumB signature:/EnumB|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.EnumB>]'
+      ENUM_ENTRY name:B signature:/EnumB.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.EnumB'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/EnumB.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumB>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/EnumB.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.EnumB
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumB.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/EnumB.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.EnumB>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/EnumB.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+                arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL: A must equal A"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_ENUM 'ENUM_ENTRY name:A signature:/EnumA.A|null[0]' type=<root>.EnumA
+              arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/EnumA.B|null[0]' type=<root>.EnumA
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL: A.A must not equal A.B"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

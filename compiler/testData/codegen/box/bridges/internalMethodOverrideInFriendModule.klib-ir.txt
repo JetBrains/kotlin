@@ -1,0 +1,332 @@
+// MODULE: lib1
+MODULE_FRAGMENT name:<lib1>
+  FILE fqName:<root> fileName:/Demo.kt
+    PROPERTY name:DemoOpenSetterCalls signature:/DemoOpenSetterCalls|{}DemoOpenSetterCalls[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls signature:[ /DemoOpenSetterCalls|{}DemoOpenSetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-DemoOpenSetterCalls> signature:/DemoOpenSetterCalls.<get-DemoOpenSetterCalls>|<get-DemoOpenSetterCalls>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:DemoOpenSetterCalls signature:/DemoOpenSetterCalls|{}DemoOpenSetterCalls[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-DemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls signature:[ /DemoOpenSetterCalls|{}DemoOpenSetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-DemoOpenSetterCalls> signature:/DemoOpenSetterCalls.<set-DemoOpenSetterCalls>|<set-DemoOpenSetterCalls>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:DemoOpenSetterCalls signature:/DemoOpenSetterCalls|{}DemoOpenSetterCalls[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls signature:[ /DemoOpenSetterCalls|{}DemoOpenSetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-DemoOpenSetterCalls>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:DemoOpenGetterCalls signature:/DemoOpenGetterCalls|{}DemoOpenGetterCalls[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:DemoOpenGetterCalls signature:[ /DemoOpenGetterCalls|{}DemoOpenGetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-DemoOpenGetterCalls> signature:/DemoOpenGetterCalls.<get-DemoOpenGetterCalls>|<get-DemoOpenGetterCalls>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:DemoOpenGetterCalls signature:/DemoOpenGetterCalls|{}DemoOpenGetterCalls[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-DemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:DemoOpenGetterCalls signature:[ /DemoOpenGetterCalls|{}DemoOpenGetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-DemoOpenGetterCalls> signature:/DemoOpenGetterCalls.<set-DemoOpenGetterCalls>|<set-DemoOpenGetterCalls>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:DemoOpenGetterCalls signature:/DemoOpenGetterCalls|{}DemoOpenGetterCalls[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:DemoOpenGetterCalls signature:[ /DemoOpenGetterCalls|{}DemoOpenGetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-DemoOpenGetterCalls>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Demo signature:/Demo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Demo
+      CONSTRUCTOR signature:/Demo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Demo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Demo signature:/Demo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:demoOpenFun signature:/Demo.demoOpenFun|demoOpenFun(){}[0] visibility:internal modality:OPEN <> ($this:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Demo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='internal open fun demoOpenFun (): <unbound IrClassSymbolImpl> declared in <root>.Demo'
+            CONST Int type=<unbound IrClassSymbolImpl> value=5
+      PROPERTY name:demoOpenVal signature:/Demo.demoOpenVal|{}demoOpenVal[0] visibility:internal modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:demoOpenVal signature:[ /Demo.demoOpenVal|{}demoOpenVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=6
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-demoOpenVal> signature:/Demo.demoOpenVal.<get-demoOpenVal>|<get-demoOpenVal>(){}[0] visibility:internal modality:OPEN <> ($this:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenVal signature:/Demo.demoOpenVal|{}demoOpenVal[0] visibility:internal modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Demo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='internal open fun <get-demoOpenVal> (): <unbound IrClassSymbolImpl> declared in <root>.Demo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:demoOpenVal signature:[ /Demo.demoOpenVal|{}demoOpenVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Demo declared in <root>.Demo.<get-demoOpenVal>' type=<root>.Demo origin=null
+      PROPERTY name:demoOpenValGet signature:/Demo.demoOpenValGet|{}demoOpenValGet[0] visibility:internal modality:OPEN [val]
+        FUN name:<get-demoOpenValGet> signature:/Demo.demoOpenValGet.<get-demoOpenValGet>|<get-demoOpenValGet>(){}[0] visibility:internal modality:OPEN <> ($this:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenValGet signature:/Demo.demoOpenValGet|{}demoOpenValGet[0] visibility:internal modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Demo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='internal open fun <get-demoOpenValGet> (): <unbound IrClassSymbolImpl> declared in <root>.Demo'
+              CONST Int type=<unbound IrClassSymbolImpl> value=7
+      PROPERTY name:demoOpenVarSetGet signature:/Demo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] visibility:internal modality:OPEN [var]
+        FIELD PROPERTY_BACKING_FIELD name:demoOpenVarSetGet signature:[ /Demo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=8
+        FUN name:<get-demoOpenVarSetGet> signature:/Demo.demoOpenVarSetGet.<get-demoOpenVarSetGet>|<get-demoOpenVarSetGet>(){}[0] visibility:internal modality:OPEN <> ($this:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenVarSetGet signature:/Demo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] visibility:internal modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Demo
+          BLOCK_BODY
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <set-DemoOpenGetterCalls> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    $this: CALL 'public final fun <get-DemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <get-DemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            RETURN type=<unbound IrClassSymbolImpl> from='internal open fun <get-demoOpenVarSetGet> (): <unbound IrClassSymbolImpl> declared in <root>.Demo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:demoOpenVarSetGet signature:[ /Demo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Demo declared in <root>.Demo.<get-demoOpenVarSetGet>' type=<root>.Demo origin=null
+        FUN name:<set-demoOpenVarSetGet> signature:/Demo.demoOpenVarSetGet.<set-demoOpenVarSetGet>|<set-demoOpenVarSetGet>(kotlin.Int){}[0] visibility:internal modality:OPEN <> ($this:<root>.Demo, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenVarSetGet signature:/Demo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] visibility:internal modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Demo
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <set-DemoOpenSetterCalls> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    $this: CALL 'public final fun <get-DemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <get-DemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:demoOpenVarSetGet signature:[ /Demo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:DemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=EQ
+              receiver: GET_VAR '<this>: <root>.Demo declared in <root>.Demo.<set-demoOpenVarSetGet>' type=<root>.Demo origin=null
+              value: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.Demo.<set-demoOpenVarSetGet>' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/TestDemo.kt
+    FUN name:testOpenFun signature:/testOpenFun|testOpenFun(Demo){}[0] visibility:public modality:FINAL <> (d:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Demo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testOpenFun (d: <root>.Demo): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal open fun demoOpenFun (): <unbound IrClassSymbolImpl> declared in <root>.Demo' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'd: <root>.Demo declared in <root>.testOpenFun' type=<root>.Demo origin=null
+    FUN name:testOpenVal signature:/testOpenVal|testOpenVal(Demo){}[0] visibility:public modality:FINAL <> (d:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Demo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testOpenVal (d: <root>.Demo): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal open fun <get-demoOpenVal> (): <unbound IrClassSymbolImpl> declared in <root>.Demo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'd: <root>.Demo declared in <root>.testOpenVal' type=<root>.Demo origin=null
+    FUN name:testOpenValGet signature:/testOpenValGet|testOpenValGet(Demo){}[0] visibility:public modality:FINAL <> (d:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Demo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testOpenValGet (d: <root>.Demo): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal open fun <get-demoOpenValGet> (): <unbound IrClassSymbolImpl> declared in <root>.Demo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'd: <root>.Demo declared in <root>.testOpenValGet' type=<root>.Demo origin=null
+    FUN name:testOpenVarGet signature:/testOpenVarGet|testOpenVarGet(Demo){}[0] visibility:public modality:FINAL <> (d:<root>.Demo) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Demo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testOpenVarGet (d: <root>.Demo): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal open fun <get-demoOpenVarSetGet> (): <unbound IrClassSymbolImpl> declared in <root>.Demo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'd: <root>.Demo declared in <root>.testOpenVarGet' type=<root>.Demo origin=null
+    FUN name:testOpenVarSet signature:/testOpenVarSet|testOpenVarSet(Demo;kotlin.Int){}[0] visibility:public modality:FINAL <> (d:<root>.Demo, v:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.Demo
+      VALUE_PARAMETER name:v index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'internal open fun <set-demoOpenVarSetGet> (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Demo' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'd: <root>.Demo declared in <root>.testOpenVarSet' type=<root>.Demo origin=null
+          value: GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.testOpenVarSet' type=<unbound IrClassSymbolImpl> origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/Box.kt
+    FUN name:testMyDemo signature:/testMyDemo|testMyDemo(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo' type=<root>.MyDemo origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=500
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=600
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=770
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=888
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-8
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-888
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-MyDemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-MyDemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'internal open fun demoOpenFun (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=500
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'internal open fun <get-demoOpenVal> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=600
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'internal open fun <get-demoOpenValGet> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=770
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'internal open fun <get-demoOpenVarSetGet> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-888
+        CALL 'internal open fun <set-demoOpenVarSetGet> (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyDemo' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          value: CONST Int type=<unbound IrClassSymbolImpl> value=-9
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'internal open fun <get-demoOpenVarSetGet> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val myDemo: <root>.MyDemo [val] declared in <root>.testMyDemo' type=<root>.MyDemo origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-999
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-MyDemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-MyDemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=4
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testMyDemo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/MyDemo.kt
+    PROPERTY name:MyDemoOpenSetterCalls signature:/MyDemoOpenSetterCalls|{}MyDemoOpenSetterCalls[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls signature:[ /MyDemoOpenSetterCalls|{}MyDemoOpenSetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MyDemoOpenSetterCalls> signature:/MyDemoOpenSetterCalls.<get-MyDemoOpenSetterCalls>|<get-MyDemoOpenSetterCalls>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MyDemoOpenSetterCalls signature:/MyDemoOpenSetterCalls|{}MyDemoOpenSetterCalls[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MyDemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls signature:[ /MyDemoOpenSetterCalls|{}MyDemoOpenSetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-MyDemoOpenSetterCalls> signature:/MyDemoOpenSetterCalls.<set-MyDemoOpenSetterCalls>|<set-MyDemoOpenSetterCalls>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MyDemoOpenSetterCalls signature:/MyDemoOpenSetterCalls|{}MyDemoOpenSetterCalls[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls signature:[ /MyDemoOpenSetterCalls|{}MyDemoOpenSetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-MyDemoOpenSetterCalls>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:MyDemoOpenGetterCalls signature:/MyDemoOpenGetterCalls|{}MyDemoOpenGetterCalls[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenGetterCalls signature:[ /MyDemoOpenGetterCalls|{}MyDemoOpenGetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MyDemoOpenGetterCalls> signature:/MyDemoOpenGetterCalls.<get-MyDemoOpenGetterCalls>|<get-MyDemoOpenGetterCalls>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MyDemoOpenGetterCalls signature:/MyDemoOpenGetterCalls|{}MyDemoOpenGetterCalls[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-MyDemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenGetterCalls signature:[ /MyDemoOpenGetterCalls|{}MyDemoOpenGetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-MyDemoOpenGetterCalls> signature:/MyDemoOpenGetterCalls.<set-MyDemoOpenGetterCalls>|<set-MyDemoOpenGetterCalls>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:MyDemoOpenGetterCalls signature:/MyDemoOpenGetterCalls|{}MyDemoOpenGetterCalls[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenGetterCalls signature:[ /MyDemoOpenGetterCalls|{}MyDemoOpenGetterCalls[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-MyDemoOpenGetterCalls>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:MyDemo signature:/MyDemo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo
+      CONSTRUCTOR signature:/MyDemo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo signature:/MyDemo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:demoOpenFun signature:/MyDemo.demoOpenFun|demoOpenFun(){}[0] visibility:internal modality:OPEN <> ($this:<root>.MyDemo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='internal open fun demoOpenFun (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=100
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.MyDemo declared in <root>.MyDemo.demoOpenFun' type=<root>.MyDemo origin=null
+      PROPERTY name:demoOpenVal signature:/MyDemo.demoOpenVal|{}demoOpenVal[0] visibility:internal modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:demoOpenVal signature:[ /MyDemo.demoOpenVal|{}demoOpenVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=600
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-demoOpenVal> signature:/MyDemo.demoOpenVal.<get-demoOpenVal>|<get-demoOpenVal>(){}[0] visibility:internal modality:OPEN <> ($this:<root>.MyDemo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenVal signature:/MyDemo.demoOpenVal|{}demoOpenVal[0] visibility:internal modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='internal open fun <get-demoOpenVal> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:demoOpenVal signature:[ /MyDemo.demoOpenVal|{}demoOpenVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:MyDemoOpenSetterCalls type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyDemo declared in <root>.MyDemo.<get-demoOpenVal>' type=<root>.MyDemo origin=null
+      PROPERTY name:demoOpenValGet signature:/MyDemo.demoOpenValGet|{}demoOpenValGet[0] visibility:internal modality:OPEN [val]
+        FUN name:<get-demoOpenValGet> signature:/MyDemo.demoOpenValGet.<get-demoOpenValGet>|<get-demoOpenValGet>(){}[0] visibility:internal modality:OPEN <> ($this:<root>.MyDemo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenValGet signature:/MyDemo.demoOpenValGet|{}demoOpenValGet[0] visibility:internal modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='internal open fun <get-demoOpenValGet> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=110
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.MyDemo declared in <root>.MyDemo.<get-demoOpenValGet>' type=<root>.MyDemo origin=null
+      PROPERTY name:demoOpenVarSetGet signature:/MyDemo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] visibility:internal modality:OPEN [var]
+        FUN name:<get-demoOpenVarSetGet> signature:/MyDemo.demoOpenVarSetGet.<get-demoOpenVarSetGet>|<get-demoOpenVarSetGet>(){}[0] visibility:internal modality:OPEN <> ($this:<root>.MyDemo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenVarSetGet signature:/MyDemo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] visibility:internal modality:OPEN [var]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo
+          BLOCK_BODY
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <set-MyDemoOpenGetterCalls> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    $this: CALL 'public final fun <get-MyDemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <get-MyDemoOpenGetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            RETURN type=<unbound IrClassSymbolImpl> from='internal open fun <get-demoOpenVarSetGet> (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=111
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.MyDemo declared in <root>.MyDemo.<get-demoOpenVarSetGet>' type=<root>.MyDemo origin=null
+        FUN name:<set-demoOpenVarSetGet> signature:/MyDemo.demoOpenVarSetGet.<set-demoOpenVarSetGet>|<set-demoOpenVarSetGet>(kotlin.Int){}[0] visibility:internal modality:OPEN <> ($this:<root>.MyDemo, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:demoOpenVarSetGet signature:/MyDemo.demoOpenVarSetGet|{}demoOpenVarSetGet[0] visibility:internal modality:OPEN [var]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <set-MyDemoOpenSetterCalls> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                  <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                    $this: CALL 'public final fun <get-MyDemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+                CALL 'public final fun <get-MyDemoOpenSetterCalls> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PREFIX_INCR
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+              $this: GET_VAR '<this>: <root>.MyDemo declared in <root>.MyDemo.<set-demoOpenVarSetGet>' type=<root>.MyDemo origin=null
+              1: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.MyDemo.<set-demoOpenVarSetGet>' type=<unbound IrClassSymbolImpl> origin=null

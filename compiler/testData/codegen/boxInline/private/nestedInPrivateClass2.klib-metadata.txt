@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/S
+    // class name: test/S.E
+    // class name: test/S.Z
+
+    private final class test/S : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Z
+
+      // nested class: E
+    }
+
+    public final enum class test/S.E : kotlin/Enum<test/S.E> {
+
+      private constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+
+      EMPTY,
+
+      // has Enum.entries
+    }
+
+    public final class test/S.Z : kotlin/Any {
+
+      public constructor()
+
+      public final fun a(): kotlin/String
+
+      public final val empty: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      internal final inline fun call(s: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+  }
+}

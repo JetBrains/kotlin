@@ -1,0 +1,61 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/pclaRootIsElvisSynthetic.kt
+    CLASS INTERFACE name:Consumer signature:/Consumer|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Consumer<T of <root>.Consumer>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /Consumer|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:buildConsumer signature:/buildConsumer|buildConsumer(kotlin.Boolean;kotlin.Function1<Consumer<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (b:<unbound IrClassSymbolImpl>, block:<unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>) returnType:T of <root>.buildConsumer?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /buildConsumer|buildConsumer(kotlin.Boolean;kotlin.Function1<Consumer<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:block index:1 type:<unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun buildConsumer <T> (b: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>): T of <root>.buildConsumer? declared in <root>'
+          WHEN type=T of <root>.buildConsumer? origin=IF
+            BRANCH
+              if: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.buildConsumer' type=<unbound IrClassSymbolImpl> origin=null
+              then: TYPE_OP type=T of <root>.buildConsumer origin=CAST typeOperand=T of <root>.buildConsumer
+                CONST String type=<unbound IrClassSymbolImpl> value="O"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:materialize signature:/materialize|materialize(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:T of <root>.materialize
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /materialize|materialize(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun materialize <T> (): T of <root>.materialize declared in <root>'
+          TYPE_OP type=T of <root>.materialize origin=CAST typeOperand=T of <root>.materialize
+            CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:expectConsumerString signature:/expectConsumerString|expectConsumerString(Consumer<kotlin.String>){}[0] visibility:public modality:FINAL <> (x:<root>.Consumer<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.Consumer<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:elvis signature:/elvis|elvis(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun elvis (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun buildConsumer <T> (b: <unbound IrClassSymbolImpl>, block: <unbound IrClassSymbolImpl><<root>.Consumer<T of <root>.buildConsumer>, <unbound IrClassSymbolImpl>>): T of <root>.buildConsumer? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                b: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.elvis' type=<unbound IrClassSymbolImpl> origin=null
+                block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Consumer<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.Consumer<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:<root>.Consumer<<unbound IrClassSymbolImpl>>
+                    BLOCK_BODY
+                      CALL 'public final fun expectConsumerString (x: <root>.Consumer<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        x: GET_VAR 'it: <root>.Consumer<<unbound IrClassSymbolImpl>> declared in <root>.elvis.<anonymous>' type=<root>.Consumer<<unbound IrClassSymbolImpl>> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.elvis' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CALL 'public final fun materialize <T> (): T of <root>.materialize declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.elvis' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun elvis (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              b: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            1: CALL 'public final fun elvis (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              b: CONST Boolean type=<unbound IrClassSymbolImpl> value=false

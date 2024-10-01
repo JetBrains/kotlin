@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final fun calc(): kotlin/String
+
+      public final inline fun test(p1: kotlin/String /* = ... */, p2: kotlin/String /* = ... */, p3: kotlin/String /* = ... */, p4: kotlin/String /* = ... */, p5: kotlin/String /* = ... */, p6: kotlin/String /* = ... */, p7: kotlin/String /* = ... */, p8: kotlin/String /* = ... */, p9: kotlin/String /* = ... */, p10: kotlin/String /* = ... */, p11: kotlin/String /* = ... */, p12: kotlin/String /* = ... */, p13: kotlin/String /* = ... */, p14: kotlin/String /* = ... */, p15: kotlin/String /* = ... */, p16: kotlin/String /* = ... */, p17: kotlin/String /* = ... */, p18: kotlin/String /* = ... */, p19: kotlin/String /* = ... */, p20: kotlin/String /* = ... */, p21: kotlin/String /* = ... */, p22: kotlin/String /* = ... */, p23: kotlin/String /* = ... */, p24: kotlin/String /* = ... */, p25: kotlin/String /* = ... */, p26: kotlin/String /* = ... */, p27: kotlin/String /* = ... */, p28: kotlin/String /* = ... */, p29: kotlin/String /* = ... */, p30: kotlin/String /* = ... */, p31: kotlin/String /* = ... */, p32: kotlin/String /* = ... */, p33: kotlin/String /* = ... */): kotlin/String
+    }
+  }
+}

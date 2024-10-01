@@ -1,0 +1,135 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt4989.kt
+    CLASS CLASS name:It signature:/It|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.It
+      CONSTRUCTOR signature:/It.<init>|<init>(kotlin.String){}[0] visibility:public <> (id:<unbound IrClassSymbolImpl>) returnType:<root>.It [primary]
+        VALUE_PARAMETER name:id index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:It signature:/It|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:id signature:/It.id|{}id[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:id signature:[ /It.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'id: <unbound IrClassSymbolImpl> declared in <root>.It.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> signature:/It.id.<get-id>|<get-id>(){}[0] visibility:public modality:FINAL <> ($this:<root>.It) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:id signature:/It.id|{}id[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.It
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-id> (): <unbound IrClassSymbolImpl> declared in <root>.It'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /It.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.It declared in <root>.It.<get-id>' type=<root>.It origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:projectId type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="projectId"
+        VAR name:it type:<root>.It [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (id: <unbound IrClassSymbolImpl>) [primary] declared in <root>.It' type=<root>.It origin=null
+            id: CONST String type=<unbound IrClassSymbolImpl> value="it"
+        FUN LOCAL_FUNCTION name:selectMetaRunnerId visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            FUN LOCAL_FUNCTION name:inc visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+              $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun inc (): <unbound IrClassSymbolImpl> [operator] declared in <root>.box.selectMetaRunnerId'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                        GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in <root>.box.selectMetaRunnerId.inc' type=<unbound IrClassSymbolImpl>? origin=null
+                      WHEN type=<unbound IrClassSymbolImpl> origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.selectMetaRunnerId.inc' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.selectMetaRunnerId.inc' type=<unbound IrClassSymbolImpl>? origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            VAR name:counter type:<unbound IrClassSymbolImpl>? [var]
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            FUN LOCAL_FUNCTION name:path visibility:local modality:FINAL <> (metaRunnerId:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:metaRunnerId index:0 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun path (metaRunnerId: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.selectMetaRunnerId'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'var counter: <unbound IrClassSymbolImpl>? [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            VAR name:i type:<unbound IrClassSymbolImpl> [var]
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+            WHILE label=null origin=WHILE_LOOP
+              condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:name type:<unbound IrClassSymbolImpl> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: GET_VAR 'val projectId: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                        1: CONST String type=<unbound IrClassSymbolImpl> value="_"
+                      1: CALL 'public final fun <get-id> (): <unbound IrClassSymbolImpl> declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR 'val it: <root>.It [val] declared in <root>.box' type=<root>.It origin=null
+                    1: WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'var counter: <unbound IrClassSymbolImpl>? [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: CONST String type=<unbound IrClassSymbolImpl> value=""
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="_"
+                          GET_VAR 'var counter: <unbound IrClassSymbolImpl>? [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'local final fun path (metaRunnerId: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=null
+                        metaRunnerId: GET_VAR 'val name: <unbound IrClassSymbolImpl> [val] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=null
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun selectMetaRunnerId (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                        GET_VAR 'val name: <unbound IrClassSymbolImpl> [val] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl>? origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl>? [val]
+                      GET_VAR 'var counter: <unbound IrClassSymbolImpl>? [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=POSTFIX_INCR
+                    SET_VAR 'var counter: <unbound IrClassSymbolImpl>? [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      CALL 'local final fun inc (): <unbound IrClassSymbolImpl> [operator] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $receiver: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    SET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                      arg0: GET_VAR 'var i: <unbound IrClassSymbolImpl> [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='local final fun selectMetaRunnerId (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                        CONST String type=<unbound IrClassSymbolImpl> value="Infinity loop: "
+                        GET_VAR 'var counter: <unbound IrClassSymbolImpl>? [var] declared in <root>.box.selectMetaRunnerId' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR name:X type:<unbound IrClassSymbolImpl> [val]
+          CALL 'local final fun selectMetaRunnerId (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val X: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 'val projectId: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="_"
+                    1: CALL 'public final fun <get-id> (): <unbound IrClassSymbolImpl> declared in <root>.It' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val it: <root>.It [val] declared in <root>.box' type=<root>.It origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="_2"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: "
+                GET_VAR 'val X: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

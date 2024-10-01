@@ -1,0 +1,64 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: Inlined
+
+    public sealed interface A : kotlin/Any {
+
+      public abstract fun foo(): Inlined?
+
+      public abstract fun foo2(): Inlined
+
+      public abstract val property: Inlined?
+        public abstract get
+
+      public abstract val property2: Inlined
+        public abstract get
+
+      // sealed subclass: B
+    }
+
+    public final class B : A {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Nothing?
+
+      public open fun foo2(): kotlin/Nothing
+
+      public open val property: kotlin/Nothing?
+        public open get
+
+      public open val property2: kotlin/Nothing
+        public open /* non-default */ get
+    }
+
+    public final value class Inlined : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Int
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

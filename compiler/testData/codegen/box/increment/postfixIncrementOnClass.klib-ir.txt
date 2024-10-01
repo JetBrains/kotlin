@@ -1,0 +1,57 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/postfixIncrementOnClass.kt
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+      CONSTRUCTOR signature:/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Derived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]'
+    CLASS CLASS name:Another signature:/Another|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Another
+      CONSTRUCTOR signature:/Another.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Another [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Another signature:/Another|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]'
+    FUN name:inc signature:/inc|inc@Base(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Base) returnType:<root>.Derived [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Base
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun inc (): <root>.Derived [operator] declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived' type=<root>.Derived origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:i type:<root>.Base [var]
+        SET_VAR 'var i: <root>.Base [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Another' type=<root>.Another origin=null
+        VAR name:j type:<root>.Another [val]
+          BLOCK type=<root>.Another origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:<unary> type:<root>.Another [val]
+              TYPE_OP type=<root>.Another origin=IMPLICIT_CAST typeOperand=<root>.Another
+                GET_VAR 'var i: <root>.Base [var] declared in <root>.box' type=<root>.Base origin=null
+            SET_VAR 'var i: <root>.Base [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+              CALL 'public final fun inc (): <root>.Derived [operator] declared in <root>' type=<root>.Derived origin=POSTFIX_INCR
+                $receiver: GET_VAR 'val <unary>: <root>.Another [val] declared in <root>.box' type=<root>.Another origin=null
+            GET_VAR 'val <unary>: <root>.Another [val] declared in <root>.box' type=<root>.Another origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Another
+                    GET_VAR 'val j: <root>.Another [val] declared in <root>.box' type=<root>.Another origin=null
+                  then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Derived
+                    TYPE_OP type=<root>.Derived origin=IMPLICIT_CAST typeOperand=<root>.Derived
+                      GET_VAR 'var i: <root>.Base [var] declared in <root>.box' type=<root>.Base origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail j = "
+                GET_VAR 'val j: <root>.Another [val] declared in <root>.box' type=<root>.Another origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=" i = "
+                TYPE_OP type=<root>.Derived origin=IMPLICIT_CAST typeOperand=<root>.Derived
+                  GET_VAR 'var i: <root>.Base [var] declared in <root>.box' type=<root>.Base origin=null

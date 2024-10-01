@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun <T#0 /* T */ : kotlin/Comparable<T#0>> arrayData(vararg values: T#0 /* kotlin/Array<out T#0> */, toArray: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Array<T#0>, kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: P
+    // class name: S
+
+    public final class P : S {
+
+      public constructor(str: kotlin/String /* = ... */)
+
+      public final val str: kotlin/String
+        public final get
+    }
+
+    public open class S : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(actual: kotlin/Boolean): kotlin/Unit
+        contract {
+          returns() implies (p#1)
+        }
+    }
+  }
+}

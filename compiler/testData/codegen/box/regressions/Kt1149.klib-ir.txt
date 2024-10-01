@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test.regressions.kt1149 fileName:/Kt1149.kt
+    CLASS INTERFACE name:SomeTrait signature:test.regressions.kt1149/SomeTrait|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.regressions.kt1149.SomeTrait
+      FUN name:foo signature:test.regressions.kt1149/SomeTrait.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:test.regressions.kt1149.SomeTrait) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.regressions.kt1149.SomeTrait
+    FUN name:box signature:test.regressions.kt1149/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:list type:<unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait> origin=null
+            <class: 1>: test.regressions.kt1149.SomeTrait
+        VAR name:res type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val list: <unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait> [val] declared in test.regressions.kt1149.box' type=<unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait> origin=null
+            1: BLOCK type=test.regressions.kt1149.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.regressions.kt1149.SomeTrait]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.regressions.kt1149.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:test.regressions.kt1149.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.regressions.kt1149.SomeTrait]'
+                FUN name:foo visibility:public modality:OPEN <> ($this:test.regressions.kt1149.box.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public abstract fun foo (): <unbound IrClassSymbolImpl> declared in test.regressions.kt1149.SomeTrait
+                  $this: VALUE_PARAMETER name:<this> type:test.regressions.kt1149.box.<no name provided>
+                  BLOCK_BODY
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'var res: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in test.regressions.kt1149.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        1: CONST String type=<unbound IrClassSymbolImpl> value="anonymous.foo()"
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.regressions.kt1149.box.<no name provided>' type=test.regressions.kt1149.box.<no name provided> origin=OBJECT_LITERAL
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: test.regressions.kt1149.SomeTrait
+          $receiver: GET_VAR 'val list: <unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait> [val] declared in test.regressions.kt1149.box' type=<unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait> origin=null
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><test.regressions.kt1149.SomeTrait, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:test.regressions.kt1149.SomeTrait) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:it index:0 type:test.regressions.kt1149.SomeTrait
+              BLOCK_BODY
+                CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in test.regressions.kt1149.SomeTrait' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'it: test.regressions.kt1149.SomeTrait declared in test.regressions.kt1149.box.<anonymous>' type=test.regressions.kt1149.SomeTrait origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test.regressions.kt1149'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CONST String type=<unbound IrClassSymbolImpl> value="anonymous.foo()"
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: GET_VAR 'var res: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in test.regressions.kt1149.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

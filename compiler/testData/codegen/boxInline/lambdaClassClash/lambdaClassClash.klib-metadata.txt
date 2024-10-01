@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: zzz
+
+    package {
+
+      public final inline fun calc(crossinline lambda: kotlin/Function0<kotlin/Int>): kotlin/Int
+
+      public final fun doCalc(lambda2: kotlin/Function0<kotlin/Int>): kotlin/Int
+    }
+  }
+}

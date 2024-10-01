@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:foo signature:/foo|foo(kotlin.Any?){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(kotlin.Any?){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T> (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.foo origin=null
+              <1>: <root>.foo.<no name provided><T of <root>.foo>
+              <2>: T of <root>.foo
+              1: BLOCK type=<root>.foo.<no name provided><T of <root>.foo> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.foo.<no name provided><T of <root>.foo>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.foo.<no name provided><T of <root>.foo> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                  FUN name:bar visibility:public modality:FINAL <> ($this:<root>.foo.<no name provided><T of <root>.foo>, $receiver:T of <root>.foo) returnType:T of <root>.foo
+                    $this: VALUE_PARAMETER name:<this> type:<root>.foo.<no name provided><T of <root>.foo>
+                    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.foo
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): T of <root>.foo declared in <root>.foo.<no name provided>'
+                        GET_VAR '<this>: T of <root>.foo declared in <root>.foo.<no name provided>.bar' type=T of <root>.foo origin=null
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.foo.<no name provided>' type=<root>.foo.<no name provided><T of <root>.foo> origin=OBJECT_LITERAL
+              2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.foo.<no name provided><T of <root>.foo>, T of <root>.foo> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.foo.<no name provided><T of <root>.foo>) returnType:T of <root>.foo
+                  $receiver: VALUE_PARAMETER name:$this$with type:<root>.foo.<no name provided><T of <root>.foo>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): T of <root>.foo declared in <root>.foo'
+                      CALL 'public final fun bar (): T of <root>.foo declared in <root>.foo.<no name provided>' type=T of <root>.foo origin=null
+                        $this: GET_VAR '$this$with: <root>.foo.<no name provided><T of <root>.foo> declared in <root>.foo.<anonymous>' type=<root>.foo.<no name provided><T of <root>.foo> origin=null
+                        $receiver: TYPE_OP type=T of <root>.foo origin=CAST typeOperand=T of <root>.foo
+                          GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.foo' type=<unbound IrClassSymbolImpl>? origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo <T> (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST String type=<unbound IrClassSymbolImpl> value="OK"

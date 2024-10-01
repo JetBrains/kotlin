@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Whatever
+
+    public final object Whatever : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun getValue(thisRef: kotlin/Any?, prop: kotlin/Any?): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* T */> mrun(lambda: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

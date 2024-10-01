@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Table
+
+    public abstract class Table<T#0 /* T */> : kotlin/Any {
+
+      public constructor(content: kotlin/Array<kotlin/Array<T#0>>)
+
+      public final val content: kotlin/Array<kotlin/Array<T#0>>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

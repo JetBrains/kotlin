@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NotEmptyMap
+
+    private final object NotEmptyMap : kotlin/collections/MutableMap<kotlin/Any, kotlin/Any> {
+
+      private constructor()
+
+      public open fun clear(): kotlin/Unit
+
+      public open fun containsKey(key: kotlin/Any): kotlin/Boolean
+
+      public open fun containsValue(value: kotlin/Any): kotlin/Boolean
+
+      public open operator fun get(key: kotlin/Any): kotlin/Any?
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open fun put(key: kotlin/Any, value: kotlin/Any): kotlin/Any?
+
+      public open fun putAll(from: kotlin/collections/Map<out kotlin/Any, kotlin/Any>): kotlin/Unit
+
+      public open fun remove(key: kotlin/Any): kotlin/Any?
+
+      public open val entries: kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<kotlin/Any, kotlin/Any>>
+        public open /* non-default */ get
+
+      public open val keys: kotlin/collections/MutableSet<kotlin/Any>
+        public open /* non-default */ get
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      public open val values: kotlin/collections/MutableCollection<kotlin/Any>
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

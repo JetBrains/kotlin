@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final const val HUNDRED: kotlin/UByte /* = 100.toUByte() */
+        public final get
+
+      public final const val MAX_BYTE: kotlin/UByte /* = 255.toUByte() */
+        public final get
+
+      public final const val MAX_BYTE_STRING: kotlin/String /* = "255" */
+        public final get
+
+      public final const val MAX_LONG: kotlin/ULong /* = 18446744073709551615uL */
+        public final get
+
+      public final const val MAX_LONG_STRING: kotlin/String /* = "18446744073709551615" */
+        public final get
+    }
+  }
+}

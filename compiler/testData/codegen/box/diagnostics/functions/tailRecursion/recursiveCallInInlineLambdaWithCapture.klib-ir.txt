@@ -1,0 +1,59 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/recursiveCallInInlineLambdaWithCapture.kt
+    FUN name:listOfFactor signature:/listOfFactor|listOfFactor(kotlin.Int){}[0] visibility:public modality:FINAL <> (number:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:number index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:listOfFactor visibility:local modality:FINAL <> (number:<unbound IrClassSymbolImpl>, acc:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [tailrec]
+          VALUE_PARAMETER name:number index:0 type:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER name:acc index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          BLOCK_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                1: GET_VAR 'number: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor.listOfFactor' type=<unbound IrClassSymbolImpl> origin=null
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PERC
+                            $this: GET_VAR 'number: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor.listOfFactor' type=<unbound IrClassSymbolImpl> origin=null
+                            1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor.listOfFactor.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                        then: RETURN type=<unbound IrClassSymbolImpl> from='local final fun listOfFactor (number: <unbound IrClassSymbolImpl>, acc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [tailrec] declared in <root>.listOfFactor'
+                          CALL 'local final fun listOfFactor (number: <unbound IrClassSymbolImpl>, acc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [tailrec] declared in <root>.listOfFactor' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            number: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=DIV
+                              $this: GET_VAR 'number: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor.listOfFactor' type=<unbound IrClassSymbolImpl> origin=null
+                              1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor.listOfFactor.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            acc: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PLUS
+                              <1>: <unbound IrClassSymbolImpl>
+                              $receiver: GET_VAR 'acc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.listOfFactor.listOfFactor' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                              1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor.listOfFactor.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='local final fun listOfFactor (number: <unbound IrClassSymbolImpl>, acc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [tailrec] declared in <root>.listOfFactor'
+              GET_VAR 'acc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.listOfFactor.listOfFactor' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun listOfFactor (number: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'local final fun listOfFactor (number: <unbound IrClassSymbolImpl>, acc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [tailrec] declared in <root>.listOfFactor' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            number: GET_VAR 'number: <unbound IrClassSymbolImpl> declared in <root>.listOfFactor' type=<unbound IrClassSymbolImpl> origin=null
+            acc: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:factors type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun listOfFactor (number: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            number: CONST Int type=<unbound IrClassSymbolImpl> value=60
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val factors: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val factors: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null

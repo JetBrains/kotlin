@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: First
+    // class name: Second
+    // class name: Third
+
+    public final class First : kotlin/Any {
+
+      public constructor(initArray: kotlin/Array<kotlin/Int>)
+
+      public final val array: kotlin/Array<kotlin/Int>
+        public final get
+    }
+
+    public final class Second : kotlin/Any {
+
+      public constructor(initArray: kotlin/Array<kotlin/Int>)
+
+      public final val first: First
+        public final get
+    }
+
+    public final class Third : kotlin/Any {
+
+      public constructor(initArray: kotlin/Array<kotlin/Int>)
+
+      public final val second: Second
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

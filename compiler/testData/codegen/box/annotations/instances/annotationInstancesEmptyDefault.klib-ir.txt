@@ -1,0 +1,369 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/annotationInstancesEmptyDefault.kt
+    CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.E>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.E
+      CONSTRUCTOR signature:test/E.<init>|<init>(){}[0] visibility:private <> () returnType:test.E [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.E
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.E>]'
+      ENUM_ENTRY name:A signature:test/E.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.E'
+      ENUM_ENTRY name:B signature:test/E.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.E'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.E>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.E
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.E>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ANNOTATION_CLASS name:A signature:test/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A signature:test/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS ANNOTATION_CLASS name:B signature:test/B|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.B
+      CONSTRUCTOR signature:test/B.<init>|<init>(test.A){}[0] visibility:public <> (a:test.A) returnType:test.B [primary]
+        VALUE_PARAMETER name:a index:0 type:test.A
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:B signature:test/B|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:test/B.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ test/B.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.A visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: test.A declared in test.B.<init>' type=test.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:test/B.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:test.B) returnType:test.A
+          correspondingProperty: PROPERTY name:a signature:test/B.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.B
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): test.A declared in test.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ test/B.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.A visibility:private [final]' type=test.A origin=null
+                receiver: GET_VAR '<this>: test.B declared in test.B.<get-a>' type=test.B origin=null
+    CLASS ANNOTATION_CLASS name:C signature:test/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+      CONSTRUCTOR signature:test/C.<init>|<init>(kotlin.Int;test.B;kotlin.reflect.KClass<*>;kotlin.Array<kotlin.reflect.KClass<*>>;test.E;kotlin.Array<kotlin.String>;kotlin.IntArray){}[0] visibility:public <> (i:<unbound IrClassSymbolImpl>, b:test.B, kClass:<unbound IrClassSymbolImpl><*>, kClassArray:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>, e:test.E, aS:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, aI:<unbound IrClassSymbolImpl>) returnType:test.C [primary]
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+        VALUE_PARAMETER name:b index:1 type:test.B
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> (a: test.A) [primary] declared in test.B' type=test.B origin=null
+        VALUE_PARAMETER name:kClass index:2 type:<unbound IrClassSymbolImpl><*>
+          EXPRESSION_BODY
+            CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:B signature:test/B|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><test.B>
+        VALUE_PARAMETER name:kClassArray index:3 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> varargElementType=<unbound IrClassSymbolImpl><*>
+              CLASS_REFERENCE 'CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.E>]' type=<unbound IrClassSymbolImpl><test.E>
+              CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:A signature:test/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><test.A>
+        VALUE_PARAMETER name:e index:4 type:test.E
+          EXPRESSION_BODY
+            GET_ENUM 'ENUM_ENTRY name:B signature:test/E.B|null[0]' type=test.E
+        VALUE_PARAMETER name:aS index:5 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="a"
+              CONST String type=<unbound IrClassSymbolImpl> value="b"
+        VALUE_PARAMETER name:aI index:6 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:C signature:test/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:i signature:test/C.i|{}i[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ test/C.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in test.C.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:test/C.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:test/C.i|{}i[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ test/C.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-i>' type=test.C origin=null
+      PROPERTY name:b signature:test/C.b|{}b[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:b signature:[ test/C.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.B visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'b: test.B declared in test.C.<init>' type=test.B origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> signature:test/C.b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:test.B
+          correspondingProperty: PROPERTY name:b signature:test/C.b|{}b[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): test.B declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b signature:[ test/C.b|{}b[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.B visibility:private [final]' type=test.B origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-b>' type=test.C origin=null
+      PROPERTY name:kClass signature:test/C.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ test/C.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClass: <unbound IrClassSymbolImpl><*> declared in test.C.<init>' type=<unbound IrClassSymbolImpl><*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClass> signature:test/C.kClass.<get-kClass>|<get-kClass>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:<unbound IrClassSymbolImpl><*>
+          correspondingProperty: PROPERTY name:kClass signature:test/C.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClass> (): <unbound IrClassSymbolImpl><*> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ test/C.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]' type=<unbound IrClassSymbolImpl><*> origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-kClass>' type=test.C origin=null
+      PROPERTY name:kClassArray signature:test/C.kClassArray|{}kClassArray[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClassArray signature:[ test/C.kClassArray|{}kClassArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClassArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in test.C.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClassArray> signature:test/C.kClassArray.<get-kClassArray>|<get-kClassArray>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          correspondingProperty: PROPERTY name:kClassArray signature:test/C.kClassArray|{}kClassArray[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClassArray> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClassArray signature:[ test/C.kClassArray|{}kClassArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-kClassArray>' type=test.C origin=null
+      PROPERTY name:e signature:test/C.e|{}e[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:e signature:[ test/C.e|{}e[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.E visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'e: test.E declared in test.C.<init>' type=test.E origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e> signature:test/C.e.<get-e>|<get-e>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:test.E
+          correspondingProperty: PROPERTY name:e signature:test/C.e|{}e[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-e> (): test.E declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e signature:[ test/C.e|{}e[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.E visibility:private [final]' type=test.E origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-e>' type=test.C origin=null
+      PROPERTY name:aS signature:test/C.aS|{}aS[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:aS signature:[ test/C.aS|{}aS[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'aS: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.C.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aS> signature:test/C.aS.<get-aS>|<get-aS>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:aS signature:test/C.aS|{}aS[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-aS> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aS signature:[ test/C.aS|{}aS[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-aS>' type=test.C origin=null
+      PROPERTY name:aI signature:test/C.aI|{}aI[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:aI signature:[ test/C.aI|{}aI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'aI: <unbound IrClassSymbolImpl> declared in test.C.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aI> signature:test/C.aI.<get-aI>|<get-aI>(){}[0] visibility:public modality:FINAL <> ($this:test.C) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:aI signature:test/C.aI|{}aI[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-aI> (): <unbound IrClassSymbolImpl> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aI signature:[ test/C.aI|{}aI[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-aI>' type=test.C origin=null
+    CLASS ANNOTATION_CLASS name:EmptyDefaultArrays signature:test/EmptyDefaultArrays|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.EmptyDefaultArrays
+      CONSTRUCTOR signature:test/EmptyDefaultArrays.<init>|<init>(kotlin.Array<kotlin.reflect.KClass<*>>;kotlin.IntArray;kotlin.Array<kotlin.String>;kotlin.Array<test.E>){}[0] visibility:public <> (kClassArray:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>, intArray:<unbound IrClassSymbolImpl>, stringArray:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, enumArray:<unbound IrClassSymbolImpl><test.E>) returnType:test.EmptyDefaultArrays [primary]
+        VALUE_PARAMETER name:kClassArray index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> varargElementType=<unbound IrClassSymbolImpl><*>
+        VALUE_PARAMETER name:intArray index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:stringArray index:2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:enumArray index:3 type:<unbound IrClassSymbolImpl><test.E>
+          EXPRESSION_BODY
+            VARARG type=<unbound IrClassSymbolImpl><test.E> varargElementType=test.E
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:EmptyDefaultArrays signature:test/EmptyDefaultArrays|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:kClassArray signature:test/EmptyDefaultArrays.kClassArray|{}kClassArray[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClassArray signature:[ test/EmptyDefaultArrays.kClassArray|{}kClassArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClassArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in test.EmptyDefaultArrays.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClassArray> signature:test/EmptyDefaultArrays.kClassArray.<get-kClassArray>|<get-kClassArray>(){}[0] visibility:public modality:FINAL <> ($this:test.EmptyDefaultArrays) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          correspondingProperty: PROPERTY name:kClassArray signature:test/EmptyDefaultArrays.kClassArray|{}kClassArray[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.EmptyDefaultArrays
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClassArray> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in test.EmptyDefaultArrays'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClassArray signature:[ test/EmptyDefaultArrays.kClassArray|{}kClassArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=null
+                receiver: GET_VAR '<this>: test.EmptyDefaultArrays declared in test.EmptyDefaultArrays.<get-kClassArray>' type=test.EmptyDefaultArrays origin=null
+      PROPERTY name:intArray signature:test/EmptyDefaultArrays.intArray|{}intArray[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:intArray signature:[ test/EmptyDefaultArrays.intArray|{}intArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'intArray: <unbound IrClassSymbolImpl> declared in test.EmptyDefaultArrays.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intArray> signature:test/EmptyDefaultArrays.intArray.<get-intArray>|<get-intArray>(){}[0] visibility:public modality:FINAL <> ($this:test.EmptyDefaultArrays) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:intArray signature:test/EmptyDefaultArrays.intArray|{}intArray[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.EmptyDefaultArrays
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intArray> (): <unbound IrClassSymbolImpl> declared in test.EmptyDefaultArrays'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArray signature:[ test/EmptyDefaultArrays.intArray|{}intArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.EmptyDefaultArrays declared in test.EmptyDefaultArrays.<get-intArray>' type=test.EmptyDefaultArrays origin=null
+      PROPERTY name:stringArray signature:test/EmptyDefaultArrays.stringArray|{}stringArray[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:stringArray signature:[ test/EmptyDefaultArrays.stringArray|{}stringArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'stringArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.EmptyDefaultArrays.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stringArray> signature:test/EmptyDefaultArrays.stringArray.<get-stringArray>|<get-stringArray>(){}[0] visibility:public modality:FINAL <> ($this:test.EmptyDefaultArrays) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:stringArray signature:test/EmptyDefaultArrays.stringArray|{}stringArray[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.EmptyDefaultArrays
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-stringArray> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.EmptyDefaultArrays'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringArray signature:[ test/EmptyDefaultArrays.stringArray|{}stringArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: test.EmptyDefaultArrays declared in test.EmptyDefaultArrays.<get-stringArray>' type=test.EmptyDefaultArrays origin=null
+      PROPERTY name:enumArray signature:test/EmptyDefaultArrays.enumArray|{}enumArray[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:enumArray signature:[ test/EmptyDefaultArrays.enumArray|{}enumArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><test.E> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'enumArray: <unbound IrClassSymbolImpl><test.E> declared in test.EmptyDefaultArrays.<init>' type=<unbound IrClassSymbolImpl><test.E> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-enumArray> signature:test/EmptyDefaultArrays.enumArray.<get-enumArray>|<get-enumArray>(){}[0] visibility:public modality:FINAL <> ($this:test.EmptyDefaultArrays) returnType:<unbound IrClassSymbolImpl><test.E>
+          correspondingProperty: PROPERTY name:enumArray signature:test/EmptyDefaultArrays.enumArray|{}enumArray[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.EmptyDefaultArrays
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-enumArray> (): <unbound IrClassSymbolImpl><test.E> declared in test.EmptyDefaultArrays'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:enumArray signature:[ test/EmptyDefaultArrays.enumArray|{}enumArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl><test.E> visibility:private [final]' type=<unbound IrClassSymbolImpl><test.E> origin=null
+                receiver: GET_VAR '<this>: test.EmptyDefaultArrays declared in test.EmptyDefaultArrays.<get-enumArray>' type=test.EmptyDefaultArrays origin=null
+    CLASS ANNOTATION_CLASS name:Partial signature:test/Partial|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Partial
+      CONSTRUCTOR signature:test/Partial.<init>|<init>(kotlin.Int;kotlin.String;test.E){}[0] visibility:public <> (i:<unbound IrClassSymbolImpl>, s:<unbound IrClassSymbolImpl>, e:test.E) returnType:test.Partial [primary]
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+        VALUE_PARAMETER name:s index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="foo"
+        VALUE_PARAMETER name:e index:2 type:test.E
+          EXPRESSION_BODY
+            GET_ENUM 'ENUM_ENTRY name:A signature:test/E.A|null[0]' type=test.E
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Partial signature:test/Partial|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:i signature:test/Partial.i|{}i[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ test/Partial.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in test.Partial.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:test/Partial.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:test.Partial) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:test/Partial.i|{}i[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Partial
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in test.Partial'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ test/Partial.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Partial declared in test.Partial.<get-i>' type=test.Partial origin=null
+      PROPERTY name:s signature:test/Partial.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/Partial.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in test.Partial.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:test/Partial.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:test.Partial) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:test/Partial.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Partial
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in test.Partial'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/Partial.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Partial declared in test.Partial.<get-s>' type=test.Partial origin=null
+      PROPERTY name:e signature:test/Partial.e|{}e[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:e signature:[ test/Partial.e|{}e[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.E visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'e: test.E declared in test.Partial.<init>' type=test.E origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e> signature:test/Partial.e.<get-e>|<get-e>(){}[0] visibility:public modality:FINAL <> ($this:test.Partial) returnType:test.E
+          correspondingProperty: PROPERTY name:e signature:test/Partial.e|{}e[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Partial
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-e> (): test.E declared in test.Partial'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e signature:[ test/Partial.e|{}e[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:test.A visibility:private [final]] ] type:test.E visibility:private [final]' type=test.E origin=null
+                receiver: GET_VAR '<this>: test.Partial declared in test.Partial.<get-e>' type=test.Partial origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:test.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>, b: test.B, kClass: <unbound IrClassSymbolImpl><*>, kClassArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>, e: test.E, aS: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, aI: <unbound IrClassSymbolImpl>) [primary] declared in test.C' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: test.A
+          1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.A' type=test.A origin=null
+          2: CALL 'public final fun <get-a> (): test.A declared in test.B' type=test.A origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-b> (): test.B declared in test.C' type=test.B origin=GET_PROPERTY
+              $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          1: CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:B signature:test/B|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><test.B>
+          2: CALL 'public final fun <get-kClass> (): <unbound IrClassSymbolImpl><*> declared in test.C' type=<unbound IrClassSymbolImpl><*> origin=GET_PROPERTY
+            $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-kClassArray> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in test.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=GET_PROPERTY
+              $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: test.E
+          1: GET_ENUM 'ENUM_ENTRY name:B signature:test/E.B|null[0]' type=test.E
+          2: CALL 'public final fun <get-e> (): test.E declared in test.C' type=test.E origin=GET_PROPERTY
+            $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="a"
+                CONST String type=<unbound IrClassSymbolImpl> value="b"
+            1: CALL 'public final fun <get-aS> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+            1: CALL 'public final fun <get-aI> (): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val c: test.C [val] declared in test.box' type=test.C origin=null
+        VAR name:p type:test.Partial [val]
+          BLOCK type=test.Partial origin=ARGUMENTS_REORDERING_FOR_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_e type:test.E [val]
+              GET_ENUM 'ENUM_ENTRY name:B signature:test/E.B|null[0]' type=test.E
+            CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>, s: <unbound IrClassSymbolImpl>, e: test.E) [primary] declared in test.Partial' type=test.Partial origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+              e: GET_VAR 'val tmp0_e: test.E [val] declared in test.box' type=test.E origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in test.Partial' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val p: test.Partial [val] declared in test.box' type=test.Partial origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+          2: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in test.Partial' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val p: test.Partial [val] declared in test.box' type=test.Partial origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: test.E
+          1: GET_ENUM 'ENUM_ENTRY name:B signature:test/E.B|null[0]' type=test.E
+          2: CALL 'public final fun <get-e> (): test.E declared in test.Partial' type=test.E origin=GET_PROPERTY
+            $this: GET_VAR 'val p: test.Partial [val] declared in test.box' type=test.Partial origin=null
+        VAR name:eda type:test.EmptyDefaultArrays [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (kClassArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>, intArray: <unbound IrClassSymbolImpl>, stringArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, enumArray: <unbound IrClassSymbolImpl><test.E>) [primary] declared in test.EmptyDefaultArrays' type=test.EmptyDefaultArrays origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-intArray> (): <unbound IrClassSymbolImpl> declared in test.EmptyDefaultArrays' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val eda: test.EmptyDefaultArrays [val] declared in test.box' type=test.EmptyDefaultArrays origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-kClassArray> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> declared in test.EmptyDefaultArrays' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>> origin=GET_PROPERTY
+              $this: GET_VAR 'val eda: test.EmptyDefaultArrays [val] declared in test.box' type=test.EmptyDefaultArrays origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-stringArray> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.EmptyDefaultArrays' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val eda: test.EmptyDefaultArrays [val] declared in test.box' type=test.EmptyDefaultArrays origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-enumArray> (): <unbound IrClassSymbolImpl><test.E> declared in test.EmptyDefaultArrays' type=<unbound IrClassSymbolImpl><test.E> origin=GET_PROPERTY
+              $this: GET_VAR 'val eda: test.EmptyDefaultArrays [val] declared in test.box' type=test.EmptyDefaultArrays origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

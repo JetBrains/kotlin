@@ -1,0 +1,255 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/bigEnum.kt
+    CLASS ENUM_CLASS name:BigEnum signature:/BigEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.BigEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BigEnum
+      CONSTRUCTOR signature:/BigEnum.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.BigEnum [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.BigEnum
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:BigEnum signature:/BigEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.BigEnum>]'
+      ENUM_ENTRY name:ITEM1 signature:/BigEnum.ITEM1|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM2 signature:/BigEnum.ITEM2|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM3 signature:/BigEnum.ITEM3|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM4 signature:/BigEnum.ITEM4|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM5 signature:/BigEnum.ITEM5|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM6 signature:/BigEnum.ITEM6|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM7 signature:/BigEnum.ITEM7|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM8 signature:/BigEnum.ITEM8|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM9 signature:/BigEnum.ITEM9|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM10 signature:/BigEnum.ITEM10|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM11 signature:/BigEnum.ITEM11|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM12 signature:/BigEnum.ITEM12|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM13 signature:/BigEnum.ITEM13|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM14 signature:/BigEnum.ITEM14|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM15 signature:/BigEnum.ITEM15|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM16 signature:/BigEnum.ITEM16|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM17 signature:/BigEnum.ITEM17|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM18 signature:/BigEnum.ITEM18|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM19 signature:/BigEnum.ITEM19|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      ENUM_ENTRY name:ITEM20 signature:/BigEnum.ITEM20|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.BigEnum'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/BigEnum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.BigEnum>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/BigEnum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.BigEnum
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/BigEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/BigEnum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.BigEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/BigEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:bar1 signature:/bar1|bar1(BigEnum){}[0] visibility:public modality:FINAL <> (x:<root>.BigEnum) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.BigEnum
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.BigEnum [val]
+            GET_VAR 'x: <root>.BigEnum declared in <root>.bar1' type=<root>.BigEnum origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar1' type=<root>.BigEnum origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:ITEM1 signature:/BigEnum.ITEM1|null[0]' type=<root>.BigEnum
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar1' type=<root>.BigEnum origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ITEM2 signature:/BigEnum.ITEM2|null[0]' type=<root>.BigEnum
+                      then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar1' type=<root>.BigEnum origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ITEM3 signature:/BigEnum.ITEM3|null[0]' type=<root>.BigEnum
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="123"
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar1' type=<root>.BigEnum origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:ITEM4 signature:/BigEnum.ITEM4|null[0]' type=<root>.BigEnum
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar1' type=<root>.BigEnum origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ITEM5 signature:/BigEnum.ITEM5|null[0]' type=<root>.BigEnum
+                      then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar1' type=<root>.BigEnum origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ITEM6 signature:/BigEnum.ITEM6|null[0]' type=<root>.BigEnum
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="456"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="-1"
+    FUN name:bar2 signature:/bar2|bar2(BigEnum){}[0] visibility:public modality:FINAL <> (x:<root>.BigEnum) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.BigEnum
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.BigEnum [val]
+            GET_VAR 'x: <root>.BigEnum declared in <root>.bar2' type=<root>.BigEnum origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar2' type=<root>.BigEnum origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:ITEM7 signature:/BigEnum.ITEM7|null[0]' type=<root>.BigEnum
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar2' type=<root>.BigEnum origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ITEM8 signature:/BigEnum.ITEM8|null[0]' type=<root>.BigEnum
+                      then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar2' type=<root>.BigEnum origin=null
+                        arg1: GET_ENUM 'ENUM_ENTRY name:ITEM9 signature:/BigEnum.ITEM9|null[0]' type=<root>.BigEnum
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="789"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar2' type=<root>.BigEnum origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:ITEM10 signature:/BigEnum.ITEM10|null[0]' type=<root>.BigEnum
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="10"
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar2' type=<root>.BigEnum origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:ITEM11 signature:/BigEnum.ITEM11|null[0]' type=<root>.BigEnum
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_subject: <root>.BigEnum [val] declared in <root>.bar2' type=<root>.BigEnum origin=null
+                    arg1: GET_ENUM 'ENUM_ENTRY name:ITEM12 signature:/BigEnum.ITEM12|null[0]' type=<root>.BigEnum
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="1112"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="-1"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="123"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM1 signature:/BigEnum.ITEM1|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="123"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM2 signature:/BigEnum.ITEM2|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="123"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM3 signature:/BigEnum.ITEM3|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="456"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM4 signature:/BigEnum.ITEM4|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="456"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM5 signature:/BigEnum.ITEM5|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="456"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM6 signature:/BigEnum.ITEM6|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="-1"
+          2: CALL 'public final fun bar1 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM7 signature:/BigEnum.ITEM7|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="789"
+          2: CALL 'public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM7 signature:/BigEnum.ITEM7|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="789"
+          2: CALL 'public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM8 signature:/BigEnum.ITEM8|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="789"
+          2: CALL 'public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM9 signature:/BigEnum.ITEM9|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="10"
+          2: CALL 'public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM10 signature:/BigEnum.ITEM10|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="1112"
+          2: CALL 'public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM11 signature:/BigEnum.ITEM11|null[0]' type=<root>.BigEnum
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="1112"
+          2: CALL 'public final fun bar2 (x: <root>.BigEnum): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_ENUM 'ENUM_ENTRY name:ITEM12 signature:/BigEnum.ITEM12|null[0]' type=<root>.BigEnum
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,188 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/bridgeNotEmptyMap.kt
+    CLASS OBJECT name:NotEmptyMap signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NotEmptyMap
+      CONSTRUCTOR signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.<init>|<init>(){}[0] ] visibility:private <> () returnType:<root>.NotEmptyMap [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:NotEmptyMap signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      FUN name:containsKey signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.containsKey|containsKey(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsKey (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyMap'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:containsValue signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.containsValue|containsValue(kotlin.Int){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsValue (value: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyMap'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:get signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.get|get(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.NotEmptyMap'
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:remove signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.remove|remove(kotlin.Any){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap, key:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun remove (key: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyMap'
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+      PROPERTY name:size signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.size|{}size[0] ] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.size.<get-size>|<get-size>(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.size|{}size[0] ] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyMap'
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:isEmpty signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.isEmpty|isEmpty(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.NotEmptyMap'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:put signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.put|put(kotlin.Any;kotlin.Int){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap, key:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:putAll signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.putAll|putAll(kotlin.collections.Map<out|kotlin.Any,kotlin.Int>){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap, from:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        VALUE_PARAMETER name:from index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:clear signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.clear|clear(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:entries signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.entries|{}entries[0] ] visibility:public modality:OPEN [val]
+        FUN name:<get-entries> signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.entries.<get-entries>|<get-entries>(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY name:entries signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.entries|{}entries[0] ] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in <root>.NotEmptyMap'
+              CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=EXCLEXCL
+                <T0>: <unbound IrClassSymbolImpl>
+                arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      PROPERTY name:keys signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.keys|{}keys[0] ] visibility:public modality:OPEN [val]
+        FUN name:<get-keys> signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.keys.<get-keys>|<get-keys>(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:keys signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.keys|{}keys[0] ] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-keys> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.NotEmptyMap'
+              CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                <T0>: <unbound IrClassSymbolImpl>
+                arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      PROPERTY name:values signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.values|{}values[0] ] visibility:public modality:OPEN [val]
+        FUN name:<get-values> signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.values.<get-values>|<get-values>(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.NotEmptyMap) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:values signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap.values|{}values[0] ] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.NotEmptyMap
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-values> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.NotEmptyMap'
+              CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                <T0>: <unbound IrClassSymbolImpl>
+                arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:n type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val]
+          TYPE_OP type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=CAST typeOperand=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?>
+            GET_OBJECT 'CLASS OBJECT name:NotEmptyMap signature:[ File '/bridgeNotEmptyMap.kt' <- /NotEmptyMap|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]' type=<root>.NotEmptyMap
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                  $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                  $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                $this: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>?> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value=""
+              arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 8"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

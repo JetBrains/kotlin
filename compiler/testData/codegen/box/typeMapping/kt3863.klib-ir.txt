@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3863.kt
+    CLASS CLASS name:NotImplemented signature:/NotImplemented|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NotImplemented<T of <root>.NotImplemented>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /NotImplemented|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/NotImplemented.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.NotImplemented<T of <root>.NotImplemented> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NotImplemented signature:/NotImplemented|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getValue signature:/NotImplemented.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($this:<root>.NotImplemented<T of <root>.NotImplemented>, thisRef:<unbound IrClassSymbolImpl>?, prop:<unbound IrClassSymbolImpl><*>) returnType:T of <root>.NotImplemented [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotImplemented<T of <root>.NotImplemented>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:prop index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (thisRef: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>): T of <root>.NotImplemented [operator] declared in <root>.NotImplemented'
+            CALL 'public final fun notImplemented (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:setValue signature:/NotImplemented.setValue|setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.NotImplemented<T of <root>.NotImplemented>, thisRef:<unbound IrClassSymbolImpl>?, prop:<unbound IrClassSymbolImpl><*>, value:T of <root>.NotImplemented) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.NotImplemented<T of <root>.NotImplemented>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:prop index:1 type:<unbound IrClassSymbolImpl><*>
+        VALUE_PARAMETER name:value index:2 type:T of <root>.NotImplemented
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun setValue (thisRef: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>, value: T of <root>.NotImplemented): <unbound IrClassSymbolImpl> [operator] declared in <root>.NotImplemented'
+            CALL 'public final fun notImplemented (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:notImplemented signature:/notImplemented|notImplemented(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun notImplemented (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun notImplemented (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/Test.x|{}x[0] visibility:public modality:FINAL [delegated,val]
+        FIELD PROPERTY_DELEGATE name:x$delegate signature:[ /Test.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:x$delegate type:<root>.NotImplemented<kotlin.Int> visibility:private [final]] ] type:<root>.NotImplemented<<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.NotImplemented' type=<root>.NotImplemented<<unbound IrClassSymbolImpl>> origin=null
+              <class: T>: <unbound IrClassSymbolImpl>
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> signature:/Test.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/Test.x|{}x[0] visibility:public modality:FINAL [delegated,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test'
+              CALL 'public final fun getValue (thisRef: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>): T of <root>.NotImplemented [operator] declared in <root>.NotImplemented' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:x$delegate signature:[ /Test.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:x$delegate type:<root>.NotImplemented<kotlin.Int> visibility:private [final]] ] type:<root>.NotImplemented<<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.Test' type=<root>.NotImplemented<<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-x>' type=<root>.Test origin=null
+                thisRef: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-x>' type=<root>.Test origin=null
+                prop: PROPERTY_REFERENCE 'public final x: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.Test' field=null getter='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Test' setter=null type=<unbound IrClassSymbolImpl><<root>.Test, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test' type=<root>.Test origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

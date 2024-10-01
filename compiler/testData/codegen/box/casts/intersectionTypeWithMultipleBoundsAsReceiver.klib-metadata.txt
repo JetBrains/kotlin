@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Baz
+    // class name: Foo
+
+    public abstract interface Bar<T#0 /* T */> : kotlin/Any {
+    }
+
+    public final class Baz<T#0 /* T */> : Foo<T#0>, Bar<T#0> {
+
+      public constructor()
+    }
+
+    public abstract interface Foo<T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun <T#0 /* T */, T#1 /* S */ : Foo<T#0> & Bar<T#0>> T#1.bip(): kotlin/String
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

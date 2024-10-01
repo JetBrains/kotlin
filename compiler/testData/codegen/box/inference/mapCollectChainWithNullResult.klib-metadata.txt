@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flow
+    // class name: FlowCollector
+
+    public abstract interface Flow<out T#0 /* T */> : kotlin/Any {
+
+      public abstract fun collect(collector: FlowCollector<T#0>): kotlin/Unit
+    }
+
+    public abstract interface FlowCollector<in T#0 /* T */> : kotlin/Any {
+
+      public abstract fun emit(value: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> Flow<T#0>.collect(action: kotlin/Function1<@kotlin/ParameterName(name = "value") T#0, kotlin/Unit>): kotlin/Unit
+
+      public final fun <T#0 /* T */> flow(block: @kotlin/ExtensionFunctionType kotlin/Function1<FlowCollector<T#0>, kotlin/Unit>): Flow<T#0>
+
+      public final fun main(): kotlin/Unit
+
+      public final fun <T#0 /* T */, T#1 /* R */> Flow<T#0>.map(transform: kotlin/Function1<T#0, T#1>): Flow<T#1>
+
+      public final fun <T#0 /* T */, T#1 /* R */> Flow<T#0>.transform(transform: @kotlin/ExtensionFunctionType kotlin/Function2<FlowCollector<T#1>, T#0, kotlin/Unit>): Flow<T#1>
+
+      public final var result: kotlin/Any?
+        public final get
+        public final set
+    }
+  }
+}

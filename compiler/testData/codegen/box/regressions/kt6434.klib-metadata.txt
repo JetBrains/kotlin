@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: E
+
+    public final class C : kotlin/Any {
+
+      public constructor(nums: kotlin/collections/Map<E, kotlin/Int>)
+
+      private final fun loadNormalizedNums(): kotlin/collections/Map<E, kotlin/Float>
+
+      public final val normalizedNums: kotlin/collections/Map<E, kotlin/Float>
+        public final get
+
+      public final val nums: kotlin/collections/Map<E, kotlin/Int>
+        public final get
+    }
+
+    public final enum class E : kotlin/Enum<E> {
+
+      private constructor()
+
+      VALUE,
+
+      VALUE2,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

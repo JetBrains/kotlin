@@ -1,0 +1,92 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:Introspector signature:test/Introspector|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Introspector
+      CONSTRUCTOR signature:test/Introspector.<init>|<init>(){}[0] visibility:public <> () returnType:test.Introspector [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Introspector signature:test/Introspector|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:SchemaRetriever signature:test/Introspector.SchemaRetriever|null[0] modality:ABSTRACT visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Introspector.SchemaRetriever
+        CONSTRUCTOR signature:test/Introspector.SchemaRetriever.<init>|<init>(kotlin.String){}[0] visibility:public <> ($this:test.Introspector, transaction:<unbound IrClassSymbolImpl>) returnType:test.Introspector.SchemaRetriever [primary]
+          $outer: VALUE_PARAMETER name:<this> type:test.Introspector
+          VALUE_PARAMETER name:transaction index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SchemaRetriever signature:test/Introspector.SchemaRetriever|null[0] modality:ABSTRACT visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:transaction signature:test/Introspector.SchemaRetriever.transaction|{}transaction[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:transaction signature:[ test/Introspector.SchemaRetriever.transaction|{}transaction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:transaction type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'transaction: <unbound IrClassSymbolImpl> declared in test.Introspector.SchemaRetriever.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-transaction> signature:test/Introspector.SchemaRetriever.transaction.<get-transaction>|<get-transaction>(){}[0] visibility:public modality:FINAL <> ($this:test.Introspector.SchemaRetriever) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:transaction signature:test/Introspector.SchemaRetriever.transaction|{}transaction[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:test.Introspector.SchemaRetriever
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-transaction> (): <unbound IrClassSymbolImpl> declared in test.Introspector.SchemaRetriever'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:transaction signature:[ test/Introspector.SchemaRetriever.transaction|{}transaction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:transaction type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: test.Introspector.SchemaRetriever declared in test.Introspector.SchemaRetriever.<get-transaction>' type=test.Introspector.SchemaRetriever origin=null
+        FUN name:inSchema signature:test/Introspector.SchemaRetriever.inSchema|inSchema(kotlin.Function1<kotlin.String,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:test.Introspector.SchemaRetriever, modifier:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+          $this: VALUE_PARAMETER name:<this> type:test.Introspector.SchemaRetriever
+          VALUE_PARAMETER name:modifier index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline]
+          BLOCK_BODY
+            VAR name:lambda type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'modifier: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline] declared in test.Introspector.SchemaRetriever.inSchema' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                      1: CALL 'public final fun <get-transaction> (): <unbound IrClassSymbolImpl> declared in test.Introspector.SchemaRetriever' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: test.Introspector.SchemaRetriever declared in test.Introspector.SchemaRetriever.inSchema' type=test.Introspector.SchemaRetriever origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val lambda: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in test.Introspector.SchemaRetriever.inSchema' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:IntrospectorImpl signature:/IntrospectorImpl|null[0] modality:FINAL visibility:public superTypes:[test.Introspector]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntrospectorImpl
+      CONSTRUCTOR signature:/IntrospectorImpl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.IntrospectorImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Introspector'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IntrospectorImpl signature:/IntrospectorImpl|null[0] modality:FINAL visibility:public superTypes:[test.Introspector]'
+      CLASS CLASS name:SchemaRetriever signature:/IntrospectorImpl.SchemaRetriever|null[0] modality:FINAL visibility:public [inner] superTypes:[test.Introspector.SchemaRetriever]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntrospectorImpl.SchemaRetriever
+        CONSTRUCTOR signature:/IntrospectorImpl.SchemaRetriever.<init>|<init>(kotlin.String){}[0] visibility:public <> ($this:<root>.IntrospectorImpl, transaction:<unbound IrClassSymbolImpl>) returnType:<root>.IntrospectorImpl.SchemaRetriever [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.IntrospectorImpl
+          VALUE_PARAMETER name:transaction index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (transaction: <unbound IrClassSymbolImpl>) [primary] declared in test.Introspector.SchemaRetriever'
+              $this: GET_VAR '<this>: <root>.IntrospectorImpl declared in <root>.IntrospectorImpl' type=<root>.IntrospectorImpl origin=null
+              transaction: GET_VAR 'transaction: <unbound IrClassSymbolImpl> declared in <root>.IntrospectorImpl.SchemaRetriever.<init>' type=<unbound IrClassSymbolImpl> origin=null
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SchemaRetriever signature:/IntrospectorImpl.SchemaRetriever|null[0] modality:FINAL visibility:public [inner] superTypes:[test.Introspector.SchemaRetriever]'
+        FUN name:retrieve signature:/IntrospectorImpl.SchemaRetriever.retrieve|retrieve(){}[0] visibility:internal modality:FINAL <> ($this:<root>.IntrospectorImpl.SchemaRetriever) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntrospectorImpl.SchemaRetriever
+          BLOCK_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.IntrospectorImpl.SchemaRetriever declared in <root>.IntrospectorImpl.SchemaRetriever.retrieve' type=<root>.IntrospectorImpl.SchemaRetriever origin=null
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (schema:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:schema index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                      <set-?>: GET_VAR 'schema: <unbound IrClassSymbolImpl> declared in <root>.IntrospectorImpl.SchemaRetriever.retrieve.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'internal final fun retrieve (): <unbound IrClassSymbolImpl> declared in <root>.IntrospectorImpl.SchemaRetriever' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> (transaction: <unbound IrClassSymbolImpl>) [primary] declared in <root>.IntrospectorImpl.SchemaRetriever' type=<root>.IntrospectorImpl.SchemaRetriever origin=null
+            $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.IntrospectorImpl' type=<root>.IntrospectorImpl origin=null
+            transaction: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

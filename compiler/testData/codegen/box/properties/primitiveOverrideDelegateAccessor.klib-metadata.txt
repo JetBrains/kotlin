@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Holder
+    // class name: R
+
+    public final class A : R<kotlin/Int> {
+
+      public constructor(start: kotlin/Int)
+
+      public open /* delegated */ var value: kotlin/Int
+        public open /* non-default */ get
+        public open /* non-default */ set(<set-?>: kotlin/Int)
+    }
+
+    public final class Holder : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final operator fun getValue(that: kotlin/Any?, desc: kotlin/reflect/KProperty<*>): kotlin/Int
+
+      public final operator fun setValue(that: kotlin/Any?, desc: kotlin/reflect/KProperty<*>, newValue: kotlin/Int): kotlin/Unit
+
+      public final var value: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public abstract interface R<T#0 /* T */ : kotlin/Comparable<T#0>> : kotlin/Any {
+
+      public abstract var value: T#0
+        public abstract get
+        public abstract set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,58 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt14243_class.kt
+    CLASS CLASS name:Z signature:/Z|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z<T of <root>.Z, Y of <root>.Z>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Z|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:Y index:1 variance: signature:[ /Z|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Z.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Z<T of <root>.Z, Y of <root>.Z> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z signature:/Z|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:/Z.test|test(1:0;1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.Z<T of <root>.Z, Y of <root>.Z>, p:T of <root>.Z, z:Y of <root>.Z) returnType:T of <root>.Z
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z, Y of <root>.Z>
+        VALUE_PARAMETER name:p index:0 type:T of <root>.Z
+        VALUE_PARAMETER name:z index:1 type:Y of <root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (p: T of <root>.Z, z: Y of <root>.Z): T of <root>.Z declared in <root>.Z'
+            GET_VAR 'p: T of <root>.Z declared in <root>.Z.test' type=T of <root>.Z origin=null
+    CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>, X of <root>.ZImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl<X of <root>.ZImpl>
+      TYPE_PARAMETER name:X index:0 variance: signature:[ /ZImpl|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ZImpl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl<X of <root>.ZImpl> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Z'
+            <T>: <unbound IrClassSymbolImpl>
+            <Y>: X of <root>.ZImpl
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>, X of <root>.ZImpl>]'
+    CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.ZImpl<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl2
+      CONSTRUCTOR signature:/ZImpl2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl'
+            <X>: <unbound IrClassSymbolImpl>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.ZImpl<<unbound IrClassSymbolImpl>>]'
+    CLASS CLASS name:ZImpl3 signature:/ZImpl3|null[0] modality:FINAL visibility:public superTypes:[<root>.ZImpl2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl3
+      CONSTRUCTOR signature:/ZImpl3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl2'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl3 signature:/ZImpl3|null[0] modality:FINAL visibility:public superTypes:[<root>.ZImpl2]'
+      FUN name:test signature:/ZImpl3.test|test(kotlin.String;kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.ZImpl3, p:<unbound IrClassSymbolImpl>, z:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZImpl3
+        VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:z index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (p: <unbound IrClassSymbolImpl>, z: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ZImpl3'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.ZImpl<<unbound IrClassSymbolImpl>>]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.ZImpl3 declared in <root>.ZImpl3.test' type=<root>.ZImpl3 origin=null
+              1: GET_VAR 'p: <unbound IrClassSymbolImpl> declared in <root>.ZImpl3.test' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'z: <unbound IrClassSymbolImpl> declared in <root>.ZImpl3.test' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun test (p: <unbound IrClassSymbolImpl>, z: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ZImpl3' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl3' type=<root>.ZImpl3 origin=null
+            p: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            z: CONST String type=<unbound IrClassSymbolImpl> value="fail"

@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flow
+    // class name: FlowCollector
+    // class name: SelectBuilder
+    // class name: SelectClause2
+    // class name: SendChannel
+
+    public final class Flow<out T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface FlowCollector<in T#0 /* T */> : kotlin/Any {
+    }
+
+    public abstract interface SelectBuilder<in T#0 /* R */> : kotlin/Any {
+
+      public abstract operator fun <T#1 /* P */, T#2 /* Q */> SelectClause2<T#1, T#2>.invoke(param: T#1, block: suspend kotlin/Function2<T#2, kotlin/coroutines/Continuation<T#0>, kotlin/Any?>): kotlin/Unit
+    }
+
+    public abstract interface SelectClause2<in T#0 /* P */, out T#1 /* Q */> : kotlin/Any {
+    }
+
+    public abstract interface SendChannel<in T#0 /* E */> : kotlin/Any {
+
+      public abstract val onSend: SelectClause2<T#0, SendChannel<T#0>>
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> flow(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): Flow<T#0>
+
+      public final fun <T#0 /* E */> produce(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<SendChannel<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final inline fun <T#0 /* R */> select(crossinline builder: @kotlin/ExtensionFunctionType kotlin/Function1<SelectBuilder<T#0>, kotlin/Unit>): T#0
+    }
+  }
+}

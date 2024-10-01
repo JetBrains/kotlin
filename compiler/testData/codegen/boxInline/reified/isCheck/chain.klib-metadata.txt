@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/B
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class test/B : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final inline fun <reified T#0 /* T */> kotlin/Any?.foo(): kotlin/Boolean
+
+      public final inline fun <reified T#0 /* Y */> kotlin/Any?.foo2(): kotlin/Boolean
+
+      public final inline fun <reified T#0 /* Z */> kotlin/Any?.foo3(): kotlin/Boolean
+    }
+  }
+}

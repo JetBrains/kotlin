@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> kotlin/Any?.check(): kotlin/Boolean
+
+      public final inline fun <reified T#0 /* T */> kotlin/Any?.check2(): kotlin/Boolean
+
+      public final fun log(a: kotlin/Any?): kotlin/Unit
+
+      public final fun test(a: kotlin/Any?): kotlin/Unit
+
+      public final fun test2(a: kotlin/Any?): kotlin/Unit
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

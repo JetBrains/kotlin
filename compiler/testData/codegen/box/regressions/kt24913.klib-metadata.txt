@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+
+    public final class Outer<T#0 /* T */> : kotlin/Any {
+
+      public constructor(v: T#0)
+
+      public final val prop: kotlin/Any?
+        public final get
+
+      public final val v: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

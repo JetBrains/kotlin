@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(x: kotlin/Long, left: kotlin/Long, right: kotlin/Long): kotlin/Boolean
+
+      public final fun checkUnoptimized(x: kotlin/Long, range: kotlin/ranges/ClosedRange<kotlin/Long>): kotlin/Boolean
+    }
+  }
+}

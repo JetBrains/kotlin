@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Data
+    // class name: Derived
+
+    public open class Base<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public open fun foo(x: T#0): kotlin/Int
+    }
+
+    public final class Data : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    public open class Derived : Base<kotlin/Int> {
+
+      public constructor()
+
+      public open fun foo(x: kotlin/Int): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

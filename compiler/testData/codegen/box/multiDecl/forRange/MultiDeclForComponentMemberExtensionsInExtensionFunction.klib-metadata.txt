@@ -1,0 +1,70 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: It
+    // class name: M
+    // class name: Range
+
+    public final class C : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public final operator fun rangeTo(c: C): Range
+
+      public final val i: kotlin/Int
+        public final get
+    }
+
+    public final class It : kotlin/Any {
+
+      public constructor(from: C, to: C)
+
+      public final operator fun hasNext(): kotlin/Boolean
+
+      public final operator fun next(): C
+
+      public final var c: kotlin/Int
+        public final get
+        public final set
+
+      public final val from: C
+        public final get
+
+      public final val to: C
+        public final get
+    }
+
+    public final class M : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun C.component1(): kotlin/Int
+
+      public final operator fun C.component2(): kotlin/Int
+    }
+
+    public final class Range : kotlin/Any {
+
+      public constructor(from: C, to: C)
+
+      public final operator fun iterator(): It
+
+      public final val from: C
+        public final get
+
+      public final val to: C
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun M.doTest(): kotlin/String
+    }
+  }
+}

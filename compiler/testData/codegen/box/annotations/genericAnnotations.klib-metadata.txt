@@ -1,0 +1,114 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: O
+
+    @ann/Test1(x = 42)
+    @ann/Test2(x = 38)
+    @ann/Test3(x = ann/Test1(x = 39))
+    @ann/Test4(x = [ann/Test3(x = ann/Test1(x = 40)), ann/Test3(x = ann/Test1(x = 50)), ann/Test3(x = ann/Test1(x = 60))])
+    public final class O : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: ann
+
+    // class name: ann/ARG
+    // class name: ann/C
+    // class name: ann/I
+    // class name: ann/Test1
+    // class name: ann/Test2
+    // class name: ann/Test3
+    // class name: ann/Test4
+    // class name: ann/Test5
+
+    public final class ann/ARG : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class ann/C<T#0 /* T */> : ann/I<T#0> {
+
+      public constructor()
+    }
+
+    public abstract interface ann/I<T#0 /* T */> : kotlin/Any {
+    }
+
+    public final annotation class ann/Test1<T#0 /* T */> : kotlin/Annotation {
+
+      public constructor(x: kotlin/Int)
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    public final annotation class ann/Test2<T#0 /* T1 */ : kotlin/Any, T#1 /* T2 */> : kotlin/Annotation {
+
+      public constructor(x: kotlin/Int /* = ... */)
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    public final annotation class ann/Test3<T#0 /* T1 */, T#1 /* T2 */ : ann/I<T#0>> : kotlin/Annotation {
+
+      public constructor(x: ann/Test1<ann/I<T#1>>)
+
+      public final val x: ann/Test1<ann/I<T#1>>
+        public final get
+    }
+
+    public final annotation class ann/Test4 : kotlin/Annotation {
+
+      public constructor(x: kotlin/Array<ann/Test3<kotlin/Int, ann/C<kotlin/Int>>>)
+
+      public final val x: kotlin/Array<ann/Test3<kotlin/Int, ann/C<kotlin/Int>>>
+        public final get
+    }
+
+    public final annotation class ann/Test5<T#0 /* T */> : kotlin/Annotation {
+
+      public constructor(vararg xs: ann/Test3<T#0, ann/C<T#0>> /* kotlin/Array<out ann/Test3<T#0, ann/C<T#0>>> */)
+
+      public final val xs: kotlin/Array<out ann/Test3<T#0, ann/C<T#0>>>
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: K
+
+    @ann/Test1(x = 24)
+    @ann/Test2(x = 83)
+    @ann/Test3(x = ann/Test1(x = 93))
+    @ann/Test4(x = [ann/Test3(x = ann/Test1(x = 44)), ann/Test3(x = ann/Test1(x = 55)), ann/Test3(x = ann/Test1(x = 66))])
+    public final class K : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

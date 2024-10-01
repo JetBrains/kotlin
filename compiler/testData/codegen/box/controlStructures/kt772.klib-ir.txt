@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:demo2 fileName:/kt772.kt
+    FUN name:print signature:demo2/print|print(kotlin.Any?){}[0] visibility:public modality:FINAL <> (o:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:o index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+    FUN name:test signature:demo2/test|test(kotlin.Int){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:monthString type:<unbound IrClassSymbolImpl>? [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="<empty>"
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in demo2.test' type=<unbound IrClassSymbolImpl> origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in demo2.test' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun print (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+                  o: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CALL 'public final fun print (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+                  o: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                CALL 'public final fun print (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+                  o: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                CALL 'public final fun print (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+                  o: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                CALL 'public final fun print (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+                  o: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var monthString: <unbound IrClassSymbolImpl>? [var] declared in demo2.test' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CONST String type=<unbound IrClassSymbolImpl> value="Invalid month"
+        CALL 'public final fun print (o: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+          o: GET_VAR 'var monthString: <unbound IrClassSymbolImpl>? [var] declared in demo2.test' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:demo2/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in demo2.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in demo2.box' type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun test (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in demo2' type=<unbound IrClassSymbolImpl> origin=null
+                i: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in demo2.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in demo2'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

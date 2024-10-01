@@ -1,0 +1,86 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/eqNullableDoublesToIntWithTP.kt
+    FUN name:eq_double_any signature:/eq_double_any|eq_double_any(0:0;0:1){0§<kotlin.Double>;1§<kotlin.Any>}[0] visibility:public modality:FINAL <A, B> (a:A of <root>.eq_double_any, b:B of <root>.eq_double_any) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /eq_double_any|eq_double_any(0:0;0:1){0§<kotlin.Double>;1§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Double] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ /eq_double_any|eq_double_any(0:0;0:1){0§<kotlin.Double>;1§<kotlin.Any>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:A of <root>.eq_double_any
+      VALUE_PARAMETER name:b index:1 type:B of <root>.eq_double_any
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eq_double_any <A, B> (a: A of <root>.eq_double_any, b: B of <root>.eq_double_any): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: A of <root>.eq_double_any declared in <root>.eq_double_any' type=A of <root>.eq_double_any origin=null
+            arg1: GET_VAR 'b: B of <root>.eq_double_any declared in <root>.eq_double_any' type=B of <root>.eq_double_any origin=null
+    FUN name:eq_double_anyN signature:/eq_double_anyN|eq_double_anyN(0:0;0:1){0§<kotlin.Double>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <A, B> (a:A of <root>.eq_double_anyN, b:B of <root>.eq_double_anyN) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /eq_double_anyN|eq_double_anyN(0:0;0:1){0§<kotlin.Double>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Double] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ /eq_double_anyN|eq_double_anyN(0:0;0:1){0§<kotlin.Double>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:A of <root>.eq_double_anyN
+      VALUE_PARAMETER name:b index:1 type:B of <root>.eq_double_anyN
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eq_double_anyN <A, B> (a: A of <root>.eq_double_anyN, b: B of <root>.eq_double_anyN): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: A of <root>.eq_double_anyN declared in <root>.eq_double_anyN' type=A of <root>.eq_double_anyN origin=null
+            arg1: GET_VAR 'b: B of <root>.eq_double_anyN declared in <root>.eq_double_anyN' type=B of <root>.eq_double_anyN origin=null
+    FUN name:eq_doubleN_any signature:/eq_doubleN_any|eq_doubleN_any(0:0;0:1){0§<kotlin.Double?>;1§<kotlin.Any>}[0] visibility:public modality:FINAL <A, B> (a:A of <root>.eq_doubleN_any, b:B of <root>.eq_doubleN_any) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /eq_doubleN_any|eq_doubleN_any(0:0;0:1){0§<kotlin.Double?>;1§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Double] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ /eq_doubleN_any|eq_doubleN_any(0:0;0:1){0§<kotlin.Double?>;1§<kotlin.Any>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:a index:0 type:A of <root>.eq_doubleN_any
+      VALUE_PARAMETER name:b index:1 type:B of <root>.eq_doubleN_any
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eq_doubleN_any <A, B> (a: A of <root>.eq_doubleN_any, b: B of <root>.eq_doubleN_any): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: A of <root>.eq_doubleN_any declared in <root>.eq_doubleN_any' type=A of <root>.eq_doubleN_any origin=null
+            arg1: GET_VAR 'b: B of <root>.eq_doubleN_any declared in <root>.eq_doubleN_any' type=B of <root>.eq_doubleN_any origin=null
+    FUN name:eq_doubleN_anyN signature:/eq_doubleN_anyN|eq_doubleN_anyN(0:0;0:1){0§<kotlin.Double?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <A, B> (a:A of <root>.eq_doubleN_anyN, b:B of <root>.eq_doubleN_anyN) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /eq_doubleN_anyN|eq_doubleN_anyN(0:0;0:1){0§<kotlin.Double?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Double] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: signature:[ /eq_doubleN_anyN|eq_doubleN_anyN(0:0;0:1){0§<kotlin.Double?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:A of <root>.eq_doubleN_anyN
+      VALUE_PARAMETER name:b index:1 type:B of <root>.eq_doubleN_anyN
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eq_doubleN_anyN <A, B> (a: A of <root>.eq_doubleN_anyN, b: B of <root>.eq_doubleN_anyN): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: A of <root>.eq_doubleN_anyN declared in <root>.eq_doubleN_anyN' type=A of <root>.eq_doubleN_anyN origin=null
+            arg1: GET_VAR 'b: B of <root>.eq_doubleN_anyN declared in <root>.eq_doubleN_anyN' type=B of <root>.eq_doubleN_anyN origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun eq_double_any <A, B> (a: A of <root>.eq_double_any, b: B of <root>.eq_double_any): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <A>: <unbound IrClassSymbolImpl>
+              <B>: <unbound IrClassSymbolImpl>
+              a: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="eq_double_any(0.0, 0)"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun eq_double_anyN <A, B> (a: A of <root>.eq_double_anyN, b: B of <root>.eq_double_anyN): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <A>: <unbound IrClassSymbolImpl>
+              <B>: <unbound IrClassSymbolImpl>
+              a: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="eq_double_anyN(0.0, 0)"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun eq_doubleN_any <A, B> (a: A of <root>.eq_doubleN_any, b: B of <root>.eq_doubleN_any): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <A>: <unbound IrClassSymbolImpl>
+              <B>: <unbound IrClassSymbolImpl>
+              a: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="eq_doubleN_any(0.0, 0)"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun eq_doubleN_anyN <A, B> (a: A of <root>.eq_doubleN_anyN, b: B of <root>.eq_doubleN_anyN): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <A>: <unbound IrClassSymbolImpl>
+              <B>: <unbound IrClassSymbolImpl>
+              a: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+              b: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="eq_doubleN_anyN(0.0, 0)"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

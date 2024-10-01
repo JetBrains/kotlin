@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/toString.kt
+    CLASS ENUM_CLASS name:State signature:/State|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.State>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.State
+      CONSTRUCTOR signature:/State.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.State [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.State
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:State signature:/State|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.State>]'
+      ENUM_ENTRY name:O signature:/State.O|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.State'
+      ENUM_ENTRY name:K signature:/State.K|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.State'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/State.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.State>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/State.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.State
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/State.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/State.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.State>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/State.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            GET_ENUM 'ENUM_ENTRY name:O signature:/State.O|null[0]' type=<root>.State
+            GET_ENUM 'ENUM_ENTRY name:K signature:/State.K|null[0]' type=<root>.State

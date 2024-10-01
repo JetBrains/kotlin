@@ -1,0 +1,85 @@
+// MODULE: maven
+MODULE_FRAGMENT name:<maven>
+  FILE fqName:maven fileName:/MavenProject.kt
+    CLASS INTERFACE name:MavenProject signature:maven/MavenProject|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:maven.MavenProject
+
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS CLASS name:AbstractMavenImportHandler signature:/AbstractMavenImportHandler|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractMavenImportHandler
+      CONSTRUCTOR signature:/AbstractMavenImportHandler.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AbstractMavenImportHandler [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMavenImportHandler signature:/AbstractMavenImportHandler|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getOptions signature:/AbstractMavenImportHandler.getOptions|getOptions(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.AbstractMavenImportHandler, enabledCompilerPlugins:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+        $this: VALUE_PARAMETER name:<this> type:<root>.AbstractMavenImportHandler
+        VALUE_PARAMETER name:enabledCompilerPlugins index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:compilerPluginOptions index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      FUN name:getOptions signature:/AbstractMavenImportHandler.getOptions|getOptions(maven.MavenProject;kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}[0] visibility:protected modality:OPEN <> ($this:<root>.AbstractMavenImportHandler, mavenProject:<unbound IrClassSymbolImpl>, enabledCompilerPlugins:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+        $this: VALUE_PARAMETER name:<this> type:<root>.AbstractMavenImportHandler
+        VALUE_PARAMETER name:mavenProject index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:enabledCompilerPlugins index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:compilerPluginOptions index:2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected open fun getOptions (mavenProject: <unbound IrClassSymbolImpl>, enabledCompilerPlugins: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.AbstractMavenImportHandler'
+            CALL 'public abstract fun getOptions (enabledCompilerPlugins: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.AbstractMavenImportHandler' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+              $this: GET_VAR '<this>: <root>.AbstractMavenImportHandler declared in <root>.AbstractMavenImportHandler.getOptions' type=<root>.AbstractMavenImportHandler origin=null
+              enabledCompilerPlugins: GET_VAR 'enabledCompilerPlugins: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.AbstractMavenImportHandler.getOptions' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              compilerPluginOptions: GET_VAR 'compilerPluginOptions: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.AbstractMavenImportHandler.getOptions' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<root>.SamWithReceiverMavenProjectImportHandler [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SamWithReceiverMavenProjectImportHandler' type=<root>.SamWithReceiverMavenProjectImportHandler origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val]
+                  CALL 'public open fun getOptions (enabledCompilerPlugins: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.SamWithReceiverMavenProjectImportHandler' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                    $this: GET_VAR 'val result: <root>.SamWithReceiverMavenProjectImportHandler [val] declared in <root>.box' type=<root>.SamWithReceiverMavenProjectImportHandler origin=null
+                    enabledCompilerPlugins: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                    compilerPluginOptions: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+  FILE fqName:<root> fileName:/sam.kt
+    CLASS CLASS name:SamWithReceiverMavenProjectImportHandler signature:/SamWithReceiverMavenProjectImportHandler|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+      CONSTRUCTOR signature:/SamWithReceiverMavenProjectImportHandler.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SamWithReceiverMavenProjectImportHandler [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SamWithReceiverMavenProjectImportHandler signature:/SamWithReceiverMavenProjectImportHandler|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getOptions signature:/SamWithReceiverMavenProjectImportHandler.getOptions|getOptions(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}[0] visibility:public modality:OPEN <> ($this:<root>.SamWithReceiverMavenProjectImportHandler, enabledCompilerPlugins:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+        VALUE_PARAMETER name:enabledCompilerPlugins index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:compilerPluginOptions index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getOptions (enabledCompilerPlugins: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, compilerPluginOptions: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.SamWithReceiverMavenProjectImportHandler'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null

@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Host
+    // class name: Host.StringDelegate
+
+    public final object Host : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun kotlin/String.provideDelegate(host: kotlin/Any?, p: kotlin/Any): Host.StringDelegate
+
+      public final val ok: kotlin/String
+        public final get
+
+      public final /* delegated */ val kotlin/String.plusK: kotlin/String
+        public final /* non-default */ get
+
+      // nested class: StringDelegate
+    }
+
+    public final class Host.StringDelegate : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final operator fun getValue(receiver: kotlin/String, p: kotlin/Any): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

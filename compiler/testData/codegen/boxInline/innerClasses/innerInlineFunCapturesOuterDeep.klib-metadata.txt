@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: O
+    // class name: O.I1
+    // class name: O.I1.I2
+    // class name: O.I1.I2.I3
+
+    public final class O : kotlin/Any {
+
+      public constructor(a: kotlin/String)
+
+      public final val a: kotlin/String
+        public final get
+
+      // nested class: I1
+    }
+
+    public final inner class O.I1 : kotlin/Any {
+
+      public constructor(b: kotlin/String)
+
+      public final val b: kotlin/String
+        public final get
+
+      // nested class: I2
+    }
+
+    public final inner class O.I1.I2 : kotlin/Any {
+
+      public constructor(c: kotlin/String)
+
+      public final val c: kotlin/String
+        public final get
+
+      // nested class: I3
+    }
+
+    public final inner class O.I1.I2.I3 : kotlin/Any {
+
+      public constructor(d: kotlin/String)
+
+      public final inline fun foo(e: kotlin/String): kotlin/String
+
+      public final val d: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

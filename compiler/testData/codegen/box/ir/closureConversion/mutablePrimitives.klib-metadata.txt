@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testBoolean(v: kotlin/Boolean): kotlin/Boolean
+
+      public final fun testByte(v: kotlin/Byte): kotlin/Byte
+
+      public final fun testChar(v: kotlin/Char): kotlin/Char
+
+      public final fun testDouble(v: kotlin/Double): kotlin/Double
+
+      public final fun testFloat(v: kotlin/Float): kotlin/Float
+
+      public final fun testInt(v: kotlin/Int): kotlin/Int
+
+      public final fun testLong(v: kotlin/Long): kotlin/Long
+
+      public final fun testShort(v: kotlin/Short): kotlin/Short
+    }
+  }
+}

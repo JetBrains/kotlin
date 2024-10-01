@@ -1,0 +1,234 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/memberScope.kt
+    CLASS INTERFACE name:TestInterface signature:/TestInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInterface<R of <root>.TestInterface>
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /TestInterface|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:emit signature:/TestInterface.emit|emit(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TestInterface<R of <root>.TestInterface>, r:R of <root>.TestInterface) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestInterface<R of <root>.TestInterface>
+        VALUE_PARAMETER name:r index:0 type:R of <root>.TestInterface
+      FUN name:get signature:/TestInterface.get|get(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TestInterface<R of <root>.TestInterface>) returnType:R of <root>.TestInterface
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestInterface<R of <root>.TestInterface>
+    FUN name:build signature:/build|build(kotlin.Function1<TestInterface<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R1> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<R1 of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:R1 index:0 variance: signature:[ /build|build(kotlin.Function1<TestInterface<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<R1 of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:test signature:/test|test@kotlin.Any(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:test2 signature:/test2|test2@kotlin.Any?(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:ret type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun build <R1> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<R1 of <root>.build>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <R1>: <unbound IrClassSymbolImpl>?
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<<unbound IrClassSymbolImpl>?>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.TestInterface<<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.TestInterface<<unbound IrClassSymbolImpl>?>
+                BLOCK_BODY
+                  CALL 'public abstract fun emit (r: R of <root>.TestInterface): <unbound IrClassSymbolImpl> declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                    r: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  CALL 'public abstract fun emit (r: R of <root>.TestInterface): <unbound IrClassSymbolImpl> declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                    r: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                        CALL 'public abstract fun get (): R of <root>.TestInterface declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl>? origin=null
+                          $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                      WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                      VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                        CALL 'public abstract fun get (): R of <root>.TestInterface declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl>? origin=null
+                          $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                      WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  VAR name:x type:<unbound IrClassSymbolImpl>? [val]
+                    CALL 'public abstract fun get (): R of <root>.TestInterface declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl>? origin=null
+                      $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                      VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                        GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                      WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp2_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'val tmp2_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                      VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                        GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                      WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp3_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'val tmp3_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: CALL 'public abstract fun get (): R of <root>.TestInterface declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl>? origin=null
+                          $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                        arg0: CALL 'public abstract fun get (): R of <root>.TestInterface declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl>? origin=null
+                          $this: GET_VAR '$this$build: <root>.TestInterface<<unbound IrClassSymbolImpl>?> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>?> origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                              VAR IR_TEMPORARY_VARIABLE name:tmp4_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                                GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                                BRANCH
+                                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                    arg0: GET_VAR 'val tmp4_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                BRANCH
+                                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR 'val tmp4_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                              VAR IR_TEMPORARY_VARIABLE name:tmp5_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                                GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                                BRANCH
+                                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                    arg0: GET_VAR 'val tmp5_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                BRANCH
+                                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR 'val tmp5_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=<unbound IrClassSymbolImpl>? origin=null
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                              VAR IR_TEMPORARY_VARIABLE name:tmp6_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                                GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                                BRANCH
+                                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                    arg0: GET_VAR 'val tmp6_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                BRANCH
+                                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR 'val tmp6_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                            VAR IR_TEMPORARY_VARIABLE name:tmp7_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                              GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                              BRANCH
+                                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                  arg0: GET_VAR 'val tmp7_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                              BRANCH
+                                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR 'val tmp7_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                        arg0: GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=<unbound IrClassSymbolImpl>? origin=null
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                              VAR IR_TEMPORARY_VARIABLE name:tmp8_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                                GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                                BRANCH
+                                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                    arg0: GET_VAR 'val tmp8_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                BRANCH
+                                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR 'val tmp8_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                            VAR IR_TEMPORARY_VARIABLE name:tmp9_safe_receiver type:<unbound IrClassSymbolImpl>? [val]
+                              GET_VAR 'val x: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                              BRANCH
+                                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                  arg0: GET_VAR 'val tmp9_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                              BRANCH
+                                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR 'val tmp9_safe_receiver: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

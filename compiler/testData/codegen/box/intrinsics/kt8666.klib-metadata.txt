@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun customToString(l: kotlin/Long, concat: kotlin/Function1<kotlin/Long, kotlin/String>): kotlin/String
+
+      public final fun customToString(prefix: kotlin/String, l: kotlin/Long, concat: kotlin/Function2<kotlin/String, kotlin/Long, kotlin/String>): kotlin/String
+
+      public final val MAX_LONG: kotlin/String /* = ... */
+        public final get
+
+      public final val PREFIX: kotlin/String /* = ... */
+        public final get
+
+      public final val emptyStringNPlus: kotlin/reflect/KFunction1<kotlin/Any?, kotlin/String>
+        public final get
+
+      public final val emptyStringPlus: kotlin/reflect/KFunction1<kotlin/Any?, kotlin/String>
+        public final get
+
+      public final val prefixNPlus: kotlin/reflect/KFunction1<kotlin/Any?, kotlin/String>
+        public final get
+
+      public final val prefixPlus: kotlin/reflect/KFunction1<kotlin/Any?, kotlin/String>
+        public final get
+
+      public final val stringNPlus: @kotlin/ExtensionFunctionType kotlin/reflect/KFunction2<kotlin/String?, kotlin/Any?, kotlin/String>
+        public final get
+
+      public final val stringPlus: kotlin/reflect/KFunction2<kotlin/String, kotlin/Any?, kotlin/String>
+        public final get
+    }
+  }
+}

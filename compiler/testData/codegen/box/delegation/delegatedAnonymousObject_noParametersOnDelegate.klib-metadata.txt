@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Callback
+    // class name: Disposable
+    // class name: MaybeCallbacks
+    // class name: MaybeObserver
+    // class name: Observer
+    // class name: SuccessCallback
+
+    public abstract interface Callback : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Unit
+    }
+
+    public abstract interface Disposable : kotlin/Any {
+    }
+
+    public abstract interface MaybeCallbacks<in T#0 /* T2 */> : SuccessCallback<T#0>, Callback {
+    }
+
+    public abstract interface MaybeObserver<in T#0 /* T3 */> : Observer, MaybeCallbacks<T#0> {
+    }
+
+    public abstract interface Observer : kotlin/Any {
+
+      public abstract fun onSubscribe(disposable: Disposable): kotlin/Unit
+    }
+
+    public abstract interface SuccessCallback<in T#0 /* T1 */> : kotlin/Any {
+
+      public abstract fun onSuccess(value: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T7 */, T#1 /* R7 */> test(emitter: MaybeCallbacks<T#1>): kotlin/Unit
+    }
+  }
+}

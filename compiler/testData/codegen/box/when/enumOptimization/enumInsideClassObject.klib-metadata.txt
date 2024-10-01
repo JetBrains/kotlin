@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+    // class name: A.Companion.Season
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      // nested class: Season
+    }
+
+    public final enum class A.Companion.Season : kotlin/Enum<A.Companion.Season> {
+
+      private constructor()
+
+      WINTER,
+
+      SPRING,
+
+      SUMMER,
+
+      AUTUMN,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: A.Companion.Season): kotlin/String
+    }
+  }
+}

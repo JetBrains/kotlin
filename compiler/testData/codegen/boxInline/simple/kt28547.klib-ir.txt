@@ -1,0 +1,250 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C<T of test.C>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/C|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/C.<init>|<init>(1:0){}[0] visibility:public <> (value:T of test.C) returnType:test.C<T of test.C> [primary]
+        VALUE_PARAMETER name:value index:0 type:T of test.C
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:test/C.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/C.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:T of test.C visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: T of test.C declared in test.C.<init>' type=T of test.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:test/C.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>) returnType:T of test.C
+          correspondingProperty: PROPERTY name:value signature:test/C.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): T of test.C declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/C.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:T of test.C visibility:private [final]' type=T of test.C origin=null
+                receiver: GET_VAR '<this>: test.C<T of test.C> declared in test.C.<get-value>' type=test.C<T of test.C> origin=null
+      PROPERTY name:inserting signature:test/C.inserting|{}inserting[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:inserting signature:[ test/C.inserting|{}inserting[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-inserting> signature:test/C.inserting.<get-inserting>|<get-inserting>(){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:inserting signature:test/C.inserting|{}inserting[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-inserting> (): <unbound IrClassSymbolImpl> declared in test.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:inserting signature:[ test/C.inserting|{}inserting[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.C<T of test.C> declared in test.C.<get-inserting>' type=test.C<T of test.C> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-inserting> signature:test/C.inserting.<set-inserting>|<set-inserting>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:inserting signature:test/C.inserting|{}inserting[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:inserting signature:[ test/C.inserting|{}inserting[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: test.C<T of test.C> declared in test.C.<set-inserting>' type=test.C<T of test.C> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in test.C.<set-inserting>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:nextSlot signature:test/C.nextSlot|nextSlot(){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>) returnType:<unbound IrClassSymbolImpl>?
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun nextSlot (): <unbound IrClassSymbolImpl>? declared in test.C'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN name:startNode signature:test/C.startNode|startNode(kotlin.Any?){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>, key:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+      FUN name:endNode signature:test/C.endNode|endNode(){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        BLOCK_BODY
+      FUN name:emitNode signature:test/C.emitNode|emitNode(kotlin.Any?){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>, node:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        VALUE_PARAMETER name:node index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+      FUN name:useNode signature:test/C.useNode|useNode(){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>) returnType:T of test.C
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun useNode (): T of test.C declared in test.C'
+            CALL 'public final fun <get-value> (): T of test.C declared in test.C' type=T of test.C origin=GET_PROPERTY
+              $this: GET_VAR '<this>: test.C<T of test.C> declared in test.C.useNode' type=test.C<T of test.C> origin=null
+      FUN name:skipValue signature:test/C.skipValue|skipValue(){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        BLOCK_BODY
+      FUN name:updateValue signature:test/C.updateValue|updateValue(kotlin.Any?){}[0] visibility:public modality:FINAL <> ($this:test.C<T of test.C>, value:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.C<T of test.C>
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+    CLASS CLASS name:B signature:test/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.B<T of test.B>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/B|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/B.<init>|<init>(test.C<1:0>;1:0){}[0] visibility:public <> (composer:test.C<T of test.B>, node:T of test.B) returnType:test.B<T of test.B> [primary]
+        VALUE_PARAMETER name:composer index:0 type:test.C<T of test.B>
+        VALUE_PARAMETER name:node index:1 type:T of test.B
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:test/B|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:composer signature:test/B.composer|{}composer[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:composer signature:[ test/B.composer|{}composer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:test.C<T of test.B> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'composer: test.C<T of test.B> declared in test.B.<init>' type=test.C<T of test.B> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-composer> signature:test/B.composer.<get-composer>|<get-composer>(){}[0] visibility:public modality:FINAL <> ($this:test.B<T of test.B>) returnType:test.C<T of test.B>
+          correspondingProperty: PROPERTY name:composer signature:test/B.composer|{}composer[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.B<T of test.B>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-composer> (): test.C<T of test.B> declared in test.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:composer signature:[ test/B.composer|{}composer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:test.C<T of test.B> visibility:private [final]' type=test.C<T of test.B> origin=null
+                receiver: GET_VAR '<this>: test.B<T of test.B> declared in test.B.<get-composer>' type=test.B<T of test.B> origin=null
+      PROPERTY name:node signature:test/B.node|{}node[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:node signature:[ test/B.node|{}node[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:T of test.B visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'node: T of test.B declared in test.B.<init>' type=T of test.B origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-node> signature:test/B.node.<get-node>|<get-node>(){}[0] visibility:public modality:FINAL <> ($this:test.B<T of test.B>) returnType:T of test.B
+          correspondingProperty: PROPERTY name:node signature:test/B.node|{}node[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.B<T of test.B>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-node> (): T of test.B declared in test.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:node signature:[ test/B.node|{}node[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:T of test.B visibility:private [final]' type=T of test.B origin=null
+                receiver: GET_VAR '<this>: test.B<T of test.B> declared in test.B.<get-node>' type=test.B<T of test.B> origin=null
+      FUN name:bar signature:test/B.bar|bar(0:0;kotlin.Function2<1:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <V> ($this:test.B<T of test.B>, value:V of test.B.bar, block:@[<unbound>] <unbound IrClassSymbolImpl><T of test.B, V of test.B.bar, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        TYPE_PARAMETER name:V index:0 variance: signature:[ test/B.bar|bar(0:0;kotlin.Function2<1:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:test.B<T of test.B>
+        VALUE_PARAMETER name:value index:0 type:V of test.B.bar
+        VALUE_PARAMETER name:block index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><T of test.B, V of test.B.bar, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar <V> (value: V of test.B.bar, block: @[<unbound>] <unbound IrClassSymbolImpl><T of test.B, V of test.B.bar, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test.B'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: test.C<T of test.B>
+              <2>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-composer> (): test.C<T of test.B> declared in test.B' type=test.C<T of test.B> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: test.B<T of test.B> declared in test.B.bar' type=test.B<T of test.B> origin=null
+              2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><test.C<T of test.B>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:test.C<T of test.B>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$with type:test.C<T of test.B>
+                  BLOCK_BODY
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                          BRANCH
+                            if: CALL 'public final fun <get-inserting> (): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                              $this: GET_VAR '$this$with: test.C<T of test.B> declared in test.B.bar.<anonymous>' type=test.C<T of test.B> origin=null
+                            then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                                arg0: CALL 'public final fun nextSlot (): <unbound IrClassSymbolImpl>? declared in test.C' type=<unbound IrClassSymbolImpl>? origin=null
+                                  $this: GET_VAR '$this$with: test.C<T of test.B> declared in test.B.bar.<anonymous>' type=test.C<T of test.B> origin=null
+                                arg1: GET_VAR 'value: V of test.B.bar declared in test.B.bar' type=V of test.B.bar origin=null
+                        then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CALL 'public final fun updateValue (value: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR '$this$with: test.C<T of test.B> declared in test.B.bar.<anonymous>' type=test.C<T of test.B> origin=null
+                            value: GET_VAR 'value: V of test.B.bar declared in test.B.bar' type=V of test.B.bar origin=null
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                            $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><T of test.B, V of test.B.bar, <unbound IrClassSymbolImpl>> declared in test.B.bar' type=@[<unbound>] <unbound IrClassSymbolImpl><T of test.B, V of test.B.bar, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                            1: CALL 'public final fun <get-node> (): T of test.B declared in test.B' type=T of test.B origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: test.B<T of test.B> declared in test.B.bar' type=test.B<T of test.B> origin=null
+                            2: GET_VAR 'value: V of test.B.bar declared in test.B.bar' type=V of test.B.bar origin=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'public final fun skipValue (): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR '$this$with: test.C<T of test.B> declared in test.B.bar.<anonymous>' type=test.C<T of test.B> origin=null
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A<T of test.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/A.<init>|<init>(test.C<1:0>){}[0] visibility:public <> (composer:test.C<T of test.A>) returnType:test.A<T of test.A> [primary]
+        VALUE_PARAMETER name:composer index:0 type:test.C<T of test.A>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:composer signature:test/A.composer|{}composer[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:composer signature:[ test/A.composer|{}composer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:test.C<T of test.A> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'composer: test.C<T of test.A> declared in test.A.<init>' type=test.C<T of test.A> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-composer> signature:test/A.composer.<get-composer>|<get-composer>(){}[0] visibility:public modality:FINAL <> ($this:test.A<T of test.A>) returnType:test.C<T of test.A>
+          correspondingProperty: PROPERTY name:composer signature:test/A.composer|{}composer[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A<T of test.A>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-composer> (): test.C<T of test.A> declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:composer signature:[ test/A.composer|{}composer[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.C visibility:private [final]] ] type:test.C<T of test.A> visibility:private [final]' type=test.C<T of test.A> origin=null
+                receiver: GET_VAR '<this>: test.A<T of test.A> declared in test.A.<get-composer>' type=test.A<T of test.A> origin=null
+      FUN name:foo signature:test/A.foo|foo(kotlin.Any;kotlin.Function0<1:0>;kotlin.Function1<test.B<1:0>,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:test.A<T of test.A>, key:<unbound IrClassSymbolImpl>, ctor:<unbound IrClassSymbolImpl><T of test.A>, update:@[<unbound>] <unbound IrClassSymbolImpl><test.B<T of test.A>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.A<T of test.A>
+        VALUE_PARAMETER name:key index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:ctor index:1 type:<unbound IrClassSymbolImpl><T of test.A>
+        VALUE_PARAMETER name:update index:2 type:@[<unbound>] <unbound IrClassSymbolImpl><test.B<T of test.A>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (key: <unbound IrClassSymbolImpl>, ctor: <unbound IrClassSymbolImpl><T of test.A>, update: @[<unbound>] <unbound IrClassSymbolImpl><test.B<T of test.A>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test.A'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: test.C<T of test.A>
+              <2>: <unbound IrClassSymbolImpl>
+              1: CALL 'public final fun <get-composer> (): test.C<T of test.A> declared in test.A' type=test.C<T of test.A> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: test.A<T of test.A> declared in test.A.foo' type=test.A<T of test.A> origin=null
+              2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><test.C<T of test.A>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:test.C<T of test.A>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$with type:test.C<T of test.A>
+                  BLOCK_BODY
+                    CALL 'public final fun startNode (key: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$with: test.C<T of test.A> declared in test.A.foo.<anonymous>' type=test.C<T of test.A> origin=null
+                      key: GET_VAR 'key: <unbound IrClassSymbolImpl> declared in test.A.foo' type=<unbound IrClassSymbolImpl> origin=null
+                    VAR name:node type:T of test.A [val]
+                      WHEN type=T of test.A origin=IF
+                        BRANCH
+                          if: CALL 'public final fun <get-inserting> (): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '$this$with: test.C<T of test.A> declared in test.A.foo.<anonymous>' type=test.C<T of test.A> origin=null
+                          then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.A origin=null
+                            <1>: T of test.A
+                            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.A origin=INVOKE
+                              $this: GET_VAR 'ctor: <unbound IrClassSymbolImpl><T of test.A> declared in test.A.foo' type=<unbound IrClassSymbolImpl><T of test.A> origin=VARIABLE_AS_FUNCTION
+                            1: FUN_EXPR type=<unbound IrClassSymbolImpl><T of test.A, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:T of test.A) returnType:<unbound IrClassSymbolImpl>
+                                VALUE_PARAMETER name:it index:0 type:T of test.A
+                                BLOCK_BODY
+                                  CALL 'public final fun emitNode (node: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR '$this$with: test.C<T of test.A> declared in test.A.foo.<anonymous>' type=test.C<T of test.A> origin=null
+                                    node: GET_VAR 'it: T of test.A declared in test.A.foo.<anonymous>.<anonymous>' type=T of test.A origin=null
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: TYPE_OP type=T of test.A origin=CAST typeOperand=T of test.A
+                            CALL 'public final fun useNode (): T of test.C declared in test.C' type=T of test.A origin=null
+                              $this: GET_VAR '$this$with: test.C<T of test.A> declared in test.A.foo.<anonymous>' type=test.C<T of test.A> origin=null
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'update: @[<unbound>] <unbound IrClassSymbolImpl><test.B<T of test.A>, <unbound IrClassSymbolImpl>> declared in test.A.foo' type=@[<unbound>] <unbound IrClassSymbolImpl><test.B<T of test.A>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                      1: CONSTRUCTOR_CALL 'public constructor <init> (composer: test.C<T of test.B>, node: T of test.B) [primary] declared in test.B' type=test.B<T of test.A> origin=null
+                        <class: T>: T of test.A
+                        composer: GET_VAR '$this$with: test.C<T of test.A> declared in test.A.foo.<anonymous>' type=test.C<T of test.A> origin=null
+                        node: GET_VAR 'val node: T of test.A [val] declared in test.A.foo.<anonymous>' type=T of test.A origin=null
+                    CALL 'public final fun endNode (): <unbound IrClassSymbolImpl> declared in test.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$with: test.C<T of test.A> declared in test.A.foo.<anonymous>' type=test.C<T of test.A> origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:test.A<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (composer: test.C<T of test.A>) [primary] declared in test.A' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            composer: CONSTRUCTOR_CALL 'public constructor <init> (value: T of test.C) [primary] declared in test.C' type=test.C<<unbound IrClassSymbolImpl>> origin=null
+              <class: T>: <unbound IrClassSymbolImpl>
+              value: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+        VAR name:str type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        CALL 'public final fun foo (key: <unbound IrClassSymbolImpl>, ctor: <unbound IrClassSymbolImpl><T of test.A>, update: @[<unbound>] <unbound IrClassSymbolImpl><test.B<T of test.A>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val a: test.A<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=test.A<<unbound IrClassSymbolImpl>> origin=null
+          key: CONST Int type=<unbound IrClassSymbolImpl> value=123
+          ctor: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  CONST String type=<unbound IrClassSymbolImpl> value="abc"
+          update: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><test.B<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:test.B<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$foo type:test.B<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'public final fun bar <V> (value: V of test.B.bar, block: @[<unbound>] <unbound IrClassSymbolImpl><T of test.B, V of test.B.bar, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test.B' type=<unbound IrClassSymbolImpl> origin=null
+                  <V>: <unbound IrClassSymbolImpl>
+                  $this: GET_VAR '$this$foo: test.B<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=test.B<<unbound IrClassSymbolImpl>> origin=null
+                  value: GET_VAR 'val str: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      $receiver: VALUE_PARAMETER name:$this$bar type:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>'
+                          GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

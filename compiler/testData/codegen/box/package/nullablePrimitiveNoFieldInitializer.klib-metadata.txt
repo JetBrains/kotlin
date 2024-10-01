@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val zbyte: kotlin/Byte?
+        public final get
+
+      public final val zchar: kotlin/Char?
+        public final get
+
+      public final val zdouble: kotlin/Double?
+        public final get
+
+      public final val zfloat: kotlin/Float?
+        public final get
+
+      public final val zint: kotlin/Int?
+        public final get
+
+      public final val zlong: kotlin/Long?
+        public final get
+
+      public final val zshort: kotlin/Short?
+        public final get
+    }
+  }
+}

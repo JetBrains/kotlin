@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Point
+
+    public final class Point : kotlin/Any {
+
+      public constructor(x: kotlin/Int, y: kotlin/Int)
+
+      public final val x: kotlin/Int
+        public final get
+
+      public final val y: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun apply(arg: Point, f: @kotlin/ExtensionFunctionType kotlin/Function2<Point, @kotlin/ParameterName(name = "scalar") kotlin/Int, Point>): Point
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

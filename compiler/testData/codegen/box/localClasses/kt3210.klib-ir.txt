@@ -1,0 +1,72 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:org.example fileName:/kt3210.kt
+    CLASS INTERFACE name:SomeTrait signature:org.example/SomeTrait|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.example.SomeTrait
+    CLASS INTERFACE name:KotlinProcessor signature:org.example/KotlinProcessor|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.example.KotlinProcessor<T of org.example.KotlinProcessor>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ org.example/KotlinProcessor|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:execute signature:org.example/KotlinProcessor.execute|execute(org.example.KotlinCallback<1:0>?){}[0] visibility:public modality:ABSTRACT <> ($this:org.example.KotlinProcessor<T of org.example.KotlinProcessor>, callback:org.example.KotlinCallback<T of org.example.KotlinProcessor>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:org.example.KotlinProcessor<T of org.example.KotlinProcessor>
+        VALUE_PARAMETER name:callback index:0 type:org.example.KotlinCallback<T of org.example.KotlinProcessor>?
+    CLASS INTERFACE name:KotlinCallback signature:org.example/KotlinCallback|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.example.KotlinCallback<T of org.example.KotlinCallback>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ org.example/KotlinCallback|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:on signature:org.example/KotlinCallback.on|on(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:org.example.KotlinCallback<T of org.example.KotlinCallback>, t:T of org.example.KotlinCallback) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:org.example.KotlinCallback<T of org.example.KotlinCallback>
+        VALUE_PARAMETER name:t index:0 type:T of org.example.KotlinCallback
+    CLASS CLASS name:Test signature:org.example/Test|null[0] modality:FINAL visibility:public superTypes:[org.example.KotlinProcessor<org.example.SomeTrait>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.example.Test
+      CONSTRUCTOR signature:org.example/Test.<init>|<init>(kotlin.String){}[0] visibility:public <> (name:<unbound IrClassSymbolImpl>) returnType:org.example.Test [primary]
+        VALUE_PARAMETER name:name index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:org.example/Test|null[0] modality:FINAL visibility:public superTypes:[org.example.KotlinProcessor<org.example.SomeTrait>]'
+      FUN name:execute signature:org.example/Test.execute|execute(org.example.KotlinCallback<org.example.SomeTrait>?){}[0] visibility:public modality:OPEN <> ($this:org.example.Test, callback:org.example.KotlinCallback<org.example.SomeTrait>?) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun execute (callback: org.example.KotlinCallback<T of org.example.KotlinProcessor>?): <unbound IrClassSymbolImpl> declared in org.example.KotlinProcessor
+        $this: VALUE_PARAMETER name:<this> type:org.example.Test
+        VALUE_PARAMETER name:callback index:0 type:org.example.KotlinCallback<org.example.SomeTrait>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_VAR 'callback: org.example.KotlinCallback<org.example.SomeTrait>? declared in org.example.Test.execute' type=org.example.KotlinCallback<org.example.SomeTrait>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CLASS CLASS name:InlineTrait modality:FINAL visibility:local superTypes:[org.example.SomeTrait]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.example.Test.execute.InlineTrait
+                  CONSTRUCTOR visibility:public <> () returnType:org.example.Test.execute.InlineTrait [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InlineTrait modality:FINAL visibility:local superTypes:[org.example.SomeTrait]'
+                VAR name:inlineTrait type:org.example.Test.execute.InlineTrait [var]
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.example.Test.execute.InlineTrait' type=org.example.Test.execute.InlineTrait origin=null
+                CALL 'public abstract fun on (t: T of org.example.KotlinCallback): <unbound IrClassSymbolImpl> declared in org.example.KotlinCallback' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'callback: org.example.KotlinCallback<org.example.SomeTrait>? declared in org.example.Test.execute' type=org.example.KotlinCallback<org.example.SomeTrait>? origin=null
+                  t: GET_VAR 'var inlineTrait: org.example.Test.execute.InlineTrait [var] declared in org.example.Test.execute' type=org.example.Test.execute.InlineTrait origin=null
+    FUN name:box signature:org.example/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:f type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        CALL 'public open fun execute (callback: org.example.KotlinCallback<org.example.SomeTrait>?): <unbound IrClassSymbolImpl> declared in org.example.Test' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> (name: <unbound IrClassSymbolImpl>) [primary] declared in org.example.Test' type=org.example.Test origin=null
+            name: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          callback: BLOCK type=org.example.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[org.example.KotlinCallback<org.example.SomeTrait>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.example.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:org.example.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[org.example.KotlinCallback<org.example.SomeTrait>]'
+              FUN name:on visibility:public modality:OPEN <> ($this:org.example.box.<no name provided>, t:org.example.SomeTrait) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun on (t: T of org.example.KotlinCallback): <unbound IrClassSymbolImpl> declared in org.example.KotlinCallback
+                $this: VALUE_PARAMETER name:<this> type:org.example.box.<no name provided>
+                VALUE_PARAMETER name:t index:0 type:org.example.SomeTrait
+                BLOCK_BODY
+                  SET_VAR 'var f: <unbound IrClassSymbolImpl> [var] declared in org.example.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.example.box.<no name provided>' type=org.example.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in org.example'
+          GET_VAR 'var f: <unbound IrClassSymbolImpl> [var] declared in org.example.box' type=<unbound IrClassSymbolImpl> origin=null

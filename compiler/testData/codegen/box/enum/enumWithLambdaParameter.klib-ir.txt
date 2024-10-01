@@ -1,0 +1,119 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/enumWithLambdaParameter.kt
+    CLASS ENUM_CLASS name:Sign signature:/Sign|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Sign>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sign
+      CONSTRUCTOR signature:/Sign.<init>|<init>(kotlin.String;kotlin.Function2<kotlin.Int,kotlin.Int,kotlin.Int>){}[0] visibility:private <> (str:<unbound IrClassSymbolImpl>, func:<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<root>.Sign [primary]
+        VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:func index:1 type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Sign
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Sign signature:/Sign|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Sign>]'
+      PROPERTY name:str signature:/Sign.str|{}str[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:str signature:[ /Sign.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'str: <unbound IrClassSymbolImpl> declared in <root>.Sign.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> signature:/Sign.str.<get-str>|<get-str>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Sign) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:str signature:/Sign.str|{}str[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Sign
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-str> (): <unbound IrClassSymbolImpl> declared in <root>.Sign'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:str signature:[ /Sign.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Sign declared in <root>.Sign.<get-str>' type=<root>.Sign origin=null
+      PROPERTY name:func signature:/Sign.func|{}func[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:func signature:[ /Sign.func|{}func[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'func: <unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.Sign.<init>' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-func> signature:/Sign.func.<get-func>|<get-func>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Sign) returnType:<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:func signature:/Sign.func|{}func[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Sign
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-func> (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.Sign'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:func signature:[ /Sign.func|{}func[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Sign declared in <root>.Sign.<get-func>' type=<root>.Sign origin=null
+      ENUM_ENTRY name:plus signature:/Sign.plus|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (str: <unbound IrClassSymbolImpl>, func: <unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) [primary] declared in <root>.Sign'
+            str: CONST String type=<unbound IrClassSymbolImpl> value="+"
+            func: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Sign'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Sign.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.Sign.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+      ENUM_ENTRY name:mult signature:/Sign.mult|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Sign.mult'
+        class: CLASS ENUM_ENTRY name:mult signature:/Sign.mult.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Sign]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sign.mult
+          CONSTRUCTOR signature:/Sign.mult.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Sign.mult [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (str: <unbound IrClassSymbolImpl>, func: <unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) [primary] declared in <root>.Sign'
+                str: CONST String type=<unbound IrClassSymbolImpl> value="*"
+                func: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Sign.mult.<init>'
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                          $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Sign.mult.<init>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.Sign.mult.<init>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:mult signature:/Sign.mult.<EEC>|null[0] modality:FINAL visibility:private superTypes:[<root>.Sign]'
+          FUN name:toString signature:/Sign.mult.<EEC>.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Sign.mult) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.Sign.mult
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Sign.mult'
+                STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.Sign.mult declared in <root>.Sign.mult.toString' type=<root>.Sign.mult origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                    2: CONST Int type=<unbound IrClassSymbolImpl> value=5
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Sign.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Sign>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Sign.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Sign
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Sign.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Sign.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Sign>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Sign.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'public final fun <get-func> (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.Sign' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "x")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "y")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_ENUM 'ENUM_ENTRY name:plus signature:/Sign.plus|null[0]' type=<root>.Sign
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val sum: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail 1: "
+                GET_VAR 'val sum: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:product type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_ENUM 'ENUM_ENTRY name:mult signature:/Sign.mult|null[0]' type=<root>.Sign
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val product: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="20"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail 2: "
+                GET_VAR 'val product: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

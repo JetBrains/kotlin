@@ -1,0 +1,71 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericFunctionInGenericInterface.kt
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      FUN name:fold signature:/Base.fold|fold(0:0;kotlin.Function2<0:0,kotlin.String,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:OPEN <R> ($this:<root>.Base, initial:R of <root>.Base.fold, operation:<unbound IrClassSymbolImpl><R of <root>.Base.fold, <unbound IrClassSymbolImpl>, R of <root>.Base.fold>) returnType:R of <root>.Base.fold
+        TYPE_PARAMETER name:R index:0 variance: signature:[ /Base.fold|fold(0:0;kotlin.Function2<0:0,kotlin.String,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        VALUE_PARAMETER name:initial index:0 type:R of <root>.Base.fold
+        VALUE_PARAMETER name:operation index:1 type:<unbound IrClassSymbolImpl><R of <root>.Base.fold, <unbound IrClassSymbolImpl>, R of <root>.Base.fold>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun fold <R> (initial: R of <root>.Base.fold, operation: <unbound IrClassSymbolImpl><R of <root>.Base.fold, <unbound IrClassSymbolImpl>, R of <root>.Base.fold>): R of <root>.Base.fold declared in <root>.Base'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.Base.fold origin=INVOKE
+              $this: GET_VAR 'operation: <unbound IrClassSymbolImpl><R of <root>.Base.fold, <unbound IrClassSymbolImpl>, R of <root>.Base.fold> declared in <root>.Base.fold' type=<unbound IrClassSymbolImpl><R of <root>.Base.fold, <unbound IrClassSymbolImpl>, R of <root>.Base.fold> origin=VARIABLE_AS_FUNCTION
+              1: GET_VAR 'initial: R of <root>.Base.fold declared in <root>.Base.fold' type=R of <root>.Base.fold origin=null
+              2: CONST String type=<unbound IrClassSymbolImpl> value="K"
+    CLASS INTERFACE name:Derived signature:/Derived|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived<T of <root>.Derived>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Derived|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.Derived<T of <root>.Impl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl<T of <root>.Impl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Impl|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Impl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Impl<T of <root>.Impl> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.Derived<T of <root>.Impl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:impl type:<root>.Impl<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Impl' type=<root>.Impl<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+        VAR name:delegated type:<root>.box.<no name provided> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Derived<<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Derived<<unbound IrClassSymbolImpl>>]'
+              FIELD DELEGATE name:$$delegate_0 type:<root>.Impl<<unbound IrClassSymbolImpl>> visibility:private [final]
+                EXPRESSION_BODY
+                  GET_VAR 'val impl: <root>.Impl<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Impl<<unbound IrClassSymbolImpl>> origin=null
+              FUN DELEGATED_MEMBER name:fold visibility:public modality:OPEN <R> ($this:<root>.box.<no name provided>, initial:R of <root>.box.<no name provided>.fold, operation:<unbound IrClassSymbolImpl><R of <root>.box.<no name provided>.fold, <unbound IrClassSymbolImpl>, R of <root>.box.<no name provided>.fold>) returnType:R of <root>.box.<no name provided>.fold
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                TYPE_PARAMETER name:R index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                VALUE_PARAMETER name:initial index:0 type:R of <root>.box.<no name provided>.fold
+                VALUE_PARAMETER name:operation index:1 type:<unbound IrClassSymbolImpl><R of <root>.box.<no name provided>.fold, <unbound IrClassSymbolImpl>, R of <root>.box.<no name provided>.fold>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun fold <R> (initial: R of <root>.box.<no name provided>.fold, operation: <unbound IrClassSymbolImpl><R of <root>.box.<no name provided>.fold, <unbound IrClassSymbolImpl>, R of <root>.box.<no name provided>.fold>): R of <root>.box.<no name provided>.fold declared in <root>.box.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.box.<no name provided>.fold origin=null
+                      <1>: R of <root>.box.<no name provided>.fold
+                      $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Impl<<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.box.<no name provided>' type=<root>.Impl<<unbound IrClassSymbolImpl>> origin=null
+                        receiver: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.fold' type=<root>.box.<no name provided> origin=null
+                      1: GET_VAR 'initial: R of <root>.box.<no name provided>.fold declared in <root>.box.<no name provided>.fold' type=R of <root>.box.<no name provided>.fold origin=null
+                      2: GET_VAR 'operation: <unbound IrClassSymbolImpl><R of <root>.box.<no name provided>.fold, <unbound IrClassSymbolImpl>, R of <root>.box.<no name provided>.fold> declared in <root>.box.<no name provided>.fold' type=<unbound IrClassSymbolImpl><R of <root>.box.<no name provided>.fold, <unbound IrClassSymbolImpl>, R of <root>.box.<no name provided>.fold> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun fold <R> (initial: R of <root>.box.<no name provided>.fold, operation: <unbound IrClassSymbolImpl><R of <root>.box.<no name provided>.fold, <unbound IrClassSymbolImpl>, R of <root>.box.<no name provided>.fold>): R of <root>.box.<no name provided>.fold declared in <root>.box.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+            <R>: <unbound IrClassSymbolImpl>
+            $this: GET_VAR 'val delegated: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
+            initial: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            operation: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null

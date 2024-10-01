@@ -1,0 +1,16 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/swapRefToSharedVarInt.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassSymbolImpl> [var]
+        SET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CONST Int type=<unbound IrClassSymbolImpl> value=12
+        FUN LOCAL_FUNCTION name:f visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            CALL 'public final fun foo (l: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              l: GET_VAR 'var a: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:foo signature:/foo|foo(kotlin.Int){}[0] visibility:public modality:FINAL <> (l:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:l index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY

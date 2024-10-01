@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: My
+
+    public final class My : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> T#0.performWithFailFinally(job: kotlin/Function1<T#0, T#1>, failJob: kotlin/Function2<@kotlin/ParameterName(name = "e") kotlin/RuntimeException, T#0, T#1>, finally: kotlin/Function1<T#0, T#1>): T#1
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> T#0.performWithFinally(job: kotlin/Function1<T#0, T#1>, finally: kotlin/Function1<T#0, T#1>): T#1
+
+      public final fun test1(): kotlin/Int
+
+      public final fun test11(): kotlin/Int
+
+      public final fun test2(): kotlin/Int
+
+      public final fun test3(): kotlin/Int
+
+      public final inline fun kotlin/String.toInt2(): kotlin/Int
+    }
+  }
+}

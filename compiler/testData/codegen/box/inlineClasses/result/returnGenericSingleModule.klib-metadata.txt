@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Operation
+    // class name: ResultOperation
+
+    public abstract interface Operation<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun performOperation(): T#0
+    }
+
+    public final object ResultOperation : Operation<kotlin/Result<kotlin/Int>> {
+
+      private constructor()
+
+      public open fun performOperation(): kotlin/Result<kotlin/Int>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

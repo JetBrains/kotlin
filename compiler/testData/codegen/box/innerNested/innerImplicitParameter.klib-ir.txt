@@ -1,0 +1,63 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/innerImplicitParameter.kt
+    CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<T of <root>.C>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /C|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C<T of <root>.C> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:A signature:/C.A|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C.A<U of <root>.C.A, T of <root>.C>
+        TYPE_PARAMETER name:U index:0 variance: signature:[ /C.A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        CONSTRUCTOR signature:/C.A.<init>|<init>(2:0?;1:0){}[0] visibility:public <> ($this:<root>.C<T of <root>.C>, x:T of <root>.C?, y:U of <root>.C.A) returnType:<root>.C.A<U of <root>.C.A, T of <root>.C> [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.C>
+          VALUE_PARAMETER name:x index:0 type:T of <root>.C?
+          VALUE_PARAMETER name:y index:1 type:U of <root>.C.A
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/C.A|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:x signature:/C.A.x|{}x[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:x signature:[ /C.A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C? visibility:private [final]] ] type:T of <root>.C? visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'x: T of <root>.C? declared in <root>.C.A.<init>' type=T of <root>.C? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/C.A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C.A<U of <root>.C.A, T of <root>.C>) returnType:T of <root>.C?
+            correspondingProperty: PROPERTY name:x signature:/C.A.x|{}x[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.C.A<U of <root>.C.A, T of <root>.C>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.C? declared in <root>.C.A'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /C.A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C? visibility:private [final]] ] type:T of <root>.C? visibility:private [final]' type=T of <root>.C? origin=null
+                  receiver: GET_VAR '<this>: <root>.C.A<U of <root>.C.A, T of <root>.C> declared in <root>.C.A.<get-x>' type=<root>.C.A<U of <root>.C.A, T of <root>.C> origin=null
+        PROPERTY name:y signature:/C.A.y|{}y[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:y signature:[ /C.A.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C? visibility:private [final]] ] type:U of <root>.C.A visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'y: U of <root>.C.A declared in <root>.C.A.<init>' type=U of <root>.C.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> signature:/C.A.y.<get-y>|<get-y>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C.A<U of <root>.C.A, T of <root>.C>) returnType:U of <root>.C.A
+            correspondingProperty: PROPERTY name:y signature:/C.A.y|{}y[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.C.A<U of <root>.C.A, T of <root>.C>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y> (): U of <root>.C.A declared in <root>.C.A'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y signature:[ /C.A.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C? visibility:private [final]] ] type:U of <root>.C.A visibility:private [final]' type=U of <root>.C.A origin=null
+                  receiver: GET_VAR '<this>: <root>.C.A<U of <root>.C.A, T of <root>.C> declared in <root>.C.A.<get-y>' type=<root>.C.A<U of <root>.C.A, T of <root>.C> origin=null
+      CLASS CLASS name:D signature:/C.D|null[0] modality:FINAL visibility:public superTypes:[<root>.C<<unbound IrClassSymbolImpl>>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C.D
+        CONSTRUCTOR signature:/C.D.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C.D [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C'
+              <T>: <unbound IrClassSymbolImpl>
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D signature:/C.D|null[0] modality:FINAL visibility:public superTypes:[<root>.C<<unbound IrClassSymbolImpl>>]'
+        FUN name:f signature:/C.D.f|f(){}[0] visibility:public modality:FINAL <> ($this:<root>.C.D) returnType:<root>.C.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          $this: VALUE_PARAMETER name:<this> type:<root>.C.D
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (): <root>.C.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.C.D'
+              CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.C?, y: U of <root>.C.A) [primary] declared in <root>.C.A' type=<root>.C.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <class: U>: <unbound IrClassSymbolImpl>
+                $outer: GET_VAR '<this>: <root>.C.D declared in <root>.C.D.f' type=<root>.C.D origin=null
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                y: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-y> (): U of <root>.C.A declared in <root>.C.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun f (): <root>.C.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.C.D' type=<root>.C.A<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C.D' type=<root>.C.D origin=null

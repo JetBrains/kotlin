@@ -1,0 +1,150 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: pckg
+
+    // class name: pckg/E0
+    // class name: pckg/E0.Companion
+    // class name: pckg/E01
+    // class name: pckg/E01.entries
+    // class name: pckg/E02
+    // class name: pckg/E03
+    // class name: pckg/E04
+    // class name: pckg/E05
+    // class name: pckg/EBasic
+    // class name: pckg/I05
+    // class name: pckg/Shadowing
+    // class name: pckg/Shadowing.E0
+
+    public final enum class pckg/E0 : kotlin/Enum<pckg/E0> {
+
+      private constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      A1,
+
+      // has Enum.entries
+    }
+
+    public final companion object pckg/E0.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val entries: kotlin/String /* = ... */
+        public final get
+    }
+
+    public final enum class pckg/E01 : kotlin/Enum<pckg/E01> {
+
+      private constructor()
+
+      // nested class: entries
+
+      // has Enum.entries
+    }
+
+    public final object pckg/E01.entries : kotlin/Any {
+
+      private constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public final enum class pckg/E02 : kotlin/Enum<pckg/E02> {
+
+      private constructor(entries: kotlin/String)
+
+      public final fun test(): kotlin/String
+
+      public final val entries: kotlin/String
+        public final get
+
+      E,
+
+      // has Enum.entries
+    }
+
+    public final enum class pckg/E03 : kotlin/Enum<pckg/E03> {
+
+      private /* secondary */ constructor(entries: kotlin/String)
+
+      E,
+
+      // has Enum.entries
+    }
+
+    public final enum class pckg/E04 : kotlin/Enum<pckg/E04> {
+
+      private constructor()
+
+      public final fun test(): kotlin/String
+
+      public final val entries: kotlin/String /* = ... */
+        public final get
+
+      E,
+
+      // has Enum.entries
+    }
+
+    public final enum class pckg/E05 : pckg/I05, kotlin/Enum<pckg/E05> {
+
+      private constructor()
+
+      public final fun test(): kotlin/String
+
+      E,
+
+      // has Enum.entries
+    }
+
+    public final enum class pckg/EBasic : kotlin/Enum<pckg/EBasic> {
+
+      private constructor()
+
+      A0,
+
+      // has Enum.entries
+    }
+
+    public abstract interface pckg/I05 : kotlin/Any {
+
+      public open val entries: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public final object pckg/Shadowing : kotlin/Any {
+
+      private constructor()
+
+      public final val entries: kotlin/String /* = ... */
+        public final get
+
+      // nested class: E0
+    }
+
+    public final enum class pckg/Shadowing.E0 : kotlin/Enum<pckg/Shadowing.E0> {
+
+      private constructor()
+
+      public final fun test(): kotlin/enums/EnumEntries<pckg/Shadowing.E0>
+
+      E,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var e03Res: kotlin/String?
+        public final get
+        public final set
+    }
+  }
+}

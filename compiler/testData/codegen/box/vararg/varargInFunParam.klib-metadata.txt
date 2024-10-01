@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(vararg p: kotlin/Int /* kotlin/IntArray */): kotlin/String
+
+      public final fun test2(vararg p: kotlin/String /* kotlin/Array<out kotlin/String> */): kotlin/String
+
+      public final fun <T#0 /* T */> test3(vararg p: T#0 /* kotlin/Array<out T#0> */): kotlin/String
+    }
+  }
+}

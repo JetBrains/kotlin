@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: kotlin/Any, y: kotlin/Any): kotlin/Unit
+
+      public final val y: kotlin/Boolean /* = ... */
+        public final get
+
+      public final val z: kotlin/Int /* = ... */
+        public final get
+    }
+  }
+}

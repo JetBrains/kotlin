@@ -1,0 +1,53 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:utils fileName:/lib.kt
+    FUN name:composition signature:utils/composition|composition(0:0;0:0;0:0;kotlin.Function2<0:0,0:0,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x0:T of utils.composition, x1:T of utils.composition, x2:T of utils.composition, fn:<unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition>) returnType:T of utils.composition [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ utils/composition|composition(0:0;0:0;0:0;kotlin.Function2<0:0,0:0,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x0 index:0 type:T of utils.composition
+      VALUE_PARAMETER name:x1 index:1 type:T of utils.composition
+      VALUE_PARAMETER name:x2 index:2 type:T of utils.composition
+      VALUE_PARAMETER name:fn index:3 type:<unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun composition <T> (x0: T of utils.composition, x1: T of utils.composition, x2: T of utils.composition, fn: <unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition>): T of utils.composition [inline] declared in utils'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of utils.composition origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition> declared in utils.composition' type=<unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition> origin=VARIABLE_AS_FUNCTION
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of utils.composition origin=INVOKE
+              $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition> declared in utils.composition' type=<unbound IrClassSymbolImpl><T of utils.composition, T of utils.composition, T of utils.composition> origin=VARIABLE_AS_FUNCTION
+              1: GET_VAR 'x0: T of utils.composition declared in utils.composition' type=T of utils.composition origin=null
+              2: GET_VAR 'x1: T of utils.composition declared in utils.composition' type=T of utils.composition origin=null
+            2: GET_VAR 'x2: T of utils.composition declared in utils.composition' type=T of utils.composition origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:nonInlinableConcat signature:/nonInlinableConcat|nonInlinableConcat(kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun nonInlinableConcat (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.nonInlinableConcat' type=<unbound IrClassSymbolImpl> origin=null
+            GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.nonInlinableConcat' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:appendTo signature:/appendTo|appendTo(kotlin.String;kotlin.String){}[0] visibility:public modality:FINAL <> (target:<unbound IrClassSymbolImpl>, suffix:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:target index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:suffix index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun appendTo (target: <unbound IrClassSymbolImpl>, suffix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun nonInlinableConcat (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: GET_VAR 'target: <unbound IrClassSymbolImpl> declared in <root>.appendTo' type=<unbound IrClassSymbolImpl> origin=null
+            y: GET_VAR 'suffix: <unbound IrClassSymbolImpl> declared in <root>.appendTo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:test signature:/test|test(kotlin.String){}[0] visibility:internal modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='internal final fun test (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            2: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            3: CONST String type=<unbound IrClassSymbolImpl> value="K"
+            4: FUNCTION_REFERENCE 'public final fun appendTo (target: <unbound IrClassSymbolImpl>, suffix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal final fun test (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="O"

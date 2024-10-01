@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyClass
+
+    public open class MyClass : kotlin/Any {
+
+      public constructor(value: kotlin/String)
+
+      public open fun toString(): kotlin/String
+
+      public final val value: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun <T#0 /* V */> T#0.getValue(receiver: kotlin/Any?, p: kotlin/Any): T#0
+
+      public final operator fun <T#0 /* P */ : MyClass> T#0.provideDelegate(host: kotlin/Any?, p: kotlin/Any): T#0
+
+      public final inline fun <T#0 /* L */> runLogged(entry: kotlin/String, action: kotlin/Function0<T#0>): T#0
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+
+      public final /* delegated */ val testK: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val testO: MyClass
+        public final /* non-default */ get
+
+      public final val testOK: kotlin/String
+        public final get
+    }
+  }
+}

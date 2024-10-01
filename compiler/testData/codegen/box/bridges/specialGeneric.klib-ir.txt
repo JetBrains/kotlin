@@ -1,0 +1,154 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/specialGeneric.kt
+    CLASS INTERFACE name:Element signature:/Element|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Element
+      PROPERTY name:isContained signature:/Element.isContained|{}isContained[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isContained> signature:/Element.isContained.<get-isContained>|<get-isContained>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Element) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isContained signature:/Element.isContained|{}isContained[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Element
+    CLASS OBJECT name:ContainedElement signature:/ContainedElement|null[0] modality:FINAL visibility:public superTypes:[<root>.Element]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ContainedElement
+      CONSTRUCTOR signature:/ContainedElement.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ContainedElement [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ContainedElement signature:/ContainedElement|null[0] modality:FINAL visibility:public superTypes:[<root>.Element]'
+      PROPERTY name:isContained signature:/ContainedElement.isContained|{}isContained[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:isContained signature:[ /ContainedElement.isContained|{}isContained[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isContained type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isContained> signature:/ContainedElement.isContained.<get-isContained>|<get-isContained>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ContainedElement) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isContained signature:/ContainedElement.isContained|{}isContained[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-isContained> (): <unbound IrClassSymbolImpl> declared in <root>.Element
+          $this: VALUE_PARAMETER name:<this> type:<root>.ContainedElement
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-isContained> (): <unbound IrClassSymbolImpl> declared in <root>.ContainedElement'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isContained signature:[ /ContainedElement.isContained|{}isContained[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isContained type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ContainedElement declared in <root>.ContainedElement.<get-isContained>' type=<root>.ContainedElement origin=null
+    CLASS OBJECT name:NotContainedElement signature:/NotContainedElement|null[0] modality:FINAL visibility:public superTypes:[<root>.Element]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NotContainedElement
+      CONSTRUCTOR signature:/NotContainedElement.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.NotContainedElement [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:NotContainedElement signature:/NotContainedElement|null[0] modality:FINAL visibility:public superTypes:[<root>.Element]'
+      PROPERTY name:isContained signature:/NotContainedElement.isContained|{}isContained[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:isContained signature:[ /NotContainedElement.isContained|{}isContained[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isContained type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isContained> signature:/NotContainedElement.isContained.<get-isContained>|<get-isContained>(){}[0] visibility:public modality:OPEN <> ($this:<root>.NotContainedElement) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isContained signature:/NotContainedElement.isContained|{}isContained[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-isContained> (): <unbound IrClassSymbolImpl> declared in <root>.Element
+          $this: VALUE_PARAMETER name:<this> type:<root>.NotContainedElement
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-isContained> (): <unbound IrClassSymbolImpl> declared in <root>.NotContainedElement'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isContained signature:[ /NotContainedElement.isContained|{}isContained[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:isContained type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.NotContainedElement declared in <root>.NotContainedElement.<get-isContained>' type=<root>.NotContainedElement origin=null
+    CLASS CLASS name:MySet signature:/MySet|null[0] modality:FINAL visibility:internal superTypes:[<unbound IrClassSymbolImpl><E of <root>.MySet>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MySet<E of <root>.MySet>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /MySet|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.Element] reified:false] ] superTypes:[<root>.Element] reified:false
+      CONSTRUCTOR signature:/MySet.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MySet<E of <root>.MySet> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MySet signature:/MySet|null[0] modality:FINAL visibility:internal superTypes:[<unbound IrClassSymbolImpl><E of <root>.MySet>]'
+      FUN name:contains signature:/MySet.contains|contains(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>, element:E of <root>.MySet) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.MySet
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: E of <root>.MySet): <unbound IrClassSymbolImpl> [operator] declared in <root>.MySet'
+            CALL 'public abstract fun <get-isContained> (): <unbound IrClassSymbolImpl> declared in <root>.Element' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'element: E of <root>.MySet declared in <root>.MySet.contains' type=E of <root>.MySet origin=null
+      FUN name:equals signature:/MySet.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:hashCode signature:/MySet.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:toString signature:/MySet.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:size signature:/MySet.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/MySet.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/MySet.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:isEmpty signature:/MySet.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:containsAll signature:/MySet.containsAll|containsAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>, elements:<unbound IrClassSymbolImpl><E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><E of <root>.MySet>): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:/MySet.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl><E of <root>.MySet> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><E of <root>.MySet> [operator] declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:set signature:/set|set(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun set (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MySet' type=<root>.MySet<<root>.Element> origin=null
+            <class: E>: <root>.Element
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:set type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun set (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val set: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1: "
+                GET_VAR 'val set: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val set: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              1: GET_OBJECT 'CLASS OBJECT name:NotContainedElement signature:/NotContainedElement|null[0] modality:FINAL visibility:public superTypes:[<root>.Element]' type=<root>.NotContainedElement
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 2: "
+                GET_VAR 'val set: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'val set: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                1: GET_OBJECT 'CLASS OBJECT name:ContainedElement signature:/ContainedElement|null[0] modality:FINAL visibility:public superTypes:[<root>.Element]' type=<root>.ContainedElement
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 3: "
+                GET_VAR 'val set: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

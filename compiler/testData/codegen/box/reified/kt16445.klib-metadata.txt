@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Container
+    // class name: Container.SomeClass
+    // class name: SomeInterface
+
+    public final object Container : kotlin/Any {
+
+      private constructor()
+
+      private final inline fun <reified T#0 /* T */> someMethod(): SomeInterface<T#0>
+
+      // nested class: SomeClass
+    }
+
+    public final class Container.SomeClass : SomeInterface<Container.SomeClass> {
+
+      public constructor()
+    }
+
+    public abstract interface SomeInterface<T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

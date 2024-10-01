@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      public final fun bar(): kotlin/Unit
+
+      public final fun foo(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val A_foo: kotlin/reflect/KFunction1<test/A, kotlin/Unit>
+        public final get
+
+      public final val a: test/A
+        public final get
+
+      public final val aBar: kotlin/reflect/KFunction0<kotlin/Unit>
+        public final get
+
+      public final val aFoo: kotlin/reflect/KFunction0<kotlin/Unit>
+        public final get
+
+      public final val aa: test/A
+        public final get
+
+      public final val aaFoo: kotlin/reflect/KFunction0<kotlin/Unit>
+        public final get
+    }
+  }
+}

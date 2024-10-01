@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun equals(a: kotlin/Comparable<kotlin/Double>, b: kotlin/Comparable<kotlin/Double>): kotlin/Boolean
+
+      public final inline fun equals754(a: kotlin/Double, b: kotlin/Double): kotlin/Boolean
+
+      public final inline fun <T#0 /* T */ : kotlin/Comparable<kotlin/Double>> equalsGeneric(a: T#0, b: kotlin/Double): kotlin/Boolean
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Comparable<kotlin/Double>> equalsReified(a: T#0, b: T#0): kotlin/Boolean
+
+      public final inline fun less(a: kotlin/Comparable<kotlin/Double>, b: kotlin/Double): kotlin/Boolean
+
+      public final inline fun less754(a: kotlin/Double, b: kotlin/Double): kotlin/Boolean
+
+      public final inline fun <T#0 /* T */ : kotlin/Comparable<kotlin/Double>> lessGeneric(a: T#0, b: kotlin/Double): kotlin/Boolean
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Comparable<kotlin/Double>> lessReified(a: T#0, b: kotlin/Double): kotlin/Boolean
+    }
+  }
+}

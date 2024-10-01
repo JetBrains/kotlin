@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyList
+
+    public final class MyList<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun get(index: kotlin/Int): T#0
+
+      public final operator fun set(index: kotlin/Int, value: T#0): kotlin/Unit
+
+      public final var value: T#0?
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

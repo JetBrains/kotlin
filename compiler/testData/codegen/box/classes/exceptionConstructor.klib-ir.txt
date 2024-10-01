@@ -1,0 +1,26 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/exceptionConstructor.kt
+    CLASS CLASS name:GameError signature:/GameError|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GameError
+      CONSTRUCTOR signature:/GameError.<init>|<init>(kotlin.String){}[0] visibility:public <> (msg:<unbound IrClassSymbolImpl>) returnType:<root>.GameError [primary]
+        VALUE_PARAMETER name:msg index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            1: GET_VAR 'msg: <unbound IrClassSymbolImpl> declared in <root>.GameError.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GameError signature:/GameError|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:e type:<root>.GameError [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (msg: <unbound IrClassSymbolImpl>) [primary] declared in <root>.GameError' type=<root>.GameError origin=null
+            msg: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val e: <root>.GameError [val] declared in <root>.box' type=<root>.GameError origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

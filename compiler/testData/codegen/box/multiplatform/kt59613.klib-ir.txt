@@ -1,0 +1,16 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+  FILE fqName:<root> fileName:/platform.kt
+    FUN name:printJson signature:/printJson|printJson(kotlin.Function0<kotlin.Any?>){}[0] visibility:public modality:FINAL <> (replacer:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:replacer index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+    FUN name:printJson signature:/printJson|printJson(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (pretty:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:pretty index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun printJson (pretty: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

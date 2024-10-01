@@ -1,0 +1,105 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.C
+    // class name: B
+    // class name: D
+    // class name: E
+    // class name: Q
+    // class name: S
+    // class name: T
+    // class name: X
+    // class name: Y
+    // class name: Z
+
+    public sealed class A : kotlin/Any {
+
+      protected constructor()
+
+      protected /* secondary */ constructor(i: kotlin/Int)
+
+      // nested class: C
+
+      // sealed subclass: A.C
+
+      // sealed subclass: B
+
+      // sealed subclass: D
+
+      // sealed subclass: E
+
+      // sealed subclass: X
+    }
+
+    public final class A.C : A {
+
+      public constructor()
+    }
+
+    public final class B : A {
+
+      public constructor()
+    }
+
+    public final class D : A {
+
+      public constructor()
+    }
+
+    public final class E : A {
+
+      public /* secondary */ constructor()
+
+      public /* secondary */ constructor(i: kotlin/Int)
+    }
+
+    public final class Q : Y {
+
+      public constructor()
+    }
+
+    public final object S : Z {
+
+      private constructor()
+    }
+
+    public final object T : Y {
+
+      private constructor()
+    }
+
+    public sealed class X : A {
+
+      protected constructor()
+
+      // sealed subclass: Y
+    }
+
+    public sealed class Y : X {
+
+      protected constructor()
+
+      // sealed subclass: Q
+
+      // sealed subclass: T
+
+      // sealed subclass: Z
+    }
+
+    public sealed class Z : Y {
+
+      protected constructor()
+
+      // sealed subclass: S
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

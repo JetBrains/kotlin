@@ -1,0 +1,59 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/traitImplGenericDelegation.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A, U of <root>.A, V of <root>.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:U index:1 variance: signature:[ /A|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Number] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:V index:2 variance: signature:[ /A|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:V index:2 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:foo signature:/A.foo|foo(1:0;1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.A<T of <root>.A, U of <root>.A, V of <root>.A>, t:T of <root>.A, u:U of <root>.A) returnType:V of <root>.A?
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A, U of <root>.A, V of <root>.A>
+        VALUE_PARAMETER name:t index:0 type:T of <root>.A
+        VALUE_PARAMETER name:u index:1 type:U of <root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (t: T of <root>.A, u: U of <root>.A): V of <root>.A? declared in <root>.A'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS INTERFACE name:B signature:/B|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.A<T of <root>.B, <unbound IrClassSymbolImpl>, V of <root>.B>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B<T of <root>.B, V of <root>.B>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /B|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /B|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Number] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.B<<unbound IrClassSymbolImpl>, <root>.Runnable>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.B<<unbound IrClassSymbolImpl>, <root>.Runnable>]'
+      FUN name:foo signature:/C.foo|foo(kotlin.String;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.C, t:<unbound IrClassSymbolImpl>, u:<unbound IrClassSymbolImpl>) returnType:<root>.Runnable?
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:t index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:u index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (t: <unbound IrClassSymbolImpl>, u: <unbound IrClassSymbolImpl>): <root>.Runnable? declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS INTERFACE name:B signature:/B|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.A<T of <root>.B, <unbound IrClassSymbolImpl>, V of <root>.B>]' type=<root>.Runnable? origin=null
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
+              1: GET_VAR 't: <unbound IrClassSymbolImpl> declared in <root>.C.foo' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'u: <unbound IrClassSymbolImpl> declared in <root>.C.foo' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:Runnable signature:/Runnable|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Runnable
+      FUN name:run signature:/Runnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Runnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Runnable
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<root>.Runnable? [val]
+          CALL 'public open fun foo (t: <unbound IrClassSymbolImpl>, u: <unbound IrClassSymbolImpl>): <root>.Runnable? declared in <root>.C' type=<root>.Runnable? origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            t: CONST String type=<unbound IrClassSymbolImpl> value=""
+            u: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val x: <root>.Runnable? [val] declared in <root>.box' type=<root>.Runnable? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val x: <root>.Runnable? [val] declared in <root>.box' type=<root>.Runnable? origin=null

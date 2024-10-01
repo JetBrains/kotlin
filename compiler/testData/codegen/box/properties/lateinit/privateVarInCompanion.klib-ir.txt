@@ -1,0 +1,78 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/privateVarInCompanion.kt
+    CLASS CLASS name:App signature:/App|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.App
+      CONSTRUCTOR signature:/App.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.App [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:App signature:/App|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:context signature:/App.context|{}context[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:context signature:[ /App.context|{}context[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:<root>.Context visibility:private [final]] ] type:<root>.Context visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Context' type=<root>.Context origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-context> signature:/App.context.<get-context>|<get-context>(){}[0] visibility:public modality:FINAL <> ($this:<root>.App) returnType:<root>.Context
+          correspondingProperty: PROPERTY name:context signature:/App.context|{}context[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.App
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-context> (): <root>.Context declared in <root>.App'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:context signature:[ /App.context|{}context[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:<root>.Context visibility:private [final]] ] type:<root>.Context visibility:private [final]' type=<root>.Context origin=null
+                receiver: GET_VAR '<this>: <root>.App declared in <root>.App.<get-context>' type=<root>.App origin=null
+      FUN name:onCreate signature:/App.onCreate|onCreate(){}[0] visibility:public modality:FINAL <> ($this:<root>.App) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.App
+        BLOCK_BODY
+          CALL 'private final fun <set-instance> (<set-?>: <root>.App): <unbound IrClassSymbolImpl> declared in <root>.App.Companion' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/App.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.App.Companion
+            <set-?>: GET_VAR '<this>: <root>.App declared in <root>.App.onCreate' type=<root>.App origin=null
+      CLASS OBJECT name:Companion signature:/App.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.App.Companion
+        CONSTRUCTOR signature:/App.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.App.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/App.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:instance signature:/App.Companion.instance|{}instance[0] visibility:private modality:FINAL [lateinit,var]
+          FIELD PROPERTY_BACKING_FIELD name:instance signature:[ /App.Companion.instance|{}instance[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:<root>.Context visibility:private [final]] ] type:<root>.App visibility:private
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-instance> signature:/App.Companion.instance.<get-instance>|<get-instance>(){}[0] visibility:private modality:FINAL <> ($this:<root>.App.Companion) returnType:<root>.App
+            correspondingProperty: PROPERTY name:instance signature:/App.Companion.instance|{}instance[0] visibility:private modality:FINAL [lateinit,var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.App.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-instance> (): <root>.App declared in <root>.App.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:instance signature:[ /App.Companion.instance|{}instance[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:<root>.Context visibility:private [final]] ] type:<root>.App visibility:private' type=<root>.App origin=null
+                  receiver: GET_VAR '<this>: <root>.App.Companion declared in <root>.App.Companion.<get-instance>' type=<root>.App.Companion origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-instance> signature:/App.Companion.instance.<set-instance>|<set-instance>(App){}[0] visibility:private modality:FINAL <> ($this:<root>.App.Companion, <set-?>:<root>.App) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:instance signature:/App.Companion.instance|{}instance[0] visibility:private modality:FINAL [lateinit,var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.App.Companion
+            VALUE_PARAMETER name:<set-?> index:0 type:<root>.App
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:instance signature:[ /App.Companion.instance|{}instance[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:<root>.Context visibility:private [final]] ] type:<root>.App visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.App.Companion declared in <root>.App.Companion.<set-instance>' type=<root>.App.Companion origin=null
+                value: GET_VAR '<set-?>: <root>.App declared in <root>.App.Companion.<set-instance>' type=<root>.App origin=null
+        PROPERTY name:context signature:/App.Companion.context|{}context[0] visibility:public modality:FINAL [val]
+          FUN name:<get-context> signature:/App.Companion.context.<get-context>|<get-context>(){}[0] visibility:public modality:FINAL <> ($this:<root>.App.Companion) returnType:<root>.Context
+            correspondingProperty: PROPERTY name:context signature:/App.Companion.context|{}context[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.App.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-context> (): <root>.Context declared in <root>.App.Companion'
+                CALL 'public final fun <get-context> (): <root>.Context declared in <root>.App' type=<root>.Context origin=GET_PROPERTY
+                  $this: CALL 'private final fun <get-instance> (): <root>.App declared in <root>.App.Companion' type=<root>.App origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.App.Companion declared in <root>.App.Companion.<get-context>' type=<root>.App.Companion origin=null
+    CLASS CLASS name:Context signature:/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Context
+      CONSTRUCTOR signature:/Context.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Context [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Context signature:/Context|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:print signature:/Context.print|print(){}[0] visibility:public modality:FINAL <> ($this:<root>.Context) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Context
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun print (): <unbound IrClassSymbolImpl> declared in <root>.Context'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:app type:<root>.App [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.App' type=<root>.App origin=null
+        CALL 'public final fun onCreate (): <unbound IrClassSymbolImpl> declared in <root>.App' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val app: <root>.App [val] declared in <root>.box' type=<root>.App origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun print (): <unbound IrClassSymbolImpl> declared in <root>.Context' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-context> (): <root>.Context declared in <root>.App.Companion' type=<root>.Context origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/App.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.App.Companion

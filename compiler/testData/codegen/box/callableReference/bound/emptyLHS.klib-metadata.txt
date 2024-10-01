@@ -1,0 +1,60 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun aMemberFunction(): kotlin/Unit
+
+      public final fun memberFunction(): kotlin/Unit
+
+      public final fun test(): kotlin/String
+
+      public final val aMemberProperty: kotlin/Int
+        public final /* non-default */ get
+
+      public final val memberProperty: kotlin/Int
+        public final /* non-default */ get
+
+      // nested class: B
+    }
+
+    public final inner class A.B : kotlin/Any {
+
+      public constructor()
+
+      public final fun memberFunction(): kotlin/Unit
+
+      public final fun test(): kotlin/String
+
+      public final val memberProperty: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun A.aExtensionFunction(): kotlin/Unit
+
+      public final fun A.B.bExtensionFunction(): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final val A.aExtensionProperty: kotlin/Int
+        public final /* non-default */ get
+
+      public final val A.B.bExtensionProperty: kotlin/Int
+        public final /* non-default */ get
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

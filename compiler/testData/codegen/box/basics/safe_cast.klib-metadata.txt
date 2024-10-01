@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class B : A {
+
+      public constructor()
+    }
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(a: kotlin/Any): A?
+
+      public final fun safe_cast_negative(): kotlin/Boolean
+
+      public final fun safe_cast_positive(): kotlin/Boolean
+    }
+  }
+}

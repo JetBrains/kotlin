@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun bar(crossinline not_exactly_once: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun foo(): kotlin/Unit
+
+      public final var res: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final inline fun baz(crossinline exactly_once: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+        contract {
+          callsInPlace(p#1, InvocationKind.EXACTLY_ONCE)
+        }
+    }
+  }
+}

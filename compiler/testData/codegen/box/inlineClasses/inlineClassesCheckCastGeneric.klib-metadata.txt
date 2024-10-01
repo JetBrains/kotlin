@@ -1,0 +1,120 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AsAny
+    // class name: AsAny2
+    // class name: AsInt
+    // class name: Primitive
+    // class name: Reference
+    // class name: Reference2
+
+    public final value class AsAny<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class AsAny2<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(x: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0?
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0?
+    }
+
+    public final value class AsInt<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final object Primitive : kotlin/Any {
+
+      private constructor()
+
+      public final fun <T#0 /* T */ : kotlin/Int> transform(a: AsInt<T#0>): AsInt<T#0>
+
+      public final fun <T#0 /* T */ : kotlin/Int> transformNullable(a: AsInt<T#0>?): AsInt<T#0>
+
+      public final fun <T#0 /* T */ : kotlin/Int> transformNullableToNullableTarget(a: AsInt<T#0>?): AsInt<T#0>?
+
+      public final fun <T#0 /* T */ : kotlin/Int> transformToNullable(a: AsInt<T#0>): AsInt<T#0>?
+
+      public final fun <T#0 /* T */ : kotlin/Int> transformToNullableTarget(a: AsInt<T#0>): AsInt<T#0>?
+    }
+
+    public final object Reference : kotlin/Any {
+
+      private constructor()
+
+      public final fun <T#0 /* T */, T#1 /* R */> transform(a: AsAny<T#0>): AsAny<T#1>
+
+      public final fun <T#0 /* T */, T#1 /* R */> transformNullable(a: AsAny<T#0>?): AsAny<T#1>
+
+      public final fun <T#0 /* T */, T#1 /* R */> transformNullableToNullableTarget(a: AsAny<T#0>?): AsAny<T#1>?
+
+      public final fun <T#0 /* T */, T#1 /* R */> transformToNullable(a: AsAny<T#0>): AsAny<T#1>?
+
+      public final fun <T#0 /* T */, T#1 /* R */> transformToNullableTarget(a: AsAny<T#0>): AsAny<T#1>?
+    }
+
+    public final object Reference2 : kotlin/Any {
+
+      private constructor()
+
+      public final fun <T#0 /* T */ : kotlin/Any, T#1 /* R */ : kotlin/Any> transform(a: AsAny2<T#0>): AsAny2<T#1>
+
+      public final fun <T#0 /* T */ : kotlin/Any, T#1 /* R */ : kotlin/Any> transformNullable(a: AsAny2<T#0>?): AsAny2<T#1>
+
+      public final fun <T#0 /* T */ : kotlin/Any, T#1 /* R */ : kotlin/Any> transformNullableToNullableTarget(a: AsAny2<T#0>?): AsAny2<T#1>?
+
+      public final fun <T#0 /* T */ : kotlin/Any, T#1 /* R */ : kotlin/Any> transformToNullable(a: AsAny2<T#0>): AsAny2<T#1>?
+
+      public final fun <T#0 /* T */ : kotlin/Any, T#1 /* R */ : kotlin/Any> transformToNullableTarget(a: AsAny2<T#0>): AsAny2<T#1>?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> kotlin/Any?.checkcast(): T#0
+    }
+  }
+}

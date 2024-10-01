@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Outer
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor(fn: kotlin/Function0<kotlin/String>)
+
+      public final val fn: kotlin/Function0<kotlin/String>
+        public final get
+    }
+
+    public open class Outer : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): Base
+
+      public final val outerO: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

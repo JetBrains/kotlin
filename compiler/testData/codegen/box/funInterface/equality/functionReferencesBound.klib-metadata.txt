@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: FunInterface
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      public final fun adapted1(s: kotlin/String? /* = ... */): kotlin/String
+
+      public final fun adapted2(vararg s: kotlin/String /* kotlin/Array<out kotlin/String> */): kotlin/String
+
+      public final fun target1(): kotlin/Unit
+
+      public final fun target2(): kotlin/Unit
+    }
+
+    public abstract fun interface FunInterface : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun adapted1FromOtherFile(c0: C): kotlin/Any
+
+      public final fun adapted2FromOtherFile(c0: C): kotlin/Any
+
+      public final fun box(): kotlin/String
+
+      public final fun checkEqual(x: kotlin/Any, y: kotlin/Any): kotlin/Unit
+
+      public final fun checkNotEqual(x: kotlin/Any, y: kotlin/Any): kotlin/Unit
+
+      private final fun id(f: FunInterface): kotlin/Any
+
+      private final fun id(f: FunInterface): kotlin/Any
+
+      public final fun target1FromOtherFile(c0: C): kotlin/Any
+    }
+  }
+}

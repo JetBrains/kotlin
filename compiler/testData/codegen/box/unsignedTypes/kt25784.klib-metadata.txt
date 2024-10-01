@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ByteDelegate
+    // class name: ByteDelegateTest
+
+    public final class ByteDelegate : kotlin/Any {
+
+      public constructor(position: kotlin/Int, uIntValue: kotlin/reflect/KProperty0<kotlin/UInt>)
+
+      public final operator fun getValue(any: kotlin/Any?, property: kotlin/reflect/KProperty<*>): kotlin/UByte
+
+      private final val position: kotlin/Int
+        private final get
+
+      private final val uIntValue: kotlin/reflect/KProperty0<kotlin/UInt>
+        private final get
+    }
+
+    public final class ByteDelegateTest : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/Unit
+
+      public final /* delegated */ val uByte: kotlin/UByte
+        public final /* non-default */ get
+
+      public final val uInt: kotlin/UInt /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

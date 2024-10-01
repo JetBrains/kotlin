@@ -1,0 +1,94 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/objectInsideDelegation.kt
+    PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:b$delegate signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:b$delegate type:kotlin.Lazy<<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.b$delegate.<anonymous>.<no name provided>> origin=null
+            <1>: <root>.b$delegate.<anonymous>.<no name provided>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.b$delegate.<anonymous>.<no name provided>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.b$delegate.<anonymous>.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.b$delegate.<anonymous>.<no name provided> declared in <root>.b$delegate'
+                    BLOCK type=<root>.b$delegate.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.First]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.b$delegate.<anonymous>.<no name provided>
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.b$delegate.<anonymous>.<no name provided> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.First]'
+                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.b$delegate.<anonymous>.<no name provided>' type=<root>.b$delegate.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-b> signature:/b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.First
+        correspondingProperty: PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): <root>.First declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.b$delegate.<anonymous>.<no name provided> origin=null
+              <1>: <root>.b$delegate.<anonymous>.<no name provided>
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:b$delegate signature:[ /b|{}b[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:b$delegate type:kotlin.Lazy<<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static] declared in <root>' type=<unbound IrClassSymbolImpl><<root>.b$delegate.<anonymous>.<no name provided>> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: PROPERTY_REFERENCE 'public final b: <root>.First [delegated,val] declared in <root>' field=null getter='public final fun <get-b> (): <root>.First declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.First> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    PROPERTY name:withoutType signature:[ File '/objectInsideDelegation.kt' <- /withoutType|{}withoutType[0] ] visibility:private modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:withoutType$delegate signature:[ [ File '/objectInsideDelegation.kt' <- /withoutType|{}withoutType[0] ] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:b$delegate type:kotlin.Lazy<<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.withoutType$delegate.<anonymous>.<no name provided>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.withoutType$delegate.<anonymous>.<no name provided>> origin=null
+            <1>: <root>.withoutType$delegate.<anonymous>.<no name provided>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.withoutType$delegate.<anonymous>.<no name provided>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.withoutType$delegate.<anonymous>.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.withoutType$delegate.<anonymous>.<no name provided> declared in <root>.withoutType$delegate'
+                    BLOCK type=<root>.withoutType$delegate.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.First]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.withoutType$delegate.<anonymous>.<no name provided>
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.withoutType$delegate.<anonymous>.<no name provided> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.First]'
+                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.withoutType$delegate.<anonymous>.<no name provided>' type=<root>.withoutType$delegate.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-withoutType> signature:[ File '/objectInsideDelegation.kt' <- /withoutType.<get-withoutType>|<get-withoutType>(){}[0] ] visibility:private modality:FINAL <> () returnType:<root>.withoutType$delegate.<anonymous>.<no name provided>
+        correspondingProperty: PROPERTY name:withoutType signature:[ File '/objectInsideDelegation.kt' <- /withoutType|{}withoutType[0] ] visibility:private modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-withoutType> (): <root>.withoutType$delegate.<anonymous>.<no name provided> declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.withoutType$delegate.<anonymous>.<no name provided> origin=null
+              <1>: <root>.withoutType$delegate.<anonymous>.<no name provided>
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:withoutType$delegate signature:[ [ File '/objectInsideDelegation.kt' <- /withoutType|{}withoutType[0] ] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:b$delegate type:kotlin.Lazy<<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.withoutType$delegate.<anonymous>.<no name provided>> visibility:private [final,static] declared in <root>' type=<unbound IrClassSymbolImpl><<root>.withoutType$delegate.<anonymous>.<no name provided>> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: PROPERTY_REFERENCE 'private final withoutType: <root>.withoutType$delegate.<anonymous>.<no name provided> [delegated,val] declared in <root>' field=null getter='private final fun <get-withoutType> (): <root>.withoutType$delegate.<anonymous>.<no name provided> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.withoutType$delegate.<anonymous>.<no name provided>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    PROPERTY name:withTwoSupertypes signature:[ File '/objectInsideDelegation.kt' <- /withTwoSupertypes|{}withTwoSupertypes[0] ] visibility:private modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:withTwoSupertypes$delegate signature:[ [ File '/objectInsideDelegation.kt' <- /withTwoSupertypes|{}withTwoSupertypes[0] ] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:b$delegate type:kotlin.Lazy<<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>> origin=null
+            <1>: <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> declared in <root>.withTwoSupertypes$delegate'
+                    BLOCK type=<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.First; <root>.Second]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.First; <root>.Second]'
+                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>' type=<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-withTwoSupertypes> signature:[ File '/objectInsideDelegation.kt' <- /withTwoSupertypes.<get-withTwoSupertypes>|<get-withTwoSupertypes>(){}[0] ] visibility:private modality:FINAL <> () returnType:<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>
+        correspondingProperty: PROPERTY name:withTwoSupertypes signature:[ File '/objectInsideDelegation.kt' <- /withTwoSupertypes|{}withTwoSupertypes[0] ] visibility:private modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-withTwoSupertypes> (): <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> origin=null
+              <1>: <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:withTwoSupertypes$delegate signature:[ [ File '/objectInsideDelegation.kt' <- /withTwoSupertypes|{}withTwoSupertypes[0] ] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:b$delegate type:kotlin.Lazy<<root>.b$delegate.<anonymous>.<no name provided>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>> visibility:private [final,static] declared in <root>' type=<unbound IrClassSymbolImpl><<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: PROPERTY_REFERENCE 'private final withTwoSupertypes: <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> [delegated,val] declared in <root>' field=null getter='private final fun <get-withTwoSupertypes> (): <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    CLASS INTERFACE name:First signature:/First|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.First
+    CLASS INTERFACE name:Second signature:/Second|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Second
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun <get-b> (): <root>.First declared in <root>' type=<root>.First origin=GET_PROPERTY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'private final fun <get-withoutType> (): <root>.withoutType$delegate.<anonymous>.<no name provided> declared in <root>' type=<root>.withoutType$delegate.<anonymous>.<no name provided> origin=GET_PROPERTY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'private final fun <get-withTwoSupertypes> (): <root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> declared in <root>' type=<root>.withTwoSupertypes$delegate.<anonymous>.<no name provided> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

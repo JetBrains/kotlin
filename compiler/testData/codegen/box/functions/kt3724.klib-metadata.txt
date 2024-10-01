@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Comment
+    // class name: Request
+
+    public final class A : Request {
+
+      public constructor()
+    }
+
+    public final class Comment : kotlin/Any {
+
+      public constructor()
+
+      public final var article: kotlin/String
+        public final get
+        public final set
+    }
+
+    public open class Request : kotlin/Any {
+
+      public constructor(handler: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Any, Comment>)
+
+      public final val handler: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Any, Comment>
+        public final get
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun new(body: @kotlin/ExtensionFunctionType kotlin/Function1<Comment, kotlin/Unit>): Comment
+    }
+  }
+}

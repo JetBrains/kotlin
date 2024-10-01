@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buildee
+    // class name: TargetType
+    // class name: TargetTypeBase
+
+    public final class Buildee<T#0 /* TV */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class TargetType : TargetTypeBase {
+
+      public constructor()
+    }
+
+    public open class TargetTypeBase : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun consumeTargetType(value: TargetType): kotlin/Unit
+
+      public final fun consumeTargetTypeBase(value: TargetTypeBase): kotlin/Unit
+
+      public final fun consumeTargetTypeBuildee(value: Buildee<TargetType>): kotlin/Unit
+
+      public final fun <T#0 /* PTV */> parallelBuild(instructionsA: @kotlin/ExtensionFunctionType kotlin/Function2<Buildee<T#0>, T#0, kotlin/Unit>, instructionsB: @kotlin/ExtensionFunctionType kotlin/Function2<Buildee<T#0>, T#0, kotlin/Unit>): Buildee<T#0>
+    }
+  }
+}

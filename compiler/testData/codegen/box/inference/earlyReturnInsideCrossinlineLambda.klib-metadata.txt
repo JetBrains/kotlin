@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#0 /* K */> infer(): T#0
+    }
+
+    package {
+
+      public final fun bar(): kotlin/Int?
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> runReadAction(crossinline runnable: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

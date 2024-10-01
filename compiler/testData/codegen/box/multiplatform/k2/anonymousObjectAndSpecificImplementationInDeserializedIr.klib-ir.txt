@@ -1,0 +1,79 @@
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:foo fileName:/common.kt
+    PROPERTY name:ByteArrayPool signature:foo/ByteArrayPool|{}ByteArrayPool[0] visibility:internal modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:ByteArrayPool signature:[ foo/ByteArrayPool|{}ByteArrayPool[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ByteArrayPool type:foo.Derived<kotlin.ByteArray> visibility:private [final,static]] ] type:foo.Derived<<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=foo.ByteArrayPool.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[foo.Derived<<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.ByteArrayPool.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:foo.ByteArrayPool.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (capacity: <unbound IrClassSymbolImpl>) [primary] declared in foo.Derived'
+                    <T>: <unbound IrClassSymbolImpl>
+                    capacity: CONST Int type=<unbound IrClassSymbolImpl> value=128
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[foo.Derived<<unbound IrClassSymbolImpl>>]'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.ByteArrayPool.<no name provided>' type=foo.ByteArrayPool.<no name provided> origin=OBJECT_LITERAL
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ByteArrayPool> signature:foo/ByteArrayPool.<get-ByteArrayPool>|<get-ByteArrayPool>(){}[0] visibility:internal modality:FINAL <> () returnType:foo.Derived<<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:ByteArrayPool signature:foo/ByteArrayPool|{}ByteArrayPool[0] visibility:internal modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='internal final fun <get-ByteArrayPool> (): foo.Derived<<unbound IrClassSymbolImpl>> declared in foo'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ByteArrayPool signature:[ foo/ByteArrayPool|{}ByteArrayPool[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ByteArrayPool type:foo.Derived<kotlin.ByteArray> visibility:private [final,static]] ] type:foo.Derived<<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=foo.Derived<<unbound IrClassSymbolImpl>> origin=null
+    CLASS INTERFACE name:Base signature:foo/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.Base<T of foo.Base>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ foo/Base|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      PROPERTY name:capacity signature:foo/Base.capacity|{}capacity[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-capacity> signature:foo/Base.capacity.<get-capacity>|<get-capacity>(){}[0] visibility:public modality:ABSTRACT <> ($this:foo.Base<T of foo.Base>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:capacity signature:foo/Base.capacity|{}capacity[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.Base<T of foo.Base>
+  FILE fqName:foo fileName:/platform.kt
+    CLASS CLASS name:Derived signature:foo/Derived|null[0] modality:ABSTRACT visibility:public superTypes:[foo.Base<T of foo.Derived>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.Derived<T of foo.Derived>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ foo/Derived|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:foo/Derived.<init>|<init>(kotlin.Int){}[0] visibility:public <> (capacity:<unbound IrClassSymbolImpl>) returnType:foo.Derived<T of foo.Derived> [primary]
+        VALUE_PARAMETER name:capacity index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:foo/Derived|null[0] modality:ABSTRACT visibility:public superTypes:[foo.Base<T of foo.Derived>]'
+      PROPERTY name:capacity signature:foo/Derived.capacity|{}capacity[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:capacity signature:[ foo/Derived.capacity|{}capacity[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:capacity type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'capacity: <unbound IrClassSymbolImpl> declared in foo.Derived.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-capacity> signature:foo/Derived.capacity.<get-capacity>|<get-capacity>(){}[0] visibility:public modality:FINAL <> ($this:foo.Derived<T of foo.Derived>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:capacity signature:foo/Derived.capacity|{}capacity[0] visibility:public modality:FINAL [val]
+          overridden:
+            public abstract fun <get-capacity> (): <unbound IrClassSymbolImpl> declared in foo.Base
+          $this: VALUE_PARAMETER name:<this> type:foo.Derived<T of foo.Derived>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-capacity> (): <unbound IrClassSymbolImpl> declared in foo.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:capacity signature:[ foo/Derived.capacity|{}capacity[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:capacity type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: foo.Derived<T of foo.Derived> declared in foo.Derived.<get-capacity>' type=foo.Derived<T of foo.Derived> origin=null
+      PROPERTY name:instances signature:foo/Derived.instances|{}instances[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:instances signature:[ foo/Derived.instances|{}instances[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:capacity type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              1: CALL 'public final fun <get-capacity> (): <unbound IrClassSymbolImpl> declared in foo.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: foo.Derived<T of foo.Derived> declared in foo.Derived' type=foo.Derived<T of foo.Derived> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-instances> signature:foo/Derived.instances.<get-instances>|<get-instances>(){}[0] visibility:private modality:FINAL <> ($this:foo.Derived<T of foo.Derived>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+          correspondingProperty: PROPERTY name:instances signature:foo/Derived.instances|{}instances[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.Derived<T of foo.Derived>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-instances> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in foo.Derived'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:instances signature:[ foo/Derived.instances|{}instances[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:capacity type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                receiver: GET_VAR '<this>: foo.Derived<T of foo.Derived> declared in foo.Derived.<get-instances>' type=foo.Derived<T of foo.Derived> origin=null
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-capacity> (): <unbound IrClassSymbolImpl> declared in foo.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'internal final fun <get-ByteArrayPool> (): foo.Derived<<unbound IrClassSymbolImpl>> declared in foo' type=foo.Derived<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=128
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Error: "
+                CALL 'public final fun <get-capacity> (): <unbound IrClassSymbolImpl> declared in foo.Derived' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'internal final fun <get-ByteArrayPool> (): foo.Derived<<unbound IrClassSymbolImpl>> declared in foo' type=foo.Derived<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY

@@ -1,0 +1,103 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/complexTraitImpl.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:/A.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+    CLASS INTERFACE name:B signature:/B|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      FUN name:foo signature:/B.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.B) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.B'
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value="B"
+    CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<root>.A; <root>.B]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:OPEN visibility:public superTypes:[<root>.A; <root>.B]'
+      FUN name:foo signature:/C.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.A
+          public open fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.B
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.C'
+            CALL 'public open fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.B' superQualifier='CLASS INTERFACE name:B signature:/B|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
+    CLASS INTERFACE name:D signature:/D|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+      FUN name:foo signature:/D.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.D) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.D
+    CLASS CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<root>.D; <root>.C]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+      CONSTRUCTOR signature:/E.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.E [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<root>.D; <root>.C]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:e type:<root>.E [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.E' type=<root>.E origin=null
+        VAR name:r type:<unbound IrClassSymbolImpl> [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_VAR 'val e: <root>.E [val] declared in <root>.box' type=<root>.E origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR name:d type:<root>.D [val]
+          GET_VAR 'val e: <root>.E [val] declared in <root>.box' type=<root>.E origin=null
+        VAR name:c type:<root>.C [val]
+          GET_VAR 'val e: <root>.E [val] declared in <root>.box' type=<root>.E origin=null
+        VAR name:b type:<root>.B [val]
+          GET_VAR 'val e: <root>.E [val] declared in <root>.box' type=<root>.E origin=null
+        VAR name:a type:<root>.A [val]
+          GET_VAR 'val e: <root>.E [val] declared in <root>.box' type=<root>.E origin=null
+        SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.D' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $this: GET_VAR 'val d: <root>.D [val] declared in <root>.box' type=<root>.D origin=null
+        SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'public open fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR 'val c: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'public open fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.B' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR 'val b: <root>.B [val] declared in <root>.box' type=<root>.B origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.A' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="BBBBB"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

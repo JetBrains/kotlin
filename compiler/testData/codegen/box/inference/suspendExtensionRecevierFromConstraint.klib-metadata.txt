@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ExtensionReceiver
+
+    public final class ExtensionReceiver : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final suspend fun ExtensionReceiver.extensionMethod(): kotlin/Unit
+
+      public final fun test(): kotlin/Unit
+
+      public typealias SuspendExtensionFunction = @kotlin/ExtensionFunctionType suspend kotlin/Function2<ExtensionReceiver, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = @kotlin/ExtensionFunctionType suspend kotlin/Function2<ExtensionReceiver, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> */
+    }
+  }
+}

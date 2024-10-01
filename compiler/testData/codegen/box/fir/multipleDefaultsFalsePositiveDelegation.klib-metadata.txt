@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Final
+    // class name: Foo
+    // class name: FooFoo
+
+    public final class Final : FooFoo {
+
+      public constructor(f: Foo)
+
+      public open fun bar(x: kotlin/Int, y: kotlin/String?): kotlin/String
+    }
+
+    public abstract interface Foo : kotlin/Any {
+
+      public abstract fun bar(x: kotlin/Int, y: kotlin/String? /* = ... */): kotlin/String
+    }
+
+    public open class FooFoo : Foo {
+
+      public constructor(f: Foo)
+
+      public open /* delegation */ fun bar(x: kotlin/Int, y: kotlin/String?): kotlin/String
+
+      public final val f: Foo
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

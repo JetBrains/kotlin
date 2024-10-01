@@ -1,0 +1,98 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DecimalW1
+    // class name: DecimalW2
+    // class name: DecimalW3
+    // class name: DecimalW4
+    // class name: Value2
+
+    public final value class DecimalW1 : Value2<kotlin/collections/List<kotlin/Int>> {
+
+      public constructor(value: kotlin/collections/List<kotlin/Int>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val value: kotlin/collections/List<kotlin/Int>
+        public open get
+
+      // underlying property: value
+
+      // underlying type: kotlin/collections/List<kotlin/Int>
+    }
+
+    public final value class DecimalW2 : Value2<kotlin/collections/ArrayList<kotlin/Int>> {
+
+      public constructor(value: kotlin/collections/ArrayList<kotlin/Int>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val value: kotlin/collections/ArrayList<kotlin/Int>
+        public open get
+
+      // underlying property: value
+
+      // underlying type: kotlin/collections/ArrayList<kotlin/Int>
+    }
+
+    public final value class DecimalW3 : Value2<kotlin/Int> {
+
+      public constructor(value: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val value: kotlin/Int
+        public open get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class DecimalW4 : Value2<kotlin/UInt> {
+
+      public constructor(value: kotlin/UInt)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val value: kotlin/UInt
+        public open get
+
+      // underlying property: value
+
+      // underlying type: kotlin/UInt
+    }
+
+    public abstract interface Value2<out T#0 /* T */> : kotlin/Any {
+
+      public open fun isInstanceOf(): kotlin/Boolean
+
+      public abstract val value: T#0
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

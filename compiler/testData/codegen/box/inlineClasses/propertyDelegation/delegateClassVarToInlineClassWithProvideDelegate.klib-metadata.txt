@@ -1,0 +1,79 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+    // class name: DelegateFactory
+    // class name: Foo
+
+    public final value class Delegate : kotlin/Any {
+
+      public constructor(default: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public final operator fun getValue(thisRef: kotlin/Any?, prop: kotlin/Any?): kotlin/Int
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final operator fun setValue(thisRef: kotlin/Any?, prop: kotlin/Any?, newValue: kotlin/Int): kotlin/Unit
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val default: kotlin/Int
+        public final get
+
+      // underlying property: default
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class DelegateFactory : kotlin/Any {
+
+      public constructor(default: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final operator fun provideDelegate(thisRef: kotlin/Any?, prop: kotlin/Any?): Delegate
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val default: kotlin/Int
+        public final get
+
+      // underlying property: default
+
+      // underlying type: kotlin/Int
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final var a: kotlin/Int
+        public final get
+        public final set
+
+      public final /* delegated */ var d: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var provideDelegateInvoked: kotlin/Int
+        public final get
+        public final set
+
+      public final var setterInvoked: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

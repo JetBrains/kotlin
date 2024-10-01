@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public abstract fun interface Foo : kotlin/Function0<kotlin/Int> {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun id(foo: Foo): kotlin/Any
+    }
+  }
+}

@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun <T#0 /* T */> bar(x: T#0): T#0
+
+      public final fun baz(i: kotlin/Int): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final fun nullableFun(): kotlin/Function1<kotlin/Int, kotlin/Int>?
+    }
+  }
+}

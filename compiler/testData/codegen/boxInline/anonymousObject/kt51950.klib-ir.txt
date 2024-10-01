@@ -1,0 +1,107 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    CLASS INTERFACE name:Service signature:/Service|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Service
+      FUN name:send signature:/Service.send|send(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Service, message:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Service
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+    FUN name:decorate signature:/decorate|decorate@Service(kotlin.Function1<Service,Service>){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Service, decorate:<unbound IrClassSymbolImpl><<root>.Service, <root>.Service>) returnType:<root>.Service [inline]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Service
+      VALUE_PARAMETER name:decorate index:0 type:<unbound IrClassSymbolImpl><<root>.Service, <root>.Service> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun decorate (decorate: <unbound IrClassSymbolImpl><<root>.Service, <root>.Service>): <root>.Service [inline] declared in <root>'
+          BLOCK type=<root>.decorate.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Service]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.decorate.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.decorate.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Service]'
+              FIELD DELEGATE name:$$delegate_0 type:<root>.Service visibility:private [final]
+                EXPRESSION_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Service origin=INVOKE
+                    $this: GET_VAR 'decorate: <unbound IrClassSymbolImpl><<root>.Service, <root>.Service> [crossinline] declared in <root>.decorate' type=<unbound IrClassSymbolImpl><<root>.Service, <root>.Service> origin=VARIABLE_AS_FUNCTION
+                    1: GET_VAR '<this>: <root>.Service declared in <root>.decorate' type=<root>.Service origin=null
+              FUN DELEGATED_MEMBER name:send visibility:public modality:OPEN <> ($this:<root>.decorate.<no name provided>, message:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Service
+                $this: VALUE_PARAMETER name:<this> type:<root>.decorate.<no name provided>
+                VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.decorate.<no name provided>'
+                    CALL 'public abstract fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Service' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Service visibility:private [final] declared in <root>.decorate.<no name provided>' type=<root>.Service origin=null
+                        receiver: GET_VAR '<this>: <root>.decorate.<no name provided> declared in <root>.decorate.<no name provided>.send' type=<root>.decorate.<no name provided> origin=null
+                      message: GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.decorate.<no name provided>.send' type=<unbound IrClassSymbolImpl> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.decorate.<no name provided>' type=<root>.decorate.<no name provided> origin=OBJECT_LITERAL
+    FUN name:transformMessage signature:/transformMessage|transformMessage@Service(kotlin.Function1<kotlin.String,kotlin.String>){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Service, transform:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<root>.Service [inline]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Service
+      VALUE_PARAMETER name:transform index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun transformMessage (transform: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <root>.Service [inline] declared in <root>'
+          CALL 'public final fun decorate (decorate: <unbound IrClassSymbolImpl><<root>.Service, <root>.Service>): <root>.Service [inline] declared in <root>' type=<root>.Service origin=null
+            $receiver: GET_VAR '<this>: <root>.Service declared in <root>.transformMessage' type=<root>.Service origin=null
+            decorate: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Service, <root>.Service> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (service:<root>.Service) returnType:<root>.Service
+                VALUE_PARAMETER name:service index:0 type:<root>.Service
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (service: <root>.Service): <root>.Service declared in <root>.transformMessage'
+                    BLOCK type=<root>.transformMessage.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Service]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.transformMessage.<anonymous>.<no name provided>
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.transformMessage.<anonymous>.<no name provided> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Service]'
+                        FUN name:send visibility:public modality:OPEN <> ($this:<root>.transformMessage.<anonymous>.<no name provided>, message:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                          overridden:
+                            public abstract fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Service
+                          $this: VALUE_PARAMETER name:<this> type:<root>.transformMessage.<anonymous>.<no name provided>
+                          VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public open fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.transformMessage.<anonymous>.<no name provided>'
+                              CALL 'public abstract fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Service' type=<unbound IrClassSymbolImpl> origin=null
+                                $this: GET_VAR 'service: <root>.Service declared in <root>.transformMessage.<anonymous>' type=<root>.Service origin=null
+                                message: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                                  $this: GET_VAR 'transform: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.transformMessage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                                  1: GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.transformMessage.<anonymous>.<no name provided>.send' type=<unbound IrClassSymbolImpl> origin=null
+                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.transformMessage.<anonymous>.<no name provided>' type=<root>.transformMessage.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:append signature:/append|append@Service(kotlin.String){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Service, suffix:<unbound IrClassSymbolImpl>) returnType:<root>.Service
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Service
+      VALUE_PARAMETER name:suffix index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun append (suffix: <unbound IrClassSymbolImpl>): <root>.Service declared in <root>'
+          CALL 'public final fun transformMessage (transform: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <root>.Service [inline] declared in <root>' type=<root>.Service origin=null
+            $receiver: GET_VAR '<this>: <root>.Service declared in <root>.append' type=<root>.Service origin=null
+            transform: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.append'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.append.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'suffix: <unbound IrClassSymbolImpl> declared in <root>.append' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Service' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun append (suffix: <unbound IrClassSymbolImpl>): <root>.Service declared in <root>' type=<root>.Service origin=null
+              $receiver: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Service]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Service]'
+                  FUN name:send visibility:public modality:OPEN <> ($this:<root>.box.<no name provided>, message:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    overridden:
+                      public abstract fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Service
+                    $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                    VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun send (message: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>'
+                        GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.send' type=<unbound IrClassSymbolImpl> origin=null
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              suffix: CONST String type=<unbound IrClassSymbolImpl> value="K"
+            message: CONST String type=<unbound IrClassSymbolImpl> value="O"

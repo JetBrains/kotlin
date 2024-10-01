@@ -1,0 +1,250 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/arraysFieldWrite.kt
+    PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sb> signature:/sb.<get-sb>|<get-sb>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:ArraysConstructor signature:/ArraysConstructor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArraysConstructor
+      PROPERTY name:memberArray signature:/ArraysConstructor.memberArray|{}memberArray[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysConstructor.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-memberArray> signature:/ArraysConstructor.memberArray.<get-memberArray>|<get-memberArray>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ArraysConstructor) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:memberArray signature:/ArraysConstructor.memberArray|{}memberArray[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArraysConstructor
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysConstructor.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor.<get-memberArray>' type=<root>.ArraysConstructor origin=null
+      CONSTRUCTOR signature:/ArraysConstructor.<init>|<init>(kotlin.Int;kotlin.Int){}[0] visibility:public <> (int1:<unbound IrClassSymbolImpl>, int2:<unbound IrClassSymbolImpl>) returnType:<root>.ArraysConstructor
+        VALUE_PARAMETER name:int1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:int2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArraysConstructor signature:/ArraysConstructor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysConstructor.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> superQualifierSymbol=<root>.ArraysConstructor origin=null
+            receiver: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor' type=<root>.ArraysConstructor origin=null
+            value: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          CALL 'public final fun set (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor' type=<root>.ArraysConstructor origin=null
+            int1: GET_VAR 'int1: <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor.<init>' type=<unbound IrClassSymbolImpl> origin=null
+            int2: GET_VAR 'int2: <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:/ArraysConstructor.set|set(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ArraysConstructor, int1:<unbound IrClassSymbolImpl>, int2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArraysConstructor
+        VALUE_PARAMETER name:int1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:int2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor.set' type=<root>.ArraysConstructor origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: GET_VAR 'int1: <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor.set' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor.set' type=<root>.ArraysConstructor origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'int2: <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:log signature:/ArraysConstructor.log|log(){}[0] visibility:public modality:FINAL <> ($this:<root>.ArraysConstructor) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArraysConstructor
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST String type=<unbound IrClassSymbolImpl> value="Array (constructor init):"
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Size: "
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor.log' type=<root>.ArraysConstructor origin=null
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Contents: "
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArraysConstructor declared in <root>.ArraysConstructor.log' type=<root>.ArraysConstructor origin=null
+    CLASS CLASS name:ArraysDefault signature:/ArraysDefault|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArraysDefault
+      PROPERTY name:memberArray signature:/ArraysDefault.memberArray|{}memberArray[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysDefault.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-memberArray> signature:/ArraysDefault.memberArray.<get-memberArray>|<get-memberArray>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ArraysDefault) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:memberArray signature:/ArraysDefault.memberArray|{}memberArray[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArraysDefault
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysDefault.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArraysDefault declared in <root>.ArraysDefault.<get-memberArray>' type=<root>.ArraysDefault origin=null
+      CONSTRUCTOR signature:/ArraysDefault.<init>|<init>(kotlin.Int;kotlin.Int){}[0] visibility:public <> (int1:<unbound IrClassSymbolImpl>, int2:<unbound IrClassSymbolImpl>) returnType:<root>.ArraysDefault
+        VALUE_PARAMETER name:int1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:int2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArraysDefault signature:/ArraysDefault|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          CALL 'public final fun set (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.ArraysDefault declared in <root>.ArraysDefault' type=<root>.ArraysDefault origin=null
+            int1: GET_VAR 'int1: <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault.<init>' type=<unbound IrClassSymbolImpl> origin=null
+            int2: GET_VAR 'int2: <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:/ArraysDefault.set|set(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ArraysDefault, int1:<unbound IrClassSymbolImpl>, int2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArraysDefault
+        VALUE_PARAMETER name:int1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:int2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArraysDefault declared in <root>.ArraysDefault.set' type=<root>.ArraysDefault origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: GET_VAR 'int1: <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault.set' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArraysDefault declared in <root>.ArraysDefault.set' type=<root>.ArraysDefault origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'int2: <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:log signature:/ArraysDefault.log|log(){}[0] visibility:public modality:FINAL <> ($this:<root>.ArraysDefault) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArraysDefault
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST String type=<unbound IrClassSymbolImpl> value="Array (default value init):"
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Size: "
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArraysDefault declared in <root>.ArraysDefault.log' type=<root>.ArraysDefault origin=null
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Contents: "
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArraysDefault declared in <root>.ArraysDefault.log' type=<root>.ArraysDefault origin=null
+    CLASS CLASS name:ArraysInitBlock signature:/ArraysInitBlock|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArraysInitBlock
+      PROPERTY name:memberArray signature:/ArraysInitBlock.memberArray|{}memberArray[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysInitBlock.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-memberArray> signature:/ArraysInitBlock.memberArray.<get-memberArray>|<get-memberArray>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ArraysInitBlock) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:memberArray signature:/ArraysInitBlock.memberArray|{}memberArray[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArraysInitBlock
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysInitBlock.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock.<get-memberArray>' type=<root>.ArraysInitBlock origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:memberArray signature:[ /ArraysInitBlock.memberArray|{}memberArray[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+            receiver: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock' type=<root>.ArraysInitBlock origin=null
+            value: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+      CONSTRUCTOR signature:/ArraysInitBlock.<init>|<init>(kotlin.Int;kotlin.Int){}[0] visibility:public <> (int1:<unbound IrClassSymbolImpl>, int2:<unbound IrClassSymbolImpl>) returnType:<root>.ArraysInitBlock
+        VALUE_PARAMETER name:int1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:int2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArraysInitBlock signature:/ArraysInitBlock|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          CALL 'public final fun set (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock' type=<root>.ArraysInitBlock origin=null
+            int1: GET_VAR 'int1: <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock.<init>' type=<unbound IrClassSymbolImpl> origin=null
+            int2: GET_VAR 'int2: <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:/ArraysInitBlock.set|set(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ArraysInitBlock, int1:<unbound IrClassSymbolImpl>, int2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArraysInitBlock
+        VALUE_PARAMETER name:int1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:int2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock.set' type=<root>.ArraysInitBlock origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: GET_VAR 'int1: <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock.set' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock.set' type=<root>.ArraysInitBlock origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'int2: <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock.set' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:log signature:/ArraysInitBlock.log|log(){}[0] visibility:public modality:FINAL <> ($this:<root>.ArraysInitBlock) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArraysInitBlock
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST String type=<unbound IrClassSymbolImpl> value="Array (init block):"
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Size: "
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock.log' type=<root>.ArraysInitBlock origin=null
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Contents: "
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: CALL 'private final fun <get-memberArray> (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArraysInitBlock declared in <root>.ArraysInitBlock.log' type=<root>.ArraysInitBlock origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:array1 type:<root>.ArraysConstructor [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.ArraysConstructor origin=INVOKE
+            $this: FUNCTION_REFERENCE 'public constructor <init> (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>) declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <root>.ArraysConstructor> origin=null reflectionTarget=<same>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun log (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array1: <root>.ArraysConstructor [val] declared in <root>.box' type=<root>.ArraysConstructor origin=null
+        CALL 'public final fun set (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array1: <root>.ArraysConstructor [val] declared in <root>.box' type=<root>.ArraysConstructor origin=null
+          int1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          int2: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun log (): <unbound IrClassSymbolImpl> declared in <root>.ArraysConstructor' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array1: <root>.ArraysConstructor [val] declared in <root>.box' type=<root>.ArraysConstructor origin=null
+        VAR name:array2 type:<root>.ArraysDefault [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.ArraysDefault origin=INVOKE
+            $this: FUNCTION_REFERENCE 'public constructor <init> (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>) declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <root>.ArraysDefault> origin=null reflectionTarget=<same>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun log (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array2: <root>.ArraysDefault [val] declared in <root>.box' type=<root>.ArraysDefault origin=null
+        CALL 'public final fun set (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array2: <root>.ArraysDefault [val] declared in <root>.box' type=<root>.ArraysDefault origin=null
+          int1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          int2: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun log (): <unbound IrClassSymbolImpl> declared in <root>.ArraysDefault' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array2: <root>.ArraysDefault [val] declared in <root>.box' type=<root>.ArraysDefault origin=null
+        VAR name:array3 type:<root>.ArraysInitBlock [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.ArraysInitBlock origin=INVOKE
+            $this: FUNCTION_REFERENCE 'public constructor <init> (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>) declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <root>.ArraysInitBlock> origin=null reflectionTarget=<same>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'public final fun log (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array3: <root>.ArraysInitBlock [val] declared in <root>.box' type=<root>.ArraysInitBlock origin=null
+        CALL 'public final fun set (int1: <unbound IrClassSymbolImpl>, int2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array3: <root>.ArraysInitBlock [val] declared in <root>.box' type=<root>.ArraysInitBlock origin=null
+          int1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          int2: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        CALL 'public final fun log (): <unbound IrClassSymbolImpl> declared in <root>.ArraysInitBlock' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val array3: <root>.ArraysInitBlock [val] declared in <root>.box' type=<root>.ArraysInitBlock origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        Array (constructor init):\n        Size: 2\n        Contents: [1, 2]\n        Array (constructor init):\n        Size: 2\n        Contents: [3, 4]\n        Array (default value init):\n        Size: 2\n        Contents: [1, 2]\n        Array (default value init):\n        Size: 2\n        Contents: [3, 4]\n        Array (init block):\n        Size: 2\n        Contents: [1, 2]\n        Array (init block):\n        Size: 2\n        Contents: [3, 4]\n\n    "
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

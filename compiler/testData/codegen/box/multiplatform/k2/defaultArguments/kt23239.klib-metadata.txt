@@ -1,0 +1,29 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public open class C : kotlin/Any {
+
+      public constructor()
+
+      public open fun f(p: kotlin/Int /* = ... */): kotlin/String
+
+      public open fun f2(p1: kotlin/Int /* = ... */, p2: kotlin/Int /* = ... */): kotlin/String
+
+      public open fun ff(p1: kotlin/Int, p2: kotlin/Int /* = ... */): kotlin/String
+
+      public open fun fff(p1: kotlin/Int, p2: kotlin/Int, p3: kotlin/Int /* = ... */): kotlin/String
+
+      public open fun fffx(p1: kotlin/Int, p2: kotlin/Int /* = ... */, p3: kotlin/Int /* = ... */): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

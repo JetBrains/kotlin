@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public final class B : test/A {
+
+      public constructor()
+
+      public final fun g(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    public open class test/A : kotlin/Any {
+
+      public constructor()
+
+      protected final fun f(): kotlin/String
+    }
+
+    package {
+
+      public final inline fun <T#0 /* R */> runInObject(crossinline block: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

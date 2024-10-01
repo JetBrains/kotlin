@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Writer
+
+    public final class Writer : kotlin/Any {
+
+      public constructor()
+
+      public final fun write(): kotlin/String
+    }
+
+    package {
+
+      public final fun a(a: @kotlin/ExtensionFunctionType suspend kotlin/Function2<Writer, kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,84 @@
+// MODULE: library
+MODULE_FRAGMENT name:<library>
+  FILE fqName:a fileName:/expected.kt
+    CLASS ANNOTATION_CLASS name:B signature:a/B|null[1] modality:OPEN visibility:public [expect] superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.B
+      CONSTRUCTOR signature:a/B.<init>|<init>(kotlin.String){}[1] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:a.B [primary,expect]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      PROPERTY name:s signature:a/B.s|{}s[1] visibility:public modality:FINAL [expect,val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:a/B.s.<get-s>|<get-s>(){}[1] visibility:public modality:FINAL <> ($this:a.B) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:a/B.s|{}s[1] visibility:public modality:FINAL [expect,val]
+          $this: VALUE_PARAMETER name:<this> type:a.B
+      CLASS ANNOTATION_CLASS name:C signature:a/B.C|null[1] modality:OPEN visibility:public [expect] superTypes:[<unbound IrClassSymbolImpl>]
+        annotations:
+          <unbound>
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.B.C
+        CONSTRUCTOR signature:a/B.C.<init>|<init>(kotlin.Boolean){}[1] visibility:public <> (a:<unbound IrClassSymbolImpl>) returnType:a.B.C [primary,expect]
+          VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+        PROPERTY name:a signature:a/B.C.a|{}a[1] visibility:public modality:FINAL [expect,val]
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:a/B.C.a.<get-a>|<get-a>(){}[1] visibility:public modality:FINAL <> ($this:a.B.C) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:a signature:a/B.C.a|{}a[1] visibility:public modality:FINAL [expect,val]
+            $this: VALUE_PARAMETER name:<this> type:a.B.C
+  FILE fqName:a fileName:/library.kt
+    CLASS ANNOTATION_CLASS name:A signature:a/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.A
+      CONSTRUCTOR signature:a/A.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:a.A [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A signature:a/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:a/A.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ a/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in a.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:a/A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:a.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:a/A.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:a.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in a.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ a/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: a.A declared in a.A.<get-x>' type=a.A origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:usage fileName:/common2.kt
+    FUN name:ok signature:usage/ok|ok(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = "OK")
+        <unbound>(1 = true)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ok (): <unbound IrClassSymbolImpl> declared in usage'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS ANNOTATION_CLASS name:AnnWithOptionalExpectation signature:usage/AnnWithOptionalExpectation|null[1] modality:OPEN visibility:public [expect] superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:usage.AnnWithOptionalExpectation
+      CONSTRUCTOR signature:usage/AnnWithOptionalExpectation.<init>|<init>(usage.C){}[1] visibility:public <> (c:usage.C) returnType:usage.AnnWithOptionalExpectation [primary,expect]
+        VALUE_PARAMETER name:c index:0 type:usage.C
+      PROPERTY name:c signature:usage/AnnWithOptionalExpectation.c|{}c[1] visibility:public modality:FINAL [expect,val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> signature:usage/AnnWithOptionalExpectation.c.<get-c>|<get-c>(){}[1] visibility:public modality:FINAL <> ($this:usage.AnnWithOptionalExpectation) returnType:usage.C
+          correspondingProperty: PROPERTY name:c signature:usage/AnnWithOptionalExpectation.c|{}c[1] visibility:public modality:FINAL [expect,val]
+          $this: VALUE_PARAMETER name:<this> type:usage.AnnWithOptionalExpectation
+      CLASS ANNOTATION_CLASS name:NestedAnnWithOptionalExpectation signature:usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation|null[1] modality:OPEN visibility:public [expect] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:usage.AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation
+        CONSTRUCTOR signature:usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation.<init>|<init>(usage.C){}[1] visibility:public <> (c2:usage.C) returnType:usage.AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation [primary,expect]
+          VALUE_PARAMETER name:c2 index:0 type:usage.C
+        PROPERTY name:c2 signature:usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation.c2|{}c2[1] visibility:public modality:FINAL [expect,val]
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c2> signature:usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation.c2.<get-c2>|<get-c2>(){}[1] visibility:public modality:FINAL <> ($this:usage.AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation) returnType:usage.C
+            correspondingProperty: PROPERTY name:c2 signature:usage/AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation.c2|{}c2[1] visibility:public modality:FINAL [expect,val]
+            $this: VALUE_PARAMETER name:<this> type:usage.AnnWithOptionalExpectation.NestedAnnWithOptionalExpectation
+  FILE fqName:usage fileName:/main.kt
+    CLASS ANNOTATION_CLASS name:C signature:usage/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:usage.C
+      CONSTRUCTOR signature:usage/C.<init>|<init>(){}[0] visibility:public <> () returnType:usage.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:C signature:usage/C|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:usage/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = 42)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in usage'
+          CALL 'public final fun ok (): <unbound IrClassSymbolImpl> declared in usage' type=<unbound IrClassSymbolImpl> origin=null

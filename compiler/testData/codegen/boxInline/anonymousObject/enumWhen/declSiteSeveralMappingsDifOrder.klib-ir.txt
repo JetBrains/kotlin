@@ -1,0 +1,97 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS ENUM_CLASS name:X signature:test/X|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.X>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.X
+      CONSTRUCTOR signature:test/X.<init>|<init>(){}[0] visibility:private <> () returnType:test.X [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.X
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:X signature:test/X|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.X>]'
+      ENUM_ENTRY name:A signature:test/X.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.X'
+      ENUM_ENTRY name:B signature:test/X.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.X'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/X.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.X>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/X.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.X
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/X.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/X.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.X>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/X.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS ENUM_CLASS name:Y signature:test/Y|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Y>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Y
+      CONSTRUCTOR signature:test/Y.<init>|<init>(){}[0] visibility:private <> () returnType:test.Y [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: test.Y
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Y signature:test/Y|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Y>]'
+      ENUM_ENTRY name:A signature:test/Y.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Y'
+      ENUM_ENTRY name:B signature:test/Y.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.Y'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/Y.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.Y>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/Y.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:test.Y
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Y.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/Y.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><test.Y>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Y.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:funForAdditionalMappingArrayInMappingFile signature:test/funForAdditionalMappingArrayInMappingFile|funForAdditionalMappingArrayInMappingFile(test.Y){}[0] visibility:public modality:FINAL <> (e:test.Y) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:e index:0 type:test.Y
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funForAdditionalMappingArrayInMappingFile (e: test.Y): <unbound IrClassSymbolImpl> declared in test'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:test.Y [val]
+              GET_VAR 'e: test.Y declared in test.funForAdditionalMappingArrayInMappingFile' type=test.Y origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: test.Y [val] declared in test.funForAdditionalMappingArrayInMappingFile' type=test.Y origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:A signature:test/Y.A|null[0]' type=test.Y
+                then: CONST String type=<unbound IrClassSymbolImpl> value="O"
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: test.Y [val] declared in test.funForAdditionalMappingArrayInMappingFile' type=test.Y origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:B signature:test/Y.B|null[0]' type=test.Y
+                then: CONST String type=<unbound IrClassSymbolImpl> value="K"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:test signature:test/test|test(test.X){}[0] visibility:public modality:FINAL <> (e:test.X) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:e index:0 type:test.X
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (e: test.X): <unbound IrClassSymbolImpl> [inline] declared in test'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:test.X [val]
+              GET_VAR 'e: test.X declared in test.test' type=test.X origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: test.X [val] declared in test.test' type=test.X origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:A signature:test/X.A|null[0]' type=test.X
+                then: CONST String type=<unbound IrClassSymbolImpl> value="O"
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: test.X [val] declared in test.test' type=test.X origin=null
+                  arg1: GET_ENUM 'ENUM_ENTRY name:B signature:test/X.B|null[0]' type=test.X
+                then: CONST String type=<unbound IrClassSymbolImpl> value="K"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun test (e: test.X): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+              e: GET_ENUM 'ENUM_ENTRY name:A signature:test/X.A|null[0]' type=test.X
+            1: CALL 'public final fun test (e: test.X): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+              e: GET_ENUM 'ENUM_ENTRY name:B signature:test/X.B|null[0]' type=test.X

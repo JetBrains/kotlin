@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/primitiveTypeInfo.kt
+    CLASS CLASS name:Box signature:/Box|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box<T of <root>.Box>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Box|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Box.<init>|<init>(1:0){}[0] visibility:public <> (t:T of <root>.Box) returnType:<root>.Box<T of <root>.Box> [primary]
+        VALUE_PARAMETER name:t index:0 type:T of <root>.Box
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box signature:/Box|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/Box.value|{}value[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Box.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private] ] type:T of <root>.Box visibility:private
+          EXPRESSION_BODY
+            GET_VAR 't: T of <root>.Box declared in <root>.Box.<init>' type=T of <root>.Box origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Box.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Box<T of <root>.Box>) returnType:T of <root>.Box
+          correspondingProperty: PROPERTY name:value signature:/Box.value|{}value[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Box<T of <root>.Box>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): T of <root>.Box declared in <root>.Box'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Box.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private] ] type:T of <root>.Box visibility:private' type=T of <root>.Box origin=null
+                receiver: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<get-value>' type=<root>.Box<T of <root>.Box> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> signature:/Box.value.<set-value>|<set-value>(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.Box<T of <root>.Box>, <set-?>:T of <root>.Box) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/Box.value|{}value[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Box<T of <root>.Box>
+          VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Box
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Box.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private] ] type:T of <root>.Box visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<set-value>' type=<root>.Box<T of <root>.Box> origin=null
+              value: GET_VAR '<set-?>: T of <root>.Box declared in <root>.Box.<set-value>' type=T of <root>.Box origin=null
+    FUN name:isIntBox signature:/isIntBox|isIntBox(Box<out|kotlin.Any?>){}[0] visibility:public modality:FINAL <> (box:<root>.Box<out <unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:box index:0 type:<root>.Box<out <unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isIntBox (box: <root>.Box<out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>'
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Box<*>
+            GET_VAR 'box: <root>.Box<out <unbound IrClassSymbolImpl>?> declared in <root>.isIntBox' type=<root>.Box<out <unbound IrClassSymbolImpl>?> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:box type:<root>.Box<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (t: T of <root>.Box) [primary] declared in <root>.Box' type=<root>.Box<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            t: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun isIntBox (box: <root>.Box<out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                box: GET_VAR 'val box: <root>.Box<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Box<<unbound IrClassSymbolImpl>> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

@@ -1,0 +1,463 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/smartCastOnBothEndsGeneric.kt
+    FUN name:checkDouble signature:/checkDouble|checkDouble(0:0?;0:0?;0:0){0§<kotlin.Double&kotlin.Comparable<kotlin.Double>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkDouble?, b:T of <root>.checkDouble?, c:T of <root>.checkDouble) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkDouble|checkDouble(0:0?;0:0?;0:0){0§<kotlin.Double&kotlin.Comparable<kotlin.Double>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkDouble?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkDouble?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkDouble
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkDouble <T> (a: T of <root>.checkDouble?, b: T of <root>.checkDouble?, c: T of <root>.checkDouble): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkDouble? declared in <root>.checkDouble' type=T of <root>.checkDouble? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkDouble? declared in <root>.checkDouble' type=T of <root>.checkDouble? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+                    $receiver: GET_VAR 'a: T of <root>.checkDouble? declared in <root>.checkDouble' type=T of <root>.checkDouble? origin=null
+                    1: GET_VAR 'b: T of <root>.checkDouble? declared in <root>.checkDouble' type=T of <root>.checkDouble? origin=null
+                  1: GET_VAR 'c: T of <root>.checkDouble declared in <root>.checkDouble' type=T of <root>.checkDouble origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkFloat signature:/checkFloat|checkFloat(0:0?;0:0?;0:0){0§<kotlin.Float&kotlin.Comparable<kotlin.Float>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkFloat?, b:T of <root>.checkFloat?, c:T of <root>.checkFloat) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkFloat|checkFloat(0:0?;0:0?;0:0){0§<kotlin.Float&kotlin.Comparable<kotlin.Float>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkFloat?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkFloat?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkFloat
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkFloat <T> (a: T of <root>.checkFloat?, b: T of <root>.checkFloat?, c: T of <root>.checkFloat): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkFloat? declared in <root>.checkFloat' type=T of <root>.checkFloat? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkFloat? declared in <root>.checkFloat' type=T of <root>.checkFloat? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=RANGE
+                    $receiver: GET_VAR 'a: T of <root>.checkFloat? declared in <root>.checkFloat' type=T of <root>.checkFloat? origin=null
+                    1: GET_VAR 'b: T of <root>.checkFloat? declared in <root>.checkFloat' type=T of <root>.checkFloat? origin=null
+                  1: GET_VAR 'c: T of <root>.checkFloat declared in <root>.checkFloat' type=T of <root>.checkFloat origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkLong signature:/checkLong|checkLong(0:0?;0:0?;0:0){0§<kotlin.Long&kotlin.Comparable<kotlin.Long>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkLong?, b:T of <root>.checkLong?, c:T of <root>.checkLong) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkLong|checkLong(0:0?;0:0?;0:0){0§<kotlin.Long&kotlin.Comparable<kotlin.Long>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkLong?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkLong?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkLong
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkLong <T> (a: T of <root>.checkLong?, b: T of <root>.checkLong?, c: T of <root>.checkLong): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkLong? declared in <root>.checkLong' type=T of <root>.checkLong? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkLong? declared in <root>.checkLong' type=T of <root>.checkLong? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkLong? declared in <root>.checkLong' type=T of <root>.checkLong? origin=null
+                    1: GET_VAR 'b: T of <root>.checkLong? declared in <root>.checkLong' type=T of <root>.checkLong? origin=null
+                  1: GET_VAR 'c: T of <root>.checkLong declared in <root>.checkLong' type=T of <root>.checkLong origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkInt signature:/checkInt|checkInt(0:0?;0:0?;0:0){0§<kotlin.Int&kotlin.Comparable<kotlin.Int>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkInt?, b:T of <root>.checkInt?, c:T of <root>.checkInt) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkInt|checkInt(0:0?;0:0?;0:0){0§<kotlin.Int&kotlin.Comparable<kotlin.Int>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkInt?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkInt?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkInt
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkInt <T> (a: T of <root>.checkInt?, b: T of <root>.checkInt?, c: T of <root>.checkInt): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkInt? declared in <root>.checkInt' type=T of <root>.checkInt? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkInt? declared in <root>.checkInt' type=T of <root>.checkInt? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkInt? declared in <root>.checkInt' type=T of <root>.checkInt? origin=null
+                    1: GET_VAR 'b: T of <root>.checkInt? declared in <root>.checkInt' type=T of <root>.checkInt? origin=null
+                  1: GET_VAR 'c: T of <root>.checkInt declared in <root>.checkInt' type=T of <root>.checkInt origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkChar signature:/checkChar|checkChar(0:0?;0:0?;0:0){0§<kotlin.Char&kotlin.Comparable<kotlin.Char>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkChar?, b:T of <root>.checkChar?, c:T of <root>.checkChar) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkChar|checkChar(0:0?;0:0?;0:0){0§<kotlin.Char&kotlin.Comparable<kotlin.Char>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkChar?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkChar?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkChar
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkChar <T> (a: T of <root>.checkChar?, b: T of <root>.checkChar?, c: T of <root>.checkChar): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkChar? declared in <root>.checkChar' type=T of <root>.checkChar? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkChar? declared in <root>.checkChar' type=T of <root>.checkChar? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkChar? declared in <root>.checkChar' type=T of <root>.checkChar? origin=null
+                    1: GET_VAR 'b: T of <root>.checkChar? declared in <root>.checkChar' type=T of <root>.checkChar? origin=null
+                  1: GET_VAR 'c: T of <root>.checkChar declared in <root>.checkChar' type=T of <root>.checkChar origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkByte signature:/checkByte|checkByte(0:0?;0:0?;0:0){0§<kotlin.Byte&kotlin.Comparable<kotlin.Byte>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkByte?, b:T of <root>.checkByte?, c:T of <root>.checkByte) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkByte|checkByte(0:0?;0:0?;0:0){0§<kotlin.Byte&kotlin.Comparable<kotlin.Byte>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkByte?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkByte?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkByte
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkByte <T> (a: T of <root>.checkByte?, b: T of <root>.checkByte?, c: T of <root>.checkByte): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkByte? declared in <root>.checkByte' type=T of <root>.checkByte? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkByte? declared in <root>.checkByte' type=T of <root>.checkByte? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkByte? declared in <root>.checkByte' type=T of <root>.checkByte? origin=null
+                    1: GET_VAR 'b: T of <root>.checkByte? declared in <root>.checkByte' type=T of <root>.checkByte? origin=null
+                  1: GET_VAR 'c: T of <root>.checkByte declared in <root>.checkByte' type=T of <root>.checkByte origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkShort signature:/checkShort|checkShort(0:0?;0:0?;0:0){0§<kotlin.Short&kotlin.Comparable<kotlin.Short>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkShort?, b:T of <root>.checkShort?, c:T of <root>.checkShort) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkShort|checkShort(0:0?;0:0?;0:0){0§<kotlin.Short&kotlin.Comparable<kotlin.Short>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkShort?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkShort?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkShort
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkShort <T> (a: T of <root>.checkShort?, b: T of <root>.checkShort?, c: T of <root>.checkShort): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkShort? declared in <root>.checkShort' type=T of <root>.checkShort? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkShort? declared in <root>.checkShort' type=T of <root>.checkShort? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkShort? declared in <root>.checkShort' type=T of <root>.checkShort? origin=null
+                    1: GET_VAR 'b: T of <root>.checkShort? declared in <root>.checkShort' type=T of <root>.checkShort? origin=null
+                  1: GET_VAR 'c: T of <root>.checkShort declared in <root>.checkShort' type=T of <root>.checkShort origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkUInt signature:/checkUInt|checkUInt(0:0?;0:0?;0:0){0§<kotlin.UInt&kotlin.Comparable<kotlin.UInt>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkUInt?, b:T of <root>.checkUInt?, c:T of <root>.checkUInt) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkUInt|checkUInt(0:0?;0:0?;0:0){0§<kotlin.UInt&kotlin.Comparable<kotlin.UInt>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkUInt?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkUInt?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkUInt
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkUInt <T> (a: T of <root>.checkUInt?, b: T of <root>.checkUInt?, c: T of <root>.checkUInt): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkUInt? declared in <root>.checkUInt' type=T of <root>.checkUInt? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkUInt? declared in <root>.checkUInt' type=T of <root>.checkUInt? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkUInt? declared in <root>.checkUInt' type=T of <root>.checkUInt? origin=null
+                    1: GET_VAR 'b: T of <root>.checkUInt? declared in <root>.checkUInt' type=T of <root>.checkUInt? origin=null
+                  1: GET_VAR 'c: T of <root>.checkUInt declared in <root>.checkUInt' type=T of <root>.checkUInt origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkULong signature:/checkULong|checkULong(0:0?;0:0?;0:0){0§<kotlin.ULong&kotlin.Comparable<kotlin.ULong>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkULong?, b:T of <root>.checkULong?, c:T of <root>.checkULong) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkULong|checkULong(0:0?;0:0?;0:0){0§<kotlin.ULong&kotlin.Comparable<kotlin.ULong>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkULong?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkULong?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkULong
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkULong <T> (a: T of <root>.checkULong?, b: T of <root>.checkULong?, c: T of <root>.checkULong): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkULong? declared in <root>.checkULong' type=T of <root>.checkULong? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkULong? declared in <root>.checkULong' type=T of <root>.checkULong? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkULong? declared in <root>.checkULong' type=T of <root>.checkULong? origin=null
+                    1: GET_VAR 'b: T of <root>.checkULong? declared in <root>.checkULong' type=T of <root>.checkULong? origin=null
+                  1: GET_VAR 'c: T of <root>.checkULong declared in <root>.checkULong' type=T of <root>.checkULong origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkUByte signature:/checkUByte|checkUByte(0:0?;0:0?;0:0){0§<kotlin.UByte&kotlin.Comparable<kotlin.UByte>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkUByte?, b:T of <root>.checkUByte?, c:T of <root>.checkUByte) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkUByte|checkUByte(0:0?;0:0?;0:0){0§<kotlin.UByte&kotlin.Comparable<kotlin.UByte>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkUByte?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkUByte?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkUByte
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkUByte <T> (a: T of <root>.checkUByte?, b: T of <root>.checkUByte?, c: T of <root>.checkUByte): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkUByte? declared in <root>.checkUByte' type=T of <root>.checkUByte? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkUByte? declared in <root>.checkUByte' type=T of <root>.checkUByte? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkUByte? declared in <root>.checkUByte' type=T of <root>.checkUByte? origin=null
+                    1: GET_VAR 'b: T of <root>.checkUByte? declared in <root>.checkUByte' type=T of <root>.checkUByte? origin=null
+                  1: GET_VAR 'c: T of <root>.checkUByte declared in <root>.checkUByte' type=T of <root>.checkUByte origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:checkUShort signature:/checkUShort|checkUShort(0:0?;0:0?;0:0){0§<kotlin.UShort&kotlin.Comparable<kotlin.UShort>>}[0] visibility:public modality:FINAL <T> (a:T of <root>.checkUShort?, b:T of <root>.checkUShort?, c:T of <root>.checkUShort) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /checkUShort|checkUShort(0:0?;0:0?;0:0){0§<kotlin.UShort&kotlin.Comparable<kotlin.UShort>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double; kotlin.Comparable<kotlin.Double>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.checkUShort?
+      VALUE_PARAMETER name:b index:1 type:T of <root>.checkUShort?
+      VALUE_PARAMETER name:c index:2 type:T of <root>.checkUShort
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun checkUShort <T> (a: T of <root>.checkUShort?, b: T of <root>.checkUShort?, c: T of <root>.checkUShort): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'a: T of <root>.checkUShort? declared in <root>.checkUShort' type=T of <root>.checkUShort? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'b: T of <root>.checkUShort? declared in <root>.checkUShort' type=T of <root>.checkUShort? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: GET_VAR 'a: T of <root>.checkUShort? declared in <root>.checkUShort' type=T of <root>.checkUShort? origin=null
+                    1: GET_VAR 'b: T of <root>.checkUShort? declared in <root>.checkUShort' type=T of <root>.checkUShort? origin=null
+                  1: GET_VAR 'c: T of <root>.checkUShort declared in <root>.checkUShort' type=T of <root>.checkUShort origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkDouble <T> (a: T of <root>.checkDouble?, b: T of <root>.checkDouble?, c: T of <root>.checkDouble): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+                b: CONST Double type=<unbound IrClassSymbolImpl> value=2.0
+                c: CONST Double type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Double"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkFloat <T> (a: T of <root>.checkFloat?, b: T of <root>.checkFloat?, c: T of <root>.checkFloat): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                b: CONST Float type=<unbound IrClassSymbolImpl> value=2.0
+                c: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Float"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkLong <T> (a: T of <root>.checkLong?, b: T of <root>.checkLong?, c: T of <root>.checkLong): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Long type=<unbound IrClassSymbolImpl> value=1
+                b: CONST Long type=<unbound IrClassSymbolImpl> value=2
+                c: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Long"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkInt <T> (a: T of <root>.checkInt?, b: T of <root>.checkInt?, c: T of <root>.checkInt): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                b: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                c: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Int"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkChar <T> (a: T of <root>.checkChar?, b: T of <root>.checkChar?, c: T of <root>.checkChar): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Char type=<unbound IrClassSymbolImpl> value='1'
+                b: CONST Char type=<unbound IrClassSymbolImpl> value='2'
+                c: CONST Char type=<unbound IrClassSymbolImpl> value='0'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Char"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkByte <T> (a: T of <root>.checkByte?, b: T of <root>.checkByte?, c: T of <root>.checkByte): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                c: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Byte"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkShort <T> (a: T of <root>.checkShort?, b: T of <root>.checkShort?, c: T of <root>.checkShort): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                c: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail Short"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkUInt <T> (a: T of <root>.checkUInt?, b: T of <root>.checkUInt?, c: T of <root>.checkUInt): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                b: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                c: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail UInt"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkULong <T> (a: T of <root>.checkULong?, b: T of <root>.checkULong?, c: T of <root>.checkULong): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Long type=<unbound IrClassSymbolImpl> value=1
+                b: CONST Long type=<unbound IrClassSymbolImpl> value=2
+                c: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail ULong"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkUByte <T> (a: T of <root>.checkUByte?, b: T of <root>.checkUByte?, c: T of <root>.checkUByte): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Byte type=<unbound IrClassSymbolImpl> value=1
+                b: CONST Byte type=<unbound IrClassSymbolImpl> value=2
+                c: CONST Byte type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail UByte"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun checkUShort <T> (a: T of <root>.checkUShort?, b: T of <root>.checkUShort?, c: T of <root>.checkUShort): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                a: CONST Short type=<unbound IrClassSymbolImpl> value=1
+                b: CONST Short type=<unbound IrClassSymbolImpl> value=2
+                c: CONST Short type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail UShort"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

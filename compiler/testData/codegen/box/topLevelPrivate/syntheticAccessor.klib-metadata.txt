@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+
+      private final fun test(): kotlin/String
+
+      private final val prop: kotlin/String /* = ... */
+        private final get
+    }
+  }
+}

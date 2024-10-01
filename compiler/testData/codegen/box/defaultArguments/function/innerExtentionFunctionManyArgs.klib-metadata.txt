@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun kotlin/String.bar(a: kotlin/Int /* = ... */, b: kotlin/Int /* = ... */, c: kotlin/Int /* = ... */, d: kotlin/Int /* = ... */, e: kotlin/Int /* = ... */, f: kotlin/Int /* = ... */, g: kotlin/Int /* = ... */, h: kotlin/Int /* = ... */, i: kotlin/Int /* = ... */, j: kotlin/Int /* = ... */, k: kotlin/Int /* = ... */, l: kotlin/Int /* = ... */, m: kotlin/Int /* = ... */, n: kotlin/Int /* = ... */, o: kotlin/Int /* = ... */, p: kotlin/Int /* = ... */, q: kotlin/Int /* = ... */, r: kotlin/Int /* = ... */, s: kotlin/Int /* = ... */, t: kotlin/Int /* = ... */, u: kotlin/Int /* = ... */, v: kotlin/Int /* = ... */, w: kotlin/Int /* = ... */, x: kotlin/Int /* = ... */, y: kotlin/Int /* = ... */, z: kotlin/Int /* = ... */, aa: kotlin/Int /* = ... */, bb: kotlin/Int /* = ... */, cc: kotlin/Int /* = ... */, dd: kotlin/Int /* = ... */, ee: kotlin/Int /* = ... */, ff: kotlin/Int /* = ... */, gg: kotlin/Int /* = ... */, hh: kotlin/Int /* = ... */, ii: kotlin/Int /* = ... */, jj: kotlin/Int /* = ... */, kk: kotlin/Int /* = ... */, ll: kotlin/Int /* = ... */, mm: kotlin/Int /* = ... */, nn: kotlin/Int /* = ... */): kotlin/String
+
+      public final fun kotlin/Char.baz(a: kotlin/Int /* = ... */, b: kotlin/Int /* = ... */, c: kotlin/Int /* = ... */, d: kotlin/Int /* = ... */, e: kotlin/Int /* = ... */, f: kotlin/Int /* = ... */, g: kotlin/Int /* = ... */, h: kotlin/Int /* = ... */, i: kotlin/Int /* = ... */, j: kotlin/Int /* = ... */, k: kotlin/Int /* = ... */, l: kotlin/Int /* = ... */, m: kotlin/Int /* = ... */, n: kotlin/Int /* = ... */, o: kotlin/Int /* = ... */, p: kotlin/Int /* = ... */, q: kotlin/Int /* = ... */, r: kotlin/Int /* = ... */, s: kotlin/Int /* = ... */, t: kotlin/Int /* = ... */, u: kotlin/Int /* = ... */, v: kotlin/Int /* = ... */, w: kotlin/Int /* = ... */, x: kotlin/Int /* = ... */, y: kotlin/Int /* = ... */, z: kotlin/Int /* = ... */, aa: kotlin/Int /* = ... */, bb: kotlin/Int /* = ... */, cc: kotlin/Int /* = ... */, dd: kotlin/Int /* = ... */, ee: kotlin/Int /* = ... */, ff: kotlin/Int /* = ... */, gg: kotlin/Int /* = ... */, hh: kotlin/Int /* = ... */, ii: kotlin/Int /* = ... */, jj: kotlin/Int /* = ... */, kk: kotlin/Int /* = ... */, ll: kotlin/Int /* = ... */, mm: kotlin/Int /* = ... */, nn: kotlin/Int /* = ... */, oo: kotlin/Int /* = ... */, pp: kotlin/Int /* = ... */, qq: kotlin/Int /* = ... */, rr: kotlin/Int /* = ... */, ss: kotlin/Int /* = ... */, tt: kotlin/Int /* = ... */, uu: kotlin/Int /* = ... */, vv: kotlin/Int /* = ... */, ww: kotlin/Int /* = ... */, xx: kotlin/Int /* = ... */, yy: kotlin/Int /* = ... */, zz: kotlin/Int /* = ... */, aaa: kotlin/Int /* = ... */, bbb: kotlin/Int /* = ... */, ccc: kotlin/Int /* = ... */, ddd: kotlin/Int /* = ... */, eee: kotlin/Int /* = ... */, fff: kotlin/Int /* = ... */, ggg: kotlin/Int /* = ... */, hhh: kotlin/Int /* = ... */, iii: kotlin/Int /* = ... */, jjj: kotlin/Int /* = ... */, kkk: kotlin/Int /* = ... */, lll: kotlin/Int /* = ... */, mmm: kotlin/Int /* = ... */, nnn: kotlin/Int /* = ... */, ooo: kotlin/Int /* = ... */, ppp: kotlin/Int /* = ... */, qqq: kotlin/Int /* = ... */, rrr: kotlin/Int /* = ... */): kotlin/String
+
+      public final fun kotlin/Int.foo(a: kotlin/Int /* = ... */, b: kotlin/Int /* = ... */, c: kotlin/Int /* = ... */, d: kotlin/Int /* = ... */, e: kotlin/Int /* = ... */, f: kotlin/Int /* = ... */, g: kotlin/Int /* = ... */, h: kotlin/Int /* = ... */, i: kotlin/Int /* = ... */, j: kotlin/Int /* = ... */, k: kotlin/Int /* = ... */, l: kotlin/Int /* = ... */, m: kotlin/Int /* = ... */, n: kotlin/Int /* = ... */, o: kotlin/Int /* = ... */, p: kotlin/Int /* = ... */, q: kotlin/Int /* = ... */, r: kotlin/Int /* = ... */, s: kotlin/Int /* = ... */, t: kotlin/Int /* = ... */, u: kotlin/Int /* = ... */, v: kotlin/Int /* = ... */, w: kotlin/Int /* = ... */, x: kotlin/Int /* = ... */, y: kotlin/Int /* = ... */, z: kotlin/Int /* = ... */, aa: kotlin/Int /* = ... */, bb: kotlin/Int /* = ... */, cc: kotlin/Int /* = ... */, dd: kotlin/Int /* = ... */, ee: kotlin/Int /* = ... */, ff: kotlin/Int /* = ... */): kotlin/String
+
+      public final fun test(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

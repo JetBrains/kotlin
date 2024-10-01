@@ -1,0 +1,265 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/loopWithinInlineFunction.kt
+    FUN name:myForEach signature:/myForEach|myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.myForEach>, action:<unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /myForEach|myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.myForEach>
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><T of <root>.myForEach> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.myForEach> declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEach> [val] declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:element type:T of <root>.myForEach [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.myForEach origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEach> [val] declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                $this: GET_VAR 'action: <unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>> declared in <root>.myForEach' type=<unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                1: GET_VAR 'val element: T of <root>.myForEach [val] declared in <root>.myForEach' type=T of <root>.myForEach origin=null
+    FUN name:testMyForEach signature:[ File '/loopWithinInlineFunction.kt' <- /testMyForEach|testMyForEach(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:visited type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEach' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEach' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun myForEach <T> (action: <unbound IrClassSymbolImpl><T of <root>.myForEach, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (j:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:j index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                              arg0: GET_VAR 'j: <unbound IrClassSymbolImpl> declared in <root>.testMyForEach.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              BREAK label=null loop.label=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                          $receiver: GET_VAR 'val visited: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testMyForEach' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=PLUSEQ
+                          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            <2>: <unbound IrClassSymbolImpl>
+                            $receiver: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEach' type=<unbound IrClassSymbolImpl> origin=null
+                            1: GET_VAR 'j: <unbound IrClassSymbolImpl> declared in <root>.testMyForEach.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: GET_VAR 'val visited: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testMyForEach' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+    FUN name:myForEachWithBreak signature:/myForEachWithBreak|myForEachWithBreak@kotlin.collections.Iterable<0:0>(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak>, dealBreaker:T of <root>.myForEachWithBreak, action:<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /myForEachWithBreak|myForEachWithBreak@kotlin.collections.Iterable<0:0>(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak>
+      VALUE_PARAMETER name:dealBreaker index:0 type:T of <root>.myForEachWithBreak
+      VALUE_PARAMETER name:action index:1 type:<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> declared in <root>.myForEachWithBreak' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> [val] declared in <root>.myForEachWithBreak' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:element type:T of <root>.myForEachWithBreak [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.myForEachWithBreak origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> [val] declared in <root>.myForEachWithBreak' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val element: T of <root>.myForEachWithBreak [val] declared in <root>.myForEachWithBreak' type=T of <root>.myForEachWithBreak origin=null
+                      arg1: GET_VAR 'dealBreaker: T of <root>.myForEachWithBreak declared in <root>.myForEachWithBreak' type=T of <root>.myForEachWithBreak origin=null
+                    then: BREAK label=null loop.label=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'action: <unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak, <unbound IrClassSymbolImpl>> declared in <root>.myForEachWithBreak' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'val element: T of <root>.myForEachWithBreak [val] declared in <root>.myForEachWithBreak' type=T of <root>.myForEachWithBreak origin=null
+    FUN name:testMyForEachWithBreak signature:[ File '/loopWithinInlineFunction.kt' <- /testMyForEachWithBreak|testMyForEachWithBreak(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:visited type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithBreak' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithBreak' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun myForEachWithBreak <T> (dealBreaker: T of <root>.myForEachWithBreak, action: <unbound IrClassSymbolImpl><T of <root>.myForEachWithBreak, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  dealBreaker: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (j:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:j index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                              arg0: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithBreak' type=<unbound IrClassSymbolImpl> origin=null
+                              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              BREAK label=null loop.label=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                          $receiver: GET_VAR 'val visited: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testMyForEachWithBreak' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=PLUSEQ
+                          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            <2>: <unbound IrClassSymbolImpl>
+                            $receiver: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithBreak' type=<unbound IrClassSymbolImpl> origin=null
+                            1: GET_VAR 'j: <unbound IrClassSymbolImpl> declared in <root>.testMyForEachWithBreak.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: GET_VAR 'val visited: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testMyForEachWithBreak' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+    FUN name:myForEachWithContinue signature:/myForEachWithContinue|myForEachWithContinue@kotlin.collections.Iterable<0:0>(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue>, skipper:T of <root>.myForEachWithContinue, action:<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /myForEachWithContinue|myForEachWithContinue@kotlin.collections.Iterable<0:0>(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue>
+      VALUE_PARAMETER name:skipper index:0 type:T of <root>.myForEachWithContinue
+      VALUE_PARAMETER name:action index:1 type:<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> declared in <root>.myForEachWithContinue' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> [val] declared in <root>.myForEachWithContinue' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:element type:T of <root>.myForEachWithContinue [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.myForEachWithContinue origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> [val] declared in <root>.myForEachWithContinue' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val element: T of <root>.myForEachWithContinue [val] declared in <root>.myForEachWithContinue' type=T of <root>.myForEachWithContinue origin=null
+                      arg1: GET_VAR 'skipper: T of <root>.myForEachWithContinue declared in <root>.myForEachWithContinue' type=T of <root>.myForEachWithContinue origin=null
+                    then: CONTINUE label=null loop.label=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'action: <unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue, <unbound IrClassSymbolImpl>> declared in <root>.myForEachWithContinue' type=<unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'val element: T of <root>.myForEachWithContinue [val] declared in <root>.myForEachWithContinue' type=T of <root>.myForEachWithContinue origin=null
+    FUN name:testMyForEachWithContinue signature:[ File '/loopWithinInlineFunction.kt' <- /testMyForEachWithContinue|testMyForEachWithContinue(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:visited type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithContinue' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithContinue' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun myForEachWithContinue <T> (skipper: T of <root>.myForEachWithContinue, action: <unbound IrClassSymbolImpl><T of <root>.myForEachWithContinue, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  skipper: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (j:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:j index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                              arg0: GET_VAR 'j: <unbound IrClassSymbolImpl> declared in <root>.testMyForEachWithContinue.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              BREAK label=null loop.label=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                          $receiver: GET_VAR 'val visited: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testMyForEachWithContinue' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=PLUSEQ
+                          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            <2>: <unbound IrClassSymbolImpl>
+                            $receiver: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.testMyForEachWithContinue' type=<unbound IrClassSymbolImpl> origin=null
+                            1: GET_VAR 'j: <unbound IrClassSymbolImpl> declared in <root>.testMyForEachWithContinue.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: GET_VAR 'val visited: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testMyForEachWithContinue' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'private final fun testMyForEach (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'private final fun testMyForEachWithBreak (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'private final fun testMyForEachWithContinue (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

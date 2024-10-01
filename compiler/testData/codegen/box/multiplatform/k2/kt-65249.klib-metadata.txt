@@ -1,0 +1,33 @@
+library {
+  // module name: <jvm>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buffer
+    // class name: ForwardingSource
+    // class name: Source
+
+    public final class Buffer : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract class ForwardingSource : Source {
+
+      public constructor()
+
+      public open fun read(sink: Buffer): kotlin/String
+    }
+
+    public abstract interface Source : kotlin/Any {
+
+      public abstract fun read(sink: Buffer): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

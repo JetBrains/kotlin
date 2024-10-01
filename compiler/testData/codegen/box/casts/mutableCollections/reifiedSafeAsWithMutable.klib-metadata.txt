@@ -1,0 +1,353 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: It
+    // class name: Itr
+    // class name: L
+    // class name: LItr
+    // class name: M
+    // class name: MC
+    // class name: ME
+    // class name: MIt
+    // class name: MItr
+    // class name: ML
+    // class name: MLItr
+    // class name: MM
+    // class name: MME
+    // class name: MS
+    // class name: S
+
+    public final class C : kotlin/collections/Collection<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/Iterator<kotlin/String>
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    public final class It : kotlin/collections/Iterable<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/Iterator<kotlin/String>
+    }
+
+    public final class Itr : kotlin/collections/Iterator<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun hasNext(): kotlin/Boolean
+
+      public open /* delegation */ operator fun next(): kotlin/String
+    }
+
+    public final class L : kotlin/collections/List<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(index: kotlin/Int): kotlin/String
+
+      public open /* delegation */ fun indexOf(element: kotlin/String): kotlin/Int
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/Iterator<kotlin/String>
+
+      public open /* delegation */ fun lastIndexOf(element: kotlin/String): kotlin/Int
+
+      public open /* delegation */ fun listIterator(): kotlin/collections/ListIterator<kotlin/String>
+
+      public open /* delegation */ fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<kotlin/String>
+
+      public open /* delegation */ fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<kotlin/String>
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    public final class LItr : kotlin/collections/ListIterator<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun hasNext(): kotlin/Boolean
+
+      public open /* delegation */ fun hasPrevious(): kotlin/Boolean
+
+      public open /* delegation */ operator fun next(): kotlin/String
+
+      public open /* delegation */ fun nextIndex(): kotlin/Int
+
+      public open /* delegation */ fun previous(): kotlin/String
+
+      public open /* delegation */ fun previousIndex(): kotlin/Int
+    }
+
+    public final class M : kotlin/collections/Map<kotlin/String, kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun containsKey(key: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsValue(value: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(key: kotlin/String): kotlin/String?
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ val entries: kotlin/collections/Set<kotlin/collections/Map.Entry<kotlin/String, kotlin/String>>
+        public open get
+
+      public open /* delegation */ val keys: kotlin/collections/Set<kotlin/String>
+        public open get
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+
+      public open /* delegation */ val values: kotlin/collections/Collection<kotlin/String>
+        public open get
+    }
+
+    public final class MC : kotlin/collections/MutableCollection<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun add(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun addAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun clear(): kotlin/Unit
+
+      public open /* delegation */ operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/MutableIterator<kotlin/String>
+
+      public open /* delegation */ fun remove(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun removeAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun retainAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    public final class ME : kotlin/collections/Map.Entry<kotlin/String, kotlin/String> {
+
+      public constructor()
+
+      public open val key: kotlin/String
+        public open /* non-default */ get
+
+      public open val value: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public final class MIt : kotlin/collections/MutableIterable<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/MutableIterator<kotlin/String>
+    }
+
+    public final class MItr : kotlin/collections/MutableIterator<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun hasNext(): kotlin/Boolean
+
+      public open /* delegation */ operator fun next(): kotlin/String
+
+      public open /* delegation */ fun remove(): kotlin/Unit
+    }
+
+    public final class ML : kotlin/collections/MutableList<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun add(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun add(index: kotlin/Int, element: kotlin/String): kotlin/Unit
+
+      public open /* delegation */ fun addAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun addAll(index: kotlin/Int, elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun clear(): kotlin/Unit
+
+      public open /* delegation */ operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(index: kotlin/Int): kotlin/String
+
+      public open /* delegation */ fun indexOf(element: kotlin/String): kotlin/Int
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/MutableIterator<kotlin/String>
+
+      public open /* delegation */ fun lastIndexOf(element: kotlin/String): kotlin/Int
+
+      public open /* delegation */ fun listIterator(): kotlin/collections/MutableListIterator<kotlin/String>
+
+      public open /* delegation */ fun listIterator(index: kotlin/Int): kotlin/collections/MutableListIterator<kotlin/String>
+
+      public open /* delegation */ fun remove(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun removeAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun removeAt(index: kotlin/Int): kotlin/String
+
+      public open /* delegation */ fun retainAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ operator fun set(index: kotlin/Int, element: kotlin/String): kotlin/String
+
+      public open /* delegation */ fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/MutableList<kotlin/String>
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    public final class MLItr : kotlin/collections/MutableListIterator<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun add(element: kotlin/String): kotlin/Unit
+
+      public open /* delegation */ operator fun hasNext(): kotlin/Boolean
+
+      public open /* delegation */ fun hasPrevious(): kotlin/Boolean
+
+      public open /* delegation */ operator fun next(): kotlin/String
+
+      public open /* delegation */ fun nextIndex(): kotlin/Int
+
+      public open /* delegation */ fun previous(): kotlin/String
+
+      public open /* delegation */ fun previousIndex(): kotlin/Int
+
+      public open /* delegation */ fun remove(): kotlin/Unit
+
+      public open /* delegation */ fun set(element: kotlin/String): kotlin/Unit
+    }
+
+    public final class MM : kotlin/collections/MutableMap<kotlin/String, kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun clear(): kotlin/Unit
+
+      public open /* delegation */ fun containsKey(key: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsValue(value: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(key: kotlin/String): kotlin/String?
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ fun put(key: kotlin/String, value: kotlin/String): kotlin/String?
+
+      public open /* delegation */ fun putAll(from: kotlin/collections/Map<out kotlin/String, kotlin/String>): kotlin/Unit
+
+      public open /* delegation */ fun remove(key: kotlin/String): kotlin/String?
+
+      public open /* delegation */ val entries: kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<kotlin/String, kotlin/String>>
+        public open get
+
+      public open /* delegation */ val keys: kotlin/collections/MutableSet<kotlin/String>
+        public open get
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+
+      public open /* delegation */ val values: kotlin/collections/MutableCollection<kotlin/String>
+        public open get
+    }
+
+    public final class MME : kotlin/collections/MutableMap.MutableEntry<kotlin/String, kotlin/String> {
+
+      public constructor()
+
+      public open fun setValue(value: kotlin/String): kotlin/String
+
+      public open val key: kotlin/String
+        public open /* non-default */ get
+
+      public open val value: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public final class MS : kotlin/collections/MutableSet<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ fun add(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun addAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun clear(): kotlin/Unit
+
+      public open /* delegation */ operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/MutableIterator<kotlin/String>
+
+      public open /* delegation */ fun remove(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun removeAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun retainAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    public final class S : kotlin/collections/Set<kotlin/String> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/Iterator<kotlin/String>
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> reifiedSafeAsReturnsNonNull(x: kotlin/Any?, operation: kotlin/String): kotlin/Unit
+
+      public final inline fun <reified T#0 /* T */> reifiedSafeAsReturnsNull(x: kotlin/Any?, operation: kotlin/String): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,33 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:build signature:/build|build(kotlin.Function1<TestInterface<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<R of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /build|build(kotlin.Function1<TestInterface<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<R of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    CLASS INTERFACE name:TestInterface signature:/TestInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInterface<R of <root>.TestInterface>
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /TestInterface|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:emit signature:/TestInterface.emit|emit(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TestInterface<R of <root>.TestInterface>, r:R of <root>.TestInterface) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestInterface<R of <root>.TestInterface>
+        VALUE_PARAMETER name:r index:0 type:R of <root>.TestInterface
+      FUN name:get signature:/TestInterface.get|get(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TestInterface<R of <root>.TestInterface>) returnType:R of <root>.TestInterface
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestInterface<R of <root>.TestInterface>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun build <R> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<R of <root>.build>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <R>: <unbound IrClassSymbolImpl>
+          block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestInterface<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.TestInterface<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$myLabel type:<root>.TestInterface<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                CALL 'public abstract fun emit (r: R of <root>.TestInterface): <unbound IrClassSymbolImpl> declared in <root>.TestInterface' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$myLabel: <root>.TestInterface<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>> origin=null
+                  r: CONST String type=<unbound IrClassSymbolImpl> value=""
+                VAR name:x type:<root>.TestInterface<<unbound IrClassSymbolImpl>> [val]
+                  GET_VAR '$this$myLabel: <root>.TestInterface<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<root>.TestInterface<<unbound IrClassSymbolImpl>> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value=""
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,113 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/typeOfCapturedStar.kt
+    CLASS INTERFACE name:KFunction signature:test/KFunction|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.KFunction<R of test.KFunction>
+      TYPE_PARAMETER name:R index:0 variance:out signature:[ test/KFunction|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    PROPERTY name:primaryConstructor0 signature:test/primaryConstructor0|@kotlin.reflect.KClass<0:0>{0§<kotlin.Any>}primaryConstructor0[0] visibility:public modality:FINAL [val]
+      FUN name:<get-primaryConstructor0> signature:test/primaryConstructor0.<get-primaryConstructor0>|<get-primaryConstructor0>@kotlin.reflect.KClass<0:0>(){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of test.<get-primaryConstructor0>>) returnType:test.KFunction<T of test.<get-primaryConstructor0>>
+        correspondingProperty: PROPERTY name:primaryConstructor0 signature:test/primaryConstructor0|@kotlin.reflect.KClass<0:0>{0§<kotlin.Any>}primaryConstructor0[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ test/primaryConstructor0|@kotlin.reflect.KClass<0:0>{0§<kotlin.Any>}primaryConstructor0[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of test.<get-primaryConstructor0>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-primaryConstructor0> <T> (): test.KFunction<T of test.<get-primaryConstructor0>> declared in test'
+            BLOCK type=test.<get-primaryConstructor0>.<no name provided><T of test.<get-primaryConstructor0>> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.KFunction<T of test.<get-primaryConstructor0>>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<get-primaryConstructor0>.<no name provided><T of test.<get-primaryConstructor0>>
+                CONSTRUCTOR visibility:public <> () returnType:test.<get-primaryConstructor0>.<no name provided><T of test.<get-primaryConstructor0>> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.KFunction<T of test.<get-primaryConstructor0>>]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.<get-primaryConstructor0>.<no name provided>' type=test.<get-primaryConstructor0>.<no name provided><T of test.<get-primaryConstructor0>> origin=OBJECT_LITERAL
+    CLASS INTERFACE name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A<T of test.A>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ test/A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      PROPERTY name:t signature:test/A.t|{}t[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-t> signature:test/A.t.<get-t>|<get-t>(){}[0] visibility:public modality:ABSTRACT <> ($this:test.A<T of test.A>) returnType:T of test.A
+          correspondingProperty: PROPERTY name:t signature:test/A.t|{}t[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A<T of test.A>
+    FUN name:bar signature:test/bar|bar(test.A<0:1>){0§<test.KFunction<0:1>>;1§<kotlin.Any>}[0] visibility:public modality:FINAL <T, E> (w:test.A<E of test.bar>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<E of test.bar>> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/bar|bar(test.A<0:1>){0§<test.KFunction<0:1>>;1§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[test.KFunction<E of test.bar>] reified:true
+      TYPE_PARAMETER name:E index:1 variance: signature:[ test/bar|bar(test.A<0:1>){0§<test.KFunction<0:1>>;1§<kotlin.Any>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:E index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:w index:0 type:test.A<E of test.bar>
+      BLOCK_BODY
+        VAR name:q type:test.KFunction<E of test.bar> [val]
+          CALL 'public final fun <get-primaryConstructor0> <T> (): test.KFunction<T of test.<get-primaryConstructor0>> declared in test' type=test.KFunction<E of test.bar> origin=GET_PROPERTY
+            <T>: E of test.bar
+            $receiver: GET_CLASS type=<unbound IrClassSymbolImpl><out E of test.bar>
+              CALL 'public abstract fun <get-t> (): T of test.A declared in test.A' type=E of test.bar origin=GET_PROPERTY
+                $this: GET_VAR 'w: test.A<E of test.bar> declared in test.bar' type=test.A<E of test.bar> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar <T, E> (w: test.A<E of test.bar>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<E of test.bar>> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<E of test.bar>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: test.KFunction<E of test.bar>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: T of test.bar
+            1: GET_VAR 'val q: test.KFunction<E of test.bar> [val] declared in test.bar' type=test.KFunction<E of test.bar> origin=null
+    FUN name:typeOfValue signature:test/typeOfValue|typeOfValue(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <Q> (q:Q of test.typeOfValue) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:Q index:0 variance: signature:[ test/typeOfValue|typeOfValue(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:q index:0 type:Q of test.typeOfValue
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun typeOfValue <Q> (q: Q of test.typeOfValue): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: Q of test.typeOfValue
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:q type:test.A<*> [val]
+          BLOCK type=test.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.A<<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:test.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.A<<unbound IrClassSymbolImpl>>]'
+              PROPERTY name:t visibility:public modality:OPEN [val]
+                FUN name:<get-t> visibility:public modality:OPEN <> ($this:test.box.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                  correspondingProperty: PROPERTY name:t visibility:public modality:OPEN [val]
+                  overridden:
+                    public abstract fun <get-t> (): T of test.A declared in test.A
+                  $this: VALUE_PARAMETER name:<this> type:test.box.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-t> (): <unbound IrClassSymbolImpl> declared in test.box.<no name provided>'
+                      CONST String type=<unbound IrClassSymbolImpl> value=""
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.box.<no name provided>' type=test.box.<no name provided> origin=OBJECT_LITERAL
+        VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<<unbound IrClassSymbolImpl>>> [val]
+          CALL 'public final fun bar <T, E> (w: test.A<E of test.bar>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<E of test.bar>> [inline] declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<<unbound IrClassSymbolImpl>>> origin=null
+            <T>: test.KFunction<<unbound IrClassSymbolImpl>>
+            <E>: <unbound IrClassSymbolImpl>
+            w: GET_VAR 'val q: test.A<*> [val] declared in test.box' type=test.A<*> origin=null
+        VAR name:w type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<<unbound IrClassSymbolImpl>>> [val] declared in test.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<<unbound IrClassSymbolImpl>>> origin=null
+        VAR name:f type:test.KFunction<<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test.KFunction<<unbound IrClassSymbolImpl>> origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<<unbound IrClassSymbolImpl>>> [val] declared in test.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, test.KFunction<<unbound IrClassSymbolImpl>>> origin=null
+        VAR name:expected type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="test.KFunction<kotlin.Any>"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val w: <unbound IrClassSymbolImpl> [val] declared in test.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: GET_VAR 'val expected: <unbound IrClassSymbolImpl> [val] declared in test.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail 1: "
+                GET_VAR 'val w: <unbound IrClassSymbolImpl> [val] declared in test.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun typeOfValue <Q> (q: Q of test.typeOfValue): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                      <Q>: test.KFunction<<unbound IrClassSymbolImpl>>
+                      q: GET_VAR 'val f: test.KFunction<<unbound IrClassSymbolImpl>> [val] declared in test.box' type=test.KFunction<<unbound IrClassSymbolImpl>> origin=null
+                arg1: GET_VAR 'val expected: <unbound IrClassSymbolImpl> [val] declared in test.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail 2: "
+                GET_VAR 'val f: test.KFunction<<unbound IrClassSymbolImpl>> [val] declared in test.box' type=test.KFunction<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

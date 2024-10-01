@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: T
+
+    public open class T : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final var value: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun localExtensionOnNullableParameter(): T
+    }
+  }
+}

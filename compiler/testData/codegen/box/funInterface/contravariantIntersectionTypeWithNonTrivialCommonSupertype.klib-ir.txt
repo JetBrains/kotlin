@@ -1,0 +1,94 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/contravariantIntersectionTypeWithNonTrivialCommonSupertype.kt
+    CLASS INTERFACE name:Top signature:/Top|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Top
+    CLASS INTERFACE name:Common signature:/Common|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Top]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Common
+    CLASS CLASS name:BaseClass signature:/BaseClass|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Common]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseClass
+      CONSTRUCTOR signature:/BaseClass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BaseClass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseClass signature:/BaseClass|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Common]'
+    CLASS INTERFACE name:BaseInterface signature:/BaseInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Common]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseInterface
+    CLASS CLASS name:ConcreteType signature:/ConcreteType|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.BaseInterface]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ConcreteType
+      CONSTRUCTOR signature:/ConcreteType.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ConcreteType [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseClass'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ConcreteType signature:/ConcreteType|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.BaseInterface]'
+    CLASS CLASS name:ConcreteType2 signature:/ConcreteType2|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.BaseInterface]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ConcreteType2
+      CONSTRUCTOR signature:/ConcreteType2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ConcreteType2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseClass'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ConcreteType2 signature:/ConcreteType2|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.BaseInterface]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun example (input: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          input: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:example signature:/example|example(kotlin.Int){}[0] visibility:public modality:FINAL <> (input:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:input index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:instance type:<root>.GenericHolder<out <root>.Common> [val]
+          BLOCK type=<root>.GenericHolder<out <root>.Common> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'input: <unbound IrClassSymbolImpl> declared in <root>.example' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<root>.GenericHolder<out <root>.Common> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.example' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.GenericHolder' type=<root>.GenericHolder<<root>.ConcreteType> origin=null
+                  <class: T>: <root>.ConcreteType
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.GenericHolder' type=<root>.GenericHolder<<root>.ConcreteType2> origin=null
+                  <class: T>: <root>.ConcreteType2
+        CALL 'public final fun doOnSuccess (onSuccess: <root>.Consumer<in T of <root>.GenericHolder>): <unbound IrClassSymbolImpl> declared in <root>.GenericHolder' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val instance: <root>.GenericHolder<out <root>.Common> [val] declared in <root>.example' type=<root>.GenericHolder<out <root>.Common> origin=null
+          onSuccess: TYPE_OP type=<root>.Consumer<in <unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.Consumer<in <unbound IrClassSymbolImpl>>
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.Common) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<root>.Common
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.Common): <unbound IrClassSymbolImpl> declared in <root>.example'
+                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun doOnSuccess (onSuccess: <root>.Consumer<in T of <root>.GenericHolder>): <unbound IrClassSymbolImpl> declared in <root>.GenericHolder' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val instance: <root>.GenericHolder<out <root>.Common> [val] declared in <root>.example' type=<root>.GenericHolder<out <root>.Common> origin=null
+          onSuccess: TYPE_OP type=<root>.Consumer<in <unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.Consumer<in <unbound IrClassSymbolImpl>>
+            FUNCTION_REFERENCE 'public final fun functionReference (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+    FUN name:functionReference signature:/functionReference|functionReference(kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    CLASS CLASS name:GenericHolder signature:/GenericHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericHolder<T of <root>.GenericHolder>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GenericHolder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Top] reified:false] ] superTypes:[<root>.Top] reified:false
+      CONSTRUCTOR signature:/GenericHolder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.GenericHolder<T of <root>.GenericHolder> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GenericHolder signature:/GenericHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:doOnSuccess signature:/GenericHolder.doOnSuccess|doOnSuccess(Consumer<in|1:0>){}[0] visibility:public modality:FINAL <> ($this:<root>.GenericHolder<T of <root>.GenericHolder>, onSuccess:<root>.Consumer<in T of <root>.GenericHolder>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.GenericHolder<T of <root>.GenericHolder>
+        VALUE_PARAMETER name:onSuccess index:0 type:<root>.Consumer<in T of <root>.GenericHolder>
+        BLOCK_BODY
+          CALL 'public abstract fun accept (t: T of <root>.Consumer): <unbound IrClassSymbolImpl> declared in <root>.Consumer' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'onSuccess: <root>.Consumer<in T of <root>.GenericHolder> declared in <root>.GenericHolder.doOnSuccess' type=<root>.Consumer<in T of <root>.GenericHolder> origin=null
+            t: TYPE_OP type=T of <root>.GenericHolder origin=CAST typeOperand=T of <root>.GenericHolder
+              BLOCK type=<root>.GenericHolder.doOnSuccess.<no name provided><T of <root>.GenericHolder> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.BaseClass]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericHolder.doOnSuccess.<no name provided><T of <root>.GenericHolder>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.GenericHolder.doOnSuccess.<no name provided><T of <root>.GenericHolder> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseClass'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.BaseClass]'
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.GenericHolder.doOnSuccess.<no name provided>' type=<root>.GenericHolder.doOnSuccess.<no name provided><T of <root>.GenericHolder> origin=OBJECT_LITERAL
+    CLASS INTERFACE name:Consumer signature:/Consumer|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Consumer<T of <root>.Consumer>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Consumer|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Top] reified:false] ] superTypes:[<root>.Top] reified:false
+      FUN name:accept signature:/Consumer.accept|accept(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Consumer<T of <root>.Consumer>, t:T of <root>.Consumer) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Consumer<T of <root>.Consumer>
+        VALUE_PARAMETER name:t index:0 type:T of <root>.Consumer

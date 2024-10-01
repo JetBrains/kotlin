@@ -1,0 +1,53 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/1.kt
+    CLASS INTERFACE name:Foo signature:/Foo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<T of <root>.Foo>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Foo|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:test signature:/Foo.test|test(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Foo<T of <root>.Foo>, p:T of <root>.Foo) returnType:T of <root>.Foo
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.Foo>
+        VALUE_PARAMETER name:p index:0 type:T of <root>.Foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun test (p: T of <root>.Foo): T of <root>.Foo declared in <root>.Foo'
+            GET_VAR 'p: T of <root>.Foo declared in <root>.Foo.test' type=T of <root>.Foo origin=null
+      PROPERTY name:prop signature:/Foo.prop|@1:0{}prop[0] visibility:public modality:OPEN [val]
+        FUN name:<get-prop> signature:/Foo.prop.<get-prop>|<get-prop>@1:0(){}[0] visibility:public modality:OPEN <> ($this:<root>.Foo<T of <root>.Foo>, $receiver:T of <root>.Foo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:prop signature:/Foo.prop|@1:0{}prop[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.Foo>
+          $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Foo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Foo'
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+    CLASS INTERFACE name:FooDerived signature:/FooDerived|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Foo<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooDerived
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:UnspecializedFromDerived signature:/UnspecializedFromDerived|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.UnspecializedFromDerived
+      CONSTRUCTOR signature:/UnspecializedFromDerived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.UnspecializedFromDerived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:UnspecializedFromDerived signature:/UnspecializedFromDerived|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:foo type:<root>.UnspecializedFromDerived [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UnspecializedFromDerived' type=<root>.UnspecializedFromDerived origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val foo: <root>.UnspecializedFromDerived [val] declared in <root>.box' type=<root>.UnspecializedFromDerived origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <root>.UnspecializedFromDerived
+              <2>: <unbound IrClassSymbolImpl>
+              1: GET_VAR 'val foo: <root>.UnspecializedFromDerived [val] declared in <root>.box' type=<root>.UnspecializedFromDerived origin=null
+              2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.UnspecializedFromDerived, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.UnspecializedFromDerived) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$with type:<root>.UnspecializedFromDerived
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '$this$with: <root>.UnspecializedFromDerived declared in <root>.box.<anonymous>' type=<root>.UnspecializedFromDerived origin=null
+                        $receiver: CONST String type=<unbound IrClassSymbolImpl> value="K"

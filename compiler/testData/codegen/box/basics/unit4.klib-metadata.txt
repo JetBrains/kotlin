@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: kotlin/Int, unit: kotlin/Unit): kotlin/Unit
+
+      public final var global: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

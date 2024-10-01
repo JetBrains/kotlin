@@ -1,0 +1,147 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IFoo
+    // class name: IcAny
+    // class name: IcInt
+    // class name: IcLong
+    // class name: IcOverIc
+    // class name: IcOverSuperInterface
+    // class name: IcStr
+
+    public abstract interface IFoo : kotlin/Any {
+
+      public open fun foo(): kotlin/String
+    }
+
+    public final value class IcAny<T#0 /* T */ : kotlin/Any> : IFoo {
+
+      public constructor(a: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: T#0?
+        public final get
+
+      // underlying property: a
+
+      // underlying type: T#0?
+    }
+
+    public final value class IcInt<T#0 /* T */ : kotlin/Int> : IFoo {
+
+      public constructor(i: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val i: T#0
+        public final get
+
+      // underlying property: i
+
+      // underlying type: T#0
+    }
+
+    public final value class IcLong<T#0 /* T */ : kotlin/Long> : IFoo {
+
+      public constructor(l: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val l: T#0
+        public final get
+
+      // underlying property: l
+
+      // underlying type: T#0
+    }
+
+    public final value class IcOverIc<T#0 /* T */ : IcLong<kotlin/Long>> : IFoo {
+
+      public constructor(o: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val o: T#0
+        public final get
+
+      // underlying property: o
+
+      // underlying type: T#0
+    }
+
+    public final value class IcOverSuperInterface<T#0 /* T */ : IFoo> : IFoo {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class IcStr<T#0 /* T */ : kotlin/String> : IFoo {
+
+      public constructor(y: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val y: T#0
+        public final get
+
+      // underlying property: y
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(message: kotlin/String, iFoo: IFoo): kotlin/Unit
+    }
+  }
+}

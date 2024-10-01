@@ -1,0 +1,17 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/CharSequence> test(charSequence: T#0): kotlin/String
+
+      public final val cs: kotlin/CharSequence
+        public final get
+    }
+  }
+}

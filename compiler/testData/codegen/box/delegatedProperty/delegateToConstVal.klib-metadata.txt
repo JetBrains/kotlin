@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Property
+
+    public final object Property : kotlin/Any {
+
+      private constructor()
+
+      public final const val PROPERTY_VALUE: kotlin/String /* = "O" */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final const val TOP_LEVEL_PROPERTY_VALUE: kotlin/String /* = "K" */
+        public final get
+
+      public final var sideEffect: kotlin/String
+        public final get
+        public final set
+
+      public final /* delegated */ val value1: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val value2: kotlin/String
+        public final /* non-default */ get
+    }
+  }
+}

@@ -1,0 +1,76 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2390.kt
+    CLASS CLASS name:JsonObject signature:/JsonObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsonObject
+      CONSTRUCTOR signature:/JsonObject.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JsonObject [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsonObject signature:/JsonObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:JsonArray signature:/JsonArray|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsonArray
+      CONSTRUCTOR signature:/JsonArray.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.JsonArray [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsonArray signature:/JsonArray|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:Formatter signature:/Formatter|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Formatter<IN of <root>.Formatter, OUT of <root>.Formatter>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /Formatter|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:OUT index:1 variance:out signature:[ /Formatter|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:OUT index:1 variance:out superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:format signature:/Formatter.format|format(1:0?){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Formatter<IN of <root>.Formatter, OUT of <root>.Formatter>, source:IN of <root>.Formatter?) returnType:OUT of <root>.Formatter
+        $this: VALUE_PARAMETER name:<this> type:<root>.Formatter<IN of <root>.Formatter, OUT of <root>.Formatter>
+        VALUE_PARAMETER name:source index:0 type:IN of <root>.Formatter?
+    CLASS INTERFACE name:MultiFormatter signature:/MultiFormatter|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MultiFormatter<IN of <root>.MultiFormatter, OUT of <root>.MultiFormatter>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /MultiFormatter|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:OUT index:1 variance:out signature:[ /MultiFormatter|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:OUT index:1 variance:out superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:format signature:/MultiFormatter.format|format(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MultiFormatter<IN of <root>.MultiFormatter, OUT of <root>.MultiFormatter>, source:<unbound IrClassSymbolImpl><IN of <root>.MultiFormatter>) returnType:OUT of <root>.MultiFormatter
+        $this: VALUE_PARAMETER name:<this> type:<root>.MultiFormatter<IN of <root>.MultiFormatter, OUT of <root>.MultiFormatter>
+        VALUE_PARAMETER name:source index:0 type:<unbound IrClassSymbolImpl><IN of <root>.MultiFormatter>
+    CLASS CLASS name:Project signature:/Project|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Project
+      CONSTRUCTOR signature:/Project.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Project [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Project signature:/Project|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:JsonFormatter signature:/JsonFormatter|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Formatter<IN of <root>.JsonFormatter, <root>.JsonObject>; <root>.MultiFormatter<IN of <root>.JsonFormatter, <root>.JsonArray>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JsonFormatter<IN of <root>.JsonFormatter>
+      TYPE_PARAMETER name:IN index:0 variance:in signature:[ /JsonFormatter|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IN index:0 variance:in superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      FUN name:format signature:/JsonFormatter.format|format(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.JsonFormatter<IN of <root>.JsonFormatter>, source:<unbound IrClassSymbolImpl><IN of <root>.JsonFormatter>) returnType:<root>.JsonArray
+        overridden:
+          public abstract fun format (source: <unbound IrClassSymbolImpl><IN of <root>.MultiFormatter>): OUT of <root>.MultiFormatter declared in <root>.MultiFormatter
+        $this: VALUE_PARAMETER name:<this> type:<root>.JsonFormatter<IN of <root>.JsonFormatter>
+        VALUE_PARAMETER name:source index:0 type:<unbound IrClassSymbolImpl><IN of <root>.JsonFormatter>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun format (source: <unbound IrClassSymbolImpl><IN of <root>.JsonFormatter>): <root>.JsonArray declared in <root>.JsonFormatter'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JsonArray' type=<root>.JsonArray origin=null
+    CLASS CLASS name:ProjectJsonFormatter signature:/ProjectJsonFormatter|null[0] modality:FINAL visibility:public superTypes:[<root>.JsonFormatter<<root>.Project>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProjectJsonFormatter
+      CONSTRUCTOR signature:/ProjectJsonFormatter.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ProjectJsonFormatter [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ProjectJsonFormatter signature:/ProjectJsonFormatter|null[0] modality:FINAL visibility:public superTypes:[<root>.JsonFormatter<<root>.Project>]'
+      FUN name:format signature:/ProjectJsonFormatter.format|format(Project?){}[0] visibility:public modality:OPEN <> ($this:<root>.ProjectJsonFormatter, source:<root>.Project?) returnType:<root>.JsonObject
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProjectJsonFormatter
+        VALUE_PARAMETER name:source index:0 type:<root>.Project?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun format (source: <root>.Project?): <root>.JsonObject declared in <root>.ProjectJsonFormatter'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JsonObject' type=<root>.JsonObject origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:formatter type:<root>.ProjectJsonFormatter [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ProjectJsonFormatter' type=<root>.ProjectJsonFormatter origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'public open fun format (source: <root>.Project?): <root>.JsonObject declared in <root>.ProjectJsonFormatter' type=<root>.JsonObject origin=null
+                    $this: GET_VAR 'val formatter: <root>.ProjectJsonFormatter [val] declared in <root>.box' type=<root>.ProjectJsonFormatter origin=null
+                    source: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Project' type=<root>.Project origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

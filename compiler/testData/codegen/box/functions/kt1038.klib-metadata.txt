@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: YieldingIterable
+    // class name: YieldingIterator
+
+    public final class YieldingIterable<T#0 /* T */> : kotlin/collections/Iterable<T#0> {
+
+      public constructor(yielderFactory: kotlin/Function0<kotlin/Function0<T#0?>>)
+
+      public open operator fun iterator(): kotlin/collections/Iterator<T#0>
+
+      public final val yielderFactory: kotlin/Function0<kotlin/Function0<T#0?>>
+        public final get
+    }
+
+    public final class YieldingIterator<T#0 /* T */> : kotlin/collections/Iterator<T#0> {
+
+      public constructor(yieldingFunction: kotlin/Function0<T#0?>)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): T#0
+
+      public final var current: T#0?
+        public final get
+        public final set
+
+      public final val yieldingFunction: kotlin/Function0<T#0?>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* TItem */> kotlin/collections/Iterable<T#0>.lazy(): kotlin/collections/Iterable<T#0>
+
+      public final infix fun <T#0 /* TItem */, T#1 /* TResult */> kotlin/collections/Iterable<T#0>.select(selector: kotlin/Function1<T#0, T#1>): kotlin/collections/Iterable<T#1>
+
+      public final infix fun <T#0 /* TItem */> kotlin/collections/Iterable<T#0>.where(predicate: kotlin/Function1<T#0, kotlin/Boolean>): kotlin/collections/Iterable<T#0>
+    }
+  }
+}

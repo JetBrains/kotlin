@@ -1,0 +1,86 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt513.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:add3 signature:/A.add3|add3@kotlin.collections.ArrayList<0:0>(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.A, $receiver:<unbound IrClassSymbolImpl><T of <root>.A.add3>, el:T of <root>.A.add3) returnType:<unbound IrClassSymbolImpl> [infix]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /A.add3|add3@kotlin.collections.ArrayList<0:0>(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.A.add3>
+        VALUE_PARAMETER name:el index:0 type:T of <root>.A.add3
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun add3 <T> (el: T of <root>.A.add3): <unbound IrClassSymbolImpl> [infix] declared in <root>.A'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.A.add3> declared in <root>.A.add3' type=<unbound IrClassSymbolImpl><T of <root>.A.add3> origin=null
+              1: GET_VAR 'el: T of <root>.A.add3 declared in <root>.A.add3' type=T of <root>.A.add3 origin=null
+      FUN name:test signature:/A.test|test(kotlin.collections.ArrayList<kotlin.Int>){}[0] visibility:public modality:FINAL <> ($this:<root>.A, list:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:list index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+            VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            WHILE label=null origin=FOR_LOOP_INNER_WHILE
+              condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.A.test' type=<unbound IrClassSymbolImpl> origin=null
+              body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                    $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.A.test' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    CALL 'public final fun add3 <T> (el: T of <root>.A.add3): <unbound IrClassSymbolImpl> [infix] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                      <T>: <unbound IrClassSymbolImpl>
+                      $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=null
+                      $receiver: GET_VAR 'list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.A.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      el: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.A.test' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:add2 signature:/add2|add2@kotlin.collections.ArrayList<0:0>(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.add2>, el:T of <root>.add2) returnType:<unbound IrClassSymbolImpl> [infix]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /add2|add2@kotlin.collections.ArrayList<0:0>(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.add2>
+      VALUE_PARAMETER name:el index:0 type:T of <root>.add2
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun add2 <T> (el: T of <root>.add2): <unbound IrClassSymbolImpl> [infix] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.add2> declared in <root>.add2' type=<unbound IrClassSymbolImpl><T of <root>.add2> origin=null
+            1: GET_VAR 'el: T of <root>.add2 declared in <root>.add2' type=T of <root>.add2 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:list type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'var list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      1: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public final fun add2 <T> (el: T of <root>.add2): <unbound IrClassSymbolImpl> [infix] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'var list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    el: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun test (list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          list: GET_VAR 'var list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'var list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

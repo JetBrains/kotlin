@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+
+    public final class B : test/A {
+
+      public constructor()
+
+      public open val value: kotlin/String /* = ... */
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    public abstract interface test/A : kotlin/Any {
+
+      private final inline fun inlineFun(lambda: kotlin/Function0<kotlin/String> /* = ... */): kotlin/String
+
+      public open fun test(): kotlin/String
+
+      public abstract val value: kotlin/String
+        public abstract get
+    }
+
+    package {
+
+      public final inline fun inlineFunStub(): kotlin/Unit
+    }
+  }
+}

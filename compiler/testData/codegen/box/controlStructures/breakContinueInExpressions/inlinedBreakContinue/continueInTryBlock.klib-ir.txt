@@ -1,0 +1,228 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/continueInTryBlock.kt
+    FUN name:myRunInline signature:/myRunInline|myRunInline(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.myRunInline' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:testContinue1 signature:/testContinue1|testContinue1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    TRY type=<unbound IrClassSymbolImpl>
+                      try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CONTINUE label=null loop.label=null
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContinue1 (): <unbound IrClassSymbolImpl> declared in <root>'
+                          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContinue1 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+    FUN name:testBreak1 signature:/testBreak1|testBreak1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    TRY type=<unbound IrClassSymbolImpl>
+                      try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        BREAK label=null loop.label=null
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testBreak1 (): <unbound IrClassSymbolImpl> declared in <root>'
+                          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testBreak1 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+    FUN name:testContinue2 signature:/testContinue2|testContinue2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        TRY type=<unbound IrClassSymbolImpl>
+                          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                            SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                            CONTINUE label=null loop.label=null
+                            SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                          finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                            SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                1: CONST Int type=<unbound IrClassSymbolImpl> value=100
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContinue2 (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testContinue2' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testBreak2 signature:/testBreak2|testBreak2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        WHILE label=null origin=WHILE_LOOP
+          condition: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    TRY type=<unbound IrClassSymbolImpl>
+                      try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        BREAK label=null loop.label=null
+                        SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            1: CONST Int type=<unbound IrClassSymbolImpl> value=100
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testBreak2 (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testBreak2' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testNested signature:/testNested|testNested(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        TRY type=<unbound IrClassSymbolImpl>
+                          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                            SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                            BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                              VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                              WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                                condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testNested.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                                  VAR FOR_LOOP_VARIABLE name:j type:<unbound IrClassSymbolImpl> [val]
+                                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.testNested.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                  BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                    CALL 'public final fun myRunInline (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                                      block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                          BLOCK_BODY
+                                            TRY type=<unbound IrClassSymbolImpl>
+                                              try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                                SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                    $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                    1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                                                CONTINUE label=null loop.label=null
+                                                SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                    $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                    1: CONST Int type=<unbound IrClassSymbolImpl> value=100
+                                              finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                                SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                    $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1000
+                            CONTINUE label=null loop.label=null
+                          finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                            SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                $this: GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                1: CONST Int type=<unbound IrClassSymbolImpl> value=10000
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testNested (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.testNested' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testContinue1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testBreak1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testContinue2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=202
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun testContinue2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testBreak2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=101
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun testBreak2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testNested (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=24042
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'public final fun testNested (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

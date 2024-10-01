@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyException
+
+    public final class MyException : kotlin/Exception {
+
+      public constructor(message: kotlin/String)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,63 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.AObj
+    // class name: A.Companion
+    // class name: B
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final val a: kotlin/Int /* = ... */
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: AObj
+    }
+
+    public final object A.AObj : B {
+
+      private constructor()
+
+      public final fun foo(): kotlin/Unit
+    }
+
+    public final companion object A.Companion : B {
+
+      private constructor()
+
+      public final fun foo(): kotlin/Unit
+    }
+
+    public open class B : kotlin/Any {
+
+      public /* secondary */ constructor()
+
+      public /* secondary */ constructor(a: kotlin/Int)
+
+      public constructor(a: kotlin/Int, b: kotlin/Int)
+
+      public final val a: kotlin/Int
+        public final get
+
+      public final val b: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

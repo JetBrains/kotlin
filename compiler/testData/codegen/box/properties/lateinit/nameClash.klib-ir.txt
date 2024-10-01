@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nameClash.kt
+    CLASS CLASS name:SS signature:/SS|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SS
+      CONSTRUCTOR signature:/SS.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SS [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SS signature:/SS|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/SS.s|{}s[0] visibility:private modality:FINAL [lateinit,var]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /SS.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/SS.s.<get-s>|<get-s>(){}[0] visibility:private modality:FINAL <> ($this:<root>.SS) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/SS.s|{}s[0] visibility:private modality:FINAL [lateinit,var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SS
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.SS'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /SS.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.SS declared in <root>.SS.<get-s>' type=<root>.SS origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-s> signature:/SS.s.<set-s>|<set-s>(kotlin.String){}[0] visibility:private modality:FINAL <> ($this:<root>.SS, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/SS.s|{}s[0] visibility:private modality:FINAL [lateinit,var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SS
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /SS.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.SS declared in <root>.SS.<set-s>' type=<root>.SS origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.SS.<set-s>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:setS signature:/SS.setS|setS(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.SS, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.SS
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'private final fun <set-s> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.SS' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.SS declared in <root>.SS.setS' type=<root>.SS origin=null
+            <set-?>: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.SS.setS' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:getS signature:/SS.getS|getS(){}[0] visibility:public modality:FINAL <> ($this:<root>.SS) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.SS
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getS (): <unbound IrClassSymbolImpl> declared in <root>.SS'
+            CALL 'private final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.SS' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.SS declared in <root>.SS.getS' type=<root>.SS origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:ss type:<root>.SS [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SS' type=<root>.SS origin=null
+        CALL 'public final fun setS (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.SS' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val ss: <root>.SS [val] declared in <root>.box' type=<root>.SS origin=null
+          s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun getS (): <unbound IrClassSymbolImpl> declared in <root>.SS' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val ss: <root>.SS [val] declared in <root>.box' type=<root>.SS origin=null

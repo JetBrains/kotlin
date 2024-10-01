@@ -1,0 +1,90 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS INTERFACE name:IZ signature:test/IZ|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.IZ
+      FUN name:z signature:test/IZ.z|z(){}[0] visibility:public modality:ABSTRACT <> ($this:test.IZ) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.IZ
+    CLASS INTERFACE name:IZZ signature:test/IZZ|null[0] modality:ABSTRACT visibility:public superTypes:[test.IZ]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.IZZ
+      FUN name:zz signature:test/IZZ.zz|zz(){}[0] visibility:public modality:ABSTRACT <> ($this:test.IZZ) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.IZZ
+    FUN name:implZZ signature:test/implZZ|implZZ(test.IZ;kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (zImpl:test.IZ, zzImpl:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:test.IZZ [inline]
+      VALUE_PARAMETER name:zImpl index:0 type:test.IZ
+      VALUE_PARAMETER name:zzImpl index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun implZZ (zImpl: test.IZ, zzImpl: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.IZZ [inline] declared in test'
+          BLOCK type=test.implZZ.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.IZZ; test.IZ]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.implZZ.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:test.implZZ.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.IZZ; test.IZ]'
+              FIELD DELEGATE name:$$delegate_0 type:test.IZ visibility:private [final]
+                EXPRESSION_BODY
+                  GET_VAR 'zImpl: test.IZ declared in test.implZZ' type=test.IZ origin=null
+              FUN name:zz visibility:public modality:OPEN <> ($this:test.implZZ.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun zz (): <unbound IrClassSymbolImpl> declared in test.IZZ
+                $this: VALUE_PARAMETER name:<this> type:test.implZZ.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun zz (): <unbound IrClassSymbolImpl> declared in test.implZZ.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'zzImpl: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [crossinline] declared in test.implZZ' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+              FUN DELEGATED_MEMBER name:z visibility:public modality:OPEN <> ($this:test.implZZ.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                  public abstract fun z (): <unbound IrClassSymbolImpl> declared in test.IZ
+                $this: VALUE_PARAMETER name:<this> type:test.implZZ.<no name provided>
+                BLOCK_BODY
+                  CALL 'public abstract fun z (): <unbound IrClassSymbolImpl> declared in test.IZ' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:test.IZ visibility:private [final] declared in test.implZZ.<no name provided>' type=test.IZ origin=null
+                      receiver: GET_VAR '<this>: test.implZZ.<no name provided> declared in test.implZZ.<no name provided>.z' type=test.implZZ.<no name provided> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.implZZ.<no name provided>' type=test.implZZ.<no name provided> origin=OBJECT_LITERAL
+  FILE fqName:<root> fileName:/2.kt
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS OBJECT name:ZImpl signature:/ZImpl|null[0] modality:FINAL visibility:public superTypes:[test.IZ]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl
+      CONSTRUCTOR signature:/ZImpl.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ZImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ZImpl signature:/ZImpl|null[0] modality:FINAL visibility:public superTypes:[test.IZ]'
+      FUN name:z signature:/ZImpl.z|z(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZImpl) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun z (): <unbound IrClassSymbolImpl> declared in test.IZ
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZImpl
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: CONST String type=<unbound IrClassSymbolImpl> value="O"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:zz type:test.IZZ [val]
+          CALL 'public final fun implZZ (zImpl: test.IZ, zzImpl: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): test.IZZ [inline] declared in test' type=test.IZZ origin=null
+            zImpl: GET_OBJECT 'CLASS OBJECT name:ZImpl signature:/ZImpl|null[0] modality:FINAL visibility:public superTypes:[test.IZ]' type=<root>.ZImpl
+            zzImpl: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      $this: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val zz: test.IZZ [val] declared in <root>.box' type=test.IZZ origin=null
+        CALL 'public abstract fun zz (): <unbound IrClassSymbolImpl> declared in test.IZZ' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val zz: test.IZZ [val] declared in <root>.box' type=test.IZZ origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

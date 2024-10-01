@@ -1,0 +1,63 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/complexImplicitReceiver.kt
+    CLASS INTERFACE name:Bound signature:/Bound|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bound
+    CLASS INTERFACE name:CompilerPhase signature:/CompilerPhase|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CompilerPhase<X1 of <root>.CompilerPhase, Y1 of <root>.CompilerPhase>
+      TYPE_PARAMETER name:X1 index:0 variance:in signature:[ /CompilerPhase|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:X1 index:0 variance:in superTypes:[<root>.Bound] reified:false] ] superTypes:[<root>.Bound] reified:false
+      TYPE_PARAMETER name:Y1 index:1 variance: signature:[ /CompilerPhase|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:Y1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:CompositePhase signature:[ File '/complexImplicitReceiver.kt' <- /CompositePhase|null[0] ] modality:FINAL visibility:private superTypes:[<root>.CompilerPhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CompositePhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase>
+      TYPE_PARAMETER name:X2 index:0 variance: signature:[ [ File '/complexImplicitReceiver.kt' <- /CompositePhase|null[0] ] <- Local[<TP>,0|TYPE_PARAMETER name:X1 index:0 variance:in superTypes:[<root>.Bound] reified:false] ] superTypes:[<root>.Bound] reified:false
+      TYPE_PARAMETER name:Y2 index:1 variance: signature:[ [ File '/complexImplicitReceiver.kt' <- /CompositePhase|null[0] ] <- Local[<TP>,1|TYPE_PARAMETER name:Y1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:[ File '/complexImplicitReceiver.kt' <- /CompositePhase.<init>|<init>(kotlin.String){}[0] ] visibility:public <> (foo:<unbound IrClassSymbolImpl>) returnType:<root>.CompositePhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase> [primary]
+        VALUE_PARAMETER name:foo index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CompositePhase signature:[ File '/complexImplicitReceiver.kt' <- /CompositePhase|null[0] ] modality:FINAL visibility:private superTypes:[<root>.CompilerPhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase>]'
+      PROPERTY name:foo signature:[ File '/complexImplicitReceiver.kt' <- /CompositePhase.foo|{}foo[0] ] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:foo signature:[ [ File '/complexImplicitReceiver.kt' <- /CompositePhase.foo|{}foo[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:foo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'foo: <unbound IrClassSymbolImpl> declared in <root>.CompositePhase.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-foo> signature:[ File '/complexImplicitReceiver.kt' <- /CompositePhase.foo.<get-foo>|<get-foo>(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.CompositePhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:foo signature:[ File '/complexImplicitReceiver.kt' <- /CompositePhase.foo|{}foo[0] ] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompositePhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-foo> (): <unbound IrClassSymbolImpl> declared in <root>.CompositePhase'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:foo signature:[ [ File '/complexImplicitReceiver.kt' <- /CompositePhase.foo|{}foo[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:foo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompositePhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase> declared in <root>.CompositePhase.<get-foo>' type=<root>.CompositePhase<X2 of <root>.CompositePhase, Y2 of <root>.CompositePhase> origin=null
+    FUN name:bar signature:/bar|bar@CompilerPhase<0:0,0:1>(){0§<Bound>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <X3, Y3> ($receiver:<root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["UNCHECKED_CAST"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      TYPE_PARAMETER name:X3 index:0 variance: signature:[ /bar|bar@CompilerPhase<0:0,0:1>(){0§<Bound>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:X1 index:0 variance:in superTypes:[<root>.Bound] reified:false] ] superTypes:[<root>.Bound] reified:false
+      TYPE_PARAMETER name:Y3 index:1 variance: signature:[ /bar|bar@CompilerPhase<0:0,0:1>(){0§<Bound>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:Y1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TYPE_OP type=<root>.CompilerPhase<X3 of <root>.bar, <unbound IrClassSymbolImpl>?> origin=CAST typeOperand=<root>.CompilerPhase<X3 of <root>.bar, <unbound IrClassSymbolImpl>?>
+            GET_VAR '<this>: <root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar> declared in <root>.bar' type=<root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar> origin=null
+        VAR name:ok type:<unbound IrClassSymbolImpl> [val]
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.CompositePhase<X3 of <root>.bar, *>
+                GET_VAR '<this>: <root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar> declared in <root>.bar' type=<root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar> origin=null
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'public final fun <get-foo> (): <unbound IrClassSymbolImpl> declared in <root>.CompositePhase' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: TYPE_OP type=<root>.CompositePhase<X3 of <root>.bar, *> origin=IMPLICIT_CAST typeOperand=<root>.CompositePhase<X3 of <root>.bar, *>
+                    GET_VAR '<this>: <root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar> declared in <root>.bar' type=<root>.CompilerPhase<X3 of <root>.bar, Y3 of <root>.bar> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar <X3, Y3> (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'val ok: <unbound IrClassSymbolImpl> [val] declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun bar <X3, Y3> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <X3>: <root>.Bound
+            <Y3>: <unbound IrClassSymbolImpl>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> (foo: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CompositePhase' type=<root>.CompositePhase<<root>.Bound, <unbound IrClassSymbolImpl>> origin=null
+              <class: X2>: <root>.Bound
+              <class: Y2>: <unbound IrClassSymbolImpl>
+              foo: CONST String type=<unbound IrClassSymbolImpl> value="O"

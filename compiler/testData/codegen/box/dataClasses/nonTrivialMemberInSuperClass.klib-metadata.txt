@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: DataClass
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor()
+
+      public open operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun hashCode(): kotlin/Int
+
+      public open fun toString(): kotlin/String
+    }
+
+    public final data class DataClass : Base {
+
+      public constructor(field: kotlin/String)
+
+      public final /* synthesized */ operator fun component1(): kotlin/String
+
+      public final /* synthesized */ fun copy(field: kotlin/String /* = ... */): DataClass
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val field: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

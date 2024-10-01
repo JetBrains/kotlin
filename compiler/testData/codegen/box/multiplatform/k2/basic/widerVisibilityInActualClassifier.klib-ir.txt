@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+    CLASS CLASS name:SomeInheritor signature:/SomeInheritor|null[0] modality:FINAL visibility:internal superTypes:[<root>.Some]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SomeInheritor
+      CONSTRUCTOR signature:/SomeInheritor.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SomeInheritor [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Some'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeInheritor signature:/SomeInheritor|null[0] modality:FINAL visibility:internal superTypes:[<root>.Some]'
+      FUN name:callFoo signature:/SomeInheritor.callFoo|callFoo(){}[0] visibility:public modality:FINAL <> ($this:<root>.SomeInheritor) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.SomeInheritor
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun callFoo (): <unbound IrClassSymbolImpl> declared in <root>.SomeInheritor'
+            CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Some.ProtectedNested' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Some.ProtectedNested' type=<root>.Some.ProtectedNested origin=null
+    FUN name:commonBox signature:/commonBox|commonBox(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun callFoo (): <unbound IrClassSymbolImpl> declared in <root>.SomeInheritor' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SomeInheritor' type=<root>.SomeInheritor origin=null
+        VAR name:y type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.PlatformOther' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.PlatformOther' type=<root>.PlatformOther origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.commonBox' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val y: <unbound IrClassSymbolImpl> [val] declared in <root>.commonBox' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:Some signature:/Some|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some
+      CONSTRUCTOR signature:/Some.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Some [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some signature:/Some|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:ProtectedNested signature:/Some.ProtectedNested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some.ProtectedNested
+        CONSTRUCTOR signature:/Some.ProtectedNested.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Some.ProtectedNested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ProtectedNested signature:/Some.ProtectedNested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:foo signature:/Some.ProtectedNested.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.Some.ProtectedNested) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Some.ProtectedNested
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.Some.ProtectedNested'
+              CONST String type=<unbound IrClassSymbolImpl> value="O"
+    CLASS CLASS name:PlatformOther signature:/PlatformOther|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PlatformOther
+      CONSTRUCTOR signature:/PlatformOther.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.PlatformOther [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PlatformOther signature:/PlatformOther|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:bar signature:/PlatformOther.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:<root>.PlatformOther) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.PlatformOther
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.PlatformOther'
+            CONST String type=<unbound IrClassSymbolImpl> value="K"
+    TYPEALIAS name:Other signature:/Other|null[0] visibility:internal expandedType:<root>.PlatformOther[actual]
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun commonBox (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

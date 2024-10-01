@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(s: kotlin/Int?): kotlin/Unit
+
+      public final var apx: kotlin/Int
+        public final /* non-default */ inline get
+        public final /* non-default */ inline set(value: kotlin/Int)
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

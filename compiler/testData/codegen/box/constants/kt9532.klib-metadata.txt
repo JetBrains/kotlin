@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    public final object A : kotlin/Any {
+
+      private constructor()
+
+      public final const val a: kotlin/String /* = "$" */
+        public final get
+
+      public final const val b: kotlin/String /* = "1234$" */
+        public final get
+
+      public final val bNonConst: kotlin/String /* = ... */
+        public final get
+
+      public final val bNullable: kotlin/String?
+        public final get
+
+      public final const val c: kotlin/Int /* = 10000 */
+        public final get
+    }
+
+    public final object B : kotlin/Any {
+
+      private constructor()
+
+      public final const val a: kotlin/String /* = "$" */
+        public final get
+
+      public final const val b: kotlin/String /* = "1234$" */
+        public final get
+
+      public final val bNonConst: kotlin/String /* = ... */
+        public final get
+
+      public final val bNullable: kotlin/String?
+        public final get
+
+      public final const val c: kotlin/Int /* = 10000 */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

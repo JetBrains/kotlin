@@ -1,0 +1,221 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/throwableComplex.kt
+    CLASS CLASS name:Base signature:/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      CONSTRUCTOR signature:/Base.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>?, cause:<unbound IrClassSymbolImpl>?) returnType:<root>.Base [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:cause index:1 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            1: GET_VAR 'message: <unbound IrClassSymbolImpl>? declared in <root>.Base.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+            2: GET_VAR 'cause: <unbound IrClassSymbolImpl>? declared in <root>.Base.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Base2 signature:/Base2|null[0] modality:OPEN visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base2
+      CONSTRUCTOR signature:/Base2.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>?, cause:<unbound IrClassSymbolImpl>?) returnType:<root>.Base2 [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:cause index:1 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.Base'
+            message: GET_VAR 'message: <unbound IrClassSymbolImpl>? declared in <root>.Base2.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+            cause: GET_VAR 'cause: <unbound IrClassSymbolImpl>? declared in <root>.Base2.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base2 signature:/Base2|null[0] modality:OPEN visibility:public superTypes:[<root>.Base]'
+    CLASS CLASS name:Override signature:/Override|null[0] modality:OPEN visibility:public superTypes:[<root>.Base2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Override
+      CONSTRUCTOR signature:/Override.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>?, cause:<unbound IrClassSymbolImpl>?) returnType:<root>.Override [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:cause index:1 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.Base2'
+            message: GET_VAR 'message: <unbound IrClassSymbolImpl>? declared in <root>.Override.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+            cause: GET_VAR 'cause: <unbound IrClassSymbolImpl>? declared in <root>.Override.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Override signature:/Override|null[0] modality:OPEN visibility:public superTypes:[<root>.Base2]'
+      PROPERTY name:i signature:/Override.i|{}i[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ /Override.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:/Override.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Override) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:/Override.i|{}i[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Override
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.Override'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /Override.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Override declared in <root>.Override.<get-i>' type=<root>.Override origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-i> signature:/Override.i.<set-i>|<set-i>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Override, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:/Override.i|{}i[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Override
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /Override.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Override declared in <root>.Override.<set-i>' type=<root>.Override origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Override.<set-i>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:message signature:/Override.message|{}message[0] visibility:public modality:OPEN [val]
+        FUN name:<get-message> signature:/Override.message.<get-message>|<get-message>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Override) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:message signature:/Override.message|{}message[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Override
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-message> (): <unbound IrClassSymbolImpl>? declared in <root>.Override'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CONST String type=<unbound IrClassSymbolImpl> value="Override: "
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:Base2 signature:/Base2|null[0] modality:OPEN visibility:public superTypes:[<root>.Base]' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Override declared in <root>.Override.<get-message>' type=<root>.Override origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.Override' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR '<this>: <root>.Override declared in <root>.Override.<get-message>' type=<root>.Override origin=null
+                    CALL 'public final fun <set-i> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Override' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      $this: GET_VAR '<this>: <root>.Override declared in <root>.Override.<get-message>' type=<root>.Override origin=null
+                      <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.Override.<get-message>' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.Override.<get-message>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:OverBase signature:/OverBase|null[0] modality:OPEN visibility:public superTypes:[<root>.Override]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OverBase
+      CONSTRUCTOR signature:/OverBase.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>?, cause:<unbound IrClassSymbolImpl>?) returnType:<root>.OverBase [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:cause index:1 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.Override'
+            message: GET_VAR 'message: <unbound IrClassSymbolImpl>? declared in <root>.OverBase.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+            cause: GET_VAR 'cause: <unbound IrClassSymbolImpl>? declared in <root>.OverBase.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OverBase signature:/OverBase|null[0] modality:OPEN visibility:public superTypes:[<root>.Override]'
+    CLASS CLASS name:OverOverride signature:/OverOverride|null[0] modality:OPEN visibility:public superTypes:[<root>.OverBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OverOverride
+      CONSTRUCTOR signature:/OverOverride.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0] visibility:public <> (message:<unbound IrClassSymbolImpl>?, cause:<unbound IrClassSymbolImpl>?) returnType:<root>.OverOverride [primary]
+        VALUE_PARAMETER name:message index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        VALUE_PARAMETER name:cause index:1 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.OverBase'
+            message: GET_VAR 'message: <unbound IrClassSymbolImpl>? declared in <root>.OverOverride.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+            cause: GET_VAR 'cause: <unbound IrClassSymbolImpl>? declared in <root>.OverOverride.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OverOverride signature:/OverOverride|null[0] modality:OPEN visibility:public superTypes:[<root>.OverBase]'
+      PROPERTY name:message signature:/OverOverride.message|{}message[0] visibility:public modality:OPEN [val]
+        FUN name:<get-message> signature:/OverOverride.message.<get-message>|<get-message>(){}[0] visibility:public modality:OPEN <> ($this:<root>.OverOverride) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:message signature:/OverOverride.message|{}message[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.OverOverride
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-message> (): <unbound IrClassSymbolImpl>? declared in <root>.OverOverride'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CONST String type=<unbound IrClassSymbolImpl> value="OverOver: "
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:OverBase signature:/OverBase|null[0] modality:OPEN visibility:public superTypes:[<root>.Override]' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.OverOverride declared in <root>.OverOverride.<get-message>' type=<root>.OverOverride origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR '<this>: <root>.OverOverride declared in <root>.OverOverride.<get-message>' type=<root>.OverOverride origin=null
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      $this: GET_VAR '<this>: <root>.OverOverride declared in <root>.OverOverride.<get-message>' type=<root>.OverOverride origin=null
+                      1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.OverOverride.<get-message>' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.OverOverride.<get-message>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:cause signature:/OverOverride.cause|{}cause[0] visibility:public modality:OPEN [val]
+        FUN name:<get-cause> signature:/OverOverride.cause.<get-cause>|<get-cause>(){}[0] visibility:public modality:OPEN <> ($this:<root>.OverOverride) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:cause signature:/OverOverride.cause|{}cause[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.OverOverride
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-cause> (): <unbound IrClassSymbolImpl>? declared in <root>.OverOverride'
+              BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:OverBase signature:/OverBase|null[0] modality:OPEN visibility:public superTypes:[<root>.Override]' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.OverOverride declared in <root>.OverOverride.<get-cause>' type=<root>.OverOverride origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.OverOverride.<get-cause>' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: GET_VAR '<this>: <root>.OverOverride declared in <root>.OverOverride.<get-cause>' type=<root>.OverOverride origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.OverOverride.<get-cause>' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun check (t: <unbound IrClassSymbolImpl>, msg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          t: CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.Base' type=<root>.Base origin=null
+            message: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            cause: CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.Base' type=<root>.Base origin=null
+              message: CONST String type=<unbound IrClassSymbolImpl> value="K"
+          msg: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'public final fun check (t: <unbound IrClassSymbolImpl>, msg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          t: CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.Override' type=<root>.Override origin=null
+            message: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          msg: CONST String type=<unbound IrClassSymbolImpl> value="Override: OK0"
+        CALL 'public final fun check (t: <unbound IrClassSymbolImpl>, msg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          t: CONSTRUCTOR_CALL 'public constructor <init> (message: <unbound IrClassSymbolImpl>?, cause: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.OverOverride' type=<root>.OverOverride origin=null
+            message: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          msg: CONST String type=<unbound IrClassSymbolImpl> value="OverOver: Override: OK01OverOver: Override: OK23"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:check signature:/check|check(kotlin.Throwable;kotlin.String){}[0] visibility:public modality:FINAL <> (t:<unbound IrClassSymbolImpl>, msg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:t index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:msg index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            THROW type=<unbound IrClassSymbolImpl>
+              GET_VAR 't: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.check
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              VAR name:c type:<unbound IrClassSymbolImpl>? [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 't: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+              VAR name:m type:<unbound IrClassSymbolImpl> [val]
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'val c: <unbound IrClassSymbolImpl>? [val] declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+                        <T0>: <unbound IrClassSymbolImpl>
+                        arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                          $this: GET_VAR 't: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+                        <T0>: <unbound IrClassSymbolImpl>
+                        arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                          $this: GET_VAR 'val c: <unbound IrClassSymbolImpl>? [val] declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl>
+                      arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                        $this: GET_VAR 't: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'val m: <unbound IrClassSymbolImpl> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: GET_VAR 'msg: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+                  then: THROW type=<unbound IrClassSymbolImpl>
+                    CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'val m: <unbound IrClassSymbolImpl> [val] declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null

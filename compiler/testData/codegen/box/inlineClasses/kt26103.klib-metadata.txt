@@ -1,0 +1,113 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Foo
+    // class name: Foo2
+    // class name: Foo3
+
+    public final value class Bar : kotlin/Any {
+
+      public constructor(y: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val y: kotlin/Int
+        public final get
+
+      // underlying property: y
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class Foo<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class Foo2<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: Foo<T#0>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: Foo<T#0>
+        public final get
+
+      // underlying property: x
+
+      // underlying type: Foo<T#0>
+    }
+
+    public final value class Foo3<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: Bar)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: Bar
+        public final get
+
+      // underlying property: x
+
+      // underlying type: Bar
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testGenericTypeArgumentInReturnType(x: kotlin/Int): kotlin/collections/List<Foo<kotlin/Any>>
+
+      public final fun testGenericTypeArgumentInReturnType2(x: kotlin/Int): kotlin/collections/List<Foo2<kotlin/Any>>
+
+      public final fun testGenericTypeArgumentInReturnType3(x: kotlin/Int): kotlin/collections/List<Foo3<kotlin/Any>>
+
+      public final fun testGenericTypeArgumentInValueParameter(zs: kotlin/collections/List<Foo<kotlin/Any>>): kotlin/Int
+
+      public final fun testGenericTypeArgumentInValueParameter2(zs: kotlin/collections/List<Foo2<kotlin/Any>>): kotlin/Int
+
+      public final fun testGenericTypeArgumentInValueParameter3(zs: kotlin/collections/List<Foo3<kotlin/Any>>): kotlin/Int
+
+      public final fun testReturnType(x: kotlin/Int): Foo<kotlin/Any>
+
+      public final fun testReturnType2(x: kotlin/Int): Foo2<kotlin/Any>
+
+      public final fun testReturnType3(x: kotlin/Int): Foo3<kotlin/Any>
+
+      public final fun testValueParameter(z: Foo<kotlin/Any>): kotlin/Int
+
+      public final fun testValueParameter2(z: Foo2<kotlin/Any>): kotlin/Int
+
+      public final fun testValueParameter3(z: Foo3<kotlin/Any>): kotlin/Int
+    }
+  }
+}

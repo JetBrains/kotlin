@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: kt606
+
+    // class name: kt606/ChannelPipeline
+    // class name: kt606/ChannelPipelineFactory
+    // class name: kt606/DefaultChannelPipeline
+    // class name: kt606/StandardPipelineFactory
+
+    public abstract interface kt606/ChannelPipeline : kotlin/Any {
+
+      public abstract fun print(any: kotlin/Any): kotlin/Unit
+    }
+
+    public abstract interface kt606/ChannelPipelineFactory : kotlin/Any {
+
+      public abstract fun getPipeline(): kt606/ChannelPipeline
+    }
+
+    public final class kt606/DefaultChannelPipeline : kt606/ChannelPipeline {
+
+      public constructor()
+
+      public open fun print(any: kotlin/Any): kotlin/Unit
+    }
+
+    public final class kt606/StandardPipelineFactory : kt606/ChannelPipelineFactory {
+
+      public constructor(config: @kotlin/ExtensionFunctionType kotlin/Function1<kt606/ChannelPipeline, kotlin/Unit>)
+
+      public open fun getPipeline(): kt606/ChannelPipeline
+
+      public final val config: @kotlin/ExtensionFunctionType kotlin/Function1<kt606/ChannelPipeline, kotlin/Unit>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

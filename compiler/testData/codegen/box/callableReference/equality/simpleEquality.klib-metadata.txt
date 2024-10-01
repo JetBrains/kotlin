@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: V
+
+    public final class V : kotlin/Any {
+
+      public constructor()
+
+      public final fun memberFun(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkEqual(x: kotlin/Any, y: kotlin/Any): kotlin/Unit
+
+      public final fun checkNotEqual(x: kotlin/Any, y: kotlin/Any): kotlin/Unit
+
+      public final fun referenceTopLevelFunFromOtherFile(): kotlin/reflect/KFunction0<kotlin/String>
+
+      public final fun topLevelFun(): kotlin/String
+    }
+  }
+}

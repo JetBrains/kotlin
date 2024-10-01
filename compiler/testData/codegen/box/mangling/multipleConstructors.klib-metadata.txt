@@ -1,0 +1,31 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun <T#0 /* T */> mangle(l: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Comparable<T#0>> mangle(l: T#0): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Comparable<T#0> & kotlin/Number> mangle(l: T#0): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

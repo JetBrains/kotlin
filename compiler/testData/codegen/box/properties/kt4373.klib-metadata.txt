@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Tr
+
+    public final class A : Tr<kotlin/Int> {
+
+      public constructor(a: Tr<kotlin/Int>)
+
+      public open /* delegation */ val prop: kotlin/Int
+        public open get
+    }
+
+    public abstract interface Tr<T#0 /* T */> : kotlin/Any {
+
+      public abstract val prop: T#0
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun eat(x: kotlin/Int): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun C.getValue(x: kotlin/Any?, y: kotlin/Any?): kotlin/String
+
+      public final val c: C
+        public final get
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+
+      public final /* delegated */ val unused: kotlin/String
+        public final /* non-default */ get
+    }
+  }
+}

@@ -1,0 +1,321 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/fromOtherFile.kt
+    FUN name:id signature:[ File '/fromOtherFile.kt' <- /id|id(FunInterface){}[0] ] visibility:private modality:FINAL <> (f:<root>.FunInterface) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:0 type:<root>.FunInterface
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'f: <root>.FunInterface declared in <root>.id' type=<root>.FunInterface origin=null
+    FUN name:target1FromOtherFile signature:/target1FromOtherFile|target1FromOtherFile(C){}[0] visibility:public modality:FINAL <> (c0:<root>.C) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c0 index:0 type:<root>.C
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun target1FromOtherFile (c0: <root>.C): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'c0: <root>.C declared in <root>.target1FromOtherFile' type=<root>.C origin=null
+    FUN name:adapted1FromOtherFile signature:/adapted1FromOtherFile|adapted1FromOtherFile(C){}[0] visibility:public modality:FINAL <> (c0:<root>.C) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c0 index:0 type:<root>.C
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun adapted1FromOtherFile (c0: <root>.C): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.adapted1FromOtherFile.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.adapted1FromOtherFile' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'c0: <root>.C declared in <root>.adapted1FromOtherFile' type=<root>.C origin=null
+    FUN name:adapted2FromOtherFile signature:/adapted2FromOtherFile|adapted2FromOtherFile(C){}[0] visibility:public modality:FINAL <> (c0:<root>.C) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c0 index:0 type:<root>.C
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun adapted2FromOtherFile (c0: <root>.C): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted2 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.adapted2FromOtherFile.adapted2' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted2 (): <unbound IrClassSymbolImpl> declared in <root>.adapted2FromOtherFile' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'c0: <root>.C declared in <root>.adapted2FromOtherFile' type=<root>.C origin=null
+  FILE fqName:<root> fileName:/test.kt
+    FUN name:checkEqual signature:/checkEqual|checkEqual(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" and "
+                  GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" should be equal"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" and "
+                  GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" should have the same hash code"
+    FUN name:checkNotEqual signature:/checkNotEqual|checkNotEqual(kotlin.Any;kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" and "
+                  GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.checkNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" should NOT be equal"
+    CLASS INTERFACE name:FunInterface signature:/FunInterface|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FunInterface
+      FUN name:invoke signature:/FunInterface.invoke|invoke(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FunInterface) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.FunInterface
+    FUN name:id signature:[ File '/test.kt' <- /id|id(FunInterface){}[0] ] visibility:private modality:FINAL <> (f:<root>.FunInterface) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:0 type:<root>.FunInterface
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'f: <root>.FunInterface declared in <root>.id' type=<root>.FunInterface origin=null
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:target1 signature:/C.target1|target1(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+      FUN name:target2 signature:/C.target2|target2(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+      FUN name:adapted1 signature:/C.adapted1|adapted1(kotlin.String?){}[0] visibility:public modality:FINAL <> ($this:<root>.C, s:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.C.adapted1' type=<unbound IrClassSymbolImpl>? origin=null
+      FUN name:adapted2 signature:/C.adapted2|adapted2(kotlin.Array<out|kotlin.String>...){}[0] visibility:public modality:FINAL <> ($this:<root>.C, s:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 's: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [vararg] declared in <root>.C.adapted2' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c0 type:<root>.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+        CALL 'public final fun checkEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'public final fun target1FromOtherFile (c0: <root>.C): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c0: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target2 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'public final fun adapted1FromOtherFile (c0: <root>.C): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c0: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted2 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted2' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted2 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted2 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted2' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted2 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted2 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted2' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted2 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'public final fun adapted2FromOtherFile (c0: <root>.C): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            c0: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted2 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted2' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted2 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted2 (vararg s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        VAR name:c1 type:<root>.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c1: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target1 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+              FUNCTION_REFERENCE 'public final fun target2 (): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                $this: GET_VAR 'val c1: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'public final fun checkNotEqual (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c0: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+          y: CALL 'private final fun id (f: <root>.FunInterface): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            f: BLOCK type=<root>.FunInterface origin=ADAPTED_FUNCTION_REFERENCE
+              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:adapted1 visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR 'receiver: <root>.C declared in <root>.box.adapted1' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+              TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+                FUNCTION_REFERENCE 'local final fun adapted1 (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun adapted1 (s: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.C
+                  $receiver: GET_VAR 'val c1: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

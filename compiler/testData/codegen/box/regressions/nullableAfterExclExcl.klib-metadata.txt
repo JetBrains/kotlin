@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Caller
+    // class name: Sample
+
+    public final class Caller<out T#0 /* M */ : Sample?> : kotlin/Any {
+
+      public constructor(member: T#0)
+
+      public final fun test(): kotlin/Unit
+
+      public final val member: T#0
+        public final get
+    }
+
+    public abstract interface Sample : kotlin/Any {
+
+      public abstract val callMe: kotlin/Int
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

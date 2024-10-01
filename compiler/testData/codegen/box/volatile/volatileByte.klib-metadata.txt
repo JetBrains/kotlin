@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ByteWrapper
+
+    public final class ByteWrapper : kotlin/Any {
+
+      public constructor(x: kotlin/Byte)
+
+      public final var x: kotlin/Byte
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val global: ByteWrapper
+        public final get
+    }
+  }
+}

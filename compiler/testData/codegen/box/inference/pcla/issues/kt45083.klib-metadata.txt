@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Hello
+
+    public final object Hello : kotlin/Any {
+
+      private constructor()
+
+      public final val hello: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* E */> buildList0(builder: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/collections/MutableList<T#0>, kotlin/Unit>): kotlin/collections/List<T#0>
+
+      public final val numbers: kotlin/collections/List<kotlin/String>
+        public final get
+    }
+  }
+}

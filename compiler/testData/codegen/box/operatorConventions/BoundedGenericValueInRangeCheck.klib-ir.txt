@@ -1,0 +1,128 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/BoundedGenericValueInRangeCheck.kt
+    FUN name:testContainsChar signature:/testContainsChar|testContainsChar(0:0){0§<kotlin.Char>}[0] visibility:public modality:FINAL <T> (arg:T of <root>.testContainsChar) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testContainsChar|testContainsChar(0:0){0§<kotlin.Char>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.testContainsChar
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContainsChar <T> (arg: T of <root>.testContainsChar): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+              $this: CONST Char type=<unbound IrClassSymbolImpl> value='A'
+              1: CONST Char type=<unbound IrClassSymbolImpl> value='Z'
+            1: GET_VAR 'arg: T of <root>.testContainsChar declared in <root>.testContainsChar' type=T of <root>.testContainsChar origin=null
+    TYPEALIAS name:CharAlias signature:/CharAlias|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl>
+    FUN name:testContainsNestedTypeArgs signature:/testContainsNestedTypeArgs|testContainsNestedTypeArgs(0:0){0§<0:1>;1§<kotlin.Char>}[0] visibility:public modality:FINAL <T, X> (arg:T of <root>.testContainsNestedTypeArgs) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testContainsNestedTypeArgs|testContainsNestedTypeArgs(0:0){0§<0:1>;1§<kotlin.Char>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[X of <root>.testContainsNestedTypeArgs] reified:false
+      TYPE_PARAMETER name:X index:1 variance: signature:[ /testContainsNestedTypeArgs|testContainsNestedTypeArgs(0:0){0§<0:1>;1§<kotlin.Char>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:X index:1 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.testContainsNestedTypeArgs
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContainsNestedTypeArgs <T, X> (arg: T of <root>.testContainsNestedTypeArgs): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+              $this: CONST Char type=<unbound IrClassSymbolImpl> value='A'
+              1: CONST Char type=<unbound IrClassSymbolImpl> value='Z'
+            1: GET_VAR 'arg: T of <root>.testContainsNestedTypeArgs declared in <root>.testContainsNestedTypeArgs' type=T of <root>.testContainsNestedTypeArgs origin=null
+    FUN name:testContainsUIntMultipleBounds signature:/testContainsUIntMultipleBounds|testContainsUIntMultipleBounds(0:0){0§<0:1>;1§<kotlin.Comparable<kotlin.UInt>&kotlin.UInt>}[0] visibility:public modality:FINAL <T, X> (arg:T of <root>.testContainsUIntMultipleBounds) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testContainsUIntMultipleBounds|testContainsUIntMultipleBounds(0:0){0§<0:1>;1§<kotlin.Comparable<kotlin.UInt>&kotlin.UInt>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[X of <root>.testContainsUIntMultipleBounds] reified:false
+      TYPE_PARAMETER name:X index:1 variance: signature:[ /testContainsUIntMultipleBounds|testContainsUIntMultipleBounds(0:0){0§<0:1>;1§<kotlin.Comparable<kotlin.UInt>&kotlin.UInt>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:X index:1 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>; <unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.testContainsUIntMultipleBounds
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testContainsUIntMultipleBounds <T, X> (arg: T of <root>.testContainsUIntMultipleBounds): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            1: GET_VAR 'arg: T of <root>.testContainsUIntMultipleBounds declared in <root>.testContainsUIntMultipleBounds' type=T of <root>.testContainsUIntMultipleBounds origin=null
+    FUN name:testForUInt signature:/testForUInt|testForUInt(0:0){0§<0:1>;1§<kotlin.UInt&kotlin.Comparable<kotlin.UInt>>}[0] visibility:public modality:FINAL <T, X> (arg:T of <root>.testForUInt) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /testForUInt|testForUInt(0:0){0§<0:1>;1§<kotlin.UInt&kotlin.Comparable<kotlin.UInt>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[X of <root>.testForUInt] reified:false
+      TYPE_PARAMETER name:X index:1 variance: signature:[ /testForUInt|testForUInt(0:0){0§<0:1>;1§<kotlin.UInt&kotlin.Comparable<kotlin.UInt>>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:X index:1 variance: superTypes:[kotlin.Char] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.testForUInt
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: GET_VAR 'arg: T of <root>.testForUInt declared in <root>.testForUInt' type=T of <root>.testForUInt origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: GET_VAR 'arg: T of <root>.testForUInt declared in <root>.testForUInt' type=T of <root>.testForUInt origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testForUInt' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testForUInt' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.testForUInt' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.testForUInt' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.testForUInt' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testForUInt <T, X> (arg: T of <root>.testForUInt): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.testForUInt' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun testContainsChar <T> (arg: T of <root>.testContainsChar): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                arg: CONST Char type=<unbound IrClassSymbolImpl> value='T'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL !testContainsChar('T')"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun testContainsChar <T> (arg: T of <root>.testContainsChar): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              arg: CONST Char type=<unbound IrClassSymbolImpl> value='f'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL testContainsChar('f')"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun testContainsNestedTypeArgs <T, X> (arg: T of <root>.testContainsNestedTypeArgs): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                <X>: <unbound IrClassSymbolImpl>
+                arg: CONST Char type=<unbound IrClassSymbolImpl> value='T'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL !testContainsNestedTypeArgs('T')"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun testContainsNestedTypeArgs <T, X> (arg: T of <root>.testContainsNestedTypeArgs): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              <X>: <unbound IrClassSymbolImpl>
+              arg: CONST Char type=<unbound IrClassSymbolImpl> value='f'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL testContainsNestedTypeArgs('f')"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun testContainsUIntMultipleBounds <T, X> (arg: T of <root>.testContainsUIntMultipleBounds): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                <X>: <unbound IrClassSymbolImpl>
+                arg: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL !testContainsUIntMultipleBounds(3U)"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun testContainsUIntMultipleBounds <T, X> (arg: T of <root>.testContainsUIntMultipleBounds): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              <X>: <unbound IrClassSymbolImpl>
+              arg: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL testContainsUIntMultipleBounds(0U)"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun testForUInt <T, X> (arg: T of <root>.testForUInt): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  <X>: <unbound IrClassSymbolImpl>
+                  arg: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL testForUInt(0U) != 6"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

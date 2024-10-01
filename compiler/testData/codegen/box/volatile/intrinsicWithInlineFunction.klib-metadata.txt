@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Box
+
+    public final class A : kotlin/Any {
+
+      public constructor(x: kotlin/String)
+
+      public final fun add(str: kotlin/String): kotlin/Unit
+
+      public final var x: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class Box : kotlin/Any {
+
+      public constructor(value1: kotlin/Int, value2: kotlin/Int)
+
+      public final var value1: kotlin/Int
+        public final get
+        public final set
+
+      public final var value2: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun update(crossinline refGetter: kotlin/Function0<kotlin/reflect/KMutableProperty0<kotlin/String>>, action: kotlin/Function1<kotlin/String, kotlin/String>): kotlin/Unit
+
+      public final inline fun wrapCas(crossinline refGetter: kotlin/Function0<kotlin/reflect/KMutableProperty0<kotlin/Int>>, expected: kotlin/Int, new: kotlin/Int): kotlin/Int
+
+      public final inline fun wrapCasTwice(crossinline refGetter: kotlin/Function0<kotlin/reflect/KMutableProperty0<kotlin/Int>>, expected: kotlin/Int, new: kotlin/Int): kotlin/Int
+    }
+  }
+}

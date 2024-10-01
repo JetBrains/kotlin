@@ -1,0 +1,74 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: AnnotationWithDefault
+    // class name: B
+    // class name: IntegerNumberValid
+
+    @AnnotationWithDefault
+    public final class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class AnnotationWithDefault : kotlin/Annotation {
+
+      public constructor(str: kotlin/String /* = ... */)
+
+      public final val str: kotlin/String
+        public final get
+    }
+
+    @AnnotationWithDefault(str = "Other")
+    public final class B : kotlin/Any {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.FIELD])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+    public final annotation class IntegerNumberValid : kotlin/Annotation {
+
+      public constructor(message: kotlin/String /* = ... */, groups: kotlin/Array<kotlin/reflect/KClass<*>> /* = ... */, minimum: kotlin/Long /* = ... */, maximum: kotlin/Long /* = ... */, minMaxArray: kotlin/LongArray /* = ... */, minMaxArrayCollection: kotlin/LongArray /* = ... */)
+
+      public final val groups: kotlin/Array<kotlin/reflect/KClass<*>>
+        public final get
+
+      public final val maximum: kotlin/Long
+        public final get
+
+      public final val message: kotlin/String
+        public final get
+
+      public final val minMaxArray: kotlin/LongArray
+        public final get
+
+      public final val minMaxArrayCollection: kotlin/LongArray
+        public final get
+
+      public final val minimum: kotlin/Long
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

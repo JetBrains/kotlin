@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ZImpl
+
+    public final object ZImpl : test/IZ {
+
+      private constructor()
+
+      public open fun z(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/IZ
+    // class name: test/IZZ
+
+    public abstract interface test/IZ : kotlin/Any {
+
+      public abstract fun z(): kotlin/Unit
+    }
+
+    public abstract interface test/IZZ : test/IZ {
+
+      public abstract fun zz(): kotlin/Unit
+    }
+
+    package {
+
+      public final inline fun implZZ(zImpl: test/IZ, crossinline zzImpl: kotlin/Function0<kotlin/Unit>): test/IZZ
+    }
+  }
+}

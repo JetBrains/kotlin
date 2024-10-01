@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IC
+    // class name: IIC
+
+    public final value class IC : IIC {
+
+      public constructor(x: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun f(i1: kotlin/Long, i2: kotlin/Long, i3: kotlin/Long, i4: kotlin/Long, i5: kotlin/Long, i6: kotlin/Long, i7: kotlin/Long, i8: kotlin/Long, i9: kotlin/Long, i10: kotlin/Long, i11: kotlin/Long, i12: kotlin/Long, i13: kotlin/Long, i14: kotlin/Long, i15: kotlin/Long, i16: kotlin/Long, i17: kotlin/Long, i18: kotlin/Long, i19: kotlin/Long, i20: kotlin/Long, i21: kotlin/Long, i22: kotlin/Long, i23: kotlin/Long, i24: kotlin/Long, i25: kotlin/Long, i26: kotlin/Long, i27: kotlin/Long, i28: kotlin/Long, i29: kotlin/Long, i30: kotlin/Long, i31: kotlin/Long, i32: kotlin/Long, i33: kotlin/Long): kotlin/Long
+
+      public open fun g(i1: kotlin/Long, i2: kotlin/Long, i3: kotlin/Long, i4: kotlin/Long, i5: kotlin/Long, i6: kotlin/Long, i7: kotlin/Long, i8: kotlin/Long, i9: kotlin/Long, i10: kotlin/Long, i11: kotlin/Long, i12: kotlin/Long, i13: kotlin/Long, i14: kotlin/Long, i15: kotlin/Long, i16: kotlin/Long, i17: kotlin/Long, i18: kotlin/Long, i19: kotlin/Long, i20: kotlin/Long, i21: kotlin/Long, i22: kotlin/Long, i23: kotlin/Long, i24: kotlin/Long, i25: kotlin/Long, i26: kotlin/Long, i27: kotlin/Long, i28: kotlin/Long, i29: kotlin/Long, i30: kotlin/Long, i31: kotlin/Long, i32: kotlin/Long): kotlin/Long
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Long
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Long
+    }
+
+    public abstract interface IIC : kotlin/Any {
+
+      public abstract fun f(i1: kotlin/Long /* = ... */, i2: kotlin/Long /* = ... */, i3: kotlin/Long /* = ... */, i4: kotlin/Long /* = ... */, i5: kotlin/Long /* = ... */, i6: kotlin/Long /* = ... */, i7: kotlin/Long /* = ... */, i8: kotlin/Long /* = ... */, i9: kotlin/Long /* = ... */, i10: kotlin/Long /* = ... */, i11: kotlin/Long /* = ... */, i12: kotlin/Long /* = ... */, i13: kotlin/Long /* = ... */, i14: kotlin/Long /* = ... */, i15: kotlin/Long /* = ... */, i16: kotlin/Long /* = ... */, i17: kotlin/Long /* = ... */, i18: kotlin/Long /* = ... */, i19: kotlin/Long /* = ... */, i20: kotlin/Long /* = ... */, i21: kotlin/Long /* = ... */, i22: kotlin/Long /* = ... */, i23: kotlin/Long /* = ... */, i24: kotlin/Long /* = ... */, i25: kotlin/Long /* = ... */, i26: kotlin/Long /* = ... */, i27: kotlin/Long /* = ... */, i28: kotlin/Long /* = ... */, i29: kotlin/Long /* = ... */, i30: kotlin/Long /* = ... */, i31: kotlin/Long /* = ... */, i32: kotlin/Long /* = ... */, i33: kotlin/Long /* = ... */): kotlin/Long
+
+      public abstract fun g(i1: kotlin/Long /* = ... */, i2: kotlin/Long /* = ... */, i3: kotlin/Long /* = ... */, i4: kotlin/Long /* = ... */, i5: kotlin/Long /* = ... */, i6: kotlin/Long /* = ... */, i7: kotlin/Long /* = ... */, i8: kotlin/Long /* = ... */, i9: kotlin/Long /* = ... */, i10: kotlin/Long /* = ... */, i11: kotlin/Long /* = ... */, i12: kotlin/Long /* = ... */, i13: kotlin/Long /* = ... */, i14: kotlin/Long /* = ... */, i15: kotlin/Long /* = ... */, i16: kotlin/Long /* = ... */, i17: kotlin/Long /* = ... */, i18: kotlin/Long /* = ... */, i19: kotlin/Long /* = ... */, i20: kotlin/Long /* = ... */, i21: kotlin/Long /* = ... */, i22: kotlin/Long /* = ... */, i23: kotlin/Long /* = ... */, i24: kotlin/Long /* = ... */, i25: kotlin/Long /* = ... */, i26: kotlin/Long /* = ... */, i27: kotlin/Long /* = ... */, i28: kotlin/Long /* = ... */, i29: kotlin/Long /* = ... */, i30: kotlin/Long /* = ... */, i31: kotlin/Long /* = ... */, i32: kotlin/Long /* = ... */): kotlin/Long
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

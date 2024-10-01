@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+
+    public abstract interface test/C : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */> get(): kotlin/reflect/KType
+
+      public final inline fun <reified T#0 /* U */> get1(): kotlin/reflect/KType
+
+      public final inline fun <reified T#0 /* V */> get2(): kotlin/reflect/KType
+    }
+  }
+}

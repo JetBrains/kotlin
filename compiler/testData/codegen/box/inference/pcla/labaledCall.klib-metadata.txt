@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestInterface
+
+    public abstract interface TestInterface<T#0 /* R */> : kotlin/Any {
+
+      public abstract fun emit(r: T#0): kotlin/Unit
+
+      public abstract fun get(): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* R */> build(block: @kotlin/ExtensionFunctionType kotlin/Function1<TestInterface<T#0>, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

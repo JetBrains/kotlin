@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: M
+
+    public final class M : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun kotlin/Long.component1(): kotlin/Long
+
+      public final operator fun kotlin/Long.component2(): kotlin/Long
+
+      public final fun doTest(l: kotlin/collections/ArrayList<kotlin/Long>): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

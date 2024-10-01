@@ -1,0 +1,153 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/lvtWithInlineOnly.kt
+    FUN name:ticker signature:/ticker|ticker(kotlin.Long;kotlin.Long){}[0] visibility:public modality:FINAL <> (delayMillis:<unbound IrClassSymbolImpl>, initialDelayMillis:<unbound IrClassSymbolImpl>) returnType:<root>.ReceiveChannel<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:delayMillis index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:initialDelayMillis index:1 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          GET_VAR 'delayMillis: <unbound IrClassSymbolImpl> declared in <root>.ticker' type=<unbound IrClassSymbolImpl> origin=null
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ticker (delayMillis: <unbound IrClassSymbolImpl>, initialDelayMillis: <unbound IrClassSymbolImpl>): <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> declared in <root>'
+          BLOCK type=<root>.ticker.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ReceiveChannel<<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ticker.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.ticker.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ReceiveChannel<<unbound IrClassSymbolImpl>>]'
+              FUN name:cancel visibility:public modality:OPEN <> ($this:<root>.ticker.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun cancel (): <unbound IrClassSymbolImpl> declared in <root>.ReceiveChannel
+                $this: VALUE_PARAMETER name:<this> type:<root>.ticker.<no name provided>
+                BLOCK_BODY
+              FUN name:receive visibility:public modality:OPEN <> ($this:<root>.ticker.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun receive (): E of <root>.ReceiveChannel declared in <root>.ReceiveChannel
+                $this: VALUE_PARAMETER name:<this> type:<root>.ticker.<no name provided>
+                BLOCK_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ticker.<no name provided>' type=<root>.ticker.<no name provided> origin=OBJECT_LITERAL
+    FUN name:withTimeoutOrNull signature:/withTimeoutOrNull|withTimeoutOrNull(kotlin.Long;kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (timeMillis:<unbound IrClassSymbolImpl>, block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>) returnType:T of <root>.withTimeoutOrNull? [suspend]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /withTimeoutOrNull|withTimeoutOrNull(kotlin.Long;kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:timeMillis index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:block index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun withTimeoutOrNull <T> (timeMillis: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>): T of <root>.withTimeoutOrNull? [suspend] declared in <root>'
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS INTERFACE name:ReceiveChannel signature:/ReceiveChannel|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReceiveChannel<E of <root>.ReceiveChannel>
+      TYPE_PARAMETER name:E index:0 variance:out signature:[ /ReceiveChannel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:receive signature:/ReceiveChannel.receive|receive(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ReceiveChannel<E of <root>.ReceiveChannel>) returnType:E of <root>.ReceiveChannel
+        $this: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<E of <root>.ReceiveChannel>
+      FUN name:cancel signature:/ReceiveChannel.cancel|cancel(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ReceiveChannel<E of <root>.ReceiveChannel>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<E of <root>.ReceiveChannel>
+    CLASS INTERFACE name:CoroutineScope signature:/CoroutineScope|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CoroutineScope
+    FUN name:delay signature:/delay|delay(kotlin.Int){}[0] visibility:public modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:test signature:/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        VAR name:tickerChannel type:<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun ticker (delayMillis: <unbound IrClassSymbolImpl>, initialDelayMillis: <unbound IrClassSymbolImpl>): <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+            delayMillis: CONST Long type=<unbound IrClassSymbolImpl> value=100
+            initialDelayMillis: CONST Long type=<unbound IrClassSymbolImpl> value=0
+        VAR name:nextElement type:<unbound IrClassSymbolImpl>? [var]
+          CALL 'public final fun withTimeoutOrNull <T> (timeMillis: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>): T of <root>.withTimeoutOrNull? [suspend] declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            timeMillis: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$withTimeoutOrNull type:<root>.CoroutineScope
+                BLOCK_BODY
+                  CALL 'public abstract fun receive (): E of <root>.ReceiveChannel declared in <root>.ReceiveChannel' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tickerChannel: <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Initial element is available immediately: "
+            GET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+        SET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun withTimeoutOrNull <T> (timeMillis: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>): T of <root>.withTimeoutOrNull? [suspend] declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            timeMillis: CONST Long type=<unbound IrClassSymbolImpl> value=50
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$withTimeoutOrNull type:<root>.CoroutineScope
+                BLOCK_BODY
+                  CALL 'public abstract fun receive (): E of <root>.ReceiveChannel declared in <root>.ReceiveChannel' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tickerChannel: <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Next element is not ready in 50 ms: "
+            GET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+        SET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun withTimeoutOrNull <T> (timeMillis: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>): T of <root>.withTimeoutOrNull? [suspend] declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            timeMillis: CONST Long type=<unbound IrClassSymbolImpl> value=60
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$withTimeoutOrNull type:<root>.CoroutineScope
+                BLOCK_BODY
+                  CALL 'public abstract fun receive (): E of <root>.ReceiveChannel declared in <root>.ReceiveChannel' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tickerChannel: <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Next element is ready in 100 ms: "
+            GET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Consumer pauses for 150ms"
+        CALL 'public final fun delay (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          i: CONST Int type=<unbound IrClassSymbolImpl> value=150
+        SET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun withTimeoutOrNull <T> (timeMillis: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>): T of <root>.withTimeoutOrNull? [suspend] declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            timeMillis: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$withTimeoutOrNull type:<root>.CoroutineScope
+                BLOCK_BODY
+                  CALL 'public abstract fun receive (): E of <root>.ReceiveChannel declared in <root>.ReceiveChannel' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tickerChannel: <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Next element is available immediately after large consumer delay: "
+            GET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+        SET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun withTimeoutOrNull <T> (timeMillis: <unbound IrClassSymbolImpl>, block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, T of <root>.withTimeoutOrNull>): T of <root>.withTimeoutOrNull? [suspend] declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            timeMillis: CONST Long type=<unbound IrClassSymbolImpl> value=60
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.CoroutineScope, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$withTimeoutOrNull type:<root>.CoroutineScope
+                BLOCK_BODY
+                  CALL 'public abstract fun receive (): E of <root>.ReceiveChannel declared in <root>.ReceiveChannel' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tickerChannel: <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Next element is ready in 50ms after consumer pause in 150ms: "
+            GET_VAR 'var nextElement: <unbound IrClassSymbolImpl>? [var] declared in <root>.test' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'public abstract fun cancel (): <unbound IrClassSymbolImpl> declared in <root>.ReceiveChannel' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val tickerChannel: <root>.ReceiveChannel<<unbound IrClassSymbolImpl>> [val] declared in <root>.test' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public final fun test (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun kotlin/String.anyLength(): kotlin/Any
+
+      public final fun box(): kotlin/String
+
+      public final fun doChain(s: kotlin/String?): kotlin/Boolean
+
+      public final fun doCmpWithAny(s: kotlin/String?): kotlin/Boolean
+
+      public final fun doIf(s: kotlin/String?): kotlin/String
+
+      public final fun doIfNot(s: kotlin/String?): kotlin/String
+
+      public final fun doIfNotNot(s: kotlin/String?): kotlin/String
+
+      public final fun doLongReceiver(x: kotlin/Long): kotlin/Boolean
+
+      public final fun doSimple(s: kotlin/String?): kotlin/Boolean
+
+      public final fun kotlin/String.drop2(): kotlin/CharSequence?
+
+      public final fun kotlin/Long.id(): kotlin/Long
+    }
+  }
+}

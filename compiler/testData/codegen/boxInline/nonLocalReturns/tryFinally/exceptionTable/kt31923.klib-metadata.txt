@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun inlineFun(block: kotlin/Function1<kotlin/String, kotlin/String>): kotlin/Unit
+
+      public final fun test(): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

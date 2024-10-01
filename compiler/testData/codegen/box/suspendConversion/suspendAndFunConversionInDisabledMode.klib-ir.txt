@@ -1,0 +1,98 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/suspendAndFunConversionInDisabledMode.kt
+    CLASS INTERFACE name:Runnable signature:/Runnable|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Runnable
+      FUN name:run signature:/Runnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Runnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Runnable
+    CLASS INTERFACE name:SuspendRunnable signature:/SuspendRunnable|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuspendRunnable
+      FUN name:run signature:/SuspendRunnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SuspendRunnable) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendRunnable
+    CLASS OBJECT name:Test1 signature:/Test1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
+      CONSTRUCTOR signature:/Test1.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test1 signature:/Test1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:call signature:/Test1.call|call(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.Test1, r:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+        VALUE_PARAMETER name:r index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+      CLASS OBJECT name:Scope signature:/Test1.Scope|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1.Scope
+        CONSTRUCTOR signature:/Test1.Scope.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test1.Scope [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Scope signature:/Test1.Scope|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:call signature:/Test1.Scope.call|call(SuspendRunnable){}[0] visibility:public modality:FINAL <> ($this:<root>.Test1.Scope, r:<root>.SuspendRunnable) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test1.Scope
+          VALUE_PARAMETER name:r index:0 type:<root>.SuspendRunnable
+          BLOCK_BODY
+        FUN name:bar signature:/Test1.Scope.bar|bar(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.Test1.Scope, f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test1.Scope
+          VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          BLOCK_BODY
+            CALL 'public final fun call (r: <root>.SuspendRunnable): <unbound IrClassSymbolImpl> declared in <root>.Test1.Scope' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.Test1.Scope declared in <root>.Test1.Scope.bar' type=<root>.Test1.Scope origin=null
+              r: BLOCK type=<root>.SuspendRunnable origin=SUSPEND_CONVERSION
+                FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                  $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:$callee type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$callee: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Test1.Scope.bar.suspendConversion0' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
+                  FUNCTION_REFERENCE 'local final fun suspendConversion0 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Test1.Scope.bar' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=SUSPEND_CONVERSION reflectionTarget=null
+                    $receiver: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Test1.Scope.bar' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    CLASS OBJECT name:Test2 signature:/Test2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
+      CONSTRUCTOR signature:/Test2.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test2 signature:/Test2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:call signature:/Test2.call|call(Runnable){}[0] visibility:public modality:FINAL <> ($this:<root>.Test2, r:<root>.Runnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        VALUE_PARAMETER name:r index:0 type:<root>.Runnable
+        BLOCK_BODY
+      CLASS OBJECT name:Scope signature:/Test2.Scope|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.Scope
+        CONSTRUCTOR signature:/Test2.Scope.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test2.Scope [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Scope signature:/Test2.Scope|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:call signature:/Test2.Scope.call|call(SuspendRunnable){}[0] visibility:public modality:FINAL <> ($this:<root>.Test2.Scope, r:<root>.SuspendRunnable) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test2.Scope
+          VALUE_PARAMETER name:r index:0 type:<root>.SuspendRunnable
+          BLOCK_BODY
+        FUN name:bar signature:/Test2.Scope.bar|bar(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:<root>.Test2.Scope, f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test2.Scope
+          VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          BLOCK_BODY
+            CALL 'public final fun call (r: <root>.SuspendRunnable): <unbound IrClassSymbolImpl> declared in <root>.Test2.Scope' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.Test2.Scope declared in <root>.Test2.Scope.bar' type=<root>.Test2.Scope origin=null
+              r: BLOCK type=<root>.SuspendRunnable origin=SUSPEND_CONVERSION
+                FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                  $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:$callee type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$callee: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Test2.Scope.bar.suspendConversion0' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
+                  FUNCTION_REFERENCE 'local final fun suspendConversion0 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Test2.Scope.bar' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=SUSPEND_CONVERSION reflectionTarget=null
+                    $receiver: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Test2.Scope.bar' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun bar (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Test1.Scope' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_OBJECT 'CLASS OBJECT name:Scope signature:/Test1.Scope|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test1.Scope
+          f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        CALL 'public final fun bar (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.Test2.Scope' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_OBJECT 'CLASS OBJECT name:Scope signature:/Test2.Scope|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test2.Scope
+          f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

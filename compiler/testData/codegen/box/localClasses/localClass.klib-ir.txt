@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/localClass.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:a signature:/A.a|a(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          CLASS CLASS name:B modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.a.B
+            CONSTRUCTOR visibility:public <> () returnType:<root>.A.a.B [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+            FUN name:s visibility:public modality:FINAL <> ($this:<root>.A.a.B) returnType:<unbound IrClassSymbolImpl>
+              $this: VALUE_PARAMETER name:<this> type:<root>.A.a.B
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun s (): <unbound IrClassSymbolImpl> declared in <root>.A.a.B'
+                  CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun a (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            CALL 'public final fun s (): <unbound IrClassSymbolImpl> declared in <root>.A.a.B' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.a.B' type=<root>.A.a.B origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun a (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null

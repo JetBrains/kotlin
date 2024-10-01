@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: L
+    // class name: LLogger
+
+    public final object L : LLogger {
+
+      private constructor()
+    }
+
+    public open class LLogger : kotlin/Any {
+
+      public constructor()
+
+      public final fun error(tag: kotlin/String, message: kotlin/String, exception: kotlin/Throwable?): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> tryAndLog(title: kotlin/String /* = ... */, message: kotlin/String /* = ... */, logger: kotlin/Function3<@kotlin/ParameterName(name = "tag") kotlin/String, @kotlin/ParameterName(name = "message") kotlin/String, @kotlin/ParameterName(name = "throwable") kotlin/Throwable?, *> /* = LoggingFunctionType^<*> */ /* = ... */, throwableAction: kotlin/Function0<T#0> /* = EmptyFunctionResult^<T#0> */): T#0?
+
+      public typealias EmptyFunctionResult<T#0 /* T */> = kotlin/Function0<T#0> /* = kotlin/Function0<T#0> */
+
+      public typealias LoggingFunctionType<T#0 /* T */> = kotlin/Function3<@kotlin/ParameterName(name = "tag") kotlin/String, @kotlin/ParameterName(name = "message") kotlin/String, @kotlin/ParameterName(name = "throwable") kotlin/Throwable?, T#0> /* = kotlin/Function3<@kotlin/ParameterName(name = "tag") kotlin/String, @kotlin/ParameterName(name = "message") kotlin/String, @kotlin/ParameterName(name = "throwable") kotlin/Throwable?, T#0> */
+    }
+  }
+}

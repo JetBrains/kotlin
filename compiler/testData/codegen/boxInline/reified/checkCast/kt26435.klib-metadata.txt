@@ -1,0 +1,67 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun doSomethingInCaseOfA(a: test/A): kotlin/Unit
+
+      public final fun doSomethingInCaseOfB(b: test/B): kotlin/Unit
+
+      public final fun doSth(base: test/Base): test/Base?
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/B
+    // class name: test/Base
+    // class name: test/Id
+
+    public final class test/A : test/Base {
+
+      public constructor(id: test/Id)
+    }
+
+    public final class test/B : test/Base {
+
+      public constructor(id: test/Id)
+    }
+
+    public sealed class test/Base : kotlin/Any {
+
+      protected constructor(id: test/Id)
+
+      public final val id: test/Id
+        public final get
+
+      // sealed subclass: test/A
+
+      // sealed subclass: test/B
+    }
+
+    public final enum class test/Id : kotlin/Enum<test/Id> {
+
+      private constructor()
+
+      OK,
+
+      FAIL,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun getSomeBaseObject(id: test/Id): test/Base
+
+      public final inline fun <reified T#0 /* T */ : test/Base> process(t: T#0, f: kotlin/Function1<T#0, kotlin/Unit>): test/Base?
+    }
+  }
+}

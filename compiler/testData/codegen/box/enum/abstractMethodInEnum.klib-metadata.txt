@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final enum class A : kotlin/Enum<A> {
+
+      private constructor()
+
+      public abstract fun t(): kotlin/String
+
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f(a: A): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,139 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/companionAccessingEnumValue.kt
+    PROPERTY name:logs signature:[ File '/companionAccessingEnumValue.kt' <- /logs|{}logs[0] ] visibility:private modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:logs signature:[ [ File '/companionAccessingEnumValue.kt' <- /logs|{}logs[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-logs> signature:[ File '/companionAccessingEnumValue.kt' <- /logs.<get-logs>|<get-logs>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:logs signature:[ File '/companionAccessingEnumValue.kt' <- /logs|{}logs[0] ] visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:logs signature:[ [ File '/companionAccessingEnumValue.kt' <- /logs|{}logs[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-logs> signature:[ File '/companionAccessingEnumValue.kt' <- /logs.<set-logs>|<set-logs>(kotlin.String){}[0] ] visibility:private modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:logs signature:[ File '/companionAccessingEnumValue.kt' <- /logs|{}logs[0] ] visibility:private modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:logs signature:[ [ File '/companionAccessingEnumValue.kt' <- /logs|{}logs[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-logs>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS ENUM_CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Foo>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(kotlin.String){}[0] visibility:private <> (text:<unbound IrClassSymbolImpl>) returnType:<root>.Foo [primary]
+        VALUE_PARAMETER name:text index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Foo
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Foo>]'
+      PROPERTY name:text signature:/Foo.text|{}text[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:text signature:[ /Foo.text|{}text[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'text: <unbound IrClassSymbolImpl> declared in <root>.Foo.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> signature:/Foo.text.<get-text>|<get-text>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:text signature:/Foo.text|{}text[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-text> (): <unbound IrClassSymbolImpl> declared in <root>.Foo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text signature:[ /Foo.text|{}text[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-text>' type=<root>.Foo origin=null
+      ENUM_ENTRY name:FOO signature:/Foo.FOO|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (text: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Foo'
+            text: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+      ENUM_ENTRY name:BAR signature:/Foo.BAR|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (text: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Foo'
+            text: CONST String type=<unbound IrClassSymbolImpl> value="bar"
+      ENUM_ENTRY name:PING signature:/Foo.PING|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (text: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Foo'
+            text: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'private final fun <set-logs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CALL 'public final fun <get-text> (): <unbound IrClassSymbolImpl> declared in <root>.Foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Foo declared in <root>.Foo' type=<root>.Foo origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value="A;"
+      CLASS OBJECT name:Companion signature:/Foo.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo.Companion
+        CONSTRUCTOR signature:/Foo.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Foo.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Foo.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'private final fun <set-logs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                1: CONST String type=<unbound IrClassSymbolImpl> value="StatA;"
+        PROPERTY name:first signature:/Foo.Companion.first|{}first[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:first signature:[ /Foo.Companion.first|{}first[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<root>.Foo visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Foo origin=GET_ARRAY_ELEMENT
+                $this: CALL 'public final fun values (): <unbound IrClassSymbolImpl><<root>.Foo> declared in <root>.Foo' type=<unbound IrClassSymbolImpl><<root>.Foo> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-first> signature:/Foo.Companion.first.<get-first>|<get-first>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Foo.Companion) returnType:<root>.Foo
+            correspondingProperty: PROPERTY name:first signature:/Foo.Companion.first|{}first[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Foo.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-first> (): <root>.Foo declared in <root>.Foo.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first signature:[ /Foo.Companion.first|{}first[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logs type:kotlin.String visibility:private [static]] ] type:<root>.Foo visibility:private [final]' type=<root>.Foo origin=null
+                  receiver: GET_VAR '<this>: <root>.Foo.Companion declared in <root>.Foo.Companion.<get-first>' type=<root>.Foo.Companion origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'private final fun <set-logs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="Stat"
+                  CALL 'public final fun <get-text> (): <unbound IrClassSymbolImpl> declared in <root>.Foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: CALL 'public final fun <get-first> (): <root>.Foo declared in <root>.Foo.Companion' type=<root>.Foo origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.Foo.Companion declared in <root>.Foo.Companion' type=<root>.Foo.Companion origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=";"
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'private final fun <set-logs> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CALL 'public final fun <get-text> (): <unbound IrClassSymbolImpl> declared in <root>.Foo' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Foo declared in <root>.Foo' type=<root>.Foo origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value="B;"
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Foo.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Foo>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Foo.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Foo
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Foo.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Foo.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Foo>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Foo.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_ENUM 'ENUM_ENTRY name:FOO signature:/Foo.FOO|null[0]' type=<root>.Foo
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQEQ
+              $this: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQEQ
+                arg0: CALL 'public final fun <get-first> (): <root>.Foo declared in <root>.Foo.Companion' type=<root>.Foo origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Foo.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Foo.Companion
+                arg1: GET_ENUM 'ENUM_ENTRY name:FOO signature:/Foo.FOO|null[0]' type=<root>.Foo
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 0: "
+                CALL 'public final fun <get-first> (): <root>.Foo declared in <root>.Foo.Companion' type=<root>.Foo origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Foo.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Foo.Companion
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="fooA;fooB;barA;barB;fooA;fooB;StatA;Statfoo;"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1: "
+                CALL 'private final fun <get-logs> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

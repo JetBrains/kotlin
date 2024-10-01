@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor(p: kotlin/String, p1: kotlin/String, p2: kotlin/String)
+
+      public final fun cond1(p: kotlin/String): kotlin/Boolean
+
+      public final fun cond2(p: kotlin/String): kotlin/Boolean
+
+      public final var cond1: kotlin/String
+        public final get
+        public final set
+
+      public final var cond2: kotlin/String
+        public final get
+        public final set
+
+      public final val p: kotlin/String
+        public final get
+
+      public final val prop: kotlin/String
+        public final get
+
+      public final val prop1: kotlin/Comparable<kotlin/Nothing>
+        public final get
+
+      public final val prop2: kotlin/Boolean
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/I
+
+    public abstract interface test/I : kotlin/Any {
+
+      public abstract fun f(): kotlin/String
+    }
+
+    package {
+
+      public final inline fun test(crossinline h: kotlin/Function0<kotlin/String>): test/I
+    }
+  }
+}

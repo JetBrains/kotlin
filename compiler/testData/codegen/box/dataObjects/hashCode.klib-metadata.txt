@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: com.example
+
+    // class name: com/example/DataObject
+    // class name: com/example/DataObject.Inner
+
+    public final data object com/example/DataObject : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // nested class: Inner
+    }
+
+    public final data object com/example/DataObject.Inner : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

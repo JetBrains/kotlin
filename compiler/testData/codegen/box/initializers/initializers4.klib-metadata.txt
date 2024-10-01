@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val DOUBLE: kotlin/Double
+        public final get
+
+      public final const val INT_MAX_POWER_OF_TWO: kotlin/Int /* = 1073741824 */
+        public final get
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+
+    public final enum class Bar : kotlin/Enum<Bar> {
+
+      private constructor()
+
+      ONE,
+
+      TWO,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun isOne(i: Bar): kotlin/Boolean
+    }
+  }
+}

@@ -1,0 +1,261 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    PROPERTY name:prop signature:/prop|{}prop[0] visibility:public modality:FINAL [val]
+      annotations:
+        BinaryAnnotation(str = "String")
+      FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:/prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:prop signature:/prop|{}prop[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:x signature:/x|{}x[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x signature:[ /x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        annotations:
+          BinaryAnnotation(str = "String")
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=5
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:x signature:/x|{}x[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/x.<set-x>|<set-x>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:x signature:/x|{}x[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:p signature:/p|{}p[0] visibility:public modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:p$delegate signature:[ /p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<root>.Delegate visibility:private [final,static]
+        annotations:
+          BinaryAnnotation(str = "String")
+        EXPRESSION_BODY
+          GET_OBJECT 'CLASS OBJECT name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Delegate
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-p> signature:/p.<get-p>|<get-p>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:p signature:/p|{}p[0] visibility:public modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-p> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CALL 'public final fun getValue (instance: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.Delegate' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p$delegate signature:[ /p|{}p[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<root>.Delegate visibility:private [final,static] declared in <root>' type=<root>.Delegate origin=null
+              instance: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              property: PROPERTY_REFERENCE 'public final p: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>' field=null getter='public final fun <get-p> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    PROPERTY name:setParamProp signature:/setParamProp|{}setParamProp[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:setParamProp signature:[ /setParamProp|{}setParamProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:<get-setParamProp> signature:/setParamProp.<get-setParamProp>|<get-setParamProp>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:setParamProp signature:/setParamProp|{}setParamProp[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-setParamProp> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:setParamProp signature:[ /setParamProp|{}setParamProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:<set-setParamProp> signature:/setParamProp.<set-setParamProp>|<set-setParamProp>(kotlin.Int){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:setParamProp signature:/setParamProp|{}setParamProp[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          annotations:
+            BinaryAnnotation(str = "String")
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:setParamProp signature:[ /setParamProp|{}setParamProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=EQ
+            value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+              $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.<set-setParamProp>' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+    PROPERTY name:mutablePropWithAnnotationOnSetterParam signature:/mutablePropWithAnnotationOnSetterParam|{}mutablePropWithAnnotationOnSetterParam[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:mutablePropWithAnnotationOnSetterParam signature:[ /mutablePropWithAnnotationOnSetterParam|{}mutablePropWithAnnotationOnSetterParam[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mutablePropWithAnnotationOnSetterParam> signature:/mutablePropWithAnnotationOnSetterParam.<get-mutablePropWithAnnotationOnSetterParam>|<get-mutablePropWithAnnotationOnSetterParam>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:mutablePropWithAnnotationOnSetterParam signature:/mutablePropWithAnnotationOnSetterParam|{}mutablePropWithAnnotationOnSetterParam[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-mutablePropWithAnnotationOnSetterParam> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mutablePropWithAnnotationOnSetterParam signature:[ /mutablePropWithAnnotationOnSetterParam|{}mutablePropWithAnnotationOnSetterParam[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:<set-mutablePropWithAnnotationOnSetterParam> signature:/mutablePropWithAnnotationOnSetterParam.<set-mutablePropWithAnnotationOnSetterParam>|<set-mutablePropWithAnnotationOnSetterParam>(kotlin.Int){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:mutablePropWithAnnotationOnSetterParam signature:/mutablePropWithAnnotationOnSetterParam|{}mutablePropWithAnnotationOnSetterParam[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          annotations:
+            BinaryAnnotation(str = "String")
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mutablePropWithAnnotationOnSetterParam signature:[ /mutablePropWithAnnotationOnSetterParam|{}mutablePropWithAnnotationOnSetterParam[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=EQ
+            value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+              $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.<set-mutablePropWithAnnotationOnSetterParam>' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+    CLASS ANNOTATION_CLASS name:BinaryAnnotation signature:/BinaryAnnotation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>, GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BinaryAnnotation
+      CONSTRUCTOR signature:/BinaryAnnotation.<init>|<init>(kotlin.String){}[0] visibility:public <> (str:<unbound IrClassSymbolImpl>) returnType:<root>.BinaryAnnotation [primary]
+        VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:BinaryAnnotation signature:/BinaryAnnotation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:str signature:/BinaryAnnotation.str|{}str[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:str signature:[ /BinaryAnnotation.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'str: <unbound IrClassSymbolImpl> declared in <root>.BinaryAnnotation.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> signature:/BinaryAnnotation.str.<get-str>|<get-str>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BinaryAnnotation) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:str signature:/BinaryAnnotation.str|{}str[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BinaryAnnotation
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-str> (): <unbound IrClassSymbolImpl> declared in <root>.BinaryAnnotation'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:str signature:[ /BinaryAnnotation.str|{}str[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.BinaryAnnotation declared in <root>.BinaryAnnotation.<get-str>' type=<root>.BinaryAnnotation origin=null
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        BinaryAnnotation(str = "String")
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(kotlin.Int){}[0] visibility:public <> (i:<unbound IrClassSymbolImpl>) returnType:<root>.A [primary]
+        annotations:
+          BinaryAnnotation(str = "String")
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:i signature:/A.i|{}i[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ /A.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:/A.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:/A.i|{}i[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /A.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-i>' type=<root>.A origin=null
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A
+        annotations:
+          BinaryAnnotation(str = "String")
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A'
+            i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    CLASS ANNOTATION_CLASS name:Anno signature:/Anno|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        BinaryAnnotation(str = "String")
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno
+      CONSTRUCTOR signature:/Anno.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Anno [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Anno signature:/Anno|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:fooWithTypeParam signature:/fooWithTypeParam|fooWithTypeParam(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, U> (a:T of <root>.fooWithTypeParam, b:U of <root>.fooWithTypeParam) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /fooWithTypeParam|fooWithTypeParam(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        annotations:
+          BinaryAnnotation(str = "String")
+      TYPE_PARAMETER name:U index:1 variance: signature:[ /fooWithTypeParam|fooWithTypeParam(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.fooWithTypeParam
+      VALUE_PARAMETER name:b index:1 type:U of <root>.fooWithTypeParam
+      BLOCK_BODY
+    CLASS ENUM_CLASS name:SomeEnum signature:/SomeEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.SomeEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SomeEnum
+      CONSTRUCTOR signature:/SomeEnum.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.SomeEnum [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.SomeEnum
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:SomeEnum signature:/SomeEnum|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.SomeEnum>]'
+      ENUM_ENTRY name:A signature:/SomeEnum.A|null[0]
+        annotations:
+          BinaryAnnotation(str = "String")
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.SomeEnum'
+      ENUM_ENTRY name:B signature:/SomeEnum.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.SomeEnum'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/SomeEnum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.SomeEnum>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/SomeEnum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.SomeEnum
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/SomeEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/SomeEnum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.SomeEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/SomeEnum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS OBJECT name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Delegate
+      CONSTRUCTOR signature:/Delegate.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Delegate [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getValue signature:/Delegate.getValue|getValue(kotlin.Any?;kotlin.Any){}[0] visibility:public modality:FINAL <> ($this:<root>.Delegate, instance:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
+        VALUE_PARAMETER name:instance index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (instance: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.Delegate'
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN name:setValue signature:/Delegate.setValue|setValue(kotlin.Any?;kotlin.Any;kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Delegate, instance:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
+        VALUE_PARAMETER name:instance index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:2 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:myExtension signature:/myExtension|myExtension@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        annotations:
+          BinaryAnnotation(str = "String")
+      BLOCK_BODY
+    FUN name:foo signature:/foo|foo(kotlin.Int){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+        annotations:
+          BinaryAnnotation(str = "String")
+      BLOCK_BODY
+    PROPERTY name:a signature:/a|@kotlin.String{}a[0] visibility:public modality:FINAL [val]
+      FUN name:<get-a> signature:/a.<get-a>|<get-a>@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:a signature:/a|@kotlin.String{}a[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+          annotations:
+            BinaryAnnotation(str = "String")
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+    CLASS CLASS name:WithConstructorArgumentAnnotation signature:/WithConstructorArgumentAnnotation|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.WithConstructorArgumentAnnotation
+      CONSTRUCTOR signature:/WithConstructorArgumentAnnotation.<init>|<init>(kotlin.Int){}[0] visibility:public <> (a:<unbound IrClassSymbolImpl>) returnType:<root>.WithConstructorArgumentAnnotation [primary]
+        VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+          annotations:
+            BinaryAnnotation(str = "String")
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WithConstructorArgumentAnnotation signature:/WithConstructorArgumentAnnotation|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:a signature:/WithConstructorArgumentAnnotation.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithConstructorArgumentAnnotation.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.WithConstructorArgumentAnnotation.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/WithConstructorArgumentAnnotation.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.WithConstructorArgumentAnnotation) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:a signature:/WithConstructorArgumentAnnotation.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.WithConstructorArgumentAnnotation
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <unbound IrClassSymbolImpl> declared in <root>.WithConstructorArgumentAnnotation'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /WithConstructorArgumentAnnotation.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.WithConstructorArgumentAnnotation declared in <root>.WithConstructorArgumentAnnotation.<get-a>' type=<root>.WithConstructorArgumentAnnotation origin=null
+    FUN name:bar signature:/bar|bar(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        BinaryAnnotation(str = "String")
+      BLOCK_BODY
+    PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [var]
+      FUN name:<get-b> signature:/b.<get-b>|<get-b>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          BinaryAnnotation(str = "String")
+        correspondingProperty: PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-b> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:<set-b> signature:/b.<set-b>|<set-b>(kotlin.Int){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          BinaryAnnotation(str = "String")
+        correspondingProperty: PROPERTY name:b signature:/b|{}b[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    TYPEALIAS name:C signature:/C|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl>
+      annotations:
+        BinaryAnnotation(str = "String")
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

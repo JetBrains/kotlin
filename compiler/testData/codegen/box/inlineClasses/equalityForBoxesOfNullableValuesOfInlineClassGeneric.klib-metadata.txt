@@ -1,0 +1,137 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NX
+    // class name: NX2
+    // class name: NY
+    // class name: NY2
+    // class name: X
+    // class name: Y
+
+    public final value class NX<T#0 /* T */ : kotlin/String?> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class NX2<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(x: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0?
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0?
+    }
+
+    public final value class NY<T#0 /* T */ : kotlin/Number?> : kotlin/Any {
+
+      public constructor(y: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val y: T#0
+        public final get
+
+      // underlying property: y
+
+      // underlying type: T#0
+    }
+
+    public final value class NY2<T#0 /* T */ : kotlin/Number> : kotlin/Any {
+
+      public constructor(y: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val y: T#0?
+        public final get
+
+      // underlying property: y
+
+      // underlying type: T#0?
+    }
+
+    public final value class X<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class Y<T#0 /* T */ : kotlin/Number> : kotlin/Any {
+
+      public constructor(y: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val y: T#0
+        public final get
+
+      // underlying property: y
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testNotNull(x: X<kotlin/String>?, y: Y<kotlin/Number>?): kotlin/Unit
+
+      public final fun testNullable(x: NX<kotlin/String?>?, y: NY<kotlin/Number?>?): kotlin/Unit
+
+      public final fun testNullable2(x: NX2<kotlin/String>?, y: NY2<kotlin/Number>?): kotlin/Unit
+
+      public final fun testNullsAsNullable(x: NX<kotlin/String?>?, y: NY<kotlin/Number?>?): kotlin/Unit
+
+      public final fun testNullsAsNullable2(x: NX2<kotlin/String>?, y: NY2<kotlin/Number>?): kotlin/Unit
+    }
+  }
+}

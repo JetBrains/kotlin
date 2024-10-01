@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Enum
+    // class name: Outer
+    // class name: Outer.Inner
+
+    public final enum class Enum : kotlin/Enum<Enum> {
+
+      private constructor()
+
+      Entry1,
+
+      Entry2,
+
+      // has Enum.entries
+    }
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      public final fun fooCaller(): Enum
+
+      private final val obj: kotlin/Any
+        private final get
+
+      // nested class: Inner
+    }
+
+    private abstract inner class Outer.Inner<T#0 /* T */> : kotlin/Any {
+
+      public constructor(default: T#0)
+
+      public final fun foo(): T#0
+
+      public final val default: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

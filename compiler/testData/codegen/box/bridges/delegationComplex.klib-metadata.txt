@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Box
+    // class name: Content
+    // class name: ContentBox
+    // class name: ContentBoxDelegate
+    // class name: Impl
+
+    public abstract interface Box<T#0 /* E */> : kotlin/Any {
+
+      public abstract fun get(): T#0
+    }
+
+    public open class Content : kotlin/Any {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public abstract interface ContentBox<T#0 /* T */ : Content> : Box<T#0> {
+    }
+
+    public final class ContentBoxDelegate<T#0 /* T */ : Content> : ContentBox<T#0> {
+
+      public constructor()
+
+      public open /* delegation */ fun get(): T#0
+    }
+
+    public final object Impl : ContentBox<Content> {
+
+      private constructor()
+
+      public open fun get(): Content
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

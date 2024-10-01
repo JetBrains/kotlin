@@ -1,0 +1,115 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt39588.kt
+    CLASS CLASS name:OptionDescriptor signature:/OptionDescriptor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OptionDescriptor<T of <root>.OptionDescriptor>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /OptionDescriptor|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/OptionDescriptor.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.OptionDescriptor<T of <root>.OptionDescriptor> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OptionDescriptor signature:/OptionDescriptor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:ArgumentValueDelegate signature:/ArgumentValueDelegate|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentValueDelegate<T of <root>.ArgumentValueDelegate>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ArgumentValueDelegate|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:getValue signature:/ArgumentValueDelegate.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:OPEN <> ($this:<root>.ArgumentValueDelegate<T of <root>.ArgumentValueDelegate>, thisRef:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl><*>) returnType:T of <root>.ArgumentValueDelegate [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentValueDelegate<T of <root>.ArgumentValueDelegate>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getValue (thisRef: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.ArgumentValueDelegate [operator] declared in <root>.ArgumentValueDelegate'
+            TYPE_OP type=T of <root>.ArgumentValueDelegate origin=CAST typeOperand=T of <root>.ArgumentValueDelegate
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:CLIEntity signature:/CLIEntity|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CLIEntity<TResult of <root>.CLIEntity>
+      TYPE_PARAMETER name:TResult index:0 variance: signature:[ /CLIEntity|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/CLIEntity.<init>|<init>(ArgumentValueDelegate<1:0>){}[0] visibility:public <> (delegate:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity>) returnType:<root>.CLIEntity<TResult of <root>.CLIEntity> [primary]
+        VALUE_PARAMETER name:delegate index:0 type:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CLIEntity signature:/CLIEntity|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:delegate signature:/CLIEntity.delegate|{}delegate[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:delegate signature:[ /CLIEntity.delegate|{}delegate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> visibility:private [final]] ] type:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'delegate: <root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> declared in <root>.CLIEntity.<init>' type=<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-delegate> signature:/CLIEntity.delegate.<get-delegate>|<get-delegate>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CLIEntity<TResult of <root>.CLIEntity>) returnType:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity>
+          correspondingProperty: PROPERTY name:delegate signature:/CLIEntity.delegate|{}delegate[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CLIEntity<TResult of <root>.CLIEntity>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-delegate> (): <root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> declared in <root>.CLIEntity'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate signature:[ /CLIEntity.delegate|{}delegate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> visibility:private [final]] ] type:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> visibility:private [final]' type=<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> origin=null
+                receiver: GET_VAR '<this>: <root>.CLIEntity<TResult of <root>.CLIEntity> declared in <root>.CLIEntity.<get-delegate>' type=<root>.CLIEntity<TResult of <root>.CLIEntity> origin=null
+      FUN name:provideDelegate signature:/CLIEntity.provideDelegate|provideDelegate(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($this:<root>.CLIEntity<TResult of <root>.CLIEntity>, thisRef:<unbound IrClassSymbolImpl>?, prop:<unbound IrClassSymbolImpl><*>) returnType:<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CLIEntity<TResult of <root>.CLIEntity>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:prop index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDelegate (thisRef: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>): <root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> [operator] declared in <root>.CLIEntity'
+            CALL 'public final fun <get-delegate> (): <root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> declared in <root>.CLIEntity' type=<root>.ArgumentValueDelegate<TResult of <root>.CLIEntity> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.CLIEntity<TResult of <root>.CLIEntity> declared in <root>.CLIEntity.provideDelegate' type=<root>.CLIEntity<TResult of <root>.CLIEntity> origin=null
+    CLASS CLASS name:AbstractSingleOption signature:/AbstractSingleOption|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.CLIEntity<TResult of <root>.AbstractSingleOption>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractSingleOption<T of <root>.AbstractSingleOption, TResult of <root>.AbstractSingleOption>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /AbstractSingleOption|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:TResult index:1 variance: signature:[ /AbstractSingleOption|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TResult index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/AbstractSingleOption.<init>|<init>(ArgumentValueDelegate<1:1>){}[0] visibility:public <> (delegate:<root>.ArgumentValueDelegate<TResult of <root>.AbstractSingleOption>) returnType:<root>.AbstractSingleOption<T of <root>.AbstractSingleOption, TResult of <root>.AbstractSingleOption> [primary]
+        VALUE_PARAMETER name:delegate index:0 type:<root>.ArgumentValueDelegate<TResult of <root>.AbstractSingleOption>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (delegate: <root>.ArgumentValueDelegate<TResult of <root>.CLIEntity>) [primary] declared in <root>.CLIEntity'
+            <TResult>: TResult of <root>.AbstractSingleOption
+            delegate: GET_VAR 'delegate: <root>.ArgumentValueDelegate<TResult of <root>.AbstractSingleOption> declared in <root>.AbstractSingleOption.<init>' type=<root>.ArgumentValueDelegate<TResult of <root>.AbstractSingleOption> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractSingleOption signature:/AbstractSingleOption|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.CLIEntity<TResult of <root>.AbstractSingleOption>]'
+    CLASS CLASS name:ArgumentSingleNullableValue signature:/ArgumentSingleNullableValue|null[0] modality:FINAL visibility:public superTypes:[<root>.ArgumentValueDelegate<T of <root>.ArgumentSingleNullableValue?>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentSingleNullableValue<T of <root>.ArgumentSingleNullableValue>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ArgumentSingleNullableValue|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/ArgumentSingleNullableValue.<init>|<init>(OptionDescriptor<1:0>){}[0] visibility:public <> (descriptor:<root>.OptionDescriptor<T of <root>.ArgumentSingleNullableValue>) returnType:<root>.ArgumentSingleNullableValue<T of <root>.ArgumentSingleNullableValue> [primary]
+        VALUE_PARAMETER name:descriptor index:0 type:<root>.OptionDescriptor<T of <root>.ArgumentSingleNullableValue>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArgumentSingleNullableValue signature:/ArgumentSingleNullableValue|null[0] modality:FINAL visibility:public superTypes:[<root>.ArgumentValueDelegate<T of <root>.ArgumentSingleNullableValue?>]'
+    CLASS CLASS name:SingleNullableOption signature:/SingleNullableOption|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractSingleOption<T of <root>.SingleNullableOption, T of <root>.SingleNullableOption?>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SingleNullableOption<T of <root>.SingleNullableOption>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /SingleNullableOption|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/SingleNullableOption.<init>|<init>(OptionDescriptor<1:0>){}[0] visibility:public <> (descriptor:<root>.OptionDescriptor<T of <root>.SingleNullableOption>) returnType:<root>.SingleNullableOption<T of <root>.SingleNullableOption> [primary]
+        VALUE_PARAMETER name:descriptor index:0 type:<root>.OptionDescriptor<T of <root>.SingleNullableOption>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (delegate: <root>.ArgumentValueDelegate<TResult of <root>.AbstractSingleOption>) [primary] declared in <root>.AbstractSingleOption'
+            <T>: T of <root>.SingleNullableOption
+            <TResult>: T of <root>.SingleNullableOption?
+            delegate: CONSTRUCTOR_CALL 'public constructor <init> (descriptor: <root>.OptionDescriptor<T of <root>.ArgumentSingleNullableValue>) [primary] declared in <root>.ArgumentSingleNullableValue' type=<root>.ArgumentSingleNullableValue<T of <root>.SingleNullableOption> origin=null
+              <class: T>: T of <root>.SingleNullableOption
+              descriptor: GET_VAR 'descriptor: <root>.OptionDescriptor<T of <root>.SingleNullableOption> declared in <root>.SingleNullableOption.<init>' type=<root>.OptionDescriptor<T of <root>.SingleNullableOption> origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SingleNullableOption signature:/SingleNullableOption|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractSingleOption<T of <root>.SingleNullableOption, T of <root>.SingleNullableOption?>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        LOCAL_DELEGATED_PROPERTY name:x type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? flags:val
+          VAR PROPERTY_DELEGATE name:x$delegate type:<root>.ArgumentValueDelegate<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.ArgumentValueDelegate<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (descriptor: <root>.OptionDescriptor<T of <root>.SingleNullableOption>) [primary] declared in <root>.SingleNullableOption' type=<root>.SingleNullableOption<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                descriptor: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.OptionDescriptor' type=<root>.OptionDescriptor<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? by (...)' delegate='val x$delegate: <root>.ArgumentValueDelegate<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> [val] declared in <root>.box' getter='local final fun <get-x> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.box' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-x> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.box'
+                CALL 'public open fun getValue (thisRef: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.ArgumentValueDelegate [operator] declared in <root>.ArgumentValueDelegate' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                  $this: GET_VAR 'val x$delegate: <root>.ArgumentValueDelegate<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> [val] declared in <root>.box' type=<root>.ArgumentValueDelegate<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> origin=null
+                  thisRef: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? by (...)' delegate='val x$delegate: <root>.ArgumentValueDelegate<<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> [val] declared in <root>.box' getter='local final fun <get-x> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.box' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val]
+                CALL 'local final fun <get-x> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=GET_LOCAL_PROPERTY
+              WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public final val i: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun C.component1(): kotlin/Int
+
+      public final operator fun C.component2(): kotlin/Int
+
+      public final fun doTest(l: kotlin/Array<C>): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Anno
+
+    public final annotation class Anno : kotlin/Annotation {
+
+      public constructor(x: kotlin/Array<kotlin/String> /* = ... */)
+
+      public final val x: kotlin/Array<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @Anno(x = [])
+      public final fun test1(): kotlin/Int
+
+      @Anno(x = ["K"])
+      public final fun test2(): kotlin/Int
+    }
+  }
+}

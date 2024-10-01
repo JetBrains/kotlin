@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: Bar
+    // class name: Foo
+
+    public final class A<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      // nested class: B
+    }
+
+    public final inner class A.B<T#1 /* N */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#2 /* H */> foo(t: T#0, n: T#1, h: T#2, a: kotlin/Function3<T#0, T#1, T#2, kotlin/Int> /* = ... */): kotlin/String
+    }
+
+    public final class Bar<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun member(a: T#0, b: kotlin/Function1<T#0, kotlin/Int> /* = ... */): kotlin/String
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#0 /* T */> member(a: T#0, b: kotlin/Function1<T#0, kotlin/Int> /* = ... */): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> topLevel(a: T#0, b: kotlin/Function1<T#0, kotlin/Int> /* = ... */): kotlin/String
+    }
+  }
+}

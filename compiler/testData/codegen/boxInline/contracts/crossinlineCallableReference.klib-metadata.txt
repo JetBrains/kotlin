@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/OutputWorkScreenView
+    // class name: test/SomeOutputScreenCallbacks
+
+    public final class test/OutputWorkScreenView : kotlin/Any {
+
+      public constructor(callbacks: test/SomeOutputScreenCallbacks)
+
+      public final val root: kotlin/Unit
+        public final get
+    }
+
+    public abstract interface test/SomeOutputScreenCallbacks : kotlin/Any {
+
+      public abstract fun ontest(): kotlin/Unit
+    }
+
+    package {
+
+      public final inline fun button(onAction: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final inline fun vBox(crossinline action: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+        contract {
+          callsInPlace(p#1, InvocationKind.EXACTLY_ONCE)
+        }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun inlineCall(block: kotlin/Function2<kotlin/CharSequence, kotlin/CharSequence, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

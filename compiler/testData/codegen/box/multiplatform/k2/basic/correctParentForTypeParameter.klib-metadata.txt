@@ -1,0 +1,21 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: bar
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: foo
+
+    package {
+
+      public final fun transform(x: kotlin/String, f: kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String
+    }
+  }
+}

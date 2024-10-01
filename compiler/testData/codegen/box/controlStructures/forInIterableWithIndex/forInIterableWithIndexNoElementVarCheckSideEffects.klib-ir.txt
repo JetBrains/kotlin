@@ -1,0 +1,225 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/forInIterableWithIndexNoElementVarCheckSideEffects.kt
+    PROPERTY name:xs signature:/xs|{}xs[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<root>.CountingIterable<<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl><T of <root>.CountingIterable>) [primary] declared in <root>.CountingIterable' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            s: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="a"
+                CONST String type=<unbound IrClassSymbolImpl> value="b"
+                CONST String type=<unbound IrClassSymbolImpl> value="c"
+                CONST String type=<unbound IrClassSymbolImpl> value="d"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> signature:/xs.<get-xs>|<get-xs>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.CountingIterable<<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:xs signature:/xs|{}xs[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xs> (): <root>.CountingIterable<<unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs signature:[ /xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<root>.CountingIterable<<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:CountingIterable signature:/CountingIterable|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><T of <root>.CountingIterable>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /CountingIterable|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/CountingIterable.<init>|<init>(kotlin.collections.Iterable<1:0>){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl><T of <root>.CountingIterable>) returnType:<root>.CountingIterable<T of <root>.CountingIterable> [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><T of <root>.CountingIterable>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CountingIterable signature:/CountingIterable|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><T of <root>.CountingIterable>]'
+      PROPERTY name:s signature:/CountingIterable.s|{}s[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /CountingIterable.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.CountingIterable> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable.<init>' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/CountingIterable.s.<get-s>|<get-s>(){}[0] visibility:private modality:FINAL <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>) returnType:<unbound IrClassSymbolImpl><T of <root>.CountingIterable>
+          correspondingProperty: PROPERTY name:s signature:/CountingIterable.s|{}s[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-s> (): <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /CountingIterable.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.CountingIterable> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=null
+                receiver: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.<get-s>' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+      PROPERTY name:hasNextCtr signature:/CountingIterable.hasNextCtr|{}hasNextCtr[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:hasNextCtr signature:[ /CountingIterable.hasNextCtr|{}hasNextCtr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hasNextCtr> signature:/CountingIterable.hasNextCtr.<get-hasNextCtr>|<get-hasNextCtr>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:hasNextCtr signature:/CountingIterable.hasNextCtr|{}hasNextCtr[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-hasNextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:hasNextCtr signature:[ /CountingIterable.hasNextCtr|{}hasNextCtr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.<get-hasNextCtr>' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-hasNextCtr> signature:/CountingIterable.hasNextCtr.<set-hasNextCtr>|<set-hasNextCtr>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:hasNextCtr signature:/CountingIterable.hasNextCtr|{}hasNextCtr[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:hasNextCtr signature:[ /CountingIterable.hasNextCtr|{}hasNextCtr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.<set-hasNextCtr>' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.CountingIterable.<set-hasNextCtr>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:nextCtr signature:/CountingIterable.nextCtr|{}nextCtr[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:nextCtr signature:[ /CountingIterable.nextCtr|{}nextCtr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nextCtr> signature:/CountingIterable.nextCtr.<get-nextCtr>|<get-nextCtr>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:nextCtr signature:/CountingIterable.nextCtr|{}nextCtr[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-nextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nextCtr signature:[ /CountingIterable.nextCtr|{}nextCtr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.<get-nextCtr>' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nextCtr> signature:/CountingIterable.nextCtr.<set-nextCtr>|<set-nextCtr>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:nextCtr signature:/CountingIterable.nextCtr|{}nextCtr[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nextCtr signature:[ /CountingIterable.nextCtr|{}nextCtr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.<set-nextCtr>' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.CountingIterable.<set-nextCtr>' type=<unbound IrClassSymbolImpl> origin=null
+      CLASS CLASS name:CountingIterableIterator signature:/CountingIterable.CountingIterableIterator|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl><T of <root>.CountingIterable>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>
+        CONSTRUCTOR signature:/CountingIterable.CountingIterableIterator.<init>|<init>(kotlin.collections.Iterator<2:0>){}[0] visibility:public <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>, it:<unbound IrClassSymbolImpl><T of <root>.CountingIterable>) returnType:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+          VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><T of <root>.CountingIterable>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CountingIterableIterator signature:/CountingIterable.CountingIterableIterator|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl><T of <root>.CountingIterable>]'
+        PROPERTY name:it signature:/CountingIterable.CountingIterableIterator.it|{}it[0] visibility:private modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:it signature:[ /CountingIterable.CountingIterableIterator.it|{}it[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.CountingIterable> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'it: <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator.<init>' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-it> signature:/CountingIterable.CountingIterableIterator.it.<get-it>|<get-it>(){}[0] visibility:private modality:FINAL <> ($this:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>) returnType:<unbound IrClassSymbolImpl><T of <root>.CountingIterable>
+            correspondingProperty: PROPERTY name:it signature:/CountingIterable.CountingIterableIterator.it|{}it[0] visibility:private modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-it> (): <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it signature:[ /CountingIterable.CountingIterableIterator.it|{}it[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.collections.Iterable<T of <root>.CountingIterable> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.CountingIterable> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=null
+                  receiver: GET_VAR '<this>: <root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator.<get-it>' type=<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> origin=null
+        FUN name:hasNext signature:/CountingIterable.CountingIterableIterator.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.CountingIterable.CountingIterableIterator'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'private final fun <get-it> (): <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator.hasNext' type=<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> origin=null
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                          VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                            CALL 'public final fun <get-hasNextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                              $this: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+                          CALL 'public final fun <set-hasNextCtr> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                            $this: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+                            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                              $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.CountingIterable.CountingIterableIterator.hasNext.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.CountingIterable.CountingIterableIterator.hasNext.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        FUN name:next signature:/CountingIterable.CountingIterableIterator.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>) returnType:T of <root>.CountingIterable [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): T of <root>.CountingIterable [operator] declared in <root>.CountingIterable.CountingIterableIterator'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.CountingIterable origin=null
+                <1>: T of <root>.CountingIterable
+                $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.CountingIterable origin=null
+                  $this: CALL 'private final fun <get-it> (): <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> declared in <root>.CountingIterable.CountingIterableIterator.next' type=<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> origin=null
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:T of <root>.CountingIterable) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:it index:0 type:T of <root>.CountingIterable
+                    BLOCK_BODY
+                      TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                        BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                          VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                            CALL 'public final fun <get-nextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                              $this: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+                          CALL 'public final fun <set-nextCtr> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                            $this: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+                            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                              $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.CountingIterable.CountingIterableIterator.next.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.CountingIterable.CountingIterableIterator.next.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:/CountingIterable.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingIterable<T of <root>.CountingIterable>) returnType:<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.CountingIterable<T of <root>.CountingIterable>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> [operator] declared in <root>.CountingIterable'
+            CONSTRUCTOR_CALL 'public constructor <init> (it: <unbound IrClassSymbolImpl><T of <root>.CountingIterable>) [primary] declared in <root>.CountingIterable.CountingIterableIterator' type=<root>.CountingIterable.CountingIterableIterator<T of <root>.CountingIterable> origin=null
+              $outer: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.iterator' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+              it: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=null
+                $this: CALL 'private final fun <get-s> (): <unbound IrClassSymbolImpl><T of <root>.CountingIterable> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl><T of <root>.CountingIterable> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.CountingIterable<T of <root>.CountingIterable> declared in <root>.CountingIterable.iterator' type=<root>.CountingIterable<T of <root>.CountingIterable> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:s type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                $receiver: CALL 'public final fun <get-xs> (): <root>.CountingIterable<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+              VAR name:index type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=1)
+                  $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                      GET_VAR 'val index: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                      CONST String type=<unbound IrClassSymbolImpl> value=";"
+        VAR name:ss type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val ss: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="0;1;2;3;"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: '"
+                GET_VAR 'val ss: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value="'"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-hasNextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-xs> (): <root>.CountingIterable<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="hasNextCtr != 5, was: '"
+                CALL 'public final fun <get-hasNextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-xs> (): <root>.CountingIterable<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                CONST String type=<unbound IrClassSymbolImpl> value="'"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-nextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-xs> (): <root>.CountingIterable<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="nextCtr != 4, was: '"
+                CALL 'public final fun <get-nextCtr> (): <unbound IrClassSymbolImpl> declared in <root>.CountingIterable' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-xs> (): <root>.CountingIterable<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.CountingIterable<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                CONST String type=<unbound IrClassSymbolImpl> value="'"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

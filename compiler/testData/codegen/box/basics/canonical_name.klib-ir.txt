@@ -1,0 +1,93 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/canonical_name.kt
+    PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sb> signature:/sb.<get-sb>|<get-sb>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<U of <root>.I, T of <root>.I>
+      TYPE_PARAMETER name:U index:0 variance: signature:[ /I|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T index:1 variance: signature:[ /I|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:foo signature:/I.foo|foo(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I<U of <root>.I, T of <root>.I>, a:U of <root>.I) returnType:T of <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.I<U of <root>.I, T of <root>.I>
+        VALUE_PARAMETER name:a index:0 type:U of <root>.I
+      FUN name:qux signature:/I.qux|qux(1:1){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I<U of <root>.I, T of <root>.I>, a:T of <root>.I) returnType:U of <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.I<U of <root>.I, T of <root>.I>
+        VALUE_PARAMETER name:a index:0 type:T of <root>.I
+    CLASS CLASS name:A1 signature:/A1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A1
+      CONSTRUCTOR signature:/A1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 signature:/A1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:A2 signature:/A2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2
+      CONSTRUCTOR signature:/A2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 signature:/A2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.I<<root>.A1, <root>.A2>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.I<<root>.A1, <root>.A2>]'
+      FUN name:foo signature:/A.foo|foo(A1){}[0] visibility:public modality:OPEN <> ($this:<root>.A, a:<root>.A1) returnType:<root>.A2
+        overridden:
+          public abstract fun foo (a: U of <root>.I): T of <root>.I declared in <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:a index:0 type:<root>.A1
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST String type=<unbound IrClassSymbolImpl> value="A:foo"
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: <root>.A1): <root>.A2 declared in <root>.A'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A2' type=<root>.A2 origin=null
+      FUN name:qux signature:/A.qux|qux(A2){}[0] visibility:public modality:OPEN <> ($this:<root>.A, a:<root>.A2) returnType:<root>.A1
+        overridden:
+          public abstract fun qux (a: T of <root>.I): U of <root>.I declared in <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:a index:0 type:<root>.A2
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST String type=<unbound IrClassSymbolImpl> value="A:qux"
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun qux (a: <root>.A2): <root>.A1 declared in <root>.A'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A1' type=<root>.A1 origin=null
+    FUN name:baz signature:/baz|baz(I<0:0,0:1>;0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <U, V> (i:<root>.I<U of <root>.baz, V of <root>.baz>, u:U of <root>.baz, v:V of <root>.baz) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:U index:0 variance: signature:[ /baz|baz(I<0:0,0:1>;0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /baz|baz(I<0:0,0:1>;0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:i index:0 type:<root>.I<U of <root>.baz, V of <root>.baz>
+      VALUE_PARAMETER name:u index:1 type:U of <root>.baz
+      VALUE_PARAMETER name:v index:2 type:V of <root>.baz
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public abstract fun foo (a: U of <root>.I): T of <root>.I declared in <root>.I' type=V of <root>.baz origin=null
+            $this: GET_VAR 'i: <root>.I<U of <root>.baz, V of <root>.baz> declared in <root>.baz' type=<root>.I<U of <root>.baz, V of <root>.baz> origin=null
+            a: GET_VAR 'u: U of <root>.baz declared in <root>.baz' type=U of <root>.baz origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public abstract fun qux (a: T of <root>.I): U of <root>.I declared in <root>.I' type=U of <root>.baz origin=null
+            $this: GET_VAR 'i: <root>.I<U of <root>.baz, V of <root>.baz> declared in <root>.baz' type=<root>.I<U of <root>.baz, V of <root>.baz> origin=null
+            a: GET_VAR 'v: V of <root>.baz declared in <root>.baz' type=V of <root>.baz origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun baz <U, V> (i: <root>.I<U of <root>.baz, V of <root>.baz>, u: U of <root>.baz, v: V of <root>.baz): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <U>: <root>.A1
+          <V>: <root>.A2
+          i: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          u: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A1' type=<root>.A1 origin=null
+          v: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A2' type=<root>.A2 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="A:foo\nA:qux\n"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Test
+
+    public final class test/Test : kotlin/Any {
+
+      public constructor(result: kotlin/Int)
+
+      public final var result: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final operator fun test/Test.inc(): test/Test
+
+      public final operator fun test/Test.plus(p: kotlin/Int): test/Test
+
+      public final var result: test/Test
+        public final get
+        public final set
+
+      public final var z: test/Test
+        public final /* non-default */ inline get
+        public final /* non-default */ inline set(value: test/Test)
+    }
+  }
+}

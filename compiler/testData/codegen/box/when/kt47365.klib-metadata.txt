@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EType
+    // class name: Wrapper
+
+    public final enum class EType : kotlin/Enum<EType> {
+
+      private constructor()
+
+      A,
+
+      // has Enum.entries
+    }
+
+    public final class Wrapper : kotlin/Any {
+
+      public constructor(t: EType?)
+
+      public final var t: EType?
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

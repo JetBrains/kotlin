@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Controller
+
+    public final class Controller : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final fun builder(controller: Controller, c: @kotlin/ExtensionFunctionType suspend kotlin/Function2<Controller, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final inline fun execute(crossinline action: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final inline fun execute(controller: Controller, crossinline action: @kotlin/ExtensionFunctionType suspend kotlin/Function2<Controller, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final fun launch(s: kotlin/String /* = ... */, block: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final fun Controller.launch(s: kotlin/String /* = ... */, block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<Controller, kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final inline fun launchCrossinline(s: kotlin/String /* = ... */, crossinline block: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final inline fun Controller.launchCrossinline(s: kotlin/String /* = ... */, crossinline block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<Controller, kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+
+      public final suspend fun withDefaultParameter(s: kotlin/String, s1: kotlin/String /* = ... */): kotlin/String
+
+      public final suspend fun Controller.withDefaultParameter(s: kotlin/String, s1: kotlin/String /* = ... */): kotlin/String
+    }
+  }
+}

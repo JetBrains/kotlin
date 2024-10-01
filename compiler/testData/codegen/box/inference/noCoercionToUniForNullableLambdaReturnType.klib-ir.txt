@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/noCoercionToUniForNullableLambdaReturnType.kt
+    FUN name:nullableK signature:/nullableK|nullableK(kotlin.Function0<0:0?>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (m:<unbound IrClassSymbolImpl><T of <root>.nullableK?>) returnType:T of <root>.nullableK?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /nullableK|nullableK(kotlin.Function0<0:0?>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:m index:0 type:<unbound IrClassSymbolImpl><T of <root>.nullableK?>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun nullableK <T> (m: <unbound IrClassSymbolImpl><T of <root>.nullableK?>): T of <root>.nullableK? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.nullableK? origin=INVOKE
+            $this: GET_VAR 'm: <unbound IrClassSymbolImpl><T of <root>.nullableK?> declared in <root>.nullableK' type=<unbound IrClassSymbolImpl><T of <root>.nullableK?> origin=VARIABLE_AS_FUNCTION
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:nullableK type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun nullableK <T> (m: <unbound IrClassSymbolImpl><T of <root>.nullableK?>): T of <root>.nullableK? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              m: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.box'
+                      CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val nullableK: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="null"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: "
+                GET_VAR 'val nullableK: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

@@ -1,0 +1,52 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+    // class name: IBase
+    // class name: IFoo
+
+    public final value class B : IFoo {
+
+      public constructor(x: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun foo(): kotlin/String
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/String
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/String
+    }
+
+    public abstract interface IBase : kotlin/Any {
+
+      public open fun testDefault1(): kotlin/String
+    }
+
+    public abstract interface IFoo : IBase {
+
+      public abstract fun foo(): kotlin/String
+
+      public open fun testDefault2(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun IBase.test1(): kotlin/String
+
+      public final fun IBase.test2(): kotlin/String
+    }
+  }
+}

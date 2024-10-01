@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun fff(): kotlin/Int
+
+      public final fun something(increase: kotlin/Function1<kotlin/Int, kotlin/Int>, x: kotlin/Int): kotlin/Int?
+
+      public final var result: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* T */> T#0.myalso(block: kotlin/Function1<T#0, kotlin/Unit>): T#0
+
+      public final inline fun <T#0 /* T */, T#1 /* R */ : kotlin/Any> kotlin/collections/Iterable<T#0>.mymapNotNull(transform: kotlin/Function1<T#0, T#1?>): kotlin/collections/List<T#1>
+    }
+  }
+}

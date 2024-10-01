@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+
+      public open fun test(s: kotlin/String): kotlin/String
+    }
+
+    public final object B : A {
+
+      private constructor()
+
+      public open fun test(s: kotlin/String): kotlin/String
+
+      public final val doTest: kotlin/Function0<kotlin/String>
+        public final get
+    }
+
+    public final object C : A {
+
+      private constructor()
+
+      public open fun test(s: kotlin/String): kotlin/String
+
+      public final val doTest: kotlin/Function0<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

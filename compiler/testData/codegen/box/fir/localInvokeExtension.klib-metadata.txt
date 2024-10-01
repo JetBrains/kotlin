@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Codec
+    // class name: ReadContext
+    // class name: WriteContext
+
+    public abstract interface Codec<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun ReadContext.decode(): T#0?
+
+      public abstract fun WriteContext.encode(value: T#0): kotlin/Unit
+    }
+
+    public abstract interface ReadContext : kotlin/Any {
+
+      public abstract val y: kotlin/String
+        public abstract get
+    }
+
+    public abstract interface WriteContext : kotlin/Any {
+
+      public abstract val x: kotlin/String
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> codec(encode: @kotlin/ExtensionFunctionType kotlin/Function2<WriteContext, T#0, kotlin/Unit>, decode: @kotlin/ExtensionFunctionType kotlin/Function1<ReadContext, T#0?>): Codec<T#0>
+    }
+  }
+}

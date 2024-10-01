@@ -1,0 +1,186 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> signature:/result.<set-result>|<set-result>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:result signature:/result|{}result[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-result>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Change signature:/Change|null[0] modality:FINAL visibility:public superTypes:[<root>.IsChange]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Change
+      CONSTRUCTOR signature:/Change.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Change [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Change signature:/Change|null[0] modality:FINAL visibility:public superTypes:[<root>.IsChange]'
+      FUN name:qux signature:/Change.qux|qux(RPPG1<out|AC1>){}[0] visibility:public modality:OPEN <> ($this:<root>.Change, select:<root>.RPPG1<out <root>.AC1>) returnType:<root>.IsChange?
+        overridden:
+          public abstract fun qux (select: <root>.RPPG1<out <root>.AC1>): <root>.IsChange? declared in <root>.IsChange
+        $this: VALUE_PARAMETER name:<this> type:<root>.Change
+        VALUE_PARAMETER name:select index:0 type:<root>.RPPG1<out <root>.AC1>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+            <set-?>: CONST String type=<unbound IrClassSymbolImpl> value=""
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun qux (select: <root>.RPPG1<out <root>.AC1>): <root>.IsChange? declared in <root>.Change'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN name:foo signature:/Change.foo|foo(RPPG1<out|AC1>;RPPG1<in|I1>){}[0] visibility:public modality:OPEN <> ($this:<root>.Change, select:<root>.RPPG1<out <root>.AC1>, sss:<root>.RPPG1<in <root>.I1>) returnType:<root>.Change?
+        overridden:
+          public abstract fun foo (select: <root>.RPPG1<out <root>.AC1>, sss: <root>.RPPG1<in <root>.I1>): <root>.IsChange? declared in <root>.IsChange
+        $this: VALUE_PARAMETER name:<this> type:<root>.Change
+        VALUE_PARAMETER name:select index:0 type:<root>.RPPG1<out <root>.AC1>
+        VALUE_PARAMETER name:sss index:1 type:<root>.RPPG1<in <root>.I1>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: CONST String type=<unbound IrClassSymbolImpl> value="O"
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (select: <root>.RPPG1<out <root>.AC1>, sss: <root>.RPPG1<in <root>.I1>): <root>.Change? declared in <root>.Change'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN name:bar signature:/Change.bar|bar(RPPG2<out|AC1,in|AC2<out|I2>>;RPPG3<in|AC1,AC2<in|I2>,out|AC3<in|I2,out|I3>>){}[0] visibility:public modality:OPEN <> ($this:<root>.Change, a:<root>.RPPG2<out <root>.AC1, in <root>.AC2<out <root>.I2>>, b:<root>.RPPG3<in <root>.AC1, <root>.AC2<in <root>.I2>, out <root>.AC3<in <root>.I2, out <root>.I3>>) returnType:<root>.Change?
+        overridden:
+          public abstract fun bar (a: <root>.RPPG2<out <root>.AC1, in <root>.AC2<out <root>.I2>>, b: <root>.RPPG3<in <root>.AC1, <root>.AC2<in <root>.I2>, out <root>.AC3<in <root>.I2, out <root>.I3>>): <root>.IsChange? declared in <root>.IsChange
+        $this: VALUE_PARAMETER name:<this> type:<root>.Change
+        VALUE_PARAMETER name:a index:0 type:<root>.RPPG2<out <root>.AC1, in <root>.AC2<out <root>.I2>>
+        VALUE_PARAMETER name:b index:1 type:<root>.RPPG3<in <root>.AC1, <root>.AC2<in <root>.I2>, out <root>.AC3<in <root>.I2, out <root>.I3>>
+        BLOCK_BODY
+          CALL 'public final fun <set-result> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun bar (a: <root>.RPPG2<out <root>.AC1, in <root>.AC2<out <root>.I2>>, b: <root>.RPPG3<in <root>.AC1, <root>.AC2<in <root>.I2>, out <root>.AC3<in <root>.I2, out <root>.I3>>): <root>.Change? declared in <root>.Change'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS INTERFACE name:IsChange signature:/IsChange|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IsChange
+      FUN name:qux signature:/IsChange.qux|qux(RPPG1<out|AC1>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IsChange, select:<root>.RPPG1<out <root>.AC1>) returnType:<root>.IsChange?
+        $this: VALUE_PARAMETER name:<this> type:<root>.IsChange
+        VALUE_PARAMETER name:select index:0 type:<root>.RPPG1<out <root>.AC1>
+      FUN name:foo signature:/IsChange.foo|foo(RPPG1<out|AC1>;RPPG1<in|I1>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IsChange, select:<root>.RPPG1<out <root>.AC1>, sss:<root>.RPPG1<in <root>.I1>) returnType:<root>.IsChange?
+        $this: VALUE_PARAMETER name:<this> type:<root>.IsChange
+        VALUE_PARAMETER name:select index:0 type:<root>.RPPG1<out <root>.AC1>
+        VALUE_PARAMETER name:sss index:1 type:<root>.RPPG1<in <root>.I1>
+      FUN name:bar signature:/IsChange.bar|bar(RPPG2<out|AC1,in|AC2<out|I2>>;RPPG3<in|AC1,AC2<in|I2>,out|AC3<in|I2,out|I3>>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IsChange, a:<root>.RPPG2<out <root>.AC1, in <root>.AC2<out <root>.I2>>, b:<root>.RPPG3<in <root>.AC1, <root>.AC2<in <root>.I2>, out <root>.AC3<in <root>.I2, out <root>.I3>>) returnType:<root>.IsChange?
+        $this: VALUE_PARAMETER name:<this> type:<root>.IsChange
+        VALUE_PARAMETER name:a index:0 type:<root>.RPPG2<out <root>.AC1, in <root>.AC2<out <root>.I2>>
+        VALUE_PARAMETER name:b index:1 type:<root>.RPPG3<in <root>.AC1, <root>.AC2<in <root>.I2>, out <root>.AC3<in <root>.I2, out <root>.I3>>
+    CLASS CLASS name:AC1 signature:/AC1|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BAC1<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AC1
+      CONSTRUCTOR signature:/AC1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AC1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BAC1'
+            <D1>: <unbound IrClassSymbolImpl>
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AC1 signature:/AC1|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BAC1<<unbound IrClassSymbolImpl>>]'
+    CLASS CLASS name:AC2 signature:/AC2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BAC2<<unbound IrClassSymbolImpl>, PP1 of <root>.AC2>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AC2<PP1 of <root>.AC2>
+      TYPE_PARAMETER name:PP1 index:0 variance: signature:[ /AC2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/AC2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AC2<PP1 of <root>.AC2> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BAC2'
+            <D1>: <unbound IrClassSymbolImpl>
+            <D2>: PP1 of <root>.AC2
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AC2 signature:/AC2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BAC2<<unbound IrClassSymbolImpl>, PP1 of <root>.AC2>]'
+    CLASS CLASS name:AC3 signature:/AC3|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BAC3<<unbound IrClassSymbolImpl>, PP1 of <root>.AC3, PP2 of <root>.AC3>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AC3<PP1 of <root>.AC3, PP2 of <root>.AC3>
+      TYPE_PARAMETER name:PP1 index:0 variance: signature:[ /AC3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:PP2 index:1 variance: signature:[ /AC3|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:PP2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/AC3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AC3<PP1 of <root>.AC3, PP2 of <root>.AC3> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BAC3'
+            <D1>: <unbound IrClassSymbolImpl>
+            <D2>: PP1 of <root>.AC3
+            <D3>: PP2 of <root>.AC3
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AC3 signature:/AC3|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.BAC3<<unbound IrClassSymbolImpl>, PP1 of <root>.AC3, PP2 of <root>.AC3>]'
+    CLASS INTERFACE name:I1 signature:/I1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
+    CLASS INTERFACE name:I2 signature:/I2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2
+    CLASS INTERFACE name:I3 signature:/I3|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I3
+    CLASS CLASS name:BAC1 signature:/BAC1|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BAC1<D1 of <root>.BAC1>
+      TYPE_PARAMETER name:D1 index:0 variance: signature:[ /BAC1|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/BAC1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BAC1<D1 of <root>.BAC1> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BAC1 signature:/BAC1|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I1]'
+    CLASS CLASS name:BAC2 signature:/BAC2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BAC2<D1 of <root>.BAC2, D2 of <root>.BAC2>
+      TYPE_PARAMETER name:D1 index:0 variance: signature:[ /BAC2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:D2 index:1 variance: signature:[ /BAC2|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:PP2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/BAC2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BAC2<D1 of <root>.BAC2, D2 of <root>.BAC2> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BAC2 signature:/BAC2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I2]'
+    CLASS CLASS name:BAC3 signature:/BAC3|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I3]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BAC3<D1 of <root>.BAC3, D2 of <root>.BAC3, D3 of <root>.BAC3>
+      TYPE_PARAMETER name:D1 index:0 variance: signature:[ /BAC3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:D2 index:1 variance: signature:[ /BAC3|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:PP2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:D3 index:2 variance: signature:[ /BAC3|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:D3 index:2 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/BAC3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BAC3<D1 of <root>.BAC3, D2 of <root>.BAC3, D3 of <root>.BAC3> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BAC3 signature:/BAC3|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I3]'
+    CLASS CLASS name:RPPG1 signature:/RPPG1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RPPG1<P1 of <root>.RPPG1>
+      TYPE_PARAMETER name:P1 index:0 variance: signature:[ /RPPG1|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.I1] reified:false
+      CONSTRUCTOR signature:/RPPG1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.RPPG1<P1 of <root>.RPPG1> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RPPG1 signature:/RPPG1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:RPPG2 signature:/RPPG2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RPPG2<P1 of <root>.RPPG2, P2 of <root>.RPPG2>
+      TYPE_PARAMETER name:P1 index:0 variance: signature:[ /RPPG2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.I1] reified:false
+      TYPE_PARAMETER name:P2 index:1 variance: signature:[ /RPPG2|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:PP2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.I2] reified:false
+      CONSTRUCTOR signature:/RPPG2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.RPPG2<P1 of <root>.RPPG2, P2 of <root>.RPPG2> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RPPG2 signature:/RPPG2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:RPPG3 signature:/RPPG3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RPPG3<P1 of <root>.RPPG3, P2 of <root>.RPPG3, P3 of <root>.RPPG3>
+      TYPE_PARAMETER name:P1 index:0 variance: signature:[ /RPPG3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:PP1 index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.I1] reified:false
+      TYPE_PARAMETER name:P2 index:1 variance: signature:[ /RPPG3|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:PP2 index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.I2] reified:false
+      TYPE_PARAMETER name:P3 index:2 variance: signature:[ /RPPG3|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:D3 index:2 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<root>.I3] reified:false
+      CONSTRUCTOR signature:/RPPG3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.RPPG3<P1 of <root>.RPPG3, P2 of <root>.RPPG3, P3 of <root>.RPPG3> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RPPG3 signature:/RPPG3|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            $this: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            $this: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+            2: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            $this: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+              <class: 2>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            2: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>>> origin=null
+              <class: 1>: <unbound IrClassSymbolImpl>
+              <class: 2>: <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>>
+              <class: 3>: <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>, out <unbound IrClassSymbolImpl>>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

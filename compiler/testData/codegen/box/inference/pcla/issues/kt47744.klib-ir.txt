@@ -1,0 +1,91 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt47744.kt
+    FUN name:flow signature:/flow|flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<T of <root>.flow>, <unbound IrClassSymbolImpl>>) returnType:<root>.Flow<T of <root>.flow>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /flow|flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<T of <root>.flow>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun flow <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<T of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<T of <root>.flow> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Flow' type=<root>.Flow<T of <root>.flow> origin=null
+            <class: T>: T of <root>.flow
+    FUN name:produce signature:/produce|produce(kotlin.coroutines.SuspendFunction1<SendChannel<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<E of <root>.produce>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /produce|produce(kotlin.coroutines.SuspendFunction1<SendChannel<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<E of <root>.produce>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    CLASS INTERFACE name:SendChannel signature:/SendChannel|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SendChannel<E of <root>.SendChannel>
+      TYPE_PARAMETER name:E index:0 variance:in signature:[ /SendChannel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:onSend signature:/SendChannel.onSend|{}onSend[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-onSend> signature:/SendChannel.onSend.<get-onSend>|<get-onSend>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SendChannel<E of <root>.SendChannel>) returnType:<root>.SelectClause2<E of <root>.SendChannel, <root>.SendChannel<E of <root>.SendChannel>>
+          correspondingProperty: PROPERTY name:onSend signature:/SendChannel.onSend|{}onSend[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SendChannel<E of <root>.SendChannel>
+    CLASS INTERFACE name:SelectClause2 signature:/SelectClause2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SelectClause2<P of <root>.SelectClause2, Q of <root>.SelectClause2>
+      TYPE_PARAMETER name:P index:0 variance:in signature:[ /SelectClause2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:Q index:1 variance:out signature:[ /SelectClause2|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:Q index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:Flow signature:/Flow|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Flow<T of <root>.Flow>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /Flow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Flow.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Flow<T of <root>.Flow> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Flow signature:/Flow|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS INTERFACE name:FlowCollector signature:/FlowCollector|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlowCollector<T of <root>.FlowCollector>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /FlowCollector|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:SelectBuilder signature:/SelectBuilder|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SelectBuilder<R of <root>.SelectBuilder>
+      TYPE_PARAMETER name:R index:0 variance:in signature:[ /SelectBuilder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:invoke signature:/SelectBuilder.invoke|invoke@SelectClause2<0:0,0:1>(0:0;kotlin.coroutines.SuspendFunction1<0:1,1:0>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:ABSTRACT <P, Q> ($this:<root>.SelectBuilder<R of <root>.SelectBuilder>, $receiver:<root>.SelectClause2<P of <root>.SelectBuilder.invoke, Q of <root>.SelectBuilder.invoke>, param:P of <root>.SelectBuilder.invoke, block:<unbound IrClassSymbolImpl><Q of <root>.SelectBuilder.invoke, R of <root>.SelectBuilder>) returnType:<unbound IrClassSymbolImpl> [operator]
+        TYPE_PARAMETER name:P index:0 variance: signature:[ /SelectBuilder.invoke|invoke@SelectClause2<0:0,0:1>(0:0;kotlin.coroutines.SuspendFunction1<0:1,1:0>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        TYPE_PARAMETER name:Q index:1 variance: signature:[ /SelectBuilder.invoke|invoke@SelectClause2<0:0,0:1>(0:0;kotlin.coroutines.SuspendFunction1<0:1,1:0>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:Q index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.SelectBuilder<R of <root>.SelectBuilder>
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.SelectClause2<P of <root>.SelectBuilder.invoke, Q of <root>.SelectBuilder.invoke>
+        VALUE_PARAMETER name:param index:0 type:P of <root>.SelectBuilder.invoke
+        VALUE_PARAMETER name:block index:1 type:<unbound IrClassSymbolImpl><Q of <root>.SelectBuilder.invoke, R of <root>.SelectBuilder>
+    FUN name:select signature:/select|select(kotlin.Function1<SelectBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (builder:@[<unbound>] <unbound IrClassSymbolImpl><<root>.SelectBuilder<R of <root>.select>, <unbound IrClassSymbolImpl>>) returnType:R of <root>.select [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /select|select(kotlin.Function1<SelectBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:builder index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.SelectBuilder<R of <root>.select>, <unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun select <R> (builder: @[<unbound>] <unbound IrClassSymbolImpl><<root>.SelectBuilder<R of <root>.select>, <unbound IrClassSymbolImpl>>): R of <root>.select [inline] declared in <root>'
+          TYPE_OP type=R of <root>.select origin=CAST typeOperand=R of <root>.select
+            GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<root>.Flow<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun flow <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<T of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<T of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'public final fun produce <E> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<E of <root>.produce>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <E>: <unbound IrClassSymbolImpl>
+                    block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.SendChannel<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        $receiver: VALUE_PARAMETER name:$this$produce type:<root>.SendChannel<<unbound IrClassSymbolImpl>>
+                        BLOCK_BODY
+                          CALL 'public final fun select <R> (builder: @[<unbound>] <unbound IrClassSymbolImpl><<root>.SelectBuilder<R of <root>.select>, <unbound IrClassSymbolImpl>>): R of <root>.select [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                            <R>: <unbound IrClassSymbolImpl>
+                            builder: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.SelectBuilder<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.SelectBuilder<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                                $receiver: VALUE_PARAMETER name:$this$select type:<root>.SelectBuilder<<unbound IrClassSymbolImpl>>
+                                BLOCK_BODY
+                                  CALL 'public abstract fun invoke <P, Q> (param: P of <root>.SelectBuilder.invoke, block: <unbound IrClassSymbolImpl><Q of <root>.SelectBuilder.invoke, R of <root>.SelectBuilder>): <unbound IrClassSymbolImpl> [operator] declared in <root>.SelectBuilder' type=<unbound IrClassSymbolImpl> origin=null
+                                    <P>: <unbound IrClassSymbolImpl>
+                                    <Q>: <root>.SendChannel<<unbound IrClassSymbolImpl>>
+                                    $this: GET_VAR '$this$select: <root>.SelectBuilder<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=<root>.SelectBuilder<<unbound IrClassSymbolImpl>> origin=null
+                                    $receiver: CALL 'public abstract fun <get-onSend> (): <root>.SelectClause2<E of <root>.SendChannel, <root>.SendChannel<E of <root>.SendChannel>> declared in <root>.SendChannel' type=<root>.SelectClause2<<unbound IrClassSymbolImpl>, <root>.SendChannel<<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+                                      $this: GET_VAR '$this$produce: <root>.SendChannel<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>.<anonymous>' type=<root>.SendChannel<<unbound IrClassSymbolImpl>> origin=null
+                                    param: CONST String type=<unbound IrClassSymbolImpl> value=""
+                                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.SendChannel<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.SendChannel<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                                        VALUE_PARAMETER name:it index:0 type:<root>.SendChannel<<unbound IrClassSymbolImpl>>
+                                        BLOCK_BODY
+                                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.SendChannel<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>.<anonymous>.<anonymous>'
+                                            GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

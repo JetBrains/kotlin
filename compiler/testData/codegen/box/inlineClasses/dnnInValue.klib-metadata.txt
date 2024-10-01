@@ -1,0 +1,46 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final value class A<T#0 /* T */> : kotlin/Any {
+
+      // requires language version 1.7.0 (level=ERROR)
+      public constructor(x: T#0 & Any)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // requires language version 1.7.0 (level=ERROR)
+      public final val x: T#0 & Any
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0 & Any
+    }
+  }
+}
+
+// MODULE: test
+library {
+  // module name: <test>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* F */ : kotlin/Any> foo(arg: T#0): T#0
+    }
+  }
+}

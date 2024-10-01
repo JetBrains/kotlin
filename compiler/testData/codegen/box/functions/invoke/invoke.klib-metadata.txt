@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: invoke
+
+    // class name: invoke/Method
+    // class name: invoke/Method2
+
+    public final class invoke/Method : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun invoke(i: kotlin/Int): kotlin/Int
+    }
+
+    public final class invoke/Method2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun invoke/Method2.invoke(s: kotlin/String): kotlin/String
+
+      public final fun test1(predicate: kotlin/Function1<kotlin/Int, kotlin/Int>, i: kotlin/Int): kotlin/Int
+
+      public final fun test2(predicate: kotlin/Function1<kotlin/Int, kotlin/Int>, i: kotlin/Int): kotlin/Int
+
+      public final fun test3(method: invoke/Method, i: kotlin/Int): kotlin/Int
+
+      public final fun test4(method: invoke/Method, i: kotlin/Int): kotlin/Int
+
+      public final fun test5(method2: invoke/Method2, s: kotlin/String): kotlin/String
+    }
+  }
+}

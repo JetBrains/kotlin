@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CharToAny
+    // class name: GenericCharToAny
+    // class name: GenericToAny
+
+    public abstract fun interface CharToAny : kotlin/Any {
+
+      public abstract fun invoke(c: kotlin/Char): kotlin/Any
+    }
+
+    public abstract fun interface GenericCharToAny : GenericToAny<kotlin/Char> {
+    }
+
+    public abstract fun interface GenericToAny<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun invoke(t: T#0): kotlin/Any
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo1(c: CharToAny): kotlin/Any
+
+      public final fun <T#0 /* T */> foo2(t: T#0, g: GenericToAny<T#0>): kotlin/Any
+
+      public final fun foo3(c: GenericCharToAny): kotlin/Any
+    }
+  }
+}

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun falseCond(): kotlin/Boolean
+
+      public final fun start(i1: kotlin/Int, i2: kotlin/Int, i3: kotlin/Int): kotlin/Int
+
+      public final fun testContinue1(): kotlin/Unit
+
+      public final fun testContinue2(): kotlin/Unit
+
+      public final fun testContinue3(): kotlin/Unit
+
+      public final fun testContinue4(): kotlin/Unit
+
+      public final fun testContinue5(): kotlin/Unit
+
+      public final fun testContinue6(): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: G
+    // class name: IFoo
+    // class name: Top
+    // class name: Unrelated
+
+    public abstract interface A : Top, Unrelated {
+    }
+
+    public abstract interface B : Top, Unrelated {
+    }
+
+    public final class G<T#0 /* T */ : Top> : kotlin/Any {
+
+      public constructor()
+
+      public final fun check(x: IFoo<in T#0>): kotlin/Unit
+    }
+
+    public abstract fun interface IFoo<T#0 /* T */ : Top> : kotlin/Any {
+
+      public abstract fun accept(t: T#0): kotlin/Unit
+    }
+
+    public abstract interface Top : kotlin/Any {
+    }
+
+    public abstract interface Unrelated : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun functionReference(x: kotlin/Any): kotlin/Unit
+    }
+  }
+}

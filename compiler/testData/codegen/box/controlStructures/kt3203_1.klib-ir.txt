@@ -1,0 +1,39 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3203_1.kt
+    FUN name:testIf signature:/testIf|testIf(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:condition type:<unbound IrClassSymbolImpl> [val]
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: GET_VAR 'val condition: <unbound IrClassSymbolImpl> [val] declared in <root>.testIf' type=<unbound IrClassSymbolImpl> origin=null
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:hello type:<unbound IrClassSymbolImpl>? [val]
+                  CONST String type=<unbound IrClassSymbolImpl> value="hello"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val hello: <unbound IrClassSymbolImpl>? [val] declared in <root>.testIf' type=<unbound IrClassSymbolImpl>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.testIf' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="result is false"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

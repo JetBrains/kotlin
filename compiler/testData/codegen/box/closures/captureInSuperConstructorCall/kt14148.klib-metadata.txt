@@ -1,0 +1,53 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Outer
+    // class name: Outer.Inner
+    // class name: Outer.JavacBug
+    // class name: Test
+
+    public open class Base : kotlin/Any {
+
+      public constructor(test: Test)
+
+      public final val test: Test
+        public final get
+    }
+
+    public open class Outer : kotlin/Any {
+
+      public constructor(x: kotlin/String)
+
+      public final val x: kotlin/String
+        public final get
+
+      // nested class: Inner
+
+      // nested class: JavacBug
+    }
+
+    public open inner class Outer.Inner : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final inner class Outer.JavacBug : Base {
+
+      public constructor()
+    }
+
+    public abstract interface Test : kotlin/Any {
+
+      public abstract fun test(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

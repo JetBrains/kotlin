@@ -1,0 +1,125 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericBoundPropertyAsCrossinline.kt
+    CLASS CLASS name:BaseFragment signature:/BaseFragment|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseFragment<T of <root>.BaseFragment>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /BaseFragment|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.BaseViewModel] reified:false] ] superTypes:[<root>.BaseViewModel] reified:false
+      CONSTRUCTOR signature:/BaseFragment.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BaseFragment<T of <root>.BaseFragment> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseFragment signature:/BaseFragment|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:viewModel signature:/BaseFragment.viewModel|{}viewModel[0] visibility:public modality:FINAL [lateinit,var]
+        FIELD PROPERTY_BACKING_FIELD name:viewModel signature:[ /BaseFragment.viewModel|{}viewModel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:viewModel type:T of <root>.BaseFragment visibility:private] ] type:T of <root>.BaseFragment visibility:private
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-viewModel> signature:/BaseFragment.viewModel.<get-viewModel>|<get-viewModel>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseFragment<T of <root>.BaseFragment>) returnType:T of <root>.BaseFragment
+          correspondingProperty: PROPERTY name:viewModel signature:/BaseFragment.viewModel|{}viewModel[0] visibility:public modality:FINAL [lateinit,var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseFragment<T of <root>.BaseFragment>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-viewModel> (): T of <root>.BaseFragment declared in <root>.BaseFragment'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:viewModel signature:[ /BaseFragment.viewModel|{}viewModel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:viewModel type:T of <root>.BaseFragment visibility:private] ] type:T of <root>.BaseFragment visibility:private' type=T of <root>.BaseFragment origin=null
+                receiver: GET_VAR '<this>: <root>.BaseFragment<T of <root>.BaseFragment> declared in <root>.BaseFragment.<get-viewModel>' type=<root>.BaseFragment<T of <root>.BaseFragment> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-viewModel> signature:/BaseFragment.viewModel.<set-viewModel>|<set-viewModel>(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseFragment<T of <root>.BaseFragment>, <set-?>:T of <root>.BaseFragment) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:viewModel signature:/BaseFragment.viewModel|{}viewModel[0] visibility:public modality:FINAL [lateinit,var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseFragment<T of <root>.BaseFragment>
+          VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.BaseFragment
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:viewModel signature:[ /BaseFragment.viewModel|{}viewModel[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:viewModel type:T of <root>.BaseFragment visibility:private] ] type:T of <root>.BaseFragment visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.BaseFragment<T of <root>.BaseFragment> declared in <root>.BaseFragment.<set-viewModel>' type=<root>.BaseFragment<T of <root>.BaseFragment> origin=null
+              value: GET_VAR '<set-?>: T of <root>.BaseFragment declared in <root>.BaseFragment.<set-viewModel>' type=T of <root>.BaseFragment origin=null
+      FUN name:onActivityCreated signature:/BaseFragment.onActivityCreated|onActivityCreated(){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseFragment<T of <root>.BaseFragment>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseFragment<T of <root>.BaseFragment>
+        BLOCK_BODY
+          CALL 'public final fun <set-viewModel> (<set-?>: T of <root>.BaseFragment): <unbound IrClassSymbolImpl> declared in <root>.BaseFragment' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.BaseFragment<T of <root>.BaseFragment> declared in <root>.BaseFragment.onActivityCreated' type=<root>.BaseFragment<T of <root>.BaseFragment> origin=null
+            <set-?>: CALL 'public abstract fun retrieveViewModel (): T of <root>.BaseFragment declared in <root>.BaseFragment' type=T of <root>.BaseFragment origin=null
+              $this: GET_VAR '<this>: <root>.BaseFragment<T of <root>.BaseFragment> declared in <root>.BaseFragment.onActivityCreated' type=<root>.BaseFragment<T of <root>.BaseFragment> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun onActivityCreated (): <unbound IrClassSymbolImpl> declared in <root>.BaseFragment'
+            CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+      FUN name:retrieveViewModel signature:/BaseFragment.retrieveViewModel|retrieveViewModel(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.BaseFragment<T of <root>.BaseFragment>) returnType:T of <root>.BaseFragment
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseFragment<T of <root>.BaseFragment>
+    CLASS CLASS name:DerivedFragment signature:/DerivedFragment|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseFragment<<root>.DerivedViewModel>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DerivedFragment
+      CONSTRUCTOR signature:/DerivedFragment.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DerivedFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseFragment'
+            <T>: <root>.DerivedViewModel
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedFragment signature:/DerivedFragment|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseFragment<<root>.DerivedViewModel>]'
+      FUN name:onActivityCreated signature:/DerivedFragment.onActivityCreated|onActivityCreated(){}[0] visibility:public modality:OPEN <> ($this:<root>.DerivedFragment) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun onActivityCreated (): <unbound IrClassSymbolImpl> declared in <root>.BaseFragment
+        $this: VALUE_PARAMETER name:<this> type:<root>.DerivedFragment
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'public open fun onActivityCreated (): <unbound IrClassSymbolImpl> declared in <root>.BaseFragment' superQualifier='CLASS CLASS name:BaseFragment signature:/BaseFragment|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.DerivedFragment declared in <root>.DerivedFragment.onActivityCreated' type=<root>.DerivedFragment origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun onActivityCreated (): <unbound IrClassSymbolImpl> declared in <root>.DerivedFragment'
+            CALL 'public final fun bind <T> (viewModelGet: <unbound IrClassSymbolImpl><T of <root>.DerivedFragment.bind?>): <unbound IrClassSymbolImpl> [inline] declared in <root>.DerivedFragment' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              $this: GET_VAR '<this>: <root>.DerivedFragment declared in <root>.DerivedFragment.onActivityCreated' type=<root>.DerivedFragment origin=null
+              viewModelGet: PROPERTY_REFERENCE 'public final property: <unbound IrClassSymbolImpl>? [var] declared in <root>.DerivedViewModel' field=null getter='public final fun <get-property> (): <unbound IrClassSymbolImpl>? declared in <root>.DerivedViewModel' setter='public final fun <set-property> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.DerivedViewModel' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.DerivedViewModel origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.DerivedFragment declared in <root>.DerivedFragment.onActivityCreated' type=<root>.DerivedFragment origin=null
+      FUN name:retrieveViewModel signature:/DerivedFragment.retrieveViewModel|retrieveViewModel(){}[0] visibility:public modality:OPEN <> ($this:<root>.DerivedFragment) returnType:<root>.DerivedViewModel
+        overridden:
+          public abstract fun retrieveViewModel (): T of <root>.BaseFragment declared in <root>.BaseFragment
+        $this: VALUE_PARAMETER name:<this> type:<root>.DerivedFragment
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun retrieveViewModel (): <root>.DerivedViewModel declared in <root>.DerivedFragment'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DerivedViewModel' type=<root>.DerivedViewModel origin=null
+      FUN name:bind signature:/DerivedFragment.bind|bind(kotlin.Function0<0:0?>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.DerivedFragment, viewModelGet:<unbound IrClassSymbolImpl><T of <root>.DerivedFragment.bind?>) returnType:<unbound IrClassSymbolImpl> [inline]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /DerivedFragment.bind|bind(kotlin.Function0<0:0?>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.BaseViewModel] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.DerivedFragment
+        VALUE_PARAMETER name:viewModelGet index:0 type:<unbound IrClassSymbolImpl><T of <root>.DerivedFragment.bind?> [crossinline]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bind <T> (viewModelGet: <unbound IrClassSymbolImpl><T of <root>.DerivedFragment.bind?>): <unbound IrClassSymbolImpl> [inline] declared in <root>.DerivedFragment'
+            CALL 'public final fun setOnFocusChangeListener (l: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.DerivedFragment' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.DerivedFragment declared in <root>.DerivedFragment.bind' type=<root>.DerivedFragment origin=null
+              l: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.DerivedFragment.bind'
+                      TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.DerivedFragment.bind? origin=INVOKE
+                          $this: GET_VAR 'viewModelGet: <unbound IrClassSymbolImpl><T of <root>.DerivedFragment.bind?> [crossinline] declared in <root>.DerivedFragment.bind' type=<unbound IrClassSymbolImpl><T of <root>.DerivedFragment.bind?> origin=VARIABLE_AS_FUNCTION
+      FUN name:setOnFocusChangeListener signature:/DerivedFragment.setOnFocusChangeListener|setOnFocusChangeListener(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> ($this:<root>.DerivedFragment, l:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DerivedFragment
+        VALUE_PARAMETER name:l index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun setOnFocusChangeListener (l: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.DerivedFragment'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'l: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.DerivedFragment.setOnFocusChangeListener' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:BaseViewModel signature:/BaseViewModel|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseViewModel
+      CONSTRUCTOR signature:/BaseViewModel.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.BaseViewModel [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseViewModel signature:/BaseViewModel|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:DerivedViewModel signature:/DerivedViewModel|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseViewModel]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DerivedViewModel
+      CONSTRUCTOR signature:/DerivedViewModel.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DerivedViewModel [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseViewModel'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedViewModel signature:/DerivedViewModel|null[0] modality:FINAL visibility:public superTypes:[<root>.BaseViewModel]'
+      PROPERTY name:property signature:/DerivedViewModel.property|{}property[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:property signature:[ /DerivedViewModel.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:viewModel type:T of <root>.BaseFragment visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> signature:/DerivedViewModel.property.<get-property>|<get-property>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DerivedViewModel) returnType:<unbound IrClassSymbolImpl>?
+          correspondingProperty: PROPERTY name:property signature:/DerivedViewModel.property|{}property[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DerivedViewModel
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-property> (): <unbound IrClassSymbolImpl>? declared in <root>.DerivedViewModel'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property signature:[ /DerivedViewModel.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:viewModel type:T of <root>.BaseFragment visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl>? origin=null
+                receiver: GET_VAR '<this>: <root>.DerivedViewModel declared in <root>.DerivedViewModel.<get-property>' type=<root>.DerivedViewModel origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-property> signature:/DerivedViewModel.property.<set-property>|<set-property>(kotlin.String?){}[0] visibility:public modality:FINAL <> ($this:<root>.DerivedViewModel, <set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:/DerivedViewModel.property|{}property[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DerivedViewModel
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property signature:[ /DerivedViewModel.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:viewModel type:T of <root>.BaseFragment visibility:private] ] type:<unbound IrClassSymbolImpl>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.DerivedViewModel declared in <root>.DerivedViewModel.<set-property>' type=<root>.DerivedViewModel origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.DerivedViewModel.<set-property>' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun onActivityCreated (): <unbound IrClassSymbolImpl> declared in <root>.DerivedFragment' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DerivedFragment' type=<root>.DerivedFragment origin=null
+

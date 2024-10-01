@@ -1,0 +1,23 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/noResolutionRecursion.kt
+    FUN name:at signature:/at|at@0:0(kotlin.Int){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.at, element:<unbound IrClassSymbolImpl>) returnType:T of <root>.at
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /at|at@0:0(kotlin.Int){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.at
+      VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun at <T> (element: <unbound IrClassSymbolImpl>): T of <root>.at declared in <root>'
+          CALL 'public final fun at <T> (): T of <root>.at declared in <root>' type=T of <root>.at origin=null
+            <T>: T of <root>.at
+            $receiver: GET_VAR '<this>: T of <root>.at declared in <root>.at' type=T of <root>.at origin=null
+    FUN name:at signature:/at|at@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.at) returnType:T of <root>.at
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /at|at@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.at
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun at <T> (): T of <root>.at declared in <root>'
+          GET_VAR '<this>: T of <root>.at declared in <root>.at' type=T of <root>.at origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun at <T> (): T of <root>.at declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK"

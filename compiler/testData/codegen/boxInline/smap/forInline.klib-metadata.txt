@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Some
+    // class name: SomeIterator
+
+    public final class Some : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun iterator(): SomeIterator
+    }
+
+    public final class SomeIterator : kotlin/Any {
+
+      public constructor()
+
+      public final operator inline fun hasNext(): kotlin/Boolean
+
+      public final operator inline fun next(): kotlin/String
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> nonInline(p: T#0): T#0
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun stub(): kotlin/Unit
+    }
+  }
+}

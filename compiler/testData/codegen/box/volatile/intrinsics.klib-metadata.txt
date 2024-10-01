@@ -1,0 +1,201 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BooleanWrapper
+    // class name: ByteWrapper
+    // class name: GenericWrapper
+    // class name: IncWrapper
+    // class name: IntWrapper
+    // class name: LongWrapper
+    // class name: RefWrapper
+    // class name: ShortWrapper
+    // class name: StringWrapper
+    // class name: Wrapper
+
+    public final class BooleanWrapper : Wrapper<kotlin/Boolean> {
+
+      public constructor(x: kotlin/Boolean)
+
+      public open fun compareAndSet(expected: kotlin/Boolean, new: kotlin/Boolean): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: kotlin/Boolean, new: kotlin/Boolean): kotlin/Boolean
+
+      public open fun get(): kotlin/Boolean
+
+      public open fun getAndSet(new: kotlin/Boolean): kotlin/Boolean
+
+      public open fun set(new: kotlin/Boolean): kotlin/Unit
+
+      public final var x: kotlin/Boolean
+        public final get
+        public final set
+    }
+
+    public final class ByteWrapper : IncWrapper<kotlin/Byte> {
+
+      public constructor(x: kotlin/Byte)
+
+      public open fun compareAndSet(expected: kotlin/Byte, new: kotlin/Byte): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: kotlin/Byte, new: kotlin/Byte): kotlin/Byte
+
+      public open fun get(): kotlin/Byte
+
+      public open fun getAndAdd(delta: kotlin/Byte): kotlin/Byte
+
+      public open fun getAndSet(new: kotlin/Byte): kotlin/Byte
+
+      public open fun set(new: kotlin/Byte): kotlin/Unit
+
+      public final var x: kotlin/Byte
+        public final get
+        public final set
+    }
+
+    public final class GenericWrapper<T#0 /* T */> : RefWrapper<T#0> {
+
+      public constructor(x: T#0)
+
+      public open fun compareAndSet(expected: T#0, new: T#0): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: T#0, new: T#0): T#0
+
+      public open fun get(): T#0
+
+      public open fun getAndSet(new: T#0): T#0
+
+      public open fun set(new: T#0): kotlin/Unit
+
+      public final var x: T#0
+        public final get
+        public final set
+    }
+
+    public abstract interface IncWrapper<T#0 /* T */> : Wrapper<T#0> {
+
+      public abstract fun getAndAdd(expected: T#0): T#0
+    }
+
+    public final class IntWrapper : IncWrapper<kotlin/Int> {
+
+      public constructor(x: kotlin/Int)
+
+      public open fun compareAndSet(expected: kotlin/Int, new: kotlin/Int): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: kotlin/Int, new: kotlin/Int): kotlin/Int
+
+      public open fun get(): kotlin/Int
+
+      public open fun getAndAdd(delta: kotlin/Int): kotlin/Int
+
+      public open fun getAndSet(new: kotlin/Int): kotlin/Int
+
+      public open fun set(new: kotlin/Int): kotlin/Unit
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public final class LongWrapper : IncWrapper<kotlin/Long> {
+
+      public constructor(x: kotlin/Long)
+
+      public open fun compareAndSet(expected: kotlin/Long, new: kotlin/Long): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: kotlin/Long, new: kotlin/Long): kotlin/Long
+
+      public open fun get(): kotlin/Long
+
+      public open fun getAndAdd(delta: kotlin/Long): kotlin/Long
+
+      public open fun getAndSet(new: kotlin/Long): kotlin/Long
+
+      public open fun set(new: kotlin/Long): kotlin/Unit
+
+      public final var x: kotlin/Long
+        public final get
+        public final set
+    }
+
+    public abstract interface RefWrapper<T#0 /* T */> : Wrapper<T#0> {
+    }
+
+    public final class ShortWrapper : IncWrapper<kotlin/Short> {
+
+      public constructor(x: kotlin/Short)
+
+      public open fun compareAndSet(expected: kotlin/Short, new: kotlin/Short): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: kotlin/Short, new: kotlin/Short): kotlin/Short
+
+      public open fun get(): kotlin/Short
+
+      public open fun getAndAdd(delta: kotlin/Short): kotlin/Short
+
+      public open fun getAndSet(new: kotlin/Short): kotlin/Short
+
+      public open fun set(new: kotlin/Short): kotlin/Unit
+
+      public final var x: kotlin/Short
+        public final get
+        public final set
+    }
+
+    public final class StringWrapper : RefWrapper<kotlin/String> {
+
+      public constructor(x: kotlin/String)
+
+      public open fun compareAndSet(expected: kotlin/String, new: kotlin/String): kotlin/Boolean
+
+      public open fun compareAndSwap(expected: kotlin/String, new: kotlin/String): kotlin/String
+
+      public open fun get(): kotlin/String
+
+      public open fun getAndSet(new: kotlin/String): kotlin/String
+
+      public open fun set(new: kotlin/String): kotlin/Unit
+
+      public final var x: kotlin/String
+        public final get
+        public final set
+    }
+
+    public abstract interface Wrapper<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun compareAndSet(expected: T#0, new: T#0): kotlin/Boolean
+
+      public abstract fun compareAndSwap(expected: T#0, new: T#0): T#0
+
+      public abstract fun get(): T#0
+
+      public abstract fun getAndSet(expected: T#0): T#0
+
+      public abstract fun set(new: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @kotlin/native/internal/TypedIntrinsic(kind = "GET_AND_ADD_FIELD")
+      internal final external fun kotlin/reflect/KMutableProperty0<kotlin/Byte>.getAndAddFieldLocal(newValue: kotlin/Byte): kotlin/Byte
+
+      @kotlin/native/internal/TypedIntrinsic(kind = "GET_AND_ADD_FIELD")
+      internal final external fun kotlin/reflect/KMutableProperty0<kotlin/Int>.getAndAddFieldLocal(newValue: kotlin/Int): kotlin/Int
+
+      @kotlin/native/internal/TypedIntrinsic(kind = "GET_AND_ADD_FIELD")
+      internal final external fun kotlin/reflect/KMutableProperty0<kotlin/Long>.getAndAddFieldLocal(newValue: kotlin/Long): kotlin/Long
+
+      @kotlin/native/internal/TypedIntrinsic(kind = "GET_AND_ADD_FIELD")
+      internal final external fun kotlin/reflect/KMutableProperty0<kotlin/Short>.getAndAddFieldLocal(delta: kotlin/Short): kotlin/Short
+
+      public final fun <T#0 /* T */> test(one: T#0, two: T#0, three: T#0, wrap: kotlin/Function1<T#0, Wrapper<T#0>>): kotlin/String?
+
+      public final inline fun testFail(block: kotlin/Function0<kotlin/Unit>, onSuccess: kotlin/Function0<kotlin/Nothing>): kotlin/Unit
+    }
+  }
+}

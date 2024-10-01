@@ -1,0 +1,62 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    PROPERTY name:same signature:test/same|{}same[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:same signature:[ test/same|{}same[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:same type:test.Call visibility:private [final,static]] ] type:test.Call visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun test (s: <unbound IrClassSymbolImpl><test.Call>): test.Call [inline] declared in test' type=test.Call origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-same> signature:test/same.<get-same>|<get-same>(){}[0] visibility:public modality:FINAL <> () returnType:test.Call
+        correspondingProperty: PROPERTY name:same signature:test/same|{}same[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-same> (): test.Call declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:same signature:[ test/same|{}same[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:same type:test.Call visibility:private [final,static]] ] type:test.Call visibility:private [final,static]' type=test.Call origin=null
+    CLASS INTERFACE name:Call signature:test/Call|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Call
+      FUN name:run signature:test/Call.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:test.Call) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Call
+    FUN name:test signature:test/test|test(kotlin.Function0<test.Call>){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl><test.Call>) returnType:test.Call [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl><test.Call>
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><test.Call> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:test.Call
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): test.Call declared in test.test'
+                  TYPE_OP type=test.Call origin=CAST typeOperand=test.Call
+                    BLOCK type=test.test.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Call]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.test.<anonymous>.<no name provided>
+                        CONSTRUCTOR visibility:public <> () returnType:test.test.<anonymous>.<no name provided> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Call]'
+                        FUN name:run visibility:public modality:OPEN <> ($this:test.test.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                          overridden:
+                            public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Call
+                          $this: VALUE_PARAMETER name:<this> type:test.test.<anonymous>.<no name provided>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public open fun run (): <unbound IrClassSymbolImpl> declared in test.test.<anonymous>.<no name provided>'
+                              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.test.<anonymous>.<no name provided>' type=test.test.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (s: <unbound IrClassSymbolImpl><test.Call>): test.Call [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test.Call origin=INVOKE
+            $this: GET_VAR 's: <unbound IrClassSymbolImpl><test.Call> declared in test.test' type=<unbound IrClassSymbolImpl><test.Call> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:inlined type:test.Call [val]
+          CALL 'public final fun test (s: <unbound IrClassSymbolImpl><test.Call>): test.Call [inline] declared in test' type=test.Call origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Call' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-same> (): test.Call declared in test' type=test.Call origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 1: "
+                CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Call' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-same> (): test.Call declared in test' type=test.Call origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Call' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val inlined: test.Call [val] declared in <root>.box' type=test.Call origin=null

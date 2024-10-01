@@ -1,0 +1,181 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: GCmp
+    // class name: GICmp
+    // class name: GIICmp
+    // class name: GSCmp
+    // class name: ICmp
+    // class name: II
+    // class name: IICmp
+    // class name: SCmp
+
+    public final value class GCmp<T#0 /* T */> : kotlin/Any {
+
+      public constructor(xc: kotlin/Comparable<T#0>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val xc: kotlin/Comparable<T#0>
+        public final get
+
+      // underlying property: xc
+
+      // underlying type: kotlin/Comparable<T#0>
+    }
+
+    public final value class GICmp<T#0 /* T */> : kotlin/Any {
+
+      public constructor(intc: kotlin/Comparable<kotlin/Int>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val intc: kotlin/Comparable<kotlin/Int>
+        public final get
+
+      // underlying property: intc
+
+      // underlying type: kotlin/Comparable<kotlin/Int>
+    }
+
+    public final value class GIICmp<T#0 /* T */> : kotlin/Any {
+
+      public constructor(iic: kotlin/Comparable<II>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val iic: kotlin/Comparable<II>
+        public final get
+
+      // underlying property: iic
+
+      // underlying type: kotlin/Comparable<II>
+    }
+
+    public final value class GSCmp<T#0 /* T */> : kotlin/Any {
+
+      public constructor(sc: kotlin/Comparable<kotlin/String>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val sc: kotlin/Comparable<kotlin/String>
+        public final get
+
+      // underlying property: sc
+
+      // underlying type: kotlin/Comparable<kotlin/String>
+    }
+
+    public final value class ICmp : kotlin/Any {
+
+      public constructor(intc: kotlin/Comparable<kotlin/Int>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val intc: kotlin/Comparable<kotlin/Int>
+        public final get
+
+      // underlying property: intc
+
+      // underlying type: kotlin/Comparable<kotlin/Int>
+    }
+
+    public final value class II : kotlin/Comparable<II> {
+
+      public constructor(i: kotlin/Int)
+
+      public open operator fun compareTo(other: II): kotlin/Int
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val i: kotlin/Int
+        public final get
+
+      // underlying property: i
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class IICmp : kotlin/Any {
+
+      public constructor(iic: kotlin/Comparable<II>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val iic: kotlin/Comparable<II>
+        public final get
+
+      // underlying property: iic
+
+      // underlying type: kotlin/Comparable<II>
+    }
+
+    public final value class SCmp : kotlin/Any {
+
+      public constructor(sc: kotlin/Comparable<kotlin/String>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val sc: kotlin/Comparable<kotlin/String>
+        public final get
+
+      // underlying property: sc
+
+      // underlying type: kotlin/Comparable<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testGCmp(x: GCmp<kotlin/String>): kotlin/Unit
+
+      public final fun testGICmp(x: GICmp<kotlin/Any>): kotlin/Unit
+
+      public final fun testGIICmp(x: GIICmp<kotlin/Any>): kotlin/Unit
+
+      public final fun testGSCmp(x: GSCmp<kotlin/Any>): kotlin/Unit
+
+      public final fun testICmp(x: ICmp): kotlin/Unit
+
+      public final fun testIICmp(x: IICmp): kotlin/Unit
+
+      public final fun testSCmp(x: SCmp): kotlin/Unit
+    }
+  }
+}

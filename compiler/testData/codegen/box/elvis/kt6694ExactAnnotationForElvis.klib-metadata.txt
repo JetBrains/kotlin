@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: JetLabelReferenceExpression
+    // class name: JetOperationReferenceExpression
+    // class name: JetSimpleNameExpression
+    // class name: PsiElement
+
+    public final class JetLabelReferenceExpression : JetSimpleNameExpression {
+
+      public constructor()
+
+      public open fun getReferencedNameElement(): PsiElement
+    }
+
+    public final class JetOperationReferenceExpression : JetSimpleNameExpression {
+
+      public constructor()
+
+      public open fun getReferencedNameElement(): JetOperationReferenceExpression
+    }
+
+    public abstract interface JetSimpleNameExpression : PsiElement {
+
+      public abstract fun getReferencedNameElement(): PsiElement
+    }
+
+    public abstract interface PsiElement : kotlin/Any {
+
+      public open fun <T#0 /* T */ : PsiElement> findChildByType(i: kotlin/Int): T#0?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

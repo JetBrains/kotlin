@@ -1,0 +1,140 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseImplOut
+    // class name: BaseImplOut10
+    // class name: BaseImplOut11
+    // class name: BaseImplOut2
+    // class name: BaseImplOut3
+    // class name: BaseImplOut4
+    // class name: BaseImplOut5
+    // class name: BaseImplOut6
+    // class name: BaseImplOut7
+    // class name: BaseImplOut8
+    // class name: BaseImplOut9
+    // class name: OutBase
+
+    public final class BaseImplOut<T#0 /* D */ : OutBase<kotlin/Int>> : OutBase<kotlin/Int> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): kotlin/Int
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class BaseImplOut10<out T#0 /* D */ : OutBase<T#0>> : OutBase<T#0> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class BaseImplOut11<T#0 /* A */ : OutBase<*>, T#1 /* D */ : OutBase<T#0>> : OutBase<T#0> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: T#1
+        public final get
+    }
+
+    public final class BaseImplOut2<T#0 /* D */> : OutBase<T#0> {
+
+      public constructor(a: OutBase<T#0>)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: OutBase<T#0>
+        public final get
+    }
+
+    public final class BaseImplOut3<T#0 /* D */ : kotlin/Number> : OutBase<T#0> {
+
+      public constructor(a: OutBase<T#0>)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: OutBase<T#0>
+        public final get
+    }
+
+    public final class BaseImplOut4<T#0 /* D */ : OutBase<kotlin/Int>> : OutBase<kotlin/Int> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): kotlin/Int
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class BaseImplOut5<T#0 /* D */ : OutBase<T#0>> : OutBase<T#0> {
+
+      public constructor(a: T#0)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: T#0
+        public final get
+    }
+
+    public final class BaseImplOut6<T#0 /* A */, T#1 /* D */ : OutBase<T#0>> : OutBase<T#0> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: T#1
+        public final get
+    }
+
+    public final class BaseImplOut7<T#0 /* A */, T#1 /* D */ : OutBase<OutBase<T#0>>> : OutBase<OutBase<T#0>> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): OutBase<T#0>
+
+      public final val a: T#1
+        public final get
+    }
+
+    public final class BaseImplOut8<T#0 /* D */ : OutBase<T#0>, T#1 /* A */ : T#0> : OutBase<T#0> {
+
+      public constructor(a: T#1)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: T#1
+        public final get
+    }
+
+    public final class BaseImplOut9<out T#0 /* D */ : kotlin/Number> : OutBase<T#0> {
+
+      public constructor(a: OutBase<T#0>)
+
+      public open /* delegation */ fun foo(): T#0
+
+      public final val a: OutBase<T#0>
+        public final get
+    }
+
+    public abstract interface OutBase<out T#0 /* T */> : kotlin/Any {
+
+      public abstract fun foo(): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

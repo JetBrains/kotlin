@@ -1,0 +1,248 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/GenericLocalClassWithLeakingTypeParameter.kt
+    PROPERTY name:reference signature:[ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference|{}reference[0] ] visibility:private modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:reference signature:[ [ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference|{}reference[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:reference type:kotlin.Any? visibility:private [static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [static]
+        EXPRESSION_BODY
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reference> signature:[ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference.<get-reference>|<get-reference>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:reference signature:[ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference|{}reference[0] ] visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-reference> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:reference signature:[ [ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference|{}reference[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:reference type:kotlin.Any? visibility:private [static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [static]' type=<unbound IrClassSymbolImpl>? origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-reference> signature:[ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference.<set-reference>|<set-reference>(kotlin.Any?){}[0] ] visibility:private modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:reference signature:[ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference|{}reference[0] ] visibility:private modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:reference signature:[ [ File '/GenericLocalClassWithLeakingTypeParameter.kt' <- /reference|{}reference[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:reference type:kotlin.Any? visibility:private [static]] ] type:<unbound IrClassSymbolImpl>? visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl>? declared in <root>.<set-reference>' type=<unbound IrClassSymbolImpl>? origin=null
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+      TYPE_PARAMETER name:CT index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<CT of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:yield signature:/Buildee.yield|yield(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>, arg:CT of <root>.Buildee) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+        VALUE_PARAMETER name:arg index:0 type:CT of <root>.Buildee
+        BLOCK_BODY
+      FUN name:materialize signature:/Buildee.materialize|materialize(){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>) returnType:CT of <root>.Buildee
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee'
+            TYPE_OP type=CT of <root>.Buildee origin=CAST typeOperand=CT of <root>.Buildee
+              CALL 'private final fun <get-reference> (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+    FUN name:build signature:/build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FT> (instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<FT of <root>.build>
+      TYPE_PARAMETER name:FT index:0 variance: signature:[ /build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructions index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<FT of <root>.build> origin=null
+            <1>: <root>.Buildee<FT of <root>.build>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<FT of <root>.build> origin=null
+              <class: CT>: FT of <root>.build
+            1: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> declared in <root>.build' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> origin=null
+    PROPERTY name:typeArgumentValue signature:/typeArgumentValue|@Buildee<0:0>{0§<kotlin.Any?>}typeArgumentValue[0] visibility:public modality:FINAL [val]
+      FUN name:<get-typeArgumentValue> signature:/typeArgumentValue.<get-typeArgumentValue>|<get-typeArgumentValue>@Buildee<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.Buildee<T of <root>.<get-typeArgumentValue>>) returnType:T of <root>.<get-typeArgumentValue>
+        correspondingProperty: PROPERTY name:typeArgumentValue signature:/typeArgumentValue|@Buildee<0:0>{0§<kotlin.Any?>}typeArgumentValue[0] visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /typeArgumentValue|@Buildee<0:0>{0§<kotlin.Any?>}typeArgumentValue[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.Buildee<T of <root>.<get-typeArgumentValue>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-typeArgumentValue> <T> (): T of <root>.<get-typeArgumentValue> declared in <root>'
+            TYPE_OP type=T of <root>.<get-typeArgumentValue> origin=CAST typeOperand=T of <root>.<get-typeArgumentValue>
+              CALL 'private final fun <get-reference> (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+    CLASS CLASS name:UserKlass signature:/UserKlass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.UserKlass
+      CONSTRUCTOR signature:/UserKlass.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.UserKlass [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:UserKlass signature:/UserKlass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:testYield signature:/testYield|testYield(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:testTypeInfoOriginInsideLocalClass visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            VAR name:buildee type:<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> [val]
+              CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> origin=null
+                <FT>: <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>>) returnType:<unbound IrClassSymbolImpl>
+                    $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>>
+                    BLOCK_BODY
+                      CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                        TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                        FUN name:localOnlyFunc visibility:public modality:FINAL <> ($this:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>) returnType:T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public final fun localOnlyFunc (): T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local'
+                              TYPE_OP type=T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local origin=CAST typeOperand=T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UserKlass' type=<root>.UserKlass origin=null
+                        FUN name:initialize visibility:public modality:FINAL <> ($this:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>) returnType:<unbound IrClassSymbolImpl>
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                          BLOCK_BODY
+                            CALL 'private final fun <set-reference> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                              <set-?>: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=null
+                                <class: T>: T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                            VAR name:arg type:<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> [val]
+                              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=null
+                                <class: T>: T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                            CALL 'public final fun yield (arg: CT of <root>.Buildee): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR '$this$build: <root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>' type=<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> origin=null
+                              arg: GET_VAR 'val arg: <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> [val] declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local.initialize' type=<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=null
+                      CALL 'public final fun initialize (): <unbound IrClassSymbolImpl> declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<<root>.UserKlass> origin=null
+                          <class: T>: <root>.UserKlass
+            VAR name:result type:T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local [val]
+              CALL 'public final fun localOnlyFunc (): T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local declared in <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local origin=null
+                $this: CALL 'public final fun <get-typeArgumentValue> <T> (): T of <root>.<get-typeArgumentValue> declared in <root>' type=<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=GET_PROPERTY
+                  <T>: <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                  $receiver: GET_VAR 'val buildee: <root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> [val] declared in <root>.testYield.testTypeInfoOriginInsideLocalClass' type=<root>.Buildee<<root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'val result: T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local [val] declared in <root>.testYield.testTypeInfoOriginInsideLocalClass' type=T of <root>.testYield.testTypeInfoOriginInsideLocalClass.<anonymous>.Local origin=null
+        FUN LOCAL_FUNCTION name:testThisExpression visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            VAR name:buildee type:<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>> [val]
+              CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>> origin=null
+                <FT>: <root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>
+                instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>>) returnType:<unbound IrClassSymbolImpl>
+                    $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>>
+                    BLOCK_BODY
+                      CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>
+                        TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                        FUN name:localOnlyFunc visibility:public modality:FINAL <> ($this:<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>) returnType:T of <root>.testYield.testThisExpression.<anonymous>.Local
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public final fun localOnlyFunc (): T of <root>.testYield.testThisExpression.<anonymous>.Local declared in <root>.testYield.testThisExpression.<anonymous>.Local'
+                              TYPE_OP type=T of <root>.testYield.testThisExpression.<anonymous>.Local origin=CAST typeOperand=T of <root>.testYield.testThisExpression.<anonymous>.Local
+                                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UserKlass' type=<root>.UserKlass origin=null
+                        FUN name:initialize visibility:public modality:FINAL <> ($this:<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>) returnType:<unbound IrClassSymbolImpl>
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>
+                          BLOCK_BODY
+                            CALL 'private final fun <set-reference> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                              <set-?>: GET_VAR '<this>: <root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local> declared in <root>.testYield.testThisExpression.<anonymous>.Local.initialize' type=<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local> origin=null
+                            CALL 'public final fun yield (arg: CT of <root>.Buildee): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR '$this$build: <root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>> declared in <root>.testYield.testThisExpression.<anonymous>' type=<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>> origin=null
+                              arg: GET_VAR '<this>: <root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local> declared in <root>.testYield.testThisExpression.<anonymous>.Local.initialize' type=<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local> origin=null
+                      CALL 'public final fun initialize (): <unbound IrClassSymbolImpl> declared in <root>.testYield.testThisExpression.<anonymous>.Local' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testYield.testThisExpression.<anonymous>.Local' type=<root>.testYield.testThisExpression.<anonymous>.Local<<root>.UserKlass> origin=null
+                          <class: T>: <root>.UserKlass
+            VAR name:result type:T of <root>.testYield.testThisExpression.<anonymous>.Local [val]
+              CALL 'public final fun localOnlyFunc (): T of <root>.testYield.testThisExpression.<anonymous>.Local declared in <root>.testYield.testThisExpression.<anonymous>.Local' type=T of <root>.testYield.testThisExpression.<anonymous>.Local origin=null
+                $this: CALL 'public final fun <get-typeArgumentValue> <T> (): T of <root>.<get-typeArgumentValue> declared in <root>' type=<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local> origin=GET_PROPERTY
+                  <T>: <root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>
+                  $receiver: GET_VAR 'val buildee: <root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>> [val] declared in <root>.testYield.testThisExpression' type=<root>.Buildee<<root>.testYield.testThisExpression.<anonymous>.Local<T of <root>.testYield.testThisExpression.<anonymous>.Local>> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'val result: T of <root>.testYield.testThisExpression.<anonymous>.Local [val] declared in <root>.testYield.testThisExpression' type=T of <root>.testYield.testThisExpression.<anonymous>.Local origin=null
+        CALL 'local final fun testTypeInfoOriginInsideLocalClass (): <unbound IrClassSymbolImpl> declared in <root>.testYield' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'local final fun testThisExpression (): <unbound IrClassSymbolImpl> declared in <root>.testYield' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testMaterialize signature:/testMaterialize|testMaterialize(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:testTypeInfoOriginInsideLocalClass visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            VAR name:buildee type:<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> [val]
+              CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> origin=null
+                <FT>: <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>>) returnType:<unbound IrClassSymbolImpl>
+                    $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>>
+                    BLOCK_BODY
+                      CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                        TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                        FUN name:localOnlyFunc visibility:public modality:FINAL <> ($this:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>) returnType:T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public final fun localOnlyFunc (): T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local'
+                              TYPE_OP type=T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local origin=CAST typeOperand=T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UserKlass' type=<root>.UserKlass origin=null
+                        FUN name:initialize visibility:public modality:FINAL <> ($this:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>) returnType:<unbound IrClassSymbolImpl>
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                          BLOCK_BODY
+                            CALL 'private final fun <set-reference> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                              <set-?>: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=null
+                                <class: T>: T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local
+                            FUN LOCAL_FUNCTION name:consume visibility:local modality:FINAL <> (arg:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>) returnType:<unbound IrClassSymbolImpl>
+                              VALUE_PARAMETER name:arg index:0 type:<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                              BLOCK_BODY
+                            CALL 'local final fun consume (arg: <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local.initialize' type=<unbound IrClassSymbolImpl> origin=null
+                              arg: CALL 'public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee' type=<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=null
+                                $this: GET_VAR '$this$build: <root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>' type=<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> origin=null
+                      CALL 'public final fun initialize (): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<<root>.UserKlass> origin=null
+                          <class: T>: <root>.UserKlass
+            VAR name:result type:T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local [val]
+              CALL 'public final fun localOnlyFunc (): T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local' type=T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local origin=null
+                $this: CALL 'public final fun <get-typeArgumentValue> <T> (): T of <root>.<get-typeArgumentValue> declared in <root>' type=<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local> origin=GET_PROPERTY
+                  <T>: <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>
+                  $receiver: GET_VAR 'val buildee: <root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> [val] declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass' type=<root>.Buildee<<root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local<T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local>> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'val result: T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local [val] declared in <root>.testMaterialize.testTypeInfoOriginInsideLocalClass' type=T of <root>.testMaterialize.testTypeInfoOriginInsideLocalClass.<anonymous>.Local origin=null
+        FUN LOCAL_FUNCTION name:testThisExpression visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            VAR name:buildee type:<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>> [val]
+              CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>> origin=null
+                <FT>: <root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>
+                instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>>) returnType:<unbound IrClassSymbolImpl>
+                    $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>>
+                    BLOCK_BODY
+                      CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>
+                        TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                        FUN name:localOnlyFunc visibility:public modality:FINAL <> ($this:<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>) returnType:T of <root>.testMaterialize.testThisExpression.<anonymous>.Local
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='public final fun localOnlyFunc (): T of <root>.testMaterialize.testThisExpression.<anonymous>.Local declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local'
+                              TYPE_OP type=T of <root>.testMaterialize.testThisExpression.<anonymous>.Local origin=CAST typeOperand=T of <root>.testMaterialize.testThisExpression.<anonymous>.Local
+                                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.UserKlass' type=<root>.UserKlass origin=null
+                        FUN name:initialize visibility:public modality:FINAL <> ($this:<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>) returnType:<unbound IrClassSymbolImpl>
+                          $this: VALUE_PARAMETER name:<this> type:<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>
+                          BLOCK_BODY
+                            CALL 'private final fun <set-reference> (<set-?>: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+                              <set-?>: GET_VAR '<this>: <root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize' type=<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> origin=null
+                            FUN LOCAL_FUNCTION name:shareTypeInfo visibility:local modality:FINAL <T> (from:T of <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize.shareTypeInfo, to:T of <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize.shareTypeInfo) returnType:<unbound IrClassSymbolImpl>
+                              TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+                              VALUE_PARAMETER name:from index:0 type:T of <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize.shareTypeInfo
+                              VALUE_PARAMETER name:to index:1 type:T of <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize.shareTypeInfo
+                              BLOCK_BODY
+                            CALL 'local final fun shareTypeInfo <T> (from: T of <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize.shareTypeInfo, to: T of <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize.shareTypeInfo): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize' type=<unbound IrClassSymbolImpl> origin=null
+                              <T>: <root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>
+                              from: GET_VAR '<this>: <root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local.initialize' type=<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> origin=null
+                              to: CALL 'public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee' type=<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> origin=null
+                                $this: GET_VAR '$this$build: <root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>> declared in <root>.testMaterialize.testThisExpression.<anonymous>' type=<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>> origin=null
+                      CALL 'public final fun initialize (): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local' type=<root>.testMaterialize.testThisExpression.<anonymous>.Local<<root>.UserKlass> origin=null
+                          <class: T>: <root>.UserKlass
+            VAR name:result type:T of <root>.testMaterialize.testThisExpression.<anonymous>.Local [val]
+              CALL 'public final fun localOnlyFunc (): T of <root>.testMaterialize.testThisExpression.<anonymous>.Local declared in <root>.testMaterialize.testThisExpression.<anonymous>.Local' type=T of <root>.testMaterialize.testThisExpression.<anonymous>.Local origin=null
+                $this: CALL 'public final fun <get-typeArgumentValue> <T> (): T of <root>.<get-typeArgumentValue> declared in <root>' type=<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local> origin=GET_PROPERTY
+                  <T>: <root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>
+                  $receiver: GET_VAR 'val buildee: <root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>> [val] declared in <root>.testMaterialize.testThisExpression' type=<root>.Buildee<<root>.testMaterialize.testThisExpression.<anonymous>.Local<T of <root>.testMaterialize.testThisExpression.<anonymous>.Local>> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'val result: T of <root>.testMaterialize.testThisExpression.<anonymous>.Local [val] declared in <root>.testMaterialize.testThisExpression' type=T of <root>.testMaterialize.testThisExpression.<anonymous>.Local origin=null
+        CALL 'local final fun testTypeInfoOriginInsideLocalClass (): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'local final fun testThisExpression (): <unbound IrClassSymbolImpl> declared in <root>.testMaterialize' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testYield (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMaterialize (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

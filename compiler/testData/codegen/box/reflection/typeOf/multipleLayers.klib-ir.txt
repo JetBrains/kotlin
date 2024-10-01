@@ -1,0 +1,40 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/multipleLayers.kt
+    CLASS INTERFACE name:C signature:test/C|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+    FUN name:get signature:test/get|get(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/get|get(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun get <T> (): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: T of test.get
+    FUN name:get1 signature:test/get1|get1(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <U> () returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:U index:0 variance: signature:[ test/get1|get1(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun get1 <U> (): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'public final fun get <T> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: U of test.get1?
+    FUN name:get2 signature:test/get2|get2(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <V> () returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:V index:0 variance: signature:[ test/get2|get2(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun get2 <V> (): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'public final fun get1 <U> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <U>: <unbound IrClassSymbolImpl><in V of test.get2?, <unbound IrClassSymbolImpl><V of test.get2>>
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.collections.Map<in test.C?, kotlin.Array<test.C>>?"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'public final fun get2 <V> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                <V>: test.C
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.collections.Map<in kotlin.collections.List<test.C>?, kotlin.Array<kotlin.collections.List<test.C>>>?"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'public final fun get2 <V> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                <V>: <unbound IrClassSymbolImpl><test.C>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

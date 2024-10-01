@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+    // class name: Value
+
+    public final object Foo : kotlin/Any {
+
+      private constructor()
+
+      public final fun bar(value: Value<kotlin/String?>?): kotlin/Unit
+
+      public final fun foo(value: Value<kotlin/String?>): kotlin/Unit
+    }
+
+    public final value class Value<T#0 /* T */ : kotlin/String?> : kotlin/Any {
+
+      public constructor(value: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: T#0
+        public final get
+
+      // underlying property: value
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var res: kotlin/String?
+        public final get
+        public final set
+    }
+  }
+}

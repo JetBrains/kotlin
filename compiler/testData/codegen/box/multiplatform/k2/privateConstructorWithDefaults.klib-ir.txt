@@ -1,0 +1,34 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+  FILE fqName:<root> fileName:/platform.kt
+    CLASS CLASS name:Frame signature:/Frame|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Frame
+      CONSTRUCTOR signature:/Frame.<init>|<init>(kotlin.String){}[0] visibility:public <> (disposableHandle:<unbound IrClassSymbolImpl>) returnType:<root>.Frame [primary]
+        VALUE_PARAMETER name:disposableHandle index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Frame signature:/Frame|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:disposableHandle signature:/Frame.disposableHandle|{}disposableHandle[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:disposableHandle signature:[ /Frame.disposableHandle|{}disposableHandle[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:disposableHandle type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'disposableHandle: <unbound IrClassSymbolImpl> declared in <root>.Frame.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-disposableHandle> signature:/Frame.disposableHandle.<get-disposableHandle>|<get-disposableHandle>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Frame) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:disposableHandle signature:/Frame.disposableHandle|{}disposableHandle[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Frame
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-disposableHandle> (): <unbound IrClassSymbolImpl> declared in <root>.Frame'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:disposableHandle signature:[ /Frame.disposableHandle|{}disposableHandle[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:disposableHandle type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Frame declared in <root>.Frame.<get-disposableHandle>' type=<root>.Frame origin=null
+      CLASS CLASS name:Break signature:/Frame.Break|null[0] modality:FINAL visibility:public superTypes:[<root>.Frame]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Frame.Break
+        CONSTRUCTOR signature:/Frame.Break.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Frame.Break [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (disposableHandle: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Frame'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Break signature:/Frame.Break|null[0] modality:FINAL visibility:public superTypes:[<root>.Frame]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Frame.Break' type=<root>.Frame.Break origin=null

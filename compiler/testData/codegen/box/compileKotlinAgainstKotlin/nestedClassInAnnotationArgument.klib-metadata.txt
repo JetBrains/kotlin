@@ -1,0 +1,117 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Anno
+    // class name: AnnoWithDefault
+    // class name: AnnoWithDefault.Nested0
+    // class name: C
+    // class name: C.Nested1
+    // class name: C.NestedAnno
+    // class name: C.NestedAnno.Nested2
+    // class name: C.NestedEnum
+    // class name: I
+
+    public final annotation class Anno : kotlin/Annotation {
+
+      public constructor(k: kotlin/reflect/KClass<*>, e: C.NestedEnum, a: C.NestedAnno)
+
+      public final val a: C.NestedAnno
+        public final get
+
+      public final val e: C.NestedEnum
+        public final get
+
+      public final val k: kotlin/reflect/KClass<*>
+        public final get
+    }
+
+    public final annotation class AnnoWithDefault : kotlin/Annotation {
+
+      public constructor(k: kotlin/reflect/KClass<*> /* = ... */)
+
+      public final val k: kotlin/reflect/KClass<*>
+        public final get
+
+      // nested class: Nested0
+    }
+
+    public final class AnnoWithDefault.Nested0 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Nested1
+
+      // nested class: NestedEnum
+
+      // nested class: NestedAnno
+    }
+
+    public final class C.Nested1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final annotation class C.NestedAnno : kotlin/Annotation {
+
+      public constructor(k: kotlin/reflect/KClass<*>)
+
+      public final val k: kotlin/reflect/KClass<*>
+        public final get
+
+      // nested class: Nested2
+    }
+
+    public final class C.NestedAnno.Nested2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final enum class C.NestedEnum : kotlin/Enum<C.NestedEnum> {
+
+      private constructor()
+
+      E,
+
+      // has Enum.entries
+    }
+
+    public abstract interface I : kotlin/Any {
+
+      @Anno(k = C.Nested1::class, e = C.NestedEnum.E, a = C.NestedAnno(k = C.NestedAnno.Nested2::class))
+      @AnnoWithDefault
+      public open fun foo(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D
+
+    public final class D : I {
+
+      public constructor()
+
+      public final fun box(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

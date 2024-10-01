@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun foo(block1: kotlin/Function0<kotlin/Unit>, noinline block2: kotlin/Function0<kotlin/Unit>, block3: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

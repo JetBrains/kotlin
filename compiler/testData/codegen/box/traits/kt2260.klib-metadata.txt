@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flusher
+
+    public abstract interface Flusher : kotlin/Any {
+
+      public open fun flush(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun flushIt(flusher: Flusher): kotlin/String
+
+      public final fun myFlusher(): Flusher
+    }
+  }
+}

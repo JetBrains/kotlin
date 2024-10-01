@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+    // class name: a/A.C
+
+    public abstract class a/A : kotlin/Any {
+
+      public constructor()
+
+      // nested class: C
+    }
+
+    protected final class a/A.C : kotlin/Any {
+
+      public constructor()
+
+      public final fun result(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: b
+
+    // class name: b/B
+
+    public final class b/B : a/A {
+
+      public constructor()
+
+      protected final val c: a/A.C
+        protected final get
+
+      public final val result: kotlin/String
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

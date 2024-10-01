@@ -1,0 +1,93 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/overrideAbstractSetMethod.kt
+    CLASS CLASS name:MySet signature:/MySet|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><E of <root>.MySet>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /MySet|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /MySet|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:E index:2 variance: signature:[ /MySet|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:E index:2 variance: superTypes:[kotlin.collections.Map.Entry<K of <root>.MySet, V of <root>.MySet>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><K of <root>.MySet, V of <root>.MySet>] reified:false
+      CONSTRUCTOR signature:/MySet.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: E of <root>.MySet
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MySet signature:/MySet|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><E of <root>.MySet>]'
+      FUN name:contains signature:/MySet.contains|contains(1:2){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>, element:E of <root>.MySet) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>
+        VALUE_PARAMETER name:element index:0 type:E of <root>.MySet
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: E of <root>.MySet): <unbound IrClassSymbolImpl> [operator] declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQEQ
+              $this: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=K of <root>.MySet origin=GET_PROPERTY
+                  $this: GET_VAR 'element: E of <root>.MySet declared in <root>.MySet.contains' type=E of <root>.MySet origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      PROPERTY name:size signature:/MySet.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/MySet.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/MySet.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:isEmpty signature:/MySet.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN name:containsAll signature:/MySet.containsAll|containsAll(kotlin.collections.Collection<1:2>){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>, elements:<unbound IrClassSymbolImpl><E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><E of <root>.MySet>): <unbound IrClassSymbolImpl> declared in <root>.MySet'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      FUN name:iterator signature:/MySet.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>) returnType:<unbound IrClassSymbolImpl><E of <root>.MySet> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MySet<K of <root>.MySet, V of <root>.MySet, E of <root>.MySet>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><E of <root>.MySet> [operator] declared in <root>.MySet'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:h type:<root>.MySet<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MySet' type=<root>.MySet<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <class: K>: <unbound IrClassSymbolImpl>
+            <class: V>: <unbound IrClassSymbolImpl>
+            <class: E>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        VAR name:c type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <root>.box.<no name provided>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.box.<no name provided>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.box.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<root>.box.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.box.<no name provided>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>?
+                      $receiver: GET_VAR 'val h: <root>.MySet<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.box' type=<root>.MySet<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+                      1: TYPE_OP type=<unbound IrClassSymbolImpl>? origin=CAST typeOperand=<unbound IrClassSymbolImpl>?
+                        GET_VAR 'it: <root>.box.<no name provided> declared in <root>.box.<anonymous>' type=<root>.box.<no name provided> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="NOT OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

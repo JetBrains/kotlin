@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/TestA
+    // class name: foo/TestB
+
+    public final enum class foo/TestA : kotlin/Enum<foo/TestA> {
+
+      private constructor()
+
+      public abstract val label: kotlin/String
+        public abstract get
+
+      FIRST,
+
+      SECOND,
+
+      THIRD,
+
+      // has Enum.entries
+    }
+
+    public final enum class foo/TestB : kotlin/Enum<foo/TestB> {
+
+      private constructor(label: kotlin/String)
+
+      public final val label: kotlin/String
+        public final get
+
+      FIRST,
+
+      SECOND,
+
+      THIRD,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

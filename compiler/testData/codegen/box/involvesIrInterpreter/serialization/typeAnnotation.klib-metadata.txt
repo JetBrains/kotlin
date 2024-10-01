@@ -1,0 +1,103 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: Outer
+    // class name: Outer.Inner
+    // class name: TypeAnnotation
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface B : kotlin/Any {
+    }
+
+    public final class C : @TypeAnnotation(str = "AClassAnno") A, @TypeAnnotation(str = "BInterfaceAnno") B {
+
+      public constructor()
+    }
+
+    public final class Outer : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): @TypeAnnotation(str = "InsideInnerAnno") kotlin/Int
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class TypeAnnotation : kotlin/Annotation {
+
+      public constructor(str: kotlin/String)
+
+      public final val str: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun <T#0 /* T */ : @TypeAnnotation(str = "SuperTAnno") kotlin/Any> bar(a: @TypeAnnotation(str = "TAnno") T#0): kotlin/Unit
+
+      public final fun example(computeAny: @TypeAnnotation(str = "FunAnno") kotlin/Function0<kotlin/Any>): kotlin/Unit
+
+      public final fun foo(a: @TypeAnnotation(str = "StringAnno") kotlin/String): @TypeAnnotation(str = "AnyAnno") kotlin/Any
+
+      public final fun functionWithLambda(action: kotlin/Function2<kotlin/Int, kotlin/String, kotlin/Any>): kotlin/Unit
+
+      public final fun lambda(): kotlin/Unit
+
+      public final fun memberAccess(): kotlin/Unit
+
+      public final fun withAnonymousObject(): kotlin/Unit
+
+      public final fun withVararg(vararg args: @TypeAnnotation(str = "ByteAnno") kotlin/Byte /* kotlin/ByteArray */): kotlin/Unit
+
+      public final val a: @TypeAnnotation(str = "IntAnno") kotlin/Int /* = ... */
+        public final get
+
+      public final var b: @TypeAnnotation(str = "ListAnno") kotlin/collections/List<@TypeAnnotation(str = "PairAnno") kotlin/Pair<@TypeAnnotation(str = "PairInt1Anno") kotlin/Int, @TypeAnnotation(str = "PairInt2Anno") kotlin/Int>>?
+        public final get
+        public final set
+
+      public final val inProjection: kotlin/collections/MutableList<in @TypeAnnotation(str = "InProjectionAnno") kotlin/String>
+        public final get
+
+      public final val outProjection: kotlin/collections/MutableList<out @TypeAnnotation(str = "OutProjectionAnno") kotlin/String>
+        public final get
+
+      public final val typeOperator: @TypeAnnotation(str = "LongAnno") kotlin/Long
+        public final get
+
+      public typealias Fun = @TypeAnnotation(str = "TypeAliasAnno") kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int> /* = @TypeAnnotation(str = "TypeAliasAnno") kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int> */
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

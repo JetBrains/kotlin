@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Box
+
+    public final class test/Box : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Any> injectFnc(): kotlin/reflect/KClass<T#0>
+    }
+  }
+}

@@ -1,0 +1,20 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun commonBox(): kotlin/String
+
+      public final val kotlin/Int.k: kotlin/String
+        public final /* non-default */ get
+
+      public final val kotlin/String.k: kotlin/String
+        public final /* non-default */ get
+    }
+  }
+}

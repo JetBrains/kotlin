@@ -1,0 +1,41 @@
+MODULE_FRAGMENT name:<jvm>
+  FILE fqName:<root> fileName:/common.kt
+    CLASS INTERFACE name:Source signature:/Source|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Source
+      FUN name:read signature:/Source.read|read(Buffer){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Source, sink:<root>.Buffer) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Source
+        VALUE_PARAMETER name:sink index:0 type:<root>.Buffer
+  FILE fqName:<root> fileName:/platfrom.kt
+    CLASS CLASS name:Buffer signature:/Buffer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buffer
+      CONSTRUCTOR signature:/Buffer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buffer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buffer signature:/Buffer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:ForwardingSource signature:/ForwardingSource|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Source]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ForwardingSource
+      CONSTRUCTOR signature:/ForwardingSource.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ForwardingSource [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ForwardingSource signature:/ForwardingSource|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Source]'
+      FUN name:read signature:/ForwardingSource.read|read(Buffer){}[0] visibility:public modality:OPEN <> ($this:<root>.ForwardingSource, sink:<root>.Buffer) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun read (sink: <root>.Buffer): <unbound IrClassSymbolImpl> declared in <root>.Source
+        $this: VALUE_PARAMETER name:<this> type:<root>.ForwardingSource
+        VALUE_PARAMETER name:sink index:0 type:<root>.Buffer
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun read (sink: <root>.Buffer): <unbound IrClassSymbolImpl> declared in <root>.ForwardingSource'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ForwardingSource]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ForwardingSource'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.ForwardingSource]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buffer' type=<root>.Buffer origin=null

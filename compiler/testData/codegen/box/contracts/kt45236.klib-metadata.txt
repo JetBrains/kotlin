@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NetRequestStatus
+    // class name: NetRequestStatus.Error
+
+    public sealed class NetRequestStatus<out T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      protected constructor()
+
+      public abstract val value: T#0?
+        public abstract get
+
+      // nested class: Error
+
+      // sealed subclass: NetRequestStatus.Error
+    }
+
+    public final data class NetRequestStatus.Error<out T#1 /* T */ : kotlin/Any> : NetRequestStatus<T#1> {
+
+      public constructor(error: kotlin/Throwable, value: T#1? /* = ... */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Throwable
+
+      public final /* synthesized */ operator fun component2(): T#1?
+
+      public final /* synthesized */ fun copy(error: kotlin/Throwable /* = ... */, value: T#1? /* = ... */): NetRequestStatus.Error<T#1>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val error: kotlin/Throwable
+        public final get
+
+      public open val value: T#1?
+        public open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Any> NetRequestStatus<T#0>.isError(): kotlin/Boolean
+        contract {
+          returns(true) implies (p#0 is NetRequestStatus.Error<T#0>)
+        }
+
+      public final fun <T#1 /* T */ : kotlin/Any> successOrThrow(): kotlin/Unit
+    }
+  }
+}

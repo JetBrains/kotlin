@@ -1,0 +1,170 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt44932.kt
+    CLASS CLASS name:PsiElement signature:/PsiElement|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PsiElement
+      CONSTRUCTOR signature:/PsiElement.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.PsiElement [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PsiElement signature:/PsiElement|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:parent signature:/PsiElement.parent|{}parent[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parent> signature:/PsiElement.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.PsiElement) returnType:<root>.PsiElement
+          correspondingProperty: PROPERTY name:parent signature:/PsiElement.parent|{}parent[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.PsiElement
+    CLASS CLASS name:KtNameReferenceExpression signature:/KtNameReferenceExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtNameReferenceExpression
+      CONSTRUCTOR signature:/KtNameReferenceExpression.<init>|<init>(PsiElement){}[0] visibility:public <> (parent:<root>.PsiElement) returnType:<root>.KtNameReferenceExpression [primary]
+        VALUE_PARAMETER name:parent index:0 type:<root>.PsiElement
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.PsiElement'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtNameReferenceExpression signature:/KtNameReferenceExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+      PROPERTY name:parent signature:/KtNameReferenceExpression.parent|{}parent[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:parent signature:[ /KtNameReferenceExpression.parent|{}parent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:parent type:<root>.PsiElement visibility:private [final]] ] type:<root>.PsiElement visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'parent: <root>.PsiElement declared in <root>.KtNameReferenceExpression.<init>' type=<root>.PsiElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parent> signature:/KtNameReferenceExpression.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:OPEN <> ($this:<root>.KtNameReferenceExpression) returnType:<root>.PsiElement
+          correspondingProperty: PROPERTY name:parent signature:/KtNameReferenceExpression.parent|{}parent[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-parent> (): <root>.PsiElement declared in <root>.PsiElement
+          $this: VALUE_PARAMETER name:<this> type:<root>.KtNameReferenceExpression
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-parent> (): <root>.PsiElement declared in <root>.KtNameReferenceExpression'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parent signature:[ /KtNameReferenceExpression.parent|{}parent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:parent type:<root>.PsiElement visibility:private [final]] ] type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
+                receiver: GET_VAR '<this>: <root>.KtNameReferenceExpression declared in <root>.KtNameReferenceExpression.<get-parent>' type=<root>.KtNameReferenceExpression origin=null
+    CLASS CLASS name:OtherElement signature:/OtherElement|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OtherElement
+      CONSTRUCTOR signature:/OtherElement.<init>|<init>(PsiElement){}[0] visibility:public <> (parent:<root>.PsiElement) returnType:<root>.OtherElement [primary]
+        VALUE_PARAMETER name:parent index:0 type:<root>.PsiElement
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.PsiElement'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OtherElement signature:/OtherElement|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+      PROPERTY name:parent signature:/OtherElement.parent|{}parent[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:parent signature:[ /OtherElement.parent|{}parent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:parent type:<root>.PsiElement visibility:private [final]] ] type:<root>.PsiElement visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'parent: <root>.PsiElement declared in <root>.OtherElement.<init>' type=<root>.PsiElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parent> signature:/OtherElement.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:OPEN <> ($this:<root>.OtherElement) returnType:<root>.PsiElement
+          correspondingProperty: PROPERTY name:parent signature:/OtherElement.parent|{}parent[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-parent> (): <root>.PsiElement declared in <root>.PsiElement
+          $this: VALUE_PARAMETER name:<this> type:<root>.OtherElement
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-parent> (): <root>.PsiElement declared in <root>.OtherElement'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parent signature:[ /OtherElement.parent|{}parent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:parent type:<root>.PsiElement visibility:private [final]] ] type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
+                receiver: GET_VAR '<this>: <root>.OtherElement declared in <root>.OtherElement.<get-parent>' type=<root>.OtherElement origin=null
+    CLASS CLASS name:KtDotQualifiedExpression signature:/KtDotQualifiedExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtDotQualifiedExpression
+      CONSTRUCTOR signature:/KtDotQualifiedExpression.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.KtDotQualifiedExpression [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.PsiElement'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtDotQualifiedExpression signature:/KtDotQualifiedExpression|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+      PROPERTY name:parent signature:/KtDotQualifiedExpression.parent|{}parent[0] visibility:public modality:OPEN [val]
+        FUN name:<get-parent> signature:/KtDotQualifiedExpression.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:OPEN <> ($this:<root>.KtDotQualifiedExpression) returnType:<root>.PsiElement
+          correspondingProperty: PROPERTY name:parent signature:/KtDotQualifiedExpression.parent|{}parent[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-parent> (): <root>.PsiElement declared in <root>.PsiElement
+          $this: VALUE_PARAMETER name:<this> type:<root>.KtDotQualifiedExpression
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-parent> (): <root>.PsiElement declared in <root>.KtDotQualifiedExpression'
+              GET_VAR '<this>: <root>.KtDotQualifiedExpression declared in <root>.KtDotQualifiedExpression.<get-parent>' type=<root>.KtDotQualifiedExpression origin=null
+      PROPERTY name:psi signature:/KtDotQualifiedExpression.psi|{}psi[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:psi signature:[ /KtDotQualifiedExpression.psi|{}psi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:parent type:<root>.PsiElement visibility:private [final]] ] type:<root>.PsiElement visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.EndElement' type=<root>.EndElement origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-psi> signature:/KtDotQualifiedExpression.psi.<get-psi>|<get-psi>(){}[0] visibility:public modality:FINAL <> ($this:<root>.KtDotQualifiedExpression) returnType:<root>.PsiElement
+          correspondingProperty: PROPERTY name:psi signature:/KtDotQualifiedExpression.psi|{}psi[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.KtDotQualifiedExpression
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-psi> (): <root>.PsiElement declared in <root>.KtDotQualifiedExpression'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:psi signature:[ /KtDotQualifiedExpression.psi|{}psi[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:parent type:<root>.PsiElement visibility:private [final]] ] type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
+                receiver: GET_VAR '<this>: <root>.KtDotQualifiedExpression declared in <root>.KtDotQualifiedExpression.<get-psi>' type=<root>.KtDotQualifiedExpression origin=null
+    CLASS CLASS name:EndElement signature:/EndElement|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EndElement
+      CONSTRUCTOR signature:/EndElement.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.EndElement [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.PsiElement'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:EndElement signature:/EndElement|null[0] modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+      PROPERTY name:parent signature:/EndElement.parent|{}parent[0] visibility:public modality:OPEN [val]
+        FUN name:<get-parent> signature:/EndElement.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:OPEN <> ($this:<root>.EndElement) returnType:<root>.PsiElement
+          correspondingProperty: PROPERTY name:parent signature:/EndElement.parent|{}parent[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-parent> (): <root>.PsiElement declared in <root>.PsiElement
+          $this: VALUE_PARAMETER name:<this> type:<root>.EndElement
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-parent> (): <root>.PsiElement declared in <root>.EndElement'
+              GET_VAR '<this>: <root>.EndElement declared in <root>.EndElement.<get-parent>' type=<root>.EndElement origin=null
+    FUN name:mark signature:/mark|mark(PsiElement){}[0] visibility:public modality:FINAL <> (element:<root>.PsiElement) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:element index:0 type:<root>.PsiElement
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.PsiElement [val]
+            GET_VAR 'element: <root>.PsiElement declared in <root>.mark' type=<root>.PsiElement origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.KtNameReferenceExpression
+                GET_VAR 'val tmp0_subject: <root>.PsiElement [val] declared in <root>.mark' type=<root>.PsiElement origin=null
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:parent type:<root>.PsiElement [var]
+                  TYPE_OP type=<root>.KtNameReferenceExpression origin=IMPLICIT_CAST typeOperand=<root>.KtNameReferenceExpression
+                    GET_VAR 'element: <root>.PsiElement declared in <root>.mark' type=<root>.PsiElement origin=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        SET_VAR 'var parent: <root>.PsiElement [var] declared in <root>.mark' type=<unbound IrClassSymbolImpl> origin=EQ
+                          CALL 'public abstract fun <get-parent> (): <root>.PsiElement declared in <root>.PsiElement' type=<root>.PsiElement origin=GET_PROPERTY
+                            $this: GET_VAR 'var parent: <root>.PsiElement [var] declared in <root>.mark' type=<root>.PsiElement origin=null
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                            VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<root>.PsiElement? [val]
+                              BLOCK type=<root>.PsiElement? origin=SAFE_CALL
+                                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.KtDotQualifiedExpression? [val]
+                                  TYPE_OP type=<root>.KtDotQualifiedExpression? origin=SAFE_CAST typeOperand=<root>.KtDotQualifiedExpression
+                                    GET_VAR 'var parent: <root>.PsiElement [var] declared in <root>.mark' type=<root>.PsiElement origin=null
+                                WHEN type=<root>.PsiElement? origin=null
+                                  BRANCH
+                                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                      arg0: GET_VAR 'val tmp0_safe_receiver: <root>.KtDotQualifiedExpression? [val] declared in <root>.mark.<anonymous>' type=<root>.KtDotQualifiedExpression? origin=null
+                                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                    then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                  BRANCH
+                                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                    then: CALL 'public final fun <get-psi> (): <root>.PsiElement declared in <root>.KtDotQualifiedExpression' type=<root>.PsiElement origin=GET_PROPERTY
+                                      $this: GET_VAR 'val tmp0_safe_receiver: <root>.KtDotQualifiedExpression? [val] declared in <root>.mark.<anonymous>' type=<root>.KtDotQualifiedExpression? origin=null
+                            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                              BRANCH
+                                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                  arg0: GET_VAR 'val tmp1_safe_receiver: <root>.PsiElement? [val] declared in <root>.mark.<anonymous>' type=<root>.PsiElement? origin=null
+                                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                              BRANCH
+                                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                  <1>: <root>.PsiElement
+                                  <2>: <unbound IrClassSymbolImpl>
+                                  $receiver: GET_VAR 'val tmp1_safe_receiver: <root>.PsiElement? [val] declared in <root>.mark.<anonymous>' type=<root>.PsiElement? origin=null
+                                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.PsiElement, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.PsiElement) returnType:<unbound IrClassSymbolImpl>
+                                      VALUE_PARAMETER name:it index:0 type:<root>.PsiElement
+                                      BLOCK_BODY
+                                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mark (element: <root>.PsiElement): <unbound IrClassSymbolImpl> declared in <root>'
+                                          CALL 'public final fun mark (element: <root>.PsiElement): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                                            element: GET_VAR 'it: <root>.PsiElement declared in <root>.mark.<anonymous>.<anonymous>' type=<root>.PsiElement origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mark (element: <root>.PsiElement): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.EndElement
+                GET_VAR 'element: <root>.PsiElement declared in <root>.mark' type=<root>.PsiElement origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:element type:<root>.KtNameReferenceExpression [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (parent: <root>.PsiElement) [primary] declared in <root>.KtNameReferenceExpression' type=<root>.KtNameReferenceExpression origin=null
+            parent: CONSTRUCTOR_CALL 'public constructor <init> (parent: <root>.PsiElement) [primary] declared in <root>.OtherElement' type=<root>.OtherElement origin=null
+              parent: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.KtDotQualifiedExpression' type=<root>.KtDotQualifiedExpression origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun mark (element: <root>.PsiElement): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            element: GET_VAR 'val element: <root>.KtNameReferenceExpression [val] declared in <root>.box' type=<root>.KtNameReferenceExpression origin=null

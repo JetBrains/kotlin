@@ -1,0 +1,29 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/genericOverriddenProperty.kt
+    CLASS INTERFACE name:H signature:test/H|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.H<T of test.H>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/H|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:parent signature:test/H.parent|{}parent[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parent> signature:test/H.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:ABSTRACT <> ($this:test.H<T of test.H>) returnType:T of test.H?
+          correspondingProperty: PROPERTY name:parent signature:test/H.parent|{}parent[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:test.H<T of test.H>
+    CLASS INTERFACE name:A signature:test/A|null[0] modality:ABSTRACT visibility:public superTypes:[test.H<test.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="test.A?"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: PROPERTY_REFERENCE 'UNBOUND IrPropertySymbolImpl' field=null getter='UNBOUND IrSimpleFunctionSymbolImpl' setter=null type=<unbound IrClassSymbolImpl><test.A, test.A?> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="T?"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: PROPERTY_REFERENCE 'public abstract parent: T of test.H? [val] declared in test.H' field=null getter='public abstract fun <get-parent> (): T of test.H? declared in test.H' setter=null type=<unbound IrClassSymbolImpl><test.H<test.A>, test.A?> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

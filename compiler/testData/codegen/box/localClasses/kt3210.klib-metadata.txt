@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: org.example
+
+    // class name: org/example/KotlinCallback
+    // class name: org/example/KotlinProcessor
+    // class name: org/example/SomeTrait
+    // class name: org/example/Test
+
+    public abstract interface org/example/KotlinCallback<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun on(t: T#0): kotlin/Unit
+    }
+
+    public abstract interface org/example/KotlinProcessor<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun execute(callback: org/example/KotlinCallback<T#0>?): kotlin/Unit
+    }
+
+    public abstract interface org/example/SomeTrait : kotlin/Any {
+    }
+
+    public final class org/example/Test : org/example/KotlinProcessor<org/example/SomeTrait> {
+
+      public constructor(name: kotlin/String)
+
+      public open fun execute(callback: org/example/KotlinCallback<org/example/SomeTrait>?): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

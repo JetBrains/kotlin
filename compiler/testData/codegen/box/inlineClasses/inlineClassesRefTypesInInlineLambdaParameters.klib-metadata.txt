@@ -1,0 +1,63 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Obj
+    // class name: Str
+
+    public final value class Obj : kotlin/Any {
+
+      public constructor(obj: kotlin/Any)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val obj: kotlin/Any
+        public final get
+
+      // underlying property: obj
+
+      // underlying type: kotlin/Any
+    }
+
+    public final value class Str : kotlin/Any {
+
+      public constructor(string: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: kotlin/String
+        public final get
+
+      // underlying property: string
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> s0(x: T#0, fn: kotlin/Function2<kotlin/Int, T#0, T#1>): T#1
+
+      public final fun testS0Any(x: Obj): Obj
+
+      public final fun testS0Str(x: Str): Str
+
+      public final fun testWeirdMixAny(x: Obj): Obj
+
+      public final fun testWeirdMixStr(x: Str): Str
+
+      public final inline fun <T#0 /* T */, T#1 /* R */> weirdMix(x: T#0, fn: kotlin/Function4<kotlin/Int, T#0, kotlin/Long, T#0, T#1>): T#1
+    }
+  }
+}

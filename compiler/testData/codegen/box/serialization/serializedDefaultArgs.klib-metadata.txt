@@ -1,0 +1,58 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SomeDataClass
+
+    public final data class SomeDataClass : kotlin/Any {
+
+      public constructor(first: kotlin/Int /* = ... */, second: kotlin/Int /* = ... */, third: kotlin/Int /* = ... */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ operator fun component2(): kotlin/Int
+
+      public final /* synthesized */ operator fun component3(): kotlin/Int
+
+      public final /* synthesized */ fun copy(first: kotlin/Int /* = ... */, second: kotlin/Int /* = ... */, third: kotlin/Int /* = ... */): SomeDataClass
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val first: kotlin/Int
+        public final get
+
+      public final val second: kotlin/Int
+        public final get
+
+      public final val third: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final val kotlin/Int.prop: SomeDataClass
+        public final /* non-default */ inline get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

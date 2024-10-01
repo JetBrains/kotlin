@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KotlinAnn
+    // class name: KotlinIntAnn
+    // class name: KotlinUIntAnn
+
+    public final annotation class KotlinAnn : kotlin/Annotation {
+
+      public constructor(vararg foo: kotlin/String /* kotlin/Array<out kotlin/String> */)
+
+      public final val foo: kotlin/Array<out kotlin/String>
+        public final get
+    }
+
+    public final annotation class KotlinIntAnn : kotlin/Annotation {
+
+      public constructor(vararg foo: kotlin/Int /* kotlin/IntArray */)
+
+      public final val foo: kotlin/IntArray
+        public final get
+    }
+
+    public final annotation class KotlinUIntAnn : kotlin/Annotation {
+
+      public constructor(vararg foo: kotlin/UInt /* kotlin/UIntArray */)
+
+      public final val foo: kotlin/UIntArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

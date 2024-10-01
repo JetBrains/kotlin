@@ -1,0 +1,209 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt36853_fibonacci.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <root>.Nat<<unbound IrClassSymbolImpl>>
+          <2>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'public final fun invoke <T> (nil: T of <root>.Nat.Companion.invoke, next: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.Nat.Companion.invoke, T of <root>.Nat.Companion.invoke>): <root>.Nat<T of <root>.Nat.Companion.invoke> [operator] declared in <root>.Nat.Companion' type=<root>.Nat<<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Nat.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Nat.Companion
+            nil: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            next: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$Nat type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR '$this$Nat: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Nat<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Nat<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$run type:<root>.Nat<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                VAR name:fib type:<unbound IrClassSymbolImpl> [val]
+                  CALL 'public final fun fibonacci <T> (n: T of <root>.fibonacci, seed: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, fib: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>>, i: T of <root>.fibonacci): T of <root>.fibonacci declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR '$this$run: <root>.Nat<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<root>.Nat<<unbound IrClassSymbolImpl>> origin=null
+                    n: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: GET_VAR 'val fib: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=89
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                        CONST String type=<unbound IrClassSymbolImpl> value="Failed: "
+                        GET_VAR 'val fib: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:fibonacci signature:/fibonacci|fibonacci@Nat<0:0>(0:0;kotlin.Pair<0:0,0:0>;kotlin.Function1<kotlin.Pair<0:0,0:0>,kotlin.Pair<0:0,0:0>>;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.Nat<T of <root>.fibonacci>, n:T of <root>.fibonacci, seed:<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, fib:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>>, i:T of <root>.fibonacci) returnType:T of <root>.fibonacci
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /fibonacci|fibonacci@Nat<0:0>(0:0;kotlin.Pair<0:0,0:0>;kotlin.Function1<kotlin.Pair<0:0,0:0>,kotlin.Pair<0:0,0:0>>;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Nat<T of <root>.fibonacci>
+      VALUE_PARAMETER name:n index:0 type:T of <root>.fibonacci
+      VALUE_PARAMETER name:seed index:1 type:<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=null
+            <1>: T of <root>.fibonacci
+            <2>: T of <root>.fibonacci
+            $receiver: CALL 'public abstract fun <get-nil> (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.fibonacci origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Nat<T of <root>.fibonacci> declared in <root>.fibonacci' type=<root>.Nat<T of <root>.fibonacci> origin=null
+            1: CALL 'public open fun <get-one> (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.fibonacci origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Nat<T of <root>.fibonacci> declared in <root>.fibonacci' type=<root>.Nat<T of <root>.fibonacci> origin=null
+      VALUE_PARAMETER name:fib index:2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>>
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<destruct>:<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>) returnType:<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>
+              VALUE_PARAMETER DESTRUCTURED_OBJECT_PARAMETER name:<destruct> index:0 type:<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>
+              BLOCK_BODY
+                VAR name:a type:T of <root>.fibonacci [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.fibonacci origin=COMPONENT_N(index=1)
+                    $this: GET_VAR '<destruct>: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> declared in <root>.fibonacci.<anonymous>' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=null
+                VAR name:b type:T of <root>.fibonacci [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.fibonacci origin=COMPONENT_N(index=2)
+                    $this: GET_VAR '<destruct>: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> declared in <root>.fibonacci.<anonymous>' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (<destruct>: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>): <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> declared in <root>.fibonacci'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=null
+                    <1>: T of <root>.fibonacci
+                    <2>: T of <root>.fibonacci
+                    $receiver: GET_VAR 'val b: T of <root>.fibonacci [val] declared in <root>.fibonacci.<anonymous>' type=T of <root>.fibonacci origin=null
+                    1: CALL 'public open fun plus (t: T of <root>.Nat): T of <root>.Nat [operator] declared in <root>.Nat' type=T of <root>.fibonacci origin=PLUS
+                      $this: GET_VAR '<this>: <root>.Nat<T of <root>.fibonacci> declared in <root>.fibonacci' type=<root>.Nat<T of <root>.fibonacci> origin=null
+                      $receiver: GET_VAR 'val a: T of <root>.fibonacci [val] declared in <root>.fibonacci.<anonymous>' type=T of <root>.fibonacci origin=null
+                      t: GET_VAR 'val b: T of <root>.fibonacci [val] declared in <root>.fibonacci.<anonymous>' type=T of <root>.fibonacci origin=null
+      VALUE_PARAMETER name:i index:3 type:T of <root>.fibonacci
+        EXPRESSION_BODY
+          CALL 'public abstract fun <get-nil> (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.fibonacci origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Nat<T of <root>.fibonacci> declared in <root>.fibonacci' type=<root>.Nat<T of <root>.fibonacci> origin=null
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun fibonacci <T> (n: T of <root>.fibonacci, seed: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, fib: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>>, i: T of <root>.fibonacci): T of <root>.fibonacci declared in <root>'
+          WHEN type=T of <root>.fibonacci origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'i: T of <root>.fibonacci declared in <root>.fibonacci' type=T of <root>.fibonacci origin=null
+                arg1: GET_VAR 'n: T of <root>.fibonacci declared in <root>.fibonacci' type=T of <root>.fibonacci origin=null
+              then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.fibonacci origin=GET_PROPERTY
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=INVOKE
+                  $this: GET_VAR 'fib: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>> declared in <root>.fibonacci' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'seed: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> declared in <root>.fibonacci' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun fibonacci <T> (n: T of <root>.fibonacci, seed: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, fib: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>>, i: T of <root>.fibonacci): T of <root>.fibonacci declared in <root>' type=T of <root>.fibonacci origin=null
+                <T>: T of <root>.fibonacci
+                $receiver: GET_VAR '<this>: <root>.Nat<T of <root>.fibonacci> declared in <root>.fibonacci' type=<root>.Nat<T of <root>.fibonacci> origin=null
+                n: GET_VAR 'n: T of <root>.fibonacci declared in <root>.fibonacci' type=T of <root>.fibonacci origin=null
+                seed: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=INVOKE
+                  $this: GET_VAR 'fib: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>> declared in <root>.fibonacci' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>, <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci>> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'seed: <unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> declared in <root>.fibonacci' type=<unbound IrClassSymbolImpl><T of <root>.fibonacci, T of <root>.fibonacci> origin=null
+                i: CALL 'public abstract fun next (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.fibonacci origin=null
+                  $this: GET_VAR '<this>: <root>.Nat<T of <root>.fibonacci> declared in <root>.fibonacci' type=<root>.Nat<T of <root>.fibonacci> origin=null
+                  $receiver: GET_VAR 'i: T of <root>.fibonacci declared in <root>.fibonacci' type=T of <root>.fibonacci origin=null
+    FUN name:plus signature:/plus|plus@Nat<0:0>(0:0;0:0;0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.Nat<T of <root>.plus>, l:T of <root>.plus, r:T of <root>.plus, acc:T of <root>.plus, i:T of <root>.plus) returnType:T of <root>.plus [tailrec]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /plus|plus@Nat<0:0>(0:0;0:0;0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Nat<T of <root>.plus>
+      VALUE_PARAMETER name:l index:0 type:T of <root>.plus
+      VALUE_PARAMETER name:r index:1 type:T of <root>.plus
+      VALUE_PARAMETER name:acc index:2 type:T of <root>.plus
+        EXPRESSION_BODY
+          GET_VAR 'l: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+      VALUE_PARAMETER name:i index:3 type:T of <root>.plus
+        EXPRESSION_BODY
+          CALL 'public abstract fun <get-nil> (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.plus origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Nat<T of <root>.plus> declared in <root>.plus' type=<root>.Nat<T of <root>.plus> origin=null
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun plus <T> (l: T of <root>.plus, r: T of <root>.plus, acc: T of <root>.plus, i: T of <root>.plus): T of <root>.plus [tailrec] declared in <root>'
+          WHEN type=T of <root>.plus origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'i: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+                arg1: GET_VAR 'r: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+              then: GET_VAR 'acc: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun plus <T> (l: T of <root>.plus, r: T of <root>.plus, acc: T of <root>.plus, i: T of <root>.plus): T of <root>.plus [tailrec] declared in <root>' type=T of <root>.plus origin=null
+                <T>: T of <root>.plus
+                $receiver: GET_VAR '<this>: <root>.Nat<T of <root>.plus> declared in <root>.plus' type=<root>.Nat<T of <root>.plus> origin=null
+                l: GET_VAR 'l: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+                r: GET_VAR 'r: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+                acc: CALL 'public abstract fun next (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.plus origin=null
+                  $this: GET_VAR '<this>: <root>.Nat<T of <root>.plus> declared in <root>.plus' type=<root>.Nat<T of <root>.plus> origin=null
+                  $receiver: GET_VAR 'acc: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+                i: CALL 'public abstract fun next (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.plus origin=null
+                  $this: GET_VAR '<this>: <root>.Nat<T of <root>.plus> declared in <root>.plus' type=<root>.Nat<T of <root>.plus> origin=null
+                  $receiver: GET_VAR 'i: T of <root>.plus declared in <root>.plus' type=T of <root>.plus origin=null
+    CLASS INTERFACE name:Nat signature:/Nat|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Nat<T of <root>.Nat>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Nat|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:nil signature:/Nat.nil|{}nil[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nil> signature:/Nat.nil.<get-nil>|<get-nil>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Nat<T of <root>.Nat>) returnType:T of <root>.Nat
+          correspondingProperty: PROPERTY name:nil signature:/Nat.nil|{}nil[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Nat<T of <root>.Nat>
+      PROPERTY name:one signature:/Nat.one|{}one[0] visibility:public modality:OPEN [val]
+        FUN name:<get-one> signature:/Nat.one.<get-one>|<get-one>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Nat<T of <root>.Nat>) returnType:T of <root>.Nat
+          correspondingProperty: PROPERTY name:one signature:/Nat.one|{}one[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Nat<T of <root>.Nat>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-one> (): T of <root>.Nat declared in <root>.Nat'
+              CALL 'public abstract fun next (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.Nat origin=null
+                $this: GET_VAR '<this>: <root>.Nat<T of <root>.Nat> declared in <root>.Nat.<get-one>' type=<root>.Nat<T of <root>.Nat> origin=null
+                $receiver: CALL 'public abstract fun <get-nil> (): T of <root>.Nat declared in <root>.Nat' type=T of <root>.Nat origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Nat<T of <root>.Nat> declared in <root>.Nat.<get-one>' type=<root>.Nat<T of <root>.Nat> origin=null
+      FUN name:next signature:/Nat.next|next@1:0(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Nat<T of <root>.Nat>, $receiver:T of <root>.Nat) returnType:T of <root>.Nat
+        $this: VALUE_PARAMETER name:<this> type:<root>.Nat<T of <root>.Nat>
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Nat
+      FUN name:plus signature:/Nat.plus|plus@1:0(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.Nat<T of <root>.Nat>, $receiver:T of <root>.Nat, t:T of <root>.Nat) returnType:T of <root>.Nat [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Nat<T of <root>.Nat>
+        $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Nat
+        VALUE_PARAMETER name:t index:0 type:T of <root>.Nat
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun plus (t: T of <root>.Nat): T of <root>.Nat [operator] declared in <root>.Nat'
+            CALL 'public final fun plus <T> (l: T of <root>.plus, r: T of <root>.plus, acc: T of <root>.plus, i: T of <root>.plus): T of <root>.plus [tailrec] declared in <root>' type=T of <root>.Nat origin=null
+              <T>: T of <root>.Nat
+              $receiver: GET_VAR '<this>: <root>.Nat<T of <root>.Nat> declared in <root>.Nat.plus' type=<root>.Nat<T of <root>.Nat> origin=null
+              l: GET_VAR '<this>: T of <root>.Nat declared in <root>.Nat.plus' type=T of <root>.Nat origin=null
+              r: GET_VAR 't: T of <root>.Nat declared in <root>.Nat.plus' type=T of <root>.Nat origin=null
+      CLASS OBJECT name:Companion signature:/Nat.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Nat.Companion
+        CONSTRUCTOR signature:/Nat.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Nat.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Nat.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:invoke signature:/Nat.Companion.invoke|invoke(0:0;kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.Nat.Companion, nil:T of <root>.Nat.Companion.invoke, next:@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.Nat.Companion.invoke, T of <root>.Nat.Companion.invoke>) returnType:<root>.Nat<T of <root>.Nat.Companion.invoke> [operator]
+          TYPE_PARAMETER name:T index:0 variance: signature:[ /Nat.Companion.invoke|invoke(0:0;kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+          $this: VALUE_PARAMETER name:<this> type:<root>.Nat.Companion
+          VALUE_PARAMETER name:nil index:0 type:T of <root>.Nat.Companion.invoke
+          VALUE_PARAMETER name:next index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.Nat.Companion.invoke, T of <root>.Nat.Companion.invoke>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun invoke <T> (nil: T of <root>.Nat.Companion.invoke, next: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.Nat.Companion.invoke, T of <root>.Nat.Companion.invoke>): <root>.Nat<T of <root>.Nat.Companion.invoke> [operator] declared in <root>.Nat.Companion'
+              BLOCK type=<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Nat<T of <root>.Nat.Companion.invoke>]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Nat<T of <root>.Nat.Companion.invoke>]'
+                  PROPERTY name:nil visibility:public modality:OPEN [val]
+                    FIELD PROPERTY_BACKING_FIELD name:nil type:T of <root>.Nat.Companion.invoke visibility:private [final]
+                      EXPRESSION_BODY
+                        GET_VAR 'nil: T of <root>.Nat.Companion.invoke declared in <root>.Nat.Companion.invoke' type=T of <root>.Nat.Companion.invoke origin=null
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nil> visibility:public modality:OPEN <> ($this:<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke>) returnType:T of <root>.Nat.Companion.invoke
+                      correspondingProperty: PROPERTY name:nil visibility:public modality:OPEN [val]
+                      overridden:
+                        public abstract fun <get-nil> (): T of <root>.Nat declared in <root>.Nat
+                      $this: VALUE_PARAMETER name:<this> type:<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-nil> (): T of <root>.Nat.Companion.invoke declared in <root>.Nat.Companion.invoke.<no name provided>'
+                          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nil type:T of <root>.Nat.Companion.invoke visibility:private [final]' type=T of <root>.Nat.Companion.invoke origin=null
+                            receiver: GET_VAR '<this>: <root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke> declared in <root>.Nat.Companion.invoke.<no name provided>.<get-nil>' type=<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke> origin=null
+                  FUN name:next visibility:public modality:OPEN <> ($this:<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke>, $receiver:T of <root>.Nat.Companion.invoke) returnType:T of <root>.Nat.Companion.invoke
+                    overridden:
+                      public abstract fun next (): T of <root>.Nat declared in <root>.Nat
+                    $this: VALUE_PARAMETER name:<this> type:<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke>
+                    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Nat.Companion.invoke
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): T of <root>.Nat.Companion.invoke declared in <root>.Nat.Companion.invoke.<no name provided>'
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.Nat.Companion.invoke origin=INVOKE
+                          $this: GET_VAR 'next: @[<unbound>] <unbound IrClassSymbolImpl><T of <root>.Nat.Companion.invoke, T of <root>.Nat.Companion.invoke> declared in <root>.Nat.Companion.invoke' type=@[<unbound>] <unbound IrClassSymbolImpl><T of <root>.Nat.Companion.invoke, T of <root>.Nat.Companion.invoke> origin=VARIABLE_AS_FUNCTION
+                          1: GET_VAR '<this>: T of <root>.Nat.Companion.invoke declared in <root>.Nat.Companion.invoke.<no name provided>.next' type=T of <root>.Nat.Companion.invoke origin=null
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Nat.Companion.invoke.<no name provided>' type=<root>.Nat.Companion.invoke.<no name provided><T of <root>.Nat.Companion.invoke> origin=OBJECT_LITERAL

@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Baz
+
+    public open class Bar : kotlin/Any {
+
+      public constructor(name: kotlin/String)
+
+      public final var foo: kotlin/String
+        public final get
+        private final /* non-default */ set(value: kotlin/String)
+    }
+
+    public final class Baz : Bar {
+
+      public constructor()
+
+      public final fun ref(): kotlin/reflect/KProperty1<Bar, kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

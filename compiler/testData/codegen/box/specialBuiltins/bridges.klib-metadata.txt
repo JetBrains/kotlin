@@ -1,0 +1,119 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A0
+    // class name: A1
+    // class name: B0
+    // class name: B1
+    // class name: B4
+    // class name: B5
+    // class name: I2
+    // class name: I3
+    // class name: I4
+    // class name: I5
+
+    public abstract interface A0 : kotlin/Any {
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public open class A1 : kotlin/Any {
+
+      public constructor()
+
+      public final val size: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final class B0 : kotlin/collections/Collection<kotlin/String>, A0 {
+
+      public constructor()
+
+      public open operator fun contains(o: kotlin/String): kotlin/Nothing
+
+      public open fun containsAll(c: kotlin/collections/Collection<kotlin/String>): kotlin/Nothing
+
+      public open fun isEmpty(): kotlin/Nothing
+
+      public open operator fun iterator(): kotlin/Nothing
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final class B1 : kotlin/collections/Collection<kotlin/String>, A1 {
+
+      public constructor()
+
+      public open operator fun contains(o: kotlin/String): kotlin/Nothing
+
+      public open fun containsAll(c: kotlin/collections/Collection<kotlin/String>): kotlin/Nothing
+
+      public open fun isEmpty(): kotlin/Nothing
+
+      public open operator fun iterator(): kotlin/Nothing
+    }
+
+    public final class B4 : kotlin/collections/Collection<kotlin/String>, I4<kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun contains(o: kotlin/String): kotlin/Nothing
+
+      public open fun containsAll(c: kotlin/collections/Collection<kotlin/String>): kotlin/Nothing
+
+      public open fun isEmpty(): kotlin/Nothing
+
+      public open operator fun iterator(): kotlin/Nothing
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final class B5 : I5 {
+
+      public constructor()
+
+      public open operator fun contains(o: kotlin/String): kotlin/Nothing
+
+      public open fun containsAll(c: kotlin/collections/Collection<kotlin/String>): kotlin/Nothing
+
+      public open fun isEmpty(): kotlin/Nothing
+
+      public open operator fun iterator(): kotlin/Nothing
+    }
+
+    public abstract interface I2 : kotlin/Any {
+
+      public abstract val size: kotlin/Int
+        public abstract get
+    }
+
+    public abstract interface I3<T#0 /* T */> : kotlin/Any {
+
+      public abstract val size: T#0
+        public abstract get
+    }
+
+    public abstract interface I4<T#0 /* T */> : kotlin/Any {
+
+      public open val size: T#0
+        public open /* non-default */ get
+    }
+
+    public abstract interface I5 : kotlin/collections/Collection<kotlin/String> {
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

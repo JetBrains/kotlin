@@ -1,0 +1,108 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:other fileName:/Main.kt
+    CLASS CLASS name:Derived signature:other/Derived|null[0] modality:FINAL visibility:public superTypes:[another.Outer]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:other.Derived
+      CONSTRUCTOR signature:other/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:other.Derived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in another.Outer'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:other/Derived|null[0] modality:FINAL visibility:public superTypes:[another.Outer]'
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=another.Outer.My origin=null
+              $this: GET_VAR '<this>: other.Derived declared in other.Derived' type=other.Derived origin=null
+              1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><another.Outer.My, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:another.Outer.My) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$my type:another.Outer.My
+                  BLOCK_BODY
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                      CALL 'public final fun initStage (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): another.Outer.Stage declared in another.Outer.My' type=another.Outer.Stage origin=null
+                        $this: GET_VAR '$this$my: another.Outer.My declared in other.Derived.<anonymous>' type=another.Outer.My origin=null
+                        f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in other.Derived.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:box signature:other/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in other.Derived' type=other.Derived origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in other'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:another fileName:/Outer.kt
+    CLASS CLASS name:Outer signature:another/Outer|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:another.Outer
+      CONSTRUCTOR signature:another/Outer.<init>|<init>(){}[0] visibility:public <> () returnType:another.Outer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:another/Outer|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Stage signature:another/Outer.Stage|null[0] modality:FINAL visibility:protected superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:another.Outer.Stage
+        CONSTRUCTOR signature:another/Outer.Stage.<init>|<init>(kotlin.Function0<kotlin.Unit>){}[0] visibility:public <> (run:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:another.Outer.Stage [primary]
+          VALUE_PARAMETER name:run index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Stage signature:another/Outer.Stage|null[0] modality:FINAL visibility:protected superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:run signature:another/Outer.Stage.run|{}run[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:run signature:[ another/Outer.Stage.run|{}run[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:run type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'run: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in another.Outer.Stage.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-run> signature:another/Outer.Stage.run.<get-run>|<get-run>(){}[0] visibility:public modality:FINAL <> ($this:another.Outer.Stage) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            correspondingProperty: PROPERTY name:run signature:another/Outer.Stage.run|{}run[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:another.Outer.Stage
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-run> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in another.Outer.Stage'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:run signature:[ another/Outer.Stage.run|{}run[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:run type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: another.Outer.Stage declared in another.Outer.Stage.<get-run>' type=another.Outer.Stage origin=null
+      CLASS CLASS name:My signature:another/Outer.My|null[0] modality:FINAL visibility:protected superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:another.Outer.My
+        CONSTRUCTOR signature:another/Outer.My.<init>|<init>(another.Outer.Stage?){}[0] visibility:public <> (stage:another.Outer.Stage?) returnType:another.Outer.My [primary]
+          VALUE_PARAMETER name:stage index:0 type:another.Outer.Stage?
+            EXPRESSION_BODY
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:My signature:another/Outer.My|null[0] modality:FINAL visibility:protected superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:stage signature:another/Outer.My.stage|{}stage[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:stage signature:[ another/Outer.My.stage|{}stage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:run type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:another.Outer.Stage? visibility:private
+            EXPRESSION_BODY
+              GET_VAR 'stage: another.Outer.Stage? declared in another.Outer.My.<init>' type=another.Outer.Stage? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stage> signature:another/Outer.My.stage.<get-stage>|<get-stage>(){}[0] visibility:public modality:FINAL <> ($this:another.Outer.My) returnType:another.Outer.Stage?
+            correspondingProperty: PROPERTY name:stage signature:another/Outer.My.stage|{}stage[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:another.Outer.My
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-stage> (): another.Outer.Stage? declared in another.Outer.My'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stage signature:[ another/Outer.My.stage|{}stage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:run type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:another.Outer.Stage? visibility:private' type=another.Outer.Stage? origin=null
+                  receiver: GET_VAR '<this>: another.Outer.My declared in another.Outer.My.<get-stage>' type=another.Outer.My origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-stage> signature:another/Outer.My.stage.<set-stage>|<set-stage>(another.Outer.Stage?){}[0] visibility:public modality:FINAL <> ($this:another.Outer.My, <set-?>:another.Outer.Stage?) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:stage signature:another/Outer.My.stage|{}stage[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:another.Outer.My
+            VALUE_PARAMETER name:<set-?> index:0 type:another.Outer.Stage?
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stage signature:[ another/Outer.My.stage|{}stage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:run type:kotlin.Function0<kotlin.Unit> visibility:private [final]] ] type:another.Outer.Stage? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: another.Outer.My declared in another.Outer.My.<set-stage>' type=another.Outer.My origin=null
+                value: GET_VAR '<set-?>: another.Outer.Stage? declared in another.Outer.My.<set-stage>' type=another.Outer.Stage? origin=null
+        FUN name:initStage signature:another/Outer.My.initStage|initStage(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($this:another.Outer.My, f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:another.Outer.Stage
+          $this: VALUE_PARAMETER name:<this> type:another.Outer.My
+          VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          BLOCK_BODY
+            CALL 'public final fun <set-stage> (<set-?>: another.Outer.Stage?): <unbound IrClassSymbolImpl> declared in another.Outer.My' type=<unbound IrClassSymbolImpl> origin=EQ
+              $this: GET_VAR '<this>: another.Outer.My declared in another.Outer.My.initStage' type=another.Outer.My origin=null
+              <set-?>: CONSTRUCTOR_CALL 'public constructor <init> (run: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in another.Outer.Stage' type=another.Outer.Stage origin=null
+                run: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in another.Outer.My.initStage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun initStage (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): another.Outer.Stage declared in another.Outer.My'
+              CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=another.Outer.Stage origin=EXCLEXCL
+                <T0>: another.Outer.Stage
+                arg0: CALL 'public final fun <get-stage> (): another.Outer.Stage? declared in another.Outer.My' type=another.Outer.Stage? origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: another.Outer.My declared in another.Outer.My.initStage' type=another.Outer.My origin=null
+      FUN name:my signature:another/Outer.my|my(kotlin.Function1<another.Outer.My,kotlin.Unit>){}[0] visibility:protected modality:FINAL <> ($this:another.Outer, init:@[<unbound>] <unbound IrClassSymbolImpl><another.Outer.My, <unbound IrClassSymbolImpl>>) returnType:another.Outer.My
+        $this: VALUE_PARAMETER name:<this> type:another.Outer
+        VALUE_PARAMETER name:init index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><another.Outer.My, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          VAR name:result type:another.Outer.My [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (stage: another.Outer.Stage?) [primary] declared in another.Outer.My' type=another.Outer.My origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'init: @[<unbound>] <unbound IrClassSymbolImpl><another.Outer.My, <unbound IrClassSymbolImpl>> declared in another.Outer.my' type=@[<unbound>] <unbound IrClassSymbolImpl><another.Outer.My, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'val result: another.Outer.My [val] declared in another.Outer.my' type=another.Outer.My origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='protected final fun my (init: @[<unbound>] <unbound IrClassSymbolImpl><another.Outer.My, <unbound IrClassSymbolImpl>>): another.Outer.My declared in another.Outer'
+            GET_VAR 'val result: another.Outer.My [val] declared in another.Outer.my' type=another.Outer.My origin=null

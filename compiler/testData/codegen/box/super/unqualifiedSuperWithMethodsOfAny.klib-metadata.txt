@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C1
+    // class name: C2
+    // class name: ClassWithToString
+    // class name: ISomething
+    // class name: IWithToString
+
+    public final class C1 : ClassWithToString, ISomething {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public final class C2 : ClassWithToString, IWithToString, ISomething {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public open class ClassWithToString : kotlin/Any {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public abstract interface ISomething : kotlin/Any {
+    }
+
+    public abstract interface IWithToString : kotlin/Any {
+
+      public abstract fun toString(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

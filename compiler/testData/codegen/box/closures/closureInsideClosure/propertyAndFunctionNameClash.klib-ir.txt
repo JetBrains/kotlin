@@ -1,0 +1,107 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:d fileName:/propertyAndFunctionNameClash.kt
+    FUN name:box signature:d/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test (list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in d' type=<unbound IrClassSymbolImpl> origin=null
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in d.ListTag' type=d.ListTag origin=null
+          list: CALL 'public final fun listOf (vararg strings: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in d' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            strings: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="a"
+              CONST String type=<unbound IrClassSymbolImpl> value="b"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in d'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:test signature:d/test|test@d.ListTag(kotlin.collections.List<kotlin.String>){}[0] visibility:public modality:FINAL <> ($receiver:d.ListTag, list:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:d.ListTag
+      VALUE_PARAMETER name:list index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR 'list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in d.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in d.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:item type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in d.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun item (body: @[<unbound>] <unbound IrClassSymbolImpl><d.LI, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in d' type=<unbound IrClassSymbolImpl> origin=null
+                  $receiver: GET_VAR '<this>: d.ListTag declared in d.test' type=d.ListTag origin=null
+                  body: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><d.LI, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:d.LI) returnType:<unbound IrClassSymbolImpl>
+                      $receiver: VALUE_PARAMETER name:$this$item type:d.LI
+                      BLOCK_BODY
+                        CALL 'public final fun a (contents: @[<unbound>] <unbound IrClassSymbolImpl><d.A, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in d' type=<unbound IrClassSymbolImpl> origin=null
+                          $receiver: GET_VAR '$this$item: d.LI declared in d.test.<anonymous>' type=d.LI origin=null
+                          contents: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><d.A, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:d.A) returnType:<unbound IrClassSymbolImpl>
+                              $receiver: VALUE_PARAMETER name:$this$a type:d.A
+                              BLOCK_BODY
+                                CALL 'public abstract fun <set-text> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in d.A' type=<unbound IrClassSymbolImpl> origin=EQ
+                                  $this: GET_VAR '$this$a: d.A declared in d.test.<anonymous>.<anonymous>' type=d.A origin=null
+                                  <set-?>: GET_VAR 'val item: <unbound IrClassSymbolImpl> [val] declared in d.test' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:HtmlTag signature:d/HtmlTag|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:d.HtmlTag
+      CONSTRUCTOR signature:d/HtmlTag.<init>|<init>(){}[0] visibility:public <> () returnType:d.HtmlTag [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:HtmlTag signature:d/HtmlTag|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:ListTag signature:d/ListTag|null[0] modality:OPEN visibility:public superTypes:[d.HtmlTag]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:d.ListTag
+      CONSTRUCTOR signature:d/ListTag.<init>|<init>(){}[0] visibility:public <> () returnType:d.ListTag [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in d.HtmlTag'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ListTag signature:d/ListTag|null[0] modality:OPEN visibility:public superTypes:[d.HtmlTag]'
+    CLASS CLASS name:LI signature:d/LI|null[0] modality:FINAL visibility:public superTypes:[d.ListTag]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:d.LI
+      CONSTRUCTOR signature:d/LI.<init>|<init>(){}[0] visibility:public <> () returnType:d.LI [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in d.ListTag'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LI signature:d/LI|null[0] modality:FINAL visibility:public superTypes:[d.ListTag]'
+    FUN name:item signature:d/item|item@d.ListTag(kotlin.Function1<d.LI,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($receiver:d.ListTag, body:@[<unbound>] <unbound IrClassSymbolImpl><d.LI, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:d.ListTag
+      VALUE_PARAMETER name:body index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><d.LI, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:a signature:d/a|a@d.HtmlTag(kotlin.Function1<d.A,kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($receiver:d.HtmlTag, contents:@[<unbound>] <unbound IrClassSymbolImpl><d.A, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:d.HtmlTag
+      VALUE_PARAMETER name:contents index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><d.A, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    CLASS CLASS name:A signature:d/A|null[0] modality:ABSTRACT visibility:public superTypes:[d.HtmlTag]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:d.A
+      CONSTRUCTOR signature:d/A.<init>|<init>(){}[0] visibility:public <> () returnType:d.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in d.HtmlTag'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:d/A|null[0] modality:ABSTRACT visibility:public superTypes:[d.HtmlTag]'
+      PROPERTY name:text signature:d/A.text|{}text[0] visibility:public modality:ABSTRACT [var]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> signature:d/A.text.<get-text>|<get-text>(){}[0] visibility:public modality:ABSTRACT <> ($this:d.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:text signature:d/A.text|{}text[0] visibility:public modality:ABSTRACT [var]
+          $this: VALUE_PARAMETER name:<this> type:d.A
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-text> signature:d/A.text.<set-text>|<set-text>(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:d.A, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:text signature:d/A.text|{}text[0] visibility:public modality:ABSTRACT [var]
+          $this: VALUE_PARAMETER name:<this> type:d.A
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+    FUN name:listOf signature:d/listOf|listOf(kotlin.Array<out|kotlin.String>...){}[0] visibility:public modality:FINAL <> (strings:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:strings index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        VAR name:list type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <class: 1>: <unbound IrClassSymbolImpl>
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR 'strings: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [vararg] declared in d.listOf' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in d.listOf' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:s type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in d.listOf' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in d.listOf' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in d.listOf' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun listOf (vararg strings: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in d'
+          GET_VAR 'val list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in d.listOf' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null

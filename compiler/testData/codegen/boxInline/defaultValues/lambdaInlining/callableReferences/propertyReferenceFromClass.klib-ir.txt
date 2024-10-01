@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(kotlin.String){}[0] visibility:public <> (ok:<unbound IrClassSymbolImpl>) returnType:test.A [primary]
+        VALUE_PARAMETER name:ok index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:ok signature:test/A.ok|{}ok[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:ok signature:[ test/A.ok|{}ok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'ok: <unbound IrClassSymbolImpl> declared in test.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> signature:test/A.ok.<get-ok>|<get-ok>(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:ok signature:test/A.ok|{}ok[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok signature:[ test/A.ok|{}ok[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.A declared in test.A.<get-ok>' type=test.A origin=null
+    FUN name:inlineFun signature:test/inlineFun|inlineFun(test.A;kotlin.Function1<test.A,kotlin.String>){}[0] visibility:public modality:FINAL <> (a:test.A, lambda:<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:a index:0 type:test.A
+      VALUE_PARAMETER name:lambda index:1 type:<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>>
+        EXPRESSION_BODY
+          PROPERTY_REFERENCE 'public final ok: <unbound IrClassSymbolImpl> [val] declared in test.A' field=null getter='public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in test.A' setter=null type=<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> origin=null
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun inlineFun (a: test.A, lambda: <unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'lambda: <unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> declared in test.inlineFun' type=<unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'a: test.A declared in test.inlineFun' type=test.A origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun inlineFun (a: test.A, lambda: <unbound IrClassSymbolImpl><test.A, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            a: CONSTRUCTOR_CALL 'public constructor <init> (ok: <unbound IrClassSymbolImpl>) [primary] declared in test.A' type=test.A origin=null
+              ok: CONST String type=<unbound IrClassSymbolImpl> value="OK"

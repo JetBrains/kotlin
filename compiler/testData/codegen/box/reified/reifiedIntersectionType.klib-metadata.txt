@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flow
+
+    public abstract interface Flow<out T#0 /* T */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */, T#1 /* R */> combine(vararg flows: Flow<T#0> /* kotlin/Array<out Flow<T#0>> */, crossinline transform: suspend kotlin/Function2<kotlin/Array<T#0>, kotlin/coroutines/Continuation<T#1>, kotlin/Any?>): Flow<T#1>
+
+      public final fun <T#0 /* T */> flowOf(value: T#0): Flow<T#0>
+
+      public final fun <T#0 /* T */> kotlin/Array<out T#0>.joinToString(): kotlin/String
+
+      public final fun test1(): kotlin/Unit
+    }
+  }
+}

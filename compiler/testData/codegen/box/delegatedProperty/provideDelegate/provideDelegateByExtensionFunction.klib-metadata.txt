@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DelegateProvider
+    // class name: Inv
+    // class name: TypeInference
+
+    public abstract class DelegateProvider<T#0 /* T */, T#1 /* R */> : kotlin/Any {
+
+      public constructor()
+
+      public abstract operator fun provideDelegate(thisRef: T#0, property: kotlin/reflect/KProperty<*>): Inv<T#1>
+    }
+
+    public final class Inv<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public final val x: T#0
+        public final get
+    }
+
+    public final class TypeInference : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ val explicitTypes: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val withoutTypes: kotlin/String
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun <T#0 /* T */> Inv<T#0>.getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+
+      public final fun <T#0 /* T */, T#1 /* R */> T#0.providerFun(): DelegateProvider<T#0, T#1>
+    }
+  }
+}

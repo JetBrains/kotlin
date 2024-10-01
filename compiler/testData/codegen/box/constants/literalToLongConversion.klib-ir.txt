@@ -1,0 +1,27 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/literalToLongConversion.kt
+    PROPERTY name:hourInMilliseconds signature:/hourInMilliseconds|{}hourInMilliseconds[0] visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:hourInMilliseconds signature:[ /hourInMilliseconds|{}hourInMilliseconds[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:hourInMilliseconds type:kotlin.Long visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=3600000
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hourInMilliseconds> signature:/hourInMilliseconds.<get-hourInMilliseconds>|<get-hourInMilliseconds>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:hourInMilliseconds signature:/hourInMilliseconds|{}hourInMilliseconds[0] visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-hourInMilliseconds> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:hourInMilliseconds signature:[ /hourInMilliseconds|{}hourInMilliseconds[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:hourInMilliseconds type:kotlin.Long visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:expected type:<unbound IrClassSymbolImpl> [val]
+          CONST Long type=<unbound IrClassSymbolImpl> value=3600000
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CONST Long type=<unbound IrClassSymbolImpl> value=3600000
+                arg1: GET_VAR 'val expected: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                CONST Long type=<unbound IrClassSymbolImpl> value=3600000

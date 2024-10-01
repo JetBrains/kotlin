@@ -1,0 +1,125 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      // nested class: B
+    }
+
+    public final inner class A.B : kotlin/Any {
+
+      public constructor(a: kotlin/Int /* = ... */, b: kotlin/Int /* = ... */, c: kotlin/Int /* = ... */, d: kotlin/Int /* = ... */, e: kotlin/Int /* = ... */, f: kotlin/Int /* = ... */, g: kotlin/Int /* = ... */, h: kotlin/Int /* = ... */, i: kotlin/Int /* = ... */, j: kotlin/Int /* = ... */, k: kotlin/Int /* = ... */, l: kotlin/Int /* = ... */, m: kotlin/Int /* = ... */, n: kotlin/Int /* = ... */, o: kotlin/Int /* = ... */, p: kotlin/Int /* = ... */, q: kotlin/Int /* = ... */, r: kotlin/Int /* = ... */, s: kotlin/Int /* = ... */, t: kotlin/Int /* = ... */, u: kotlin/Int /* = ... */, v: kotlin/Int /* = ... */, w: kotlin/Int /* = ... */, x: kotlin/Int /* = ... */, y: kotlin/Int /* = ... */, z: kotlin/Int /* = ... */, aa: kotlin/Int /* = ... */, bb: kotlin/Int /* = ... */, cc: kotlin/Int /* = ... */, dd: kotlin/Int /* = ... */, ee: kotlin/Int /* = ... */, ff: kotlin/Int /* = ... */)
+
+      public open fun toString(): kotlin/String
+
+      public final val a: kotlin/Int
+        public final get
+
+      public final val aa: kotlin/Int
+        public final get
+
+      public final val b: kotlin/Int
+        public final get
+
+      public final val bb: kotlin/Int
+        public final get
+
+      public final val c: kotlin/Int
+        public final get
+
+      public final val cc: kotlin/Int
+        public final get
+
+      public final val d: kotlin/Int
+        public final get
+
+      public final val dd: kotlin/Int
+        public final get
+
+      public final val e: kotlin/Int
+        public final get
+
+      public final val ee: kotlin/Int
+        public final get
+
+      public final val f: kotlin/Int
+        public final get
+
+      public final val ff: kotlin/Int
+        public final get
+
+      public final val g: kotlin/Int
+        public final get
+
+      public final val h: kotlin/Int
+        public final get
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final val j: kotlin/Int
+        public final get
+
+      public final val k: kotlin/Int
+        public final get
+
+      public final val l: kotlin/Int
+        public final get
+
+      public final val m: kotlin/Int
+        public final get
+
+      public final val n: kotlin/Int
+        public final get
+
+      public final val o: kotlin/Int
+        public final get
+
+      public final val p: kotlin/Int
+        public final get
+
+      public final val q: kotlin/Int
+        public final get
+
+      public final val r: kotlin/Int
+        public final get
+
+      public final val s: kotlin/Int
+        public final get
+
+      public final val t: kotlin/Int
+        public final get
+
+      public final val u: kotlin/Int
+        public final get
+
+      public final val v: kotlin/Int
+        public final get
+
+      public final val w: kotlin/Int
+        public final get
+
+      public final val x: kotlin/Int
+        public final get
+
+      public final val y: kotlin/Int
+        public final get
+
+      public final val z: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,77 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/CreateEmployeeUseCaseAccessor
+    // class name: lib/Either
+    // class name: lib/Employee
+    // class name: lib/Single
+    // class name: lib/TestObserver
+
+    public final class lib/CreateEmployeeUseCaseAccessor : kotlin/Any {
+
+      public constructor()
+
+      public final fun testNormalName(): kotlin/Unit
+    }
+
+    public final class lib/Either<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class lib/Employee : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class lib/Single<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): lib/TestObserver<T#0>
+    }
+
+    public final class lib/TestObserver<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun assertValue(valuePredicate: kotlin/Function1<T#0, kotlin/Boolean>): kotlin/Unit
+    }
+
+    package {
+
+      public final fun provideDomainSingle(): lib/Single<lib/Either<lib/Employee> /* = lib/DomainEither^<lib/Employee> */> /* = lib/DomainSingle^<lib/Employee> */
+
+      public typealias DomainEither<T#0 /* T */> = lib/Either<T#0> /* = lib/Either<T#0> */
+
+      public typealias DomainSingle<T#0 /* T */> = lib/Single<lib/Either<T#0> /* = lib/DomainEither^<T#0> */> /* = lib/Single<lib/Either<T#0> /* = lib/DomainEither^<T#0> */> */
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CreateEmployeeUseCaseTest
+
+    public final class CreateEmployeeUseCaseTest : kotlin/Any {
+
+      public constructor()
+
+      public final fun testNormalName(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

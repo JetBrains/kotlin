@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Selector
+
+    public final class Selector<T#0 /* In */, T#1 /* Out */> : kotlin/collections/Iterator<T#1> {
+
+      public constructor(source: kotlin/collections/Iterator<T#0>, f: kotlin/Function1<T#0, T#1>)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): T#1
+
+      public final val f: kotlin/Function1<T#0, T#1>
+        public final get
+
+      public final val source: kotlin/collections/Iterator<T#0>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> kotlin/collections/Iterator<T#0>.foreach(action: kotlin/Function1<T#0, kotlin/Unit>): kotlin/Unit
+
+      public final fun <T#0 /* In */, T#1 /* Out */> kotlin/collections/Iterator<T#0>.select(f: kotlin/Function1<T#0, T#1>): kotlin/collections/Iterator<T#1>
+
+      public final var result: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

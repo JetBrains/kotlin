@@ -1,0 +1,117 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/accessPrivateInlineClassConstructorFromLambdaGeneric.kt
+    CLASS CLASS name:Composed signature:/Composed|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Composed<T of <root>.Composed>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Composed|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.String] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/Composed.<init>|<init>(1:0){}[0] visibility:public <> (s:T of <root>.Composed) returnType:<root>.Composed<T of <root>.Composed> [primary]
+        VALUE_PARAMETER name:s index:0 type:T of <root>.Composed
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Composed signature:/Composed|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/Composed.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Composed.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:T of <root>.Composed visibility:private [final]] ] type:T of <root>.Composed visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: T of <root>.Composed declared in <root>.Composed.<init>' type=T of <root>.Composed origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/Composed.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Composed<T of <root>.Composed>) returnType:T of <root>.Composed
+          correspondingProperty: PROPERTY name:s signature:/Composed.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Composed<T of <root>.Composed>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): T of <root>.Composed declared in <root>.Composed'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Composed.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:T of <root>.Composed visibility:private [final]] ] type:T of <root>.Composed visibility:private [final]' type=T of <root>.Composed origin=null
+                receiver: GET_VAR '<this>: <root>.Composed<T of <root>.Composed> declared in <root>.Composed.<get-s>' type=<root>.Composed<T of <root>.Composed> origin=null
+      CONSTRUCTOR signature:/Composed.<init>|<init>(kotlin.String;kotlin.Int){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>, x:<unbound IrClassSymbolImpl>) returnType:<root>.Composed<T of <root>.Composed>
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:x index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: T of <root>.Composed) [primary] declared in <root>.Composed'
+            <T>: T of <root>.Composed
+            s: TYPE_OP type=T of <root>.Composed origin=CAST typeOperand=T of <root>.Composed
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.Composed.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                    2: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Composed.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      CONSTRUCTOR signature:/Composed.<init>|<init>(kotlin.String;kotlin.String){}[0] visibility:private <> (s1:<unbound IrClassSymbolImpl>, s2:<unbound IrClassSymbolImpl>) returnType:<root>.Composed<T of <root>.Composed>
+        VALUE_PARAMETER name:s1 index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:s2 index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>, x: <unbound IrClassSymbolImpl>) declared in <root>.Composed'
+            <T>: T of <root>.Composed
+            s: TYPE_OP type=T of <root>.Composed origin=CAST typeOperand=T of <root>.Composed
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR 's1: <unbound IrClassSymbolImpl> declared in <root>.Composed.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 's2: <unbound IrClassSymbolImpl> declared in <root>.Composed.<init>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=2
+      FUN name:p1 signature:/Composed.p1|p1(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Composed<T of <root>.Composed>, s2:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<root>.Composed<<unbound IrClassSymbolImpl>>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Composed<T of <root>.Composed>
+        VALUE_PARAMETER name:s2 index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun p1 (s2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<root>.Composed<<unbound IrClassSymbolImpl>>> declared in <root>.Composed'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Composed<<unbound IrClassSymbolImpl>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Composed<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.Composed<<unbound IrClassSymbolImpl>> declared in <root>.Composed.p1'
+                    CONSTRUCTOR_CALL 'private constructor <init> (s1: <unbound IrClassSymbolImpl>, s2: <unbound IrClassSymbolImpl>) declared in <root>.Composed' type=<root>.Composed<<unbound IrClassSymbolImpl>> origin=null
+                      <class: T>: <unbound IrClassSymbolImpl>
+                      s1: CALL 'public final fun <get-s> (): T of <root>.Composed declared in <root>.Composed' type=T of <root>.Composed origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.Composed<T of <root>.Composed> declared in <root>.Composed.p1' type=<root>.Composed<T of <root>.Composed> origin=null
+                      s2: GET_VAR 's2: <unbound IrClassSymbolImpl> declared in <root>.Composed.p1' type=<unbound IrClassSymbolImpl> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/Composed.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Composed<T of <root>.Composed>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Composed<T of <root>.Composed>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Composed'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Composed("
+              CONST String type=<unbound IrClassSymbolImpl> value="s="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Composed.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:T of <root>.Composed visibility:private [final]] ] type:T of <root>.Composed visibility:private [final]' type=T of <root>.Composed origin=null
+                receiver: GET_VAR '<this>: <root>.Composed<T of <root>.Composed> declared in <root>.Composed.toString' type=<root>.Composed<T of <root>.Composed> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/Composed.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Composed<T of <root>.Composed>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Composed<T of <root>.Composed>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Composed'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Composed.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:T of <root>.Composed visibility:private [final]] ] type:T of <root>.Composed visibility:private [final]' type=T of <root>.Composed origin=null
+                receiver: GET_VAR '<this>: <root>.Composed<T of <root>.Composed> declared in <root>.Composed.hashCode' type=<root>.Composed<T of <root>.Composed> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/Composed.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Composed<T of <root>.Composed>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Composed<T of <root>.Composed>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Composed<T of <root>.Composed>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Composed.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Composed'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Composed<T of <root>.Composed> [val]
+            TYPE_OP type=<root>.Composed<T of <root>.Composed> origin=CAST typeOperand=<root>.Composed<T of <root>.Composed>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Composed.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Composed.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:T of <root>.Composed visibility:private [final]] ] type:T of <root>.Composed visibility:private [final]' type=T of <root>.Composed origin=null
+                    receiver: GET_VAR '<this>: <root>.Composed<T of <root>.Composed> declared in <root>.Composed.equals' type=<root>.Composed<T of <root>.Composed> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Composed.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:T of <root>.Composed visibility:private [final]] ] type:T of <root>.Composed visibility:private [final]' type=T of <root>.Composed origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Composed<T of <root>.Composed> [val] declared in <root>.Composed.equals' type=<root>.Composed<T of <root>.Composed> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Composed'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Composed'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-s> (): T of <root>.Composed declared in <root>.Composed' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Composed<<unbound IrClassSymbolImpl>> origin=INVOKE
+              $this: CALL 'public final fun p1 (s2: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><<root>.Composed<<unbound IrClassSymbolImpl>>> declared in <root>.Composed' type=<unbound IrClassSymbolImpl><<root>.Composed<<unbound IrClassSymbolImpl>>> origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> (s: T of <root>.Composed) [primary] declared in <root>.Composed' type=<root>.Composed<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                s2: CONST String type=<unbound IrClassSymbolImpl> value="K1234"

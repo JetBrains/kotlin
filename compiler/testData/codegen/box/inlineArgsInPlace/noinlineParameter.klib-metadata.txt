@@ -1,0 +1,15 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @kotlin/internal/InlineOnly
+      public final inline fun invokeNoInline(noinline b: kotlin/Function1<kotlin/String, kotlin/String>, s: kotlin/String): kotlin/String
+    }
+  }
+}

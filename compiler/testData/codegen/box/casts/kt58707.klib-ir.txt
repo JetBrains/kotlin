@@ -1,0 +1,29 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt58707.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    FUN name:getA signature:/getA|getA(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> () returnType:<root>.A
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /getA|getA(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getA <E> (): <root>.A declared in <root>'
+          TYPE_OP type=<root>.A origin=CAST typeOperand=<root>.A
+            BLOCK type=<root>.getA.<no name provided><E of <root>.getA> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.getA.<no name provided><E of <root>.getA>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.getA.<no name provided><E of <root>.getA> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.getA.<no name provided>' type=<root>.getA.<no name provided><E of <root>.getA> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.A
+                CALL 'public final fun getA <E> (): <root>.A declared in <root>' type=<root>.A origin=null
+                  <E>: <unbound IrClassSymbolImpl>
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="FAIL"

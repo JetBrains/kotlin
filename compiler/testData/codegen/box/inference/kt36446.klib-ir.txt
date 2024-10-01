@@ -1,0 +1,101 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt36446.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun definition <Transaction> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.DefinitionBuilder<Transaction of <root>.definition>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <Transaction>: <root>.Transaction
+          configure: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.DefinitionBuilder<<root>.Transaction>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.DefinitionBuilder<<root>.Transaction>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$definition type:<root>.DefinitionBuilder<<root>.Transaction>
+              BLOCK_BODY
+                CALL 'public final fun conversion <Value> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ConversionBuilder<Value of <root>.DefinitionBuilder.conversion>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.DefinitionBuilder' type=<unbound IrClassSymbolImpl> origin=null
+                  <Value>: <unbound IrClassSymbolImpl>
+                  $this: GET_VAR '$this$definition: <root>.DefinitionBuilder<<root>.Transaction> declared in <root>.box.<anonymous>' type=<root>.DefinitionBuilder<<root>.Transaction> origin=null
+                  configure: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.ConversionBuilder<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ConversionBuilder<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                      $receiver: VALUE_PARAMETER name:$this$conversion type:<root>.ConversionBuilder<<unbound IrClassSymbolImpl>>
+                      BLOCK_BODY
+                        LOCAL_DELEGATED_PROPERTY name:offset type:<unbound IrClassSymbolImpl> flags:val
+                          VAR PROPERTY_DELEGATE name:offset$delegate type:<root>.ArgumentReference<<unbound IrClassSymbolImpl>> [val]
+                            CALL 'public abstract fun provideDelegate (thisRef: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): <root>.ArgumentReference<Value of <root>.ArgumentDefinition> [operator] declared in <root>.ArgumentDefinition' type=<root>.ArgumentReference<<unbound IrClassSymbolImpl>> origin=null
+                              $this: CALL 'public final fun argument <ArgumentValue> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ArgumentBuilder<ArgumentValue of <root>.ConversionBuilder.argument>, <unbound IrClassSymbolImpl>>): <root>.ArgumentDefinition<ArgumentValue of <root>.ConversionBuilder.argument> declared in <root>.ConversionBuilder' type=<root>.ArgumentDefinition<<unbound IrClassSymbolImpl>> origin=null
+                                <ArgumentValue>: <unbound IrClassSymbolImpl>
+                                $this: GET_VAR '$this$conversion: <root>.ConversionBuilder<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>.<anonymous>' type=<root>.ConversionBuilder<<unbound IrClassSymbolImpl>> origin=null
+                                configure: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.ArgumentBuilder<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ArgumentBuilder<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                                    $receiver: VALUE_PARAMETER name:$this$argument type:<root>.ArgumentBuilder<<unbound IrClassSymbolImpl>>
+                                    BLOCK_BODY
+                                      CALL 'public final fun defaultInt (default: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArgumentBuilder' type=<unbound IrClassSymbolImpl> origin=null
+                                        $this: GET_VAR '$this$argument: <root>.ArgumentBuilder<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=<root>.ArgumentBuilder<<unbound IrClassSymbolImpl>> origin=null
+                                        default: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                              thisRef: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                              property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val offset: <unbound IrClassSymbolImpl> by (...)' delegate='val offset$delegate: <root>.ArgumentReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>.<anonymous>' getter='local final fun <get-offset> (): <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-offset> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-offset> (): <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>'
+                                CALL 'public abstract fun getValue (thisRef: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): Value of <root>.ArgumentReference [operator] declared in <root>.ArgumentReference' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR 'val offset$delegate: <root>.ArgumentReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>.<anonymous>' type=<root>.ArgumentReference<<unbound IrClassSymbolImpl>> origin=null
+                                  thisRef: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                                  property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val offset: <unbound IrClassSymbolImpl> by (...)' delegate='val offset$delegate: <root>.ArgumentReference<<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>.<anonymous>' getter='local final fun <get-offset> (): <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS INTERFACE name:Transaction signature:/Transaction|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Transaction
+    FUN name:definition signature:/definition|definition(kotlin.Function1<DefinitionBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <Transaction> (configure:@[<unbound>] <unbound IrClassSymbolImpl><<root>.DefinitionBuilder<Transaction of <root>.definition>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:Transaction index:0 variance: signature:[ /definition|definition(kotlin.Function1<DefinitionBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:configure index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.DefinitionBuilder<Transaction of <root>.definition>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    CLASS CLASS name:ArgumentBuilder signature:/ArgumentBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentBuilder<Value of <root>.ArgumentBuilder>
+      TYPE_PARAMETER name:Value index:0 variance: signature:[ /ArgumentBuilder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ArgumentBuilder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ArgumentBuilder<Value of <root>.ArgumentBuilder> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArgumentBuilder signature:/ArgumentBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:defaultInt signature:/ArgumentBuilder.defaultInt|defaultInt(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ArgumentBuilder<Value of <root>.ArgumentBuilder>, default:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentBuilder<Value of <root>.ArgumentBuilder>
+        VALUE_PARAMETER name:default index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    CLASS CLASS name:ConversionBuilder signature:/ConversionBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ConversionBuilder<Value of <root>.ConversionBuilder>
+      TYPE_PARAMETER name:Value index:0 variance: signature:[ /ConversionBuilder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ConversionBuilder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ConversionBuilder<Value of <root>.ConversionBuilder> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ConversionBuilder signature:/ConversionBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:argument signature:/ConversionBuilder.argument|argument(kotlin.Function1<ArgumentBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <ArgumentValue> ($this:<root>.ConversionBuilder<Value of <root>.ConversionBuilder>, configure:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ArgumentBuilder<ArgumentValue of <root>.ConversionBuilder.argument>, <unbound IrClassSymbolImpl>>) returnType:<root>.ArgumentDefinition<ArgumentValue of <root>.ConversionBuilder.argument>
+        TYPE_PARAMETER name:ArgumentValue index:0 variance: signature:[ /ConversionBuilder.argument|argument(kotlin.Function1<ArgumentBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.ConversionBuilder<Value of <root>.ConversionBuilder>
+        VALUE_PARAMETER name:configure index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ArgumentBuilder<ArgumentValue of <root>.ConversionBuilder.argument>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun argument <ArgumentValue> (configure: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ArgumentBuilder<ArgumentValue of <root>.ConversionBuilder.argument>, <unbound IrClassSymbolImpl>>): <root>.ArgumentDefinition<ArgumentValue of <root>.ConversionBuilder.argument> declared in <root>.ConversionBuilder'
+            TYPE_OP type=<root>.ArgumentDefinition<ArgumentValue of <root>.ConversionBuilder.argument> origin=CAST typeOperand=<root>.ArgumentDefinition<ArgumentValue of <root>.ConversionBuilder.argument>
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS CLASS name:DefinitionBuilder signature:/DefinitionBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DefinitionBuilder<Transaction of <root>.DefinitionBuilder>
+      TYPE_PARAMETER name:Transaction index:0 variance: signature:[ /DefinitionBuilder|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/DefinitionBuilder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DefinitionBuilder<Transaction of <root>.DefinitionBuilder> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefinitionBuilder signature:/DefinitionBuilder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:conversion signature:/DefinitionBuilder.conversion|conversion(kotlin.Function1<ConversionBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <Value> ($this:<root>.DefinitionBuilder<Transaction of <root>.DefinitionBuilder>, configure:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ConversionBuilder<Value of <root>.DefinitionBuilder.conversion>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+        TYPE_PARAMETER name:Value index:0 variance: signature:[ /DefinitionBuilder.conversion|conversion(kotlin.Function1<ConversionBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.DefinitionBuilder<Transaction of <root>.DefinitionBuilder>
+        VALUE_PARAMETER name:configure index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ConversionBuilder<Value of <root>.DefinitionBuilder.conversion>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+    CLASS INTERFACE name:ArgumentDefinition signature:/ArgumentDefinition|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentDefinition<Value of <root>.ArgumentDefinition>
+      TYPE_PARAMETER name:Value index:0 variance: signature:[ /ArgumentDefinition|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:provideDelegate signature:/ArgumentDefinition.provideDelegate|provideDelegate(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ArgumentDefinition<Value of <root>.ArgumentDefinition>, thisRef:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl><*>) returnType:<root>.ArgumentReference<Value of <root>.ArgumentDefinition> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentDefinition<Value of <root>.ArgumentDefinition>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>
+    CLASS INTERFACE name:ArgumentReference signature:/ArgumentReference|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentReference<Value of <root>.ArgumentReference>
+      TYPE_PARAMETER name:Value index:0 variance:out signature:[ /ArgumentReference|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:Transaction index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:getValue signature:/ArgumentReference.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ArgumentReference<Value of <root>.ArgumentReference>, thisRef:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl><*>) returnType:Value of <root>.ArgumentReference [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentReference<Value of <root>.ArgumentReference>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>

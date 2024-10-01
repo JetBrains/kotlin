@@ -1,0 +1,105 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt53422a.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun buildFromValue <PTV> (value: PTV of <root>.buildFromValue, instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, PTV of <root>.buildFromValue, <unbound IrClassSymbolImpl>>): <root>.Buildee<PTV of <root>.buildFromValue> declared in <root>' type=<root>.Buildee<<root>.InnerBuildee<<root>.TargetType>> origin=null
+            <PTV>: <root>.InnerBuildee<<root>.TargetType>
+            value: CALL 'public final fun innerBuild <IPTV> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<IPTV of <root>.innerBuild>, <unbound IrClassSymbolImpl>>): <root>.InnerBuildee<IPTV of <root>.innerBuild> declared in <root>' type=<root>.InnerBuildee<<root>.TargetType> origin=null
+              <IPTV>: <root>.TargetType
+              instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<<root>.TargetType>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.InnerBuildee<<root>.TargetType>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$innerBuild type:<root>.InnerBuildee<<root>.TargetType>
+                  BLOCK_BODY
+                    CALL 'public final fun setInnerTypeVariable (value: ITV of <root>.InnerBuildee): <unbound IrClassSymbolImpl> declared in <root>.InnerBuildee' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$innerBuild: <root>.InnerBuildee<<root>.TargetType> declared in <root>.box.<anonymous>' type=<root>.InnerBuildee<<root>.TargetType> origin=null
+                      value: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TargetType' type=<root>.TargetType origin=null
+            instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<root>.InnerBuildee<<root>.TargetType>>, <root>.InnerBuildee<<root>.TargetType>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<root>.InnerBuildee<<root>.TargetType>>, it:<root>.InnerBuildee<<root>.TargetType>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$buildFromValue type:<root>.Buildee<<root>.InnerBuildee<<root>.TargetType>>
+                VALUE_PARAMETER name:it index:0 type:<root>.InnerBuildee<<root>.TargetType>
+                BLOCK_BODY
+                  CALL 'public final fun placeholderExtensionInvokeOnInnerBuildee <EITV> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    <EITV>: <root>.TargetType
+                    $receiver: GET_VAR 'it: <root>.InnerBuildee<<root>.TargetType> declared in <root>.box.<anonymous>' type=<root>.InnerBuildee<<root>.TargetType> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:TargetType signature:/TargetType|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TargetType
+      CONSTRUCTOR signature:/TargetType.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.TargetType [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TargetType signature:/TargetType|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:InnerBuildee signature:/InnerBuildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InnerBuildee<ITV of <root>.InnerBuildee>
+      TYPE_PARAMETER name:ITV index:0 variance: signature:[ /InnerBuildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:ITV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/InnerBuildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.InnerBuildee<ITV of <root>.InnerBuildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerBuildee signature:/InnerBuildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:setInnerTypeVariable signature:/InnerBuildee.setInnerTypeVariable|setInnerTypeVariable(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.InnerBuildee<ITV of <root>.InnerBuildee>, value:ITV of <root>.InnerBuildee) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.InnerBuildee<ITV of <root>.InnerBuildee>
+        VALUE_PARAMETER name:value index:0 type:ITV of <root>.InnerBuildee
+        BLOCK_BODY
+          CALL 'private final fun <set-storage> (<set-?>: ITV of <root>.InnerBuildee): <unbound IrClassSymbolImpl> declared in <root>.InnerBuildee' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.InnerBuildee<ITV of <root>.InnerBuildee> declared in <root>.InnerBuildee.setInnerTypeVariable' type=<root>.InnerBuildee<ITV of <root>.InnerBuildee> origin=null
+            <set-?>: GET_VAR 'value: ITV of <root>.InnerBuildee declared in <root>.InnerBuildee.setInnerTypeVariable' type=ITV of <root>.InnerBuildee origin=null
+      PROPERTY name:storage signature:/InnerBuildee.storage|{}storage[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /InnerBuildee.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:storage type:ITV of <root>.InnerBuildee visibility:private] ] type:ITV of <root>.InnerBuildee visibility:private
+          EXPRESSION_BODY
+            TYPE_OP type=ITV of <root>.InnerBuildee origin=CAST typeOperand=ITV of <root>.InnerBuildee
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TargetType' type=<root>.TargetType origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-storage> signature:/InnerBuildee.storage.<get-storage>|<get-storage>(){}[0] visibility:private modality:FINAL <> ($this:<root>.InnerBuildee<ITV of <root>.InnerBuildee>) returnType:ITV of <root>.InnerBuildee
+          correspondingProperty: PROPERTY name:storage signature:/InnerBuildee.storage|{}storage[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.InnerBuildee<ITV of <root>.InnerBuildee>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-storage> (): ITV of <root>.InnerBuildee declared in <root>.InnerBuildee'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /InnerBuildee.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:storage type:ITV of <root>.InnerBuildee visibility:private] ] type:ITV of <root>.InnerBuildee visibility:private' type=ITV of <root>.InnerBuildee origin=null
+                receiver: GET_VAR '<this>: <root>.InnerBuildee<ITV of <root>.InnerBuildee> declared in <root>.InnerBuildee.<get-storage>' type=<root>.InnerBuildee<ITV of <root>.InnerBuildee> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-storage> signature:/InnerBuildee.storage.<set-storage>|<set-storage>(1:0){}[0] visibility:private modality:FINAL <> ($this:<root>.InnerBuildee<ITV of <root>.InnerBuildee>, <set-?>:ITV of <root>.InnerBuildee) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:storage signature:/InnerBuildee.storage|{}storage[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.InnerBuildee<ITV of <root>.InnerBuildee>
+          VALUE_PARAMETER name:<set-?> index:0 type:ITV of <root>.InnerBuildee
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /InnerBuildee.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:storage type:ITV of <root>.InnerBuildee visibility:private] ] type:ITV of <root>.InnerBuildee visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.InnerBuildee<ITV of <root>.InnerBuildee> declared in <root>.InnerBuildee.<set-storage>' type=<root>.InnerBuildee<ITV of <root>.InnerBuildee> origin=null
+              value: GET_VAR '<set-?>: ITV of <root>.InnerBuildee declared in <root>.InnerBuildee.<set-storage>' type=ITV of <root>.InnerBuildee origin=null
+    FUN name:placeholderExtensionInvokeOnInnerBuildee signature:/placeholderExtensionInvokeOnInnerBuildee|placeholderExtensionInvokeOnInnerBuildee@InnerBuildee<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <EITV> ($receiver:<root>.InnerBuildee<EITV of <root>.placeholderExtensionInvokeOnInnerBuildee>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:EITV index:0 variance: signature:[ /placeholderExtensionInvokeOnInnerBuildee|placeholderExtensionInvokeOnInnerBuildee@InnerBuildee<0:0>(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:ITV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.InnerBuildee<EITV of <root>.placeholderExtensionInvokeOnInnerBuildee>
+      BLOCK_BODY
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<TV of <root>.Buildee>
+      TYPE_PARAMETER name:TV index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:ITV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<TV of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:innerBuild signature:/innerBuild|innerBuild(kotlin.Function1<InnerBuildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <IPTV> (instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<IPTV of <root>.innerBuild>, <unbound IrClassSymbolImpl>>) returnType:<root>.InnerBuildee<IPTV of <root>.innerBuild>
+      TYPE_PARAMETER name:IPTV index:0 variance: signature:[ /innerBuild|innerBuild(kotlin.Function1<InnerBuildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:ITV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructions index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<IPTV of <root>.innerBuild>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun innerBuild <IPTV> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<IPTV of <root>.innerBuild>, <unbound IrClassSymbolImpl>>): <root>.InnerBuildee<IPTV of <root>.innerBuild> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.InnerBuildee<IPTV of <root>.innerBuild> origin=null
+            <1>: <root>.InnerBuildee<IPTV of <root>.innerBuild>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.InnerBuildee' type=<root>.InnerBuildee<IPTV of <root>.innerBuild> origin=null
+              <class: ITV>: IPTV of <root>.innerBuild
+            1: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<IPTV of <root>.innerBuild>, <unbound IrClassSymbolImpl>> declared in <root>.innerBuild' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.InnerBuildee<IPTV of <root>.innerBuild>, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:buildFromValue signature:/buildFromValue|buildFromValue(0:0;kotlin.Function2<Buildee<0:0>,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <PTV> (value:PTV of <root>.buildFromValue, instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, PTV of <root>.buildFromValue, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<PTV of <root>.buildFromValue>
+      TYPE_PARAMETER name:PTV index:0 variance: signature:[ /buildFromValue|buildFromValue(0:0;kotlin.Function2<Buildee<0:0>,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:ITV index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:value index:0 type:PTV of <root>.buildFromValue
+      VALUE_PARAMETER name:instructions index:1 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, PTV of <root>.buildFromValue, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun buildFromValue <PTV> (value: PTV of <root>.buildFromValue, instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, PTV of <root>.buildFromValue, <unbound IrClassSymbolImpl>>): <root>.Buildee<PTV of <root>.buildFromValue> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<PTV of <root>.buildFromValue> origin=null
+            <1>: <root>.Buildee<PTV of <root>.buildFromValue>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<PTV of <root>.buildFromValue> origin=null
+              <class: TV>: PTV of <root>.buildFromValue
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<PTV of <root>.buildFromValue>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$apply type:<root>.Buildee<PTV of <root>.buildFromValue>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, PTV of <root>.buildFromValue, <unbound IrClassSymbolImpl>> declared in <root>.buildFromValue' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<PTV of <root>.buildFromValue>, PTV of <root>.buildFromValue, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                    1: GET_VAR '$this$apply: <root>.Buildee<PTV of <root>.buildFromValue> declared in <root>.buildFromValue.<anonymous>' type=<root>.Buildee<PTV of <root>.buildFromValue> origin=null
+                    2: GET_VAR 'value: PTV of <root>.buildFromValue declared in <root>.buildFromValue' type=PTV of <root>.buildFromValue origin=null

@@ -1,0 +1,793 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/specialCallsWithLambdas.kt
+    CLASS INTERFACE name:FlowCollector signature:/FlowCollector|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlowCollector<T of <root>.FlowCollector>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /FlowCollector|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:flow signature:/flow|flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <L> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>) returnType:<root>.Flow<L of <root>.flow>
+      annotations:
+        <unbound>(1 = ["OPT_IN_USAGE_ERROR"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      TYPE_PARAMETER name:L index:0 variance: signature:[ /flow|flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>>) [primary] declared in <root>.Flow' type=<root>.Flow<L of <root>.flow> origin=null
+            <class: R>: L of <root>.flow
+            block: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>> declared in <root>.flow' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:Flow signature:/Flow|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Flow<R of <root>.Flow>
+      TYPE_PARAMETER name:R index:0 variance:out signature:[ /Flow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Flow.<init>|<init>(kotlin.coroutines.SuspendFunction1<FlowCollector<1:0>,kotlin.Unit>){}[0] visibility:public <> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>>) returnType:<root>.Flow<R of <root>.Flow> [primary]
+        VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Flow signature:/Flow|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:block signature:/Flow.block|{}block[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:block signature:[ /Flow.block|{}block[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:block type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<R of <root>.Flow>, kotlin.Unit> visibility:private [final]] ] type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>> declared in <root>.Flow.<init>' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-block> signature:/Flow.block.<get-block>|<get-block>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Flow<R of <root>.Flow>) returnType:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:block signature:/Flow.block|{}block[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Flow<R of <root>.Flow>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-block> (): @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>> declared in <root>.Flow'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:block signature:[ /Flow.block|{}block[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:block type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<R of <root>.Flow>, kotlin.Unit> visibility:private [final]] ] type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>> visibility:private [final]' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<R of <root>.Flow>, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Flow<R of <root>.Flow> declared in <root>.Flow.<get-block>' type=<root>.Flow<R of <root>.Flow> origin=null
+    FUN name:select signature:/select|select(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (x:<unbound IrClassSymbolImpl><out R of <root>.select>) returnType:R of <root>.select
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /select|select(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><out R of <root>.select> varargElementType:R of <root>.select [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun select <R> (vararg x: R of <root>.select): R of <root>.select declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.select origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'x: <unbound IrClassSymbolImpl><out R of <root>.select> [vararg] declared in <root>.select' type=<unbound IrClassSymbolImpl><out R of <root>.select> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:poll0 signature:/poll0|poll0(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll0 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'public final fun select <R> (vararg x: R of <root>.select): R of <root>.select declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <R>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      x: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll0.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll0.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll0.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll01 signature:/poll01|poll01(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll01 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'public final fun select <R> (vararg x: R of <root>.select): R of <root>.select declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <R>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      x: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll01.<anonymous>'
+                                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll01.<anonymous>'
+                                CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll01.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll1 signature:/poll1|poll1(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll1 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IF
+                      BRANCH
+                        if: GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll1' type=<unbound IrClassSymbolImpl> origin=null
+                        then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll1.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll1.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll1.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll11 signature:/poll11|poll11(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll11 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IF
+                      BRANCH
+                        if: GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll11' type=<unbound IrClassSymbolImpl> origin=null
+                        then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll11.<anonymous>'
+                                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll11.<anonymous>'
+                                  CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll11.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll12 signature:/poll12|poll12(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll12 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IF
+                      BRANCH
+                        if: GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll12' type=<unbound IrClassSymbolImpl> origin=null
+                        then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll12.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll12.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll12.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll13 signature:/poll13|poll13(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll13 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=IF
+                      BRANCH
+                        if: GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll13' type=<unbound IrClassSymbolImpl> origin=null
+                        then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll13.<anonymous>'
+                                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll13.<anonymous>'
+                                CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll13.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll2 signature:/poll2|poll2(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll2 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+                        GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll2' type=<unbound IrClassSymbolImpl> origin=null
+                      WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.poll2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll2.<anonymous>'
+                                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll2.<anonymous>'
+                                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll2.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll21 signature:/poll21|poll21(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll21 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+                        GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll21' type=<unbound IrClassSymbolImpl> origin=null
+                      WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.poll21.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll21.<anonymous>'
+                                    CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                BLOCK_BODY
+                                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll21.<anonymous>'
+                                    CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll21.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll22 signature:/poll22|poll22(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll22 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+                        GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll22' type=<unbound IrClassSymbolImpl> origin=null
+                      WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.poll22.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll22.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll22.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll22.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll23 signature:/poll23|poll23(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (flag:<unbound IrClassSymbolImpl>) returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:flag index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll23 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+                        GET_VAR 'flag: <unbound IrClassSymbolImpl> declared in <root>.poll23' type=<unbound IrClassSymbolImpl> origin=null
+                      WHEN type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=WHEN
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.poll23.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            arg1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll23.<anonymous>'
+                                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll23.<anonymous>'
+                                  CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll23.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll4 signature:/poll4|poll4(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll4 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    TRY type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      try: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll4.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll4.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll4.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll41 signature:/poll41|poll41(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll41 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    TRY type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      try: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll41.<anonymous>'
+                                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll41.<anonymous>'
+                                  CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll41.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll42 signature:/poll42|poll42(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll42 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    TRY type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      try: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll42.<anonymous>'
+                                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll42.<anonymous>'
+                                  CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll42.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll43 signature:/poll43|poll43(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll43 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    TRY type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      try: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll43.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll43.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll43.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll5 signature:/poll5|poll5(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll5 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    TRY type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      try: BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll5.<anonymous>'
+                                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                      CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.poll5.<anonymous>
+                        VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+                        BLOCK type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll5.<anonymous>'
+                                  CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                      finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll5.<anonymous>'
+                                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll5.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll7 signature:/poll7|poll7(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll7 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      arg0: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll7.<anonymous>'
+                              GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll7.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll71 signature:/poll71|poll71(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll71 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      arg0: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll71.<anonymous>'
+                              CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll71.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll72 signature:/poll72|poll72(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll72 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                      arg0: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll72.<anonymous>'
+                              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                  BLOCK_BODY
+                                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll72.<anonymous>.<anonymous>'
+                                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INVOKE
+                      $this: GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.poll72.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+    FUN name:poll73 signature:/poll73|poll73(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll73 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+                      <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      arg0: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll73.<anonymous>'
+                              GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val inv: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.poll73.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:poll81 signature:/poll81|poll81(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll81 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                        1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll81.<anonymous>'
+                                GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll81.<anonymous>'
+                              GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val inv: <unbound IrClassSymbolImpl> [val] declared in <root>.poll81.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:poll82 signature:/poll82|poll82(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll82 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                        1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll82.<anonymous>'
+                                FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                    BLOCK_BODY
+                                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll82.<anonymous>.<anonymous>'
+                                        GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll82.<anonymous>'
+                              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                  BLOCK_BODY
+                                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll82.<anonymous>.<anonymous>'
+                                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val inv: <unbound IrClassSymbolImpl> [val] declared in <root>.poll82.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:poll83 signature:/poll83|poll83(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll83 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                        1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll83.<anonymous>'
+                                FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                    BLOCK_BODY
+                                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll83.<anonymous>.<anonymous>'
+                                        GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                      1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll83.<anonymous>'
+                              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                  BLOCK_BODY
+                                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll83.<anonymous>.<anonymous>'
+                                      GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val inv: <unbound IrClassSymbolImpl> [val] declared in <root>.poll83.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:poll85 signature:/poll85|poll85(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll85 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                        1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll85.<anonymous>'
+                                FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                    BLOCK_BODY
+                                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll85.<anonymous>.<anonymous>'
+                                        CONST String type=<unbound IrClassSymbolImpl> value="1f"
+                      1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll85.<anonymous>'
+                              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                  BLOCK_BODY
+                                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll85.<anonymous>.<anonymous>'
+                                      CONST String type=<unbound IrClassSymbolImpl> value="1"
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val inv: <unbound IrClassSymbolImpl> [val] declared in <root>.poll85.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:poll86 signature:/poll86|poll86(){}[0] visibility:public modality:FINAL <> () returnType:<root>.Flow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun poll86 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun flow <L> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<L of <root>.flow>, <unbound IrClassSymbolImpl>>): <root>.Flow<L of <root>.flow> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            <L>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FlowCollector<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  VAR name:inv type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                      $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=EXCLEXCL
+                        <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>
+                        arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                              BLOCK_BODY
+                                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll86.<anonymous>'
+                                  FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                      BLOCK_BODY
+                                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll86.<anonymous>.<anonymous>'
+                                          CONST String type=<unbound IrClassSymbolImpl> value="1f"
+                      1: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=EXCLEXCL
+                        <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                        arg0: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.poll86.<anonymous>'
+                                FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                                    BLOCK_BODY
+                                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.poll86.<anonymous>.<anonymous>'
+                                        CONST String type=<unbound IrClassSymbolImpl> value="1"
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'val inv: <unbound IrClassSymbolImpl> [val] declared in <root>.poll86.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll0 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll01 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll1 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll11 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll12 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll13 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll2 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll21 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll22 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll23 (flag: <unbound IrClassSymbolImpl>): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+            flag: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll4 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll41 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll42 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll43 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll5 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll7 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll71 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll72 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll73 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll81 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll82 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll83 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll85 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun poll86 (): <root>.Flow<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.Flow<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,105 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: L
+    // class name: Obj
+    // class name: Str
+    // class name: Z
+
+    public final value class L : kotlin/Any {
+
+      public constructor(long: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val long: kotlin/Long
+        public final get
+
+      // underlying property: long
+
+      // underlying type: kotlin/Long
+    }
+
+    public final value class Obj : kotlin/Any {
+
+      public constructor(obj: kotlin/Any)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val obj: kotlin/Any
+        public final get
+
+      // underlying property: obj
+
+      // underlying type: kotlin/Any
+    }
+
+    public final value class Str : kotlin/Any {
+
+      public constructor(string: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: kotlin/String
+        public final get
+
+      // underlying property: string
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class Z : kotlin/Any {
+
+      public constructor(int: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val int: kotlin/Int
+        public final get
+
+      // underlying property: int
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* R */> s1L(x: L, fn: kotlin/Function2<kotlin/Int, L, T#0>): T#0
+
+      public final inline fun <T#0 /* R */> s1Obj(x: Obj, fn: kotlin/Function2<kotlin/Int, Obj, T#0>): T#0
+
+      public final inline fun <T#0 /* R */> s1Str(x: Str, fn: kotlin/Function2<kotlin/Int, Str, T#0>): T#0
+
+      public final inline fun <T#0 /* R */> s1Z(x: Z, fn: kotlin/Function2<kotlin/Int, Z, T#0>): T#0
+
+      public final fun testS1L(a: L): L
+
+      public final fun testS1Obj(a: Obj): Obj
+
+      public final fun testS1Str(a: Str): Str
+
+      public final fun testS1Z(a: Z): Z
+    }
+  }
+}

@@ -1,0 +1,65 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Nested
+    // class name: NestedArray
+    // class name: TypeAnnotation
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class Nested : kotlin/Annotation {
+
+      public constructor(a: TypeAnnotation)
+
+      public final val a: TypeAnnotation
+        public final get
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class NestedArray : kotlin/Annotation {
+
+      public constructor(a: kotlin/Array<TypeAnnotation>)
+
+      public final val a: kotlin/Array<TypeAnnotation>
+        public final get
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class TypeAnnotation : kotlin/Annotation {
+
+      public constructor(str: kotlin/String)
+
+      public final val str: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final val a: @Nested(a = TypeAnnotation(str = "IntAnno")) kotlin/Int /* = ... */
+        public final get
+
+      public final val b: @NestedArray(a = [TypeAnnotation(str = "Element1Anno"), TypeAnnotation(str = "Element2Anno")]) kotlin/Int /* = ... */
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,63 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EndElement
+    // class name: KtDotQualifiedExpression
+    // class name: KtNameReferenceExpression
+    // class name: OtherElement
+    // class name: PsiElement
+
+    public final class EndElement : PsiElement {
+
+      public constructor()
+
+      public open val parent: PsiElement
+        public open /* non-default */ get
+    }
+
+    public final class KtDotQualifiedExpression : PsiElement {
+
+      public constructor()
+
+      public open val parent: PsiElement
+        public open /* non-default */ get
+
+      public final val psi: PsiElement
+        public final get
+    }
+
+    public final class KtNameReferenceExpression : PsiElement {
+
+      public constructor(parent: PsiElement)
+
+      public open val parent: PsiElement
+        public open get
+    }
+
+    public final class OtherElement : PsiElement {
+
+      public constructor(parent: PsiElement)
+
+      public open val parent: PsiElement
+        public open get
+    }
+
+    public abstract class PsiElement : kotlin/Any {
+
+      public constructor()
+
+      public abstract val parent: PsiElement
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun mark(element: PsiElement): kotlin/String
+    }
+  }
+}

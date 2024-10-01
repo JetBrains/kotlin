@@ -1,0 +1,133 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/subclass.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(kotlin.String){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.A [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/A.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/A.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/A.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /A.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-value>' type=<root>.A origin=null
+    CLASS CLASS name:Fun signature:/Fun|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fun
+      CONSTRUCTOR signature:/Fun.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Fun [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Fun signature:/Fun|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <root>.A, <unbound IrClassSymbolImpl>>]'
+      FUN name:invoke signature:/Fun.invoke|invoke(A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A;A){}[0] visibility:public modality:OPEN <> ($this:<root>.Fun, p1:<root>.A, p2:<root>.A, p3:<root>.A, p4:<root>.A, p5:<root>.A, p6:<root>.A, p7:<root>.A, p8:<root>.A, p9:<root>.A, p10:<root>.A, p11:<root>.A, p12:<root>.A, p13:<root>.A, p14:<root>.A, p15:<root>.A, p16:<root>.A, p17:<root>.A, p18:<root>.A, p19:<root>.A, p20:<root>.A, p21:<root>.A, p22:<root>.A, p23:<root>.A, p24:<root>.A, p25:<root>.A, p26:<root>.A, p27:<root>.A, p28:<root>.A, p29:<root>.A, p30:<root>.A, p31:<root>.A, p32:<root>.A, p33:<root>.A, p34:<root>.A, p35:<root>.A, p36:<root>.A, p37:<root>.A, p38:<root>.A, p39:<root>.A, p40:<root>.A, p41:<root>.A, p42:<root>.A) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Fun
+        VALUE_PARAMETER name:p1 index:0 type:<root>.A
+        VALUE_PARAMETER name:p2 index:1 type:<root>.A
+        VALUE_PARAMETER name:p3 index:2 type:<root>.A
+        VALUE_PARAMETER name:p4 index:3 type:<root>.A
+        VALUE_PARAMETER name:p5 index:4 type:<root>.A
+        VALUE_PARAMETER name:p6 index:5 type:<root>.A
+        VALUE_PARAMETER name:p7 index:6 type:<root>.A
+        VALUE_PARAMETER name:p8 index:7 type:<root>.A
+        VALUE_PARAMETER name:p9 index:8 type:<root>.A
+        VALUE_PARAMETER name:p10 index:9 type:<root>.A
+        VALUE_PARAMETER name:p11 index:10 type:<root>.A
+        VALUE_PARAMETER name:p12 index:11 type:<root>.A
+        VALUE_PARAMETER name:p13 index:12 type:<root>.A
+        VALUE_PARAMETER name:p14 index:13 type:<root>.A
+        VALUE_PARAMETER name:p15 index:14 type:<root>.A
+        VALUE_PARAMETER name:p16 index:15 type:<root>.A
+        VALUE_PARAMETER name:p17 index:16 type:<root>.A
+        VALUE_PARAMETER name:p18 index:17 type:<root>.A
+        VALUE_PARAMETER name:p19 index:18 type:<root>.A
+        VALUE_PARAMETER name:p20 index:19 type:<root>.A
+        VALUE_PARAMETER name:p21 index:20 type:<root>.A
+        VALUE_PARAMETER name:p22 index:21 type:<root>.A
+        VALUE_PARAMETER name:p23 index:22 type:<root>.A
+        VALUE_PARAMETER name:p24 index:23 type:<root>.A
+        VALUE_PARAMETER name:p25 index:24 type:<root>.A
+        VALUE_PARAMETER name:p26 index:25 type:<root>.A
+        VALUE_PARAMETER name:p27 index:26 type:<root>.A
+        VALUE_PARAMETER name:p28 index:27 type:<root>.A
+        VALUE_PARAMETER name:p29 index:28 type:<root>.A
+        VALUE_PARAMETER name:p30 index:29 type:<root>.A
+        VALUE_PARAMETER name:p31 index:30 type:<root>.A
+        VALUE_PARAMETER name:p32 index:31 type:<root>.A
+        VALUE_PARAMETER name:p33 index:32 type:<root>.A
+        VALUE_PARAMETER name:p34 index:33 type:<root>.A
+        VALUE_PARAMETER name:p35 index:34 type:<root>.A
+        VALUE_PARAMETER name:p36 index:35 type:<root>.A
+        VALUE_PARAMETER name:p37 index:36 type:<root>.A
+        VALUE_PARAMETER name:p38 index:37 type:<root>.A
+        VALUE_PARAMETER name:p39 index:38 type:<root>.A
+        VALUE_PARAMETER name:p40 index:39 type:<root>.A
+        VALUE_PARAMETER name:p41 index:40 type:<root>.A
+        VALUE_PARAMETER name:p42 index:41 type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun invoke (p1: <root>.A, p2: <root>.A, p3: <root>.A, p4: <root>.A, p5: <root>.A, p6: <root>.A, p7: <root>.A, p8: <root>.A, p9: <root>.A, p10: <root>.A, p11: <root>.A, p12: <root>.A, p13: <root>.A, p14: <root>.A, p15: <root>.A, p16: <root>.A, p17: <root>.A, p18: <root>.A, p19: <root>.A, p20: <root>.A, p21: <root>.A, p22: <root>.A, p23: <root>.A, p24: <root>.A, p25: <root>.A, p26: <root>.A, p27: <root>.A, p28: <root>.A, p29: <root>.A, p30: <root>.A, p31: <root>.A, p32: <root>.A, p33: <root>.A, p34: <root>.A, p35: <root>.A, p36: <root>.A, p37: <root>.A, p38: <root>.A, p39: <root>.A, p40: <root>.A, p41: <root>.A, p42: <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.Fun'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'p21: <root>.A declared in <root>.Fun.invoke' type=<root>.A origin=null
+              1: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'p32: <root>.A declared in <root>.Fun.invoke' type=<root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<root>.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+            value: CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:f type:<root>.Fun [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Fun' type=<root>.Fun origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun invoke (p1: <root>.A, p2: <root>.A, p3: <root>.A, p4: <root>.A, p5: <root>.A, p6: <root>.A, p7: <root>.A, p8: <root>.A, p9: <root>.A, p10: <root>.A, p11: <root>.A, p12: <root>.A, p13: <root>.A, p14: <root>.A, p15: <root>.A, p16: <root>.A, p17: <root>.A, p18: <root>.A, p19: <root>.A, p20: <root>.A, p21: <root>.A, p22: <root>.A, p23: <root>.A, p24: <root>.A, p25: <root>.A, p26: <root>.A, p27: <root>.A, p28: <root>.A, p29: <root>.A, p30: <root>.A, p31: <root>.A, p32: <root>.A, p33: <root>.A, p34: <root>.A, p35: <root>.A, p36: <root>.A, p37: <root>.A, p38: <root>.A, p39: <root>.A, p40: <root>.A, p41: <root>.A, p42: <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.Fun' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val f: <root>.Fun [val] declared in <root>.box' type=<root>.Fun origin=VARIABLE_AS_FUNCTION
+            p1: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p2: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p3: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p4: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p5: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p6: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p7: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p8: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p9: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p10: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p11: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p12: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p13: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p14: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p15: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p16: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p17: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p18: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p19: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p20: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p21: CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+              value: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            p22: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p23: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p24: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p25: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p26: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p27: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p28: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p29: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p30: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p31: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p32: CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+              value: CONST String type=<unbound IrClassSymbolImpl> value="K"
+            p33: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p34: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p35: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p36: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p37: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p38: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p39: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p40: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p41: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+            p42: GET_VAR 'val a: <root>.A [val] declared in <root>.box' type=<root>.A origin=null

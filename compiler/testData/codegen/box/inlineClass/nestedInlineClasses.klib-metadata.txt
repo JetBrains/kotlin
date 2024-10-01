@@ -1,0 +1,63 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: I
+    // class name: I.IC
+    // class name: I2
+    // class name: I2.IC
+
+    public abstract interface I : kotlin/Any {
+
+      // nested class: IC
+    }
+
+    public final value class I.IC : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    public abstract interface I2 : kotlin/Any {
+
+      // nested class: IC
+    }
+
+    public final value class I2.IC : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

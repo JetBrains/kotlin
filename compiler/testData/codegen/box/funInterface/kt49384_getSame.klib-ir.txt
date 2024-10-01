@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt49384_getSame.kt
+    CLASS INTERFACE name:A signature:/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:Foo signature:/Foo|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<T of <root>.Foo>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Foo|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:same signature:/Foo.same|same(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Foo<T of <root>.Foo>, obj:T of <root>.Foo) returnType:T of <root>.Foo
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.Foo>
+        VALUE_PARAMETER name:obj index:0 type:T of <root>.Foo
+    FUN name:getSame signature:/getSame|getSame(A<out|kotlin.Any>;Foo<A<out|kotlin.Any>>){}[0] visibility:public modality:FINAL <> (obj:<root>.A<out <unbound IrClassSymbolImpl>>, foo:<root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>>) returnType:<root>.A<out <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:obj index:0 type:<root>.A<out <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:foo index:1 type:<root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getSame (obj: <root>.A<out <unbound IrClassSymbolImpl>>, foo: <root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>>): <root>.A<out <unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public abstract fun same (obj: T of <root>.Foo): T of <root>.Foo declared in <root>.Foo' type=<root>.A<out <unbound IrClassSymbolImpl>> origin=null
+            $this: GET_VAR 'foo: <root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>> declared in <root>.getSame' type=<root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>> origin=null
+            obj: GET_VAR 'obj: <root>.A<out <unbound IrClassSymbolImpl>> declared in <root>.getSame' type=<root>.A<out <unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:obj type:<root>.box.<no name provided> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A<<unbound IrClassSymbolImpl>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A<<unbound IrClassSymbolImpl>>]'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <root>.A<out <unbound IrClassSymbolImpl>>
+          1: GET_VAR 'val obj: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
+          2: CALL 'public final fun getSame (obj: <root>.A<out <unbound IrClassSymbolImpl>>, foo: <root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>>): <root>.A<out <unbound IrClassSymbolImpl>> declared in <root>' type=<root>.A<out <unbound IrClassSymbolImpl>> origin=null
+            obj: GET_VAR 'val obj: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
+            foo: TYPE_OP type=<root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>> origin=SAM_CONVERSION typeOperand=<root>.Foo<<root>.A<out <unbound IrClassSymbolImpl>>>
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.A<out <unbound IrClassSymbolImpl>>, <root>.A<out <unbound IrClassSymbolImpl>>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.A<out <unbound IrClassSymbolImpl>>) returnType:<root>.A<out <unbound IrClassSymbolImpl>>
+                  VALUE_PARAMETER name:it index:0 type:<root>.A<out <unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.A<out <unbound IrClassSymbolImpl>>): <root>.A<out <unbound IrClassSymbolImpl>> declared in <root>.box'
+                      GET_VAR 'it: <root>.A<out <unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<root>.A<out <unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

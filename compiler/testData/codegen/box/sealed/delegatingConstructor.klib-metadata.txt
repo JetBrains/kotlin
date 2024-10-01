@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Derived
+    // class name: Sealed
+
+    public final class Derived : Sealed {
+
+      public constructor()
+    }
+
+    public sealed class Sealed : kotlin/Any {
+
+      protected /* secondary */ constructor()
+
+      protected constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+
+      // sealed subclass: Derived
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

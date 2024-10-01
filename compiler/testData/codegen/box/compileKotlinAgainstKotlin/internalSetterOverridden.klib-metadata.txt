@@ -1,0 +1,43 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Derived
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor()
+
+      public abstract var x: kotlin/String
+        public abstract get
+        internal abstract /* non-default */ set(value: kotlin/String)
+    }
+
+    public final class Derived : Base {
+
+      public constructor()
+
+      public open var x: kotlin/String
+        public open get
+        internal open /* non-default */ set(value: kotlin/String)
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

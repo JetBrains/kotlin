@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+
+    public open class Base : kotlin/Any {
+
+      public constructor(addr: kotlin/Long, name: kotlin/String)
+
+      public final val addr: kotlin/Long
+        public final get
+
+      public final val name: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

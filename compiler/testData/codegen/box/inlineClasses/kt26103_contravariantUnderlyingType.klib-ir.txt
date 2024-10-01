@@ -1,0 +1,677 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt26103_contravariantUnderlyingType.kt
+    CLASS CLASS name:GCmp signature:/GCmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GCmp<T of <root>.GCmp>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GCmp|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/GCmp.<init>|<init>(kotlin.Comparable<1:0>){}[0] visibility:public <> (xc:<unbound IrClassSymbolImpl><T of <root>.GCmp>) returnType:<root>.GCmp<T of <root>.GCmp> [primary]
+        VALUE_PARAMETER name:xc index:0 type:<unbound IrClassSymbolImpl><T of <root>.GCmp>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GCmp signature:/GCmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:xc signature:/GCmp.xc|{}xc[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:xc signature:[ /GCmp.xc|{}xc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.GCmp> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'xc: <unbound IrClassSymbolImpl><T of <root>.GCmp> declared in <root>.GCmp.<init>' type=<unbound IrClassSymbolImpl><T of <root>.GCmp> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xc> signature:/GCmp.xc.<get-xc>|<get-xc>(){}[0] visibility:public modality:FINAL <> ($this:<root>.GCmp<T of <root>.GCmp>) returnType:<unbound IrClassSymbolImpl><T of <root>.GCmp>
+          correspondingProperty: PROPERTY name:xc signature:/GCmp.xc|{}xc[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.GCmp<T of <root>.GCmp>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xc> (): <unbound IrClassSymbolImpl><T of <root>.GCmp> declared in <root>.GCmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xc signature:[ /GCmp.xc|{}xc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.GCmp> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.GCmp> origin=null
+                receiver: GET_VAR '<this>: <root>.GCmp<T of <root>.GCmp> declared in <root>.GCmp.<get-xc>' type=<root>.GCmp<T of <root>.GCmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/GCmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.GCmp<T of <root>.GCmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GCmp<T of <root>.GCmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.GCmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="GCmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="xc="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xc signature:[ /GCmp.xc|{}xc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.GCmp> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.GCmp> origin=null
+                receiver: GET_VAR '<this>: <root>.GCmp<T of <root>.GCmp> declared in <root>.GCmp.toString' type=<root>.GCmp<T of <root>.GCmp> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/GCmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.GCmp<T of <root>.GCmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GCmp<T of <root>.GCmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.GCmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xc signature:[ /GCmp.xc|{}xc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.GCmp> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.GCmp> origin=null
+                receiver: GET_VAR '<this>: <root>.GCmp<T of <root>.GCmp> declared in <root>.GCmp.hashCode' type=<root>.GCmp<T of <root>.GCmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/GCmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.GCmp<T of <root>.GCmp>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GCmp<T of <root>.GCmp>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.GCmp<T of <root>.GCmp>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GCmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GCmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.GCmp<T of <root>.GCmp> [val]
+            TYPE_OP type=<root>.GCmp<T of <root>.GCmp> origin=CAST typeOperand=<root>.GCmp<T of <root>.GCmp>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GCmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xc signature:[ /GCmp.xc|{}xc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.GCmp> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.GCmp> origin=null
+                    receiver: GET_VAR '<this>: <root>.GCmp<T of <root>.GCmp> declared in <root>.GCmp.equals' type=<root>.GCmp<T of <root>.GCmp> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xc signature:[ /GCmp.xc|{}xc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><T of <root>.GCmp> visibility:private [final]' type=<unbound IrClassSymbolImpl><T of <root>.GCmp> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.GCmp<T of <root>.GCmp> [val] declared in <root>.GCmp.equals' type=<root>.GCmp<T of <root>.GCmp> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GCmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GCmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:GSCmp signature:/GSCmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GSCmp<T of <root>.GSCmp>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GSCmp|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/GSCmp.<init>|<init>(kotlin.Comparable<kotlin.String>){}[0] visibility:public <> (sc:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.GSCmp<T of <root>.GSCmp> [primary]
+        VALUE_PARAMETER name:sc index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GSCmp signature:/GSCmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:sc signature:/GSCmp.sc|{}sc[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /GSCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'sc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.GSCmp.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sc> signature:/GSCmp.sc.<get-sc>|<get-sc>(){}[0] visibility:public modality:FINAL <> ($this:<root>.GSCmp<T of <root>.GSCmp>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:sc signature:/GSCmp.sc|{}sc[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.GSCmp<T of <root>.GSCmp>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.GSCmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /GSCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.GSCmp<T of <root>.GSCmp> declared in <root>.GSCmp.<get-sc>' type=<root>.GSCmp<T of <root>.GSCmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/GSCmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.GSCmp<T of <root>.GSCmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GSCmp<T of <root>.GSCmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.GSCmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="GSCmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="sc="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /GSCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.GSCmp<T of <root>.GSCmp> declared in <root>.GSCmp.toString' type=<root>.GSCmp<T of <root>.GSCmp> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/GSCmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.GSCmp<T of <root>.GSCmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GSCmp<T of <root>.GSCmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.GSCmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /GSCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.GSCmp<T of <root>.GSCmp> declared in <root>.GSCmp.hashCode' type=<root>.GSCmp<T of <root>.GSCmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/GSCmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.GSCmp<T of <root>.GSCmp>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GSCmp<T of <root>.GSCmp>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.GSCmp<T of <root>.GSCmp>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GSCmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GSCmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.GSCmp<T of <root>.GSCmp> [val]
+            TYPE_OP type=<root>.GSCmp<T of <root>.GSCmp> origin=CAST typeOperand=<root>.GSCmp<T of <root>.GSCmp>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GSCmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /GSCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR '<this>: <root>.GSCmp<T of <root>.GSCmp> declared in <root>.GSCmp.equals' type=<root>.GSCmp<T of <root>.GSCmp> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /GSCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.GSCmp<T of <root>.GSCmp> [val] declared in <root>.GSCmp.equals' type=<root>.GSCmp<T of <root>.GSCmp> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GSCmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GSCmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:SCmp signature:/SCmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SCmp
+      CONSTRUCTOR signature:/SCmp.<init>|<init>(kotlin.Comparable<kotlin.String>){}[0] visibility:public <> (sc:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.SCmp [primary]
+        VALUE_PARAMETER name:sc index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SCmp signature:/SCmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:sc signature:/SCmp.sc|{}sc[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /SCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'sc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.SCmp.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sc> signature:/SCmp.sc.<get-sc>|<get-sc>(){}[0] visibility:public modality:FINAL <> ($this:<root>.SCmp) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:sc signature:/SCmp.sc|{}sc[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SCmp
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.SCmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /SCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.SCmp declared in <root>.SCmp.<get-sc>' type=<root>.SCmp origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/SCmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.SCmp) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SCmp
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.SCmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="SCmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="sc="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /SCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.SCmp declared in <root>.SCmp.toString' type=<root>.SCmp origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/SCmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.SCmp) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SCmp
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.SCmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /SCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.SCmp declared in <root>.SCmp.hashCode' type=<root>.SCmp origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/SCmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.SCmp, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SCmp
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.SCmp
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.SCmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.SCmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.SCmp [val]
+            TYPE_OP type=<root>.SCmp origin=CAST typeOperand=<root>.SCmp
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.SCmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /SCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR '<this>: <root>.SCmp declared in <root>.SCmp.equals' type=<root>.SCmp origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sc signature:[ /SCmp.sc|{}sc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.SCmp [val] declared in <root>.SCmp.equals' type=<root>.SCmp origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.SCmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.SCmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:ICmp signature:/ICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ICmp
+      CONSTRUCTOR signature:/ICmp.<init>|<init>(kotlin.Comparable<kotlin.Int>){}[0] visibility:public <> (intc:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.ICmp [primary]
+        VALUE_PARAMETER name:intc index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ICmp signature:/ICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:intc signature:/ICmp.intc|{}intc[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /ICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'intc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ICmp.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intc> signature:/ICmp.intc.<get-intc>|<get-intc>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ICmp) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:intc signature:/ICmp.intc|{}intc[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ICmp
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ICmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /ICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ICmp declared in <root>.ICmp.<get-intc>' type=<root>.ICmp origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/ICmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.ICmp) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ICmp
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ICmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="ICmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="intc="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /ICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ICmp declared in <root>.ICmp.toString' type=<root>.ICmp origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/ICmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.ICmp) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ICmp
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.ICmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /ICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.ICmp declared in <root>.ICmp.hashCode' type=<root>.ICmp origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/ICmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.ICmp, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ICmp
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.ICmp
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.ICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.ICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.ICmp [val]
+            TYPE_OP type=<root>.ICmp origin=CAST typeOperand=<root>.ICmp
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.ICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /ICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR '<this>: <root>.ICmp declared in <root>.ICmp.equals' type=<root>.ICmp origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /ICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.ICmp [val] declared in <root>.ICmp.equals' type=<root>.ICmp origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.ICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.ICmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:GICmp signature:/GICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GICmp<T of <root>.GICmp>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GICmp|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/GICmp.<init>|<init>(kotlin.Comparable<kotlin.Int>){}[0] visibility:public <> (intc:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<root>.GICmp<T of <root>.GICmp> [primary]
+        VALUE_PARAMETER name:intc index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GICmp signature:/GICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:intc signature:/GICmp.intc|{}intc[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /GICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'intc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.GICmp.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intc> signature:/GICmp.intc.<get-intc>|<get-intc>(){}[0] visibility:public modality:FINAL <> ($this:<root>.GICmp<T of <root>.GICmp>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:intc signature:/GICmp.intc|{}intc[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.GICmp<T of <root>.GICmp>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.GICmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /GICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.GICmp<T of <root>.GICmp> declared in <root>.GICmp.<get-intc>' type=<root>.GICmp<T of <root>.GICmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/GICmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.GICmp<T of <root>.GICmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GICmp<T of <root>.GICmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.GICmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="GICmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="intc="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /GICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.GICmp<T of <root>.GICmp> declared in <root>.GICmp.toString' type=<root>.GICmp<T of <root>.GICmp> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/GICmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.GICmp<T of <root>.GICmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GICmp<T of <root>.GICmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.GICmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /GICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.GICmp<T of <root>.GICmp> declared in <root>.GICmp.hashCode' type=<root>.GICmp<T of <root>.GICmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/GICmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.GICmp<T of <root>.GICmp>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GICmp<T of <root>.GICmp>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.GICmp<T of <root>.GICmp>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.GICmp<T of <root>.GICmp> [val]
+            TYPE_OP type=<root>.GICmp<T of <root>.GICmp> origin=CAST typeOperand=<root>.GICmp<T of <root>.GICmp>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /GICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR '<this>: <root>.GICmp<T of <root>.GICmp> declared in <root>.GICmp.equals' type=<root>.GICmp<T of <root>.GICmp> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intc signature:[ /GICmp.intc|{}intc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.GICmp<T of <root>.GICmp> [val] declared in <root>.GICmp.equals' type=<root>.GICmp<T of <root>.GICmp> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GICmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:II signature:/II|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl><<root>.II>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.II
+      CONSTRUCTOR signature:/II.<init>|<init>(kotlin.Int){}[0] visibility:public <> (i:<unbound IrClassSymbolImpl>) returnType:<root>.II [primary]
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:II signature:/II|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl><<root>.II>]'
+      PROPERTY name:i signature:/II.i|{}i[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ /II.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.II.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:/II.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL <> ($this:<root>.II) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:i signature:/II.i|{}i[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.II
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.II'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /II.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.II declared in <root>.II.<get-i>' type=<root>.II origin=null
+      FUN name:compareTo signature:/II.compareTo|compareTo(II){}[0] visibility:public modality:OPEN <> ($this:<root>.II, other:<root>.II) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.II
+        VALUE_PARAMETER name:other index:0 type:<root>.II
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareTo (other: <root>.II): <unbound IrClassSymbolImpl> [operator] declared in <root>.II'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.II' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.II declared in <root>.II.compareTo' type=<root>.II origin=null
+              1: CALL 'public final fun <get-i> (): <unbound IrClassSymbolImpl> declared in <root>.II' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'other: <root>.II declared in <root>.II.compareTo' type=<root>.II origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/II.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.II) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.II
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.II'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="II("
+              CONST String type=<unbound IrClassSymbolImpl> value="i="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /II.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.II declared in <root>.II.toString' type=<root>.II origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/II.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.II) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.II
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.II'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /II.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.II declared in <root>.II.hashCode' type=<root>.II origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/II.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.II, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.II
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.II
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.II.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.II'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.II [val]
+            TYPE_OP type=<root>.II origin=CAST typeOperand=<root>.II
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.II.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /II.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.II declared in <root>.II.equals' type=<root>.II origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ /II.i|{}i[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.II [val] declared in <root>.II.equals' type=<root>.II origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.II'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.II'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:IICmp signature:/IICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IICmp
+      CONSTRUCTOR signature:/IICmp.<init>|<init>(kotlin.Comparable<II>){}[0] visibility:public <> (iic:<unbound IrClassSymbolImpl><<root>.II>) returnType:<root>.IICmp [primary]
+        VALUE_PARAMETER name:iic index:0 type:<unbound IrClassSymbolImpl><<root>.II>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IICmp signature:/IICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:iic signature:/IICmp.iic|{}iic[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /IICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'iic: <unbound IrClassSymbolImpl><<root>.II> declared in <root>.IICmp.<init>' type=<unbound IrClassSymbolImpl><<root>.II> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-iic> signature:/IICmp.iic.<get-iic>|<get-iic>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IICmp) returnType:<unbound IrClassSymbolImpl><<root>.II>
+          correspondingProperty: PROPERTY name:iic signature:/IICmp.iic|{}iic[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IICmp
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-iic> (): <unbound IrClassSymbolImpl><<root>.II> declared in <root>.IICmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /IICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                receiver: GET_VAR '<this>: <root>.IICmp declared in <root>.IICmp.<get-iic>' type=<root>.IICmp origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/IICmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.IICmp) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IICmp
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.IICmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="IICmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="iic="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /IICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                receiver: GET_VAR '<this>: <root>.IICmp declared in <root>.IICmp.toString' type=<root>.IICmp origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/IICmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.IICmp) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IICmp
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.IICmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /IICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                receiver: GET_VAR '<this>: <root>.IICmp declared in <root>.IICmp.hashCode' type=<root>.IICmp origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/IICmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.IICmp, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.IICmp
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.IICmp
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.IICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.IICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.IICmp [val]
+            TYPE_OP type=<root>.IICmp origin=CAST typeOperand=<root>.IICmp
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.IICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /IICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                    receiver: GET_VAR '<this>: <root>.IICmp declared in <root>.IICmp.equals' type=<root>.IICmp origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /IICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.IICmp [val] declared in <root>.IICmp.equals' type=<root>.IICmp origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.IICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.IICmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:GIICmp signature:/GIICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GIICmp<T of <root>.GIICmp>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /GIICmp|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/GIICmp.<init>|<init>(kotlin.Comparable<II>){}[0] visibility:public <> (iic:<unbound IrClassSymbolImpl><<root>.II>) returnType:<root>.GIICmp<T of <root>.GIICmp> [primary]
+        VALUE_PARAMETER name:iic index:0 type:<unbound IrClassSymbolImpl><<root>.II>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GIICmp signature:/GIICmp|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:iic signature:/GIICmp.iic|{}iic[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /GIICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'iic: <unbound IrClassSymbolImpl><<root>.II> declared in <root>.GIICmp.<init>' type=<unbound IrClassSymbolImpl><<root>.II> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-iic> signature:/GIICmp.iic.<get-iic>|<get-iic>(){}[0] visibility:public modality:FINAL <> ($this:<root>.GIICmp<T of <root>.GIICmp>) returnType:<unbound IrClassSymbolImpl><<root>.II>
+          correspondingProperty: PROPERTY name:iic signature:/GIICmp.iic|{}iic[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.GIICmp<T of <root>.GIICmp>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-iic> (): <unbound IrClassSymbolImpl><<root>.II> declared in <root>.GIICmp'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /GIICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                receiver: GET_VAR '<this>: <root>.GIICmp<T of <root>.GIICmp> declared in <root>.GIICmp.<get-iic>' type=<root>.GIICmp<T of <root>.GIICmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/GIICmp.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.GIICmp<T of <root>.GIICmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GIICmp<T of <root>.GIICmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.GIICmp'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="GIICmp("
+              CONST String type=<unbound IrClassSymbolImpl> value="iic="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /GIICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                receiver: GET_VAR '<this>: <root>.GIICmp<T of <root>.GIICmp> declared in <root>.GIICmp.toString' type=<root>.GIICmp<T of <root>.GIICmp> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/GIICmp.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.GIICmp<T of <root>.GIICmp>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GIICmp<T of <root>.GIICmp>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.GIICmp'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /GIICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                receiver: GET_VAR '<this>: <root>.GIICmp<T of <root>.GIICmp> declared in <root>.GIICmp.hashCode' type=<root>.GIICmp<T of <root>.GIICmp> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/GIICmp.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.GIICmp<T of <root>.GIICmp>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.GIICmp<T of <root>.GIICmp>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.GIICmp<T of <root>.GIICmp>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GIICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GIICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.GIICmp<T of <root>.GIICmp> [val]
+            TYPE_OP type=<root>.GIICmp<T of <root>.GIICmp> origin=CAST typeOperand=<root>.GIICmp<T of <root>.GIICmp>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.GIICmp.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /GIICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                    receiver: GET_VAR '<this>: <root>.GIICmp<T of <root>.GIICmp> declared in <root>.GIICmp.equals' type=<root>.GIICmp<T of <root>.GIICmp> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:iic signature:[ /GIICmp.iic|{}iic[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:xc type:kotlin.Comparable<T of <root>.GCmp> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.II> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.II> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.GIICmp<T of <root>.GIICmp> [val] declared in <root>.GIICmp.equals' type=<root>.GIICmp<T of <root>.GIICmp> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GIICmp'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.GIICmp'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:testGCmp signature:/testGCmp|testGCmp(GCmp<kotlin.String>){}[0] visibility:public modality:FINAL <> (x:<root>.GCmp<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.GCmp<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-xc> (): <unbound IrClassSymbolImpl><T of <root>.GCmp> declared in <root>.GCmp' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.GCmp<<unbound IrClassSymbolImpl>> declared in <root>.testGCmp' type=<root>.GCmp<<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testGSCmp signature:/testGSCmp|testGSCmp(GSCmp<kotlin.Any>){}[0] visibility:public modality:FINAL <> (x:<root>.GSCmp<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.GSCmp<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-sc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.GSCmp' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.GSCmp<<unbound IrClassSymbolImpl>> declared in <root>.testGSCmp' type=<root>.GSCmp<<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testSCmp signature:/testSCmp|testSCmp(SCmp){}[0] visibility:public modality:FINAL <> (x:<root>.SCmp) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.SCmp
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-sc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.SCmp' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.SCmp declared in <root>.testSCmp' type=<root>.SCmp origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testICmp signature:/testICmp|testICmp(ICmp){}[0] visibility:public modality:FINAL <> (x:<root>.ICmp) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.ICmp
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-intc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.ICmp' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.ICmp declared in <root>.testICmp' type=<root>.ICmp origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testGICmp signature:/testGICmp|testGICmp(GICmp<kotlin.Any>){}[0] visibility:public modality:FINAL <> (x:<root>.GICmp<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.GICmp<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-intc> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.GICmp' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.GICmp<<unbound IrClassSymbolImpl>> declared in <root>.testGICmp' type=<root>.GICmp<<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testIICmp signature:/testIICmp|testIICmp(IICmp){}[0] visibility:public modality:FINAL <> (x:<root>.IICmp) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.IICmp
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-iic> (): <unbound IrClassSymbolImpl><<root>.II> declared in <root>.IICmp' type=<unbound IrClassSymbolImpl><<root>.II> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.IICmp declared in <root>.testIICmp' type=<root>.IICmp origin=null
+                  1: CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.II' type=<root>.II origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testGIICmp signature:/testGIICmp|testGIICmp(GIICmp<kotlin.Any>){}[0] visibility:public modality:FINAL <> (x:<root>.GIICmp<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<root>.GIICmp<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun <get-iic> (): <unbound IrClassSymbolImpl><<root>.II> declared in <root>.GIICmp' type=<unbound IrClassSymbolImpl><<root>.II> origin=GET_PROPERTY
+                    $this: GET_VAR 'x: <root>.GIICmp<<unbound IrClassSymbolImpl>> declared in <root>.testGIICmp' type=<root>.GIICmp<<unbound IrClassSymbolImpl>> origin=null
+                  1: CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.II' type=<root>.II origin=null
+                    i: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testGCmp (x: <root>.GCmp<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (xc: <unbound IrClassSymbolImpl><T of <root>.GCmp>) [primary] declared in <root>.GCmp' type=<root>.GCmp<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            xc: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'public final fun testGSCmp (x: <root>.GSCmp<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (sc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in <root>.GSCmp' type=<root>.GSCmp<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            sc: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'public final fun testSCmp (x: <root>.SCmp): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (sc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in <root>.SCmp' type=<root>.SCmp origin=null
+            sc: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        CALL 'public final fun testICmp (x: <root>.ICmp): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (intc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in <root>.ICmp' type=<root>.ICmp origin=null
+            intc: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'public final fun testGICmp (x: <root>.GICmp<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (intc: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) [primary] declared in <root>.GICmp' type=<root>.GICmp<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            intc: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'public final fun testIICmp (x: <root>.IICmp): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (iic: <unbound IrClassSymbolImpl><<root>.II>) [primary] declared in <root>.IICmp' type=<root>.IICmp origin=null
+            iic: CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.II' type=<root>.II origin=null
+              i: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'public final fun testGIICmp (x: <root>.GIICmp<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CONSTRUCTOR_CALL 'public constructor <init> (iic: <unbound IrClassSymbolImpl><<root>.II>) [primary] declared in <root>.GIICmp' type=<root>.GIICmp<<unbound IrClassSymbolImpl>> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            iic: CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>) [primary] declared in <root>.II' type=<root>.II origin=null
+              i: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

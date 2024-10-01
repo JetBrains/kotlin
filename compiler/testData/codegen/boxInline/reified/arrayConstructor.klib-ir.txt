@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:f signature:test/f|f(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:<unbound IrClassSymbolImpl><T of test.f>) returnType:<unbound IrClassSymbolImpl><T of test.f> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/f|f(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><T of test.f>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f <T> (x: <unbound IrClassSymbolImpl><T of test.f>): <unbound IrClassSymbolImpl><T of test.f> [inline] declared in test'
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><T of test.f> origin=null
+            <class: 1>: T of test.f
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, T of test.f> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:T of test.f
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): T of test.f declared in test.f'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.f origin=INVOKE
+                      $this: GET_VAR 'x: <unbound IrClassSymbolImpl><T of test.f> declared in test.f' type=<unbound IrClassSymbolImpl><T of test.f> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: CALL 'public final fun f <T> (x: <unbound IrClassSymbolImpl><T of test.f>): <unbound IrClassSymbolImpl><T of test.f> [inline] declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              x: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0

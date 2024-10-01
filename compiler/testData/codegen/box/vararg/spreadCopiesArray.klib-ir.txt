@@ -1,0 +1,291 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/spreadCopiesArray.kt
+    FUN name:copyArray signature:/copyArray|copyArray(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (data:<unbound IrClassSymbolImpl><out T of <root>.copyArray>) returnType:<unbound IrClassSymbolImpl><out T of <root>.copyArray>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /copyArray|copyArray(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl><out T of <root>.copyArray> varargElementType:T of <root>.copyArray [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyArray <T> (vararg data: T of <root>.copyArray): <unbound IrClassSymbolImpl><out T of <root>.copyArray> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl><out T of <root>.copyArray> [vararg] declared in <root>.copyArray' type=<unbound IrClassSymbolImpl><out T of <root>.copyArray> origin=null
+    FUN name:reifiedCopyArray signature:/reifiedCopyArray|reifiedCopyArray(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (data:<unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray>) returnType:<unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /reifiedCopyArray|reifiedCopyArray(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray> varargElementType:T of <root>.reifiedCopyArray [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun reifiedCopyArray <T> (vararg data: T of <root>.reifiedCopyArray): <unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray> [inline] declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray> [vararg] declared in <root>.reifiedCopyArray' type=<unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray> origin=null
+    FUN name:copyBooleanArray signature:/copyBooleanArray|copyBooleanArray(kotlin.BooleanArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyBooleanArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyBooleanArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyByteArray signature:/copyByteArray|copyByteArray(kotlin.ByteArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyByteArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyByteArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyCharArray signature:/copyCharArray|copyCharArray(kotlin.CharArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyCharArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyCharArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyShortArray signature:/copyShortArray|copyShortArray(kotlin.ShortArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyShortArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyShortArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyIntArray signature:/copyIntArray|copyIntArray(kotlin.IntArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyIntArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyIntArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyLongArray signature:/copyLongArray|copyLongArray(kotlin.LongArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyLongArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyLongArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyFloatArray signature:/copyFloatArray|copyFloatArray(kotlin.FloatArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyFloatArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyFloatArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyDoubleArray signature:/copyDoubleArray|copyDoubleArray(kotlin.DoubleArray...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyDoubleArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl> [vararg] declared in <root>.copyDoubleArray' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:copyStringArray signature:/copyStringArray|copyStringArray(kotlin.Array<out|kotlin.String>...){}[0] visibility:public modality:FINAL <> (data:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyStringArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> declared in <root>'
+          GET_VAR 'data: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [vararg] declared in <root>.copyStringArray' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sarr type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        VAR name:sarr2 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun copyArray <T> (vararg data: T of <root>.copyArray): <unbound IrClassSymbolImpl><out T of <root>.copyArray> declared in <root>' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            data: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val sarr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val sarr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="Array was not copied"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val sarr2: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: Array<String>"
+        VAR name:rsarr type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        VAR name:rsarr2 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [var]
+          CALL 'public final fun reifiedCopyArray <T> (vararg data: T of <root>.reifiedCopyArray): <unbound IrClassSymbolImpl><out T of <root>.reifiedCopyArray> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            data: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'var rsarr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'var rsarr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="Array was not copied"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'var rsarr2: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: Array<String>, reified copy"
+        VAR name:boolArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        VAR name:boolArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyBooleanArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val boolArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val boolArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val boolArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: BooleanArray"
+        VAR name:byteArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Byte type=<unbound IrClassSymbolImpl> value=1
+        VAR name:byteArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyByteArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val byteArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val byteArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Byte type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Byte type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val byteArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: ByteArray"
+        VAR name:charArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Char type=<unbound IrClassSymbolImpl> value='a'
+        VAR name:charArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyCharArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val charArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val charArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Char type=<unbound IrClassSymbolImpl> value='b'
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val charArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Char type=<unbound IrClassSymbolImpl> value='a'
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: CharArray"
+        VAR name:shortArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Short type=<unbound IrClassSymbolImpl> value=1
+        VAR name:shortArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyShortArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val shortArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val shortArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Short type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Short type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val shortArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: ShortArray"
+        VAR name:iarr type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val iarr: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:iarr2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyIntArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val iarr: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val iarr: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val iarr2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: IntArray"
+        VAR name:longArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Long type=<unbound IrClassSymbolImpl> value=1
+        VAR name:longArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyLongArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val longArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val longArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Long type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val longArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: LongArray"
+        VAR name:floatArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+        VAR name:floatArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyFloatArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val floatArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val floatArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Float type=<unbound IrClassSymbolImpl> value=42.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val floatArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: FloatArray"
+        VAR name:doubleArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        VAR name:doubleArray2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun copyDoubleArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val doubleArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val doubleArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST Double type=<unbound IrClassSymbolImpl> value=42.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val doubleArray2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: DoubleArray"
+        VAR name:stringArray type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="abc"
+        VAR name:stringArray2 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun copyStringArray (vararg data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            data: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              SPREAD_ELEMENT
+                GET_VAR 'val stringArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val stringArray: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="def"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val stringArray2: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Failed: Array<String>"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

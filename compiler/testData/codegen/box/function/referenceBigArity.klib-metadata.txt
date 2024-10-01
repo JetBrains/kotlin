@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun фу(а: kotlin/Int, б: kotlin/Int, в: kotlin/Int, г: kotlin/Int, д: kotlin/Int, е: kotlin/Int, ё: kotlin/Int, ж: kotlin/Int, з: kotlin/Int, и: kotlin/Int, й: kotlin/Int, к: kotlin/Int, л: kotlin/Int, м: kotlin/Int, н: kotlin/Int, о: kotlin/Int, п: kotlin/Int, р: kotlin/Int, с: kotlin/Int, т: kotlin/Int, у: kotlin/Int, ф: kotlin/Int, х: kotlin/Int, ц: kotlin/Int, ч: kotlin/Int, ш: kotlin/Int, щ: kotlin/Int, ъ: kotlin/Int, ы: kotlin/Int, ь: kotlin/Int, э: kotlin/Int, ю: kotlin/Int, я: kotlin/Int): kotlin/Int
+    }
+  }
+}

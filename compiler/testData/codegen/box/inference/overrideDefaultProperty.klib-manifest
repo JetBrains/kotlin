@@ -1,0 +1,36 @@
+// MODULE: InterfaceModule
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = <test-run-target>
+unique_name = InterfaceModule
+// MODULE: OpenClassModule
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = <test-run-target>
+unique_name = OpenClassModule
+// MODULE: OpenClassWithOverrideModule
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = <test-run-target>
+unique_name = OpenClassWithOverrideModule
+// MODULE: main
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = <test-run-target>
+unique_name = main

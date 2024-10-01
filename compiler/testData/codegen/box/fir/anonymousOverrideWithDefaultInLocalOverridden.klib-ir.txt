@@ -1,0 +1,73 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/anonymousOverrideWithDefaultInLocalOverridden.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CLASS CLASS name:Outer modality:OPEN visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Outer
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.Outer [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:OPEN visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          CLASS CLASS name:A modality:OPEN visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Outer.A
+            CONSTRUCTOR visibility:public <> ($this:<root>.box.Outer) returnType:<root>.box.Outer.A [primary]
+              $outer: VALUE_PARAMETER name:<this> type:<root>.box.Outer
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+            FUN name:foo visibility:public modality:OPEN <> ($this:<root>.box.Outer.A, x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.Outer.A
+              VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>?
+                EXPRESSION_BODY
+                  CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.box.Outer.A'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.box.Outer.A.foo' type=<unbound IrClassSymbolImpl> origin=null
+                    1: BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                        GET_VAR 'y: <unbound IrClassSymbolImpl>? declared in <root>.box.Outer.A.foo' type=<unbound IrClassSymbolImpl>? origin=null
+                      WHEN type=<unbound IrClassSymbolImpl> origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.Outer.A.foo' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.Outer.A.foo' type=<unbound IrClassSymbolImpl>? origin=null
+        VAR name:b type:<root>.box.<no name provided> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.box.Outer]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.Outer'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.box.Outer]'
+              CLASS CLASS name:MyClass modality:FINAL visibility:local [inner] superTypes:[<root>.box.Outer.A]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>.MyClass
+                CONSTRUCTOR visibility:public <> ($this:<root>.box.<no name provided>) returnType:<root>.box.<no name provided>.MyClass [primary]
+                  $outer: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.Outer.A'
+                      $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:local [inner] superTypes:[<root>.box.Outer.A]'
+                FUN name:foo visibility:public modality:OPEN <> ($this:<root>.box.<no name provided>.MyClass, x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+                  overridden:
+                    public open fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.box.Outer.A
+                  $this: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>.MyClass
+                  VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>?
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.MyClass'
+                      CALL 'public open fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.box.Outer.A' superQualifier='CLASS CLASS name:A modality:OPEN visibility:local [inner] superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR '<this>: <root>.box.<no name provided>.MyClass declared in <root>.box.<no name provided>.MyClass.foo' type=<root>.box.<no name provided>.MyClass origin=null
+                        x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.MyClass.foo' type=<unbound IrClassSymbolImpl> origin=null
+                        y: GET_VAR 'y: <unbound IrClassSymbolImpl>? declared in <root>.box.<no name provided>.MyClass.foo' type=<unbound IrClassSymbolImpl>? origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun foo (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.box.<no name provided>.MyClass' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>.MyClass' type=<root>.box.<no name provided>.MyClass origin=null
+              $outer: GET_VAR 'val b: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="O"

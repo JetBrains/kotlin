@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BasePublisher
+    // class name: DerivedPublisher
+    // class name: Document
+    // class name: Flow
+    // class name: Foo
+
+    public abstract interface BasePublisher<T#0 /* U */> : kotlin/Any {
+    }
+
+    public abstract interface DerivedPublisher<T#0 /* K */> : BasePublisher<Document<T#0>> {
+    }
+
+    public final class Document<T#0 /* S */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface Flow<out T#0 /* P */> : kotlin/Any {
+    }
+
+    public final class Foo<T#0 /* T */> : Flow<Document<out T#0>> {
+
+      public constructor(x: DerivedPublisher<out T#0>)
+
+      public final val x: DerivedPublisher<out T#0>
+        public final get
+    }
+
+    package {
+
+      public final fun <T#0 /* R */> asFlow(x: BasePublisher<T#0>): Flow<T#0>
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

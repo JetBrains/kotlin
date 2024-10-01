@@ -1,0 +1,193 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unqualifiedSuperWithDeeperHierarchies.kt
+    CLASS CLASS name:DeeperBase signature:/DeeperBase|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DeeperBase
+      CONSTRUCTOR signature:/DeeperBase.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DeeperBase [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DeeperBase signature:/DeeperBase|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:deeperBaseFun signature:/DeeperBase.deeperBaseFun|deeperBaseFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeeperBase) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeeperBase
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun deeperBaseFun (): <unbound IrClassSymbolImpl> declared in <root>.DeeperBase'
+            CONST String type=<unbound IrClassSymbolImpl> value="DeeperBase.deeperBaseFun()"
+      PROPERTY name:deeperBaseProp signature:/DeeperBase.deeperBaseProp|{}deeperBaseProp[0] visibility:public modality:OPEN [val]
+        FUN name:<get-deeperBaseProp> signature:/DeeperBase.deeperBaseProp.<get-deeperBaseProp>|<get-deeperBaseProp>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeeperBase) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:deeperBaseProp signature:/DeeperBase.deeperBaseProp|{}deeperBaseProp[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DeeperBase
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-deeperBaseProp> (): <unbound IrClassSymbolImpl> declared in <root>.DeeperBase'
+              CONST String type=<unbound IrClassSymbolImpl> value="DeeperBase.deeperBaseProp"
+    CLASS CLASS name:DeepBase signature:/DeepBase|null[0] modality:OPEN visibility:public superTypes:[<root>.DeeperBase]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DeepBase
+      CONSTRUCTOR signature:/DeepBase.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DeepBase [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DeeperBase'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DeepBase signature:/DeepBase|null[0] modality:OPEN visibility:public superTypes:[<root>.DeeperBase]'
+    CLASS INTERFACE name:DeeperInterface signature:/DeeperInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DeeperInterface
+      FUN name:deeperInterfaceFun signature:/DeeperInterface.deeperInterfaceFun|deeperInterfaceFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeeperInterface) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeeperInterface
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun deeperInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeeperInterface'
+            CONST String type=<unbound IrClassSymbolImpl> value="DeeperInterface.deeperInterfaceFun()"
+      PROPERTY name:deeperInterfaceProp signature:/DeeperInterface.deeperInterfaceProp|{}deeperInterfaceProp[0] visibility:public modality:OPEN [val]
+        FUN name:<get-deeperInterfaceProp> signature:/DeeperInterface.deeperInterfaceProp.<get-deeperInterfaceProp>|<get-deeperInterfaceProp>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeeperInterface) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:deeperInterfaceProp signature:/DeeperInterface.deeperInterfaceProp|{}deeperInterfaceProp[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DeeperInterface
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-deeperInterfaceProp> (): <unbound IrClassSymbolImpl> declared in <root>.DeeperInterface'
+              CONST String type=<unbound IrClassSymbolImpl> value="DeeperInterface.deeperInterfaceProp"
+    CLASS INTERFACE name:DeepInterface signature:/DeepInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.DeeperInterface]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DeepInterface
+      FUN name:deepInterfaceFun signature:/DeepInterface.deepInterfaceFun|deepInterfaceFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeepInterface) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepInterface
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun deepInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepInterface'
+            CONST String type=<unbound IrClassSymbolImpl> value="DeepInterface.deepInterfaceFun()"
+    CLASS CLASS name:DeepDerived signature:/DeepDerived|null[0] modality:FINAL visibility:public superTypes:[<root>.DeepBase; <root>.DeepInterface]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DeepDerived
+      CONSTRUCTOR signature:/DeepDerived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DeepDerived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DeepBase'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DeepDerived signature:/DeepDerived|null[0] modality:FINAL visibility:public superTypes:[<root>.DeepBase; <root>.DeepInterface]'
+      FUN name:deeperBaseFun signature:/DeepDerived.deeperBaseFun|deeperBaseFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun deeperBaseFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CONST String type=<unbound IrClassSymbolImpl> value="DeepDerived.deeperBaseFun()"
+      PROPERTY name:deeperBaseProp signature:/DeepDerived.deeperBaseProp|{}deeperBaseProp[0] visibility:public modality:OPEN [val]
+        FUN name:<get-deeperBaseProp> signature:/DeepDerived.deeperBaseProp.<get-deeperBaseProp>|<get-deeperBaseProp>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:deeperBaseProp signature:/DeepDerived.deeperBaseProp|{}deeperBaseProp[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-deeperBaseProp> (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+              CONST String type=<unbound IrClassSymbolImpl> value="DeepDerived.deeperBaseProp"
+      FUN name:deeperInterfaceFun signature:/DeepDerived.deeperInterfaceFun|deeperInterfaceFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun deeperInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CONST String type=<unbound IrClassSymbolImpl> value="DeepDerived.deeperInterfaceFun()"
+      PROPERTY name:deeperInterfaceProp signature:/DeepDerived.deeperInterfaceProp|{}deeperInterfaceProp[0] visibility:public modality:OPEN [val]
+        FUN name:<get-deeperInterfaceProp> signature:/DeepDerived.deeperInterfaceProp.<get-deeperInterfaceProp>|<get-deeperInterfaceProp>(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:deeperInterfaceProp signature:/DeepDerived.deeperInterfaceProp|{}deeperInterfaceProp[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-deeperInterfaceProp> (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+              CONST String type=<unbound IrClassSymbolImpl> value="DeepDerived.deeperInterfaceProp"
+      FUN name:deepInterfaceFun signature:/DeepDerived.deepInterfaceFun|deepInterfaceFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun deepInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepInterface
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun deepInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CONST String type=<unbound IrClassSymbolImpl> value="DeepDerived.deepInterfaceFun()"
+      FUN name:callsSuperDeeperBaseFun signature:/DeepDerived.callsSuperDeeperBaseFun|callsSuperDeeperBaseFun(){}[0] visibility:public modality:FINAL <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun callsSuperDeeperBaseFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:DeepBase signature:/DeepBase|null[0] modality:OPEN visibility:public superTypes:[<root>.DeeperBase]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.DeepDerived declared in <root>.DeepDerived.callsSuperDeeperBaseFun' type=<root>.DeepDerived origin=null
+      FUN name:getsSuperDeeperBaseProp signature:/DeepDerived.getsSuperDeeperBaseProp|getsSuperDeeperBaseProp(){}[0] visibility:public modality:FINAL <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getsSuperDeeperBaseProp (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:DeepBase signature:/DeepBase|null[0] modality:OPEN visibility:public superTypes:[<root>.DeeperBase]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.DeepDerived declared in <root>.DeepDerived.getsSuperDeeperBaseProp' type=<root>.DeepDerived origin=null
+      FUN name:callsSuperDeepInterfaceFun signature:/DeepDerived.callsSuperDeepInterfaceFun|callsSuperDeepInterfaceFun(){}[0] visibility:public modality:FINAL <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun callsSuperDeepInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CALL 'public open fun deepInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepInterface' superQualifier='CLASS INTERFACE name:DeepInterface signature:/DeepInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.DeeperInterface]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.DeepDerived declared in <root>.DeepDerived.callsSuperDeepInterfaceFun' type=<root>.DeepDerived origin=null
+      FUN name:callsSuperDeeperInterfaceFun signature:/DeepDerived.callsSuperDeeperInterfaceFun|callsSuperDeeperInterfaceFun(){}[0] visibility:public modality:FINAL <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun callsSuperDeeperInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS INTERFACE name:DeepInterface signature:/DeepInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.DeeperInterface]' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.DeepDerived declared in <root>.DeepDerived.callsSuperDeeperInterfaceFun' type=<root>.DeepDerived origin=null
+      FUN name:getsSuperDeeperInterfaceProp signature:/DeepDerived.getsSuperDeeperInterfaceProp|getsSuperDeeperInterfaceProp(){}[0] visibility:public modality:FINAL <> ($this:<root>.DeepDerived) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DeepDerived
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getsSuperDeeperInterfaceProp (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS INTERFACE name:DeepInterface signature:/DeepInterface|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.DeeperInterface]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.DeepDerived declared in <root>.DeepDerived.getsSuperDeeperInterfaceProp' type=<root>.DeepDerived origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:dd type:<root>.DeepDerived [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DeepDerived' type=<root>.DeepDerived origin=null
+        VAR name:test1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun callsSuperDeeperBaseFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val dd: <root>.DeepDerived [val] declared in <root>.box' type=<root>.DeepDerived origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val test1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="DeeperBase.deeperBaseFun()"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: dd.callsSuperDeeperBaseFun()=="
+                GET_VAR 'val test1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:test2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun getsSuperDeeperBaseProp (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val dd: <root>.DeepDerived [val] declared in <root>.box' type=<root>.DeepDerived origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val test2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="DeeperBase.deeperBaseProp"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: dd.getsSuperDeeperBaseProp()=="
+                GET_VAR 'val test2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:test3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun callsSuperDeepInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val dd: <root>.DeepDerived [val] declared in <root>.box' type=<root>.DeepDerived origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val test3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="DeepInterface.deepInterfaceFun()"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: dd.callsSuperDeepInterfaceFun()=="
+                GET_VAR 'val test3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:test4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun callsSuperDeeperInterfaceFun (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val dd: <root>.DeepDerived [val] declared in <root>.box' type=<root>.DeepDerived origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val test4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="DeeperInterface.deeperInterfaceFun()"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: dd.callsSuperDeeperInterfaceFun()=="
+                GET_VAR 'val test4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:test5 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun getsSuperDeeperInterfaceProp (): <unbound IrClassSymbolImpl> declared in <root>.DeepDerived' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val dd: <root>.DeepDerived [val] declared in <root>.box' type=<root>.DeepDerived origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val test5: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="DeeperInterface.deeperInterfaceProp"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: dd.getsSuperDeeperInterfaceProp()=="
+                GET_VAR 'val test5: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

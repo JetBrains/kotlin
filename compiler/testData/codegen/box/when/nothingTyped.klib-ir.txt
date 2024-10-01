@@ -1,0 +1,180 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nothingTyped.kt
+    FUN name:nothingTypedWhenSimple signature:/nothingTypedWhenSimple|nothingTypedWhenSimple(kotlin.Int){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:nothing type:<unbound IrClassSymbolImpl> [val]
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'c: <unbound IrClassSymbolImpl> declared in <root>.nothingTypedWhenSimple' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenSimple' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenSimple' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=5
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenSimple' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenSimple' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=6
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenSimple' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=9
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=7746353
+    FUN name:nothingTypedWhenMixed signature:/nothingTypedWhenMixed|nothingTypedWhenMixed(kotlin.Int){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:nothing type:<unbound IrClassSymbolImpl> [val]
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+              GET_VAR 'c: <unbound IrClassSymbolImpl> declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=5
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=23
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=211
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=44
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=666
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=43
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=43
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=53
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=55
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=99
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=81
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=21
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=212
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=5
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=66
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=611
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=12
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=123
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=63
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=11
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=19
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.nothingTypedWhenMixed' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=9
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST Int type=<unbound IrClassSymbolImpl> value=7746353
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun nothingTypedWhenSimple (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  c: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun nothingTypedWhenMixed (c: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  c: CONST Int type=<unbound IrClassSymbolImpl> value=99
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=81
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

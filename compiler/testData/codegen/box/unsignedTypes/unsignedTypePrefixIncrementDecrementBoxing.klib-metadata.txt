@@ -1,0 +1,62 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(u: kotlin/Any?, ts: kotlin/String, className: kotlin/String): kotlin/Unit
+
+      public final fun prefixDecrementUByteLocal(): kotlin/Any?
+
+      public final fun prefixDecrementUByteProperty(): kotlin/Any?
+
+      public final fun prefixDecrementUIntLocal(): kotlin/Any?
+
+      public final fun prefixDecrementUIntProperty(): kotlin/Any?
+
+      public final fun prefixDecrementULongLocal(): kotlin/Any?
+
+      public final fun prefixDecrementULongProperty(): kotlin/Any?
+
+      public final fun prefixDecrementUShortLocal(): kotlin/Any?
+
+      public final fun prefixDecrementUShortProperty(): kotlin/Any?
+
+      public final fun prefixIncrementUByteLocal(): kotlin/Any?
+
+      public final fun prefixIncrementUByteProperty(): kotlin/Any?
+
+      public final fun prefixIncrementUIntLocal(): kotlin/Any?
+
+      public final fun prefixIncrementUIntProperty(): kotlin/Any?
+
+      public final fun prefixIncrementULongLocal(): kotlin/Any?
+
+      public final fun prefixIncrementULongProperty(): kotlin/Any?
+
+      public final fun prefixIncrementUShortLocal(): kotlin/Any?
+
+      public final fun prefixIncrementUShortProperty(): kotlin/Any?
+
+      public final var gb: kotlin/UByte
+        public final get
+        public final set
+
+      public final var gi: kotlin/UInt
+        public final get
+        public final set
+
+      public final var gl: kotlin/ULong
+        public final get
+        public final set
+
+      public final var gs: kotlin/UShort
+        public final get
+        public final set
+    }
+  }
+}

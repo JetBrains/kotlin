@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/localClassFunClosure.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:o type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+        FUN LOCAL_FUNCTION name:ok visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='local final fun ok (): <unbound IrClassSymbolImpl> declared in <root>.box'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR 'val o: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+        CLASS CLASS name:OK modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.OK
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.OK [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OK modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          PROPERTY name:ok visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:ok type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CALL 'local final fun ok (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:<root>.box.OK) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.OK
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in <root>.box.OK'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.OK declared in <root>.box.OK.<get-ok>' type=<root>.box.OK origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-ok> (): <unbound IrClassSymbolImpl> declared in <root>.box.OK' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.OK' type=<root>.box.OK origin=null

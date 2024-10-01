@@ -1,0 +1,49 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: PlatformOther
+    // class name: Some
+    // class name: Some.ProtectedNested
+    // class name: SomeInheritor
+
+    public open class PlatformOther : kotlin/Any {
+
+      public constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    public open class Some : kotlin/Any {
+
+      public constructor()
+
+      // nested class: ProtectedNested
+    }
+
+    public final class Some.ProtectedNested : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/String
+    }
+
+    internal final class SomeInheritor : Some {
+
+      public constructor()
+
+      public final fun callFoo(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun commonBox(): kotlin/String
+
+      internal typealias Other = PlatformOther /* = PlatformOther */
+    }
+  }
+}

@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/common.kt
+    CLASS CLASS name:Base signature:/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      CONSTRUCTOR signature:/Base.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Base [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base signature:/Base|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/Base.x|{}x[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Base.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Base.x.<get-x>|<get-x>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Base) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/Base.x|{}x[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Base'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Base.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-x>' type=<root>.Base origin=null
+    CLASS CLASS name:Child signature:/Child|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Child
+      CONSTRUCTOR signature:/Child.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Child [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Child signature:/Child|null[0] modality:FINAL visibility:public superTypes:[<root>.Base]'
+      FUN name:xGetter signature:/Child.xGetter|xGetter(){}[0] visibility:public modality:FINAL <> ($this:<root>.Child) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Child
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun xGetter (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Child'
+            PROPERTY_REFERENCE 'UNBOUND IrPropertySymbolImpl' field=null getter='UNBOUND IrSimpleFunctionSymbolImpl' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_VAR '<this>: <root>.Child declared in <root>.Child.xGetter' type=<root>.Child origin=null
+  FILE fqName:<root> fileName:/platform.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'public final fun xGetter (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Child' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Child' type=<root>.Child origin=null

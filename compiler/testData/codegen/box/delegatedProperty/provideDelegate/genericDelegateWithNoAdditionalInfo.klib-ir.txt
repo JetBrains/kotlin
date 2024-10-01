@@ -1,0 +1,56 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericDelegateWithNoAdditionalInfo.kt
+    CLASS INTERFACE name:DelegateProvider signature:/DelegateProvider|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DelegateProvider<T of <root>.DelegateProvider>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /DelegateProvider|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:provideDelegate signature:/DelegateProvider.provideDelegate|provideDelegate(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.DelegateProvider<T of <root>.DelegateProvider>, receiver:<unbound IrClassSymbolImpl>?, prop:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl><T of <root>.DelegateProvider> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.DelegateProvider<T of <root>.DelegateProvider>
+        VALUE_PARAMETER name:receiver index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:prop index:1 type:<unbound IrClassSymbolImpl><*>
+    FUN name:delegate signature:/delegate|delegate(){0§<kotlin.Any>}[0] visibility:public modality:FINAL <Value> () returnType:<root>.DelegateProvider<Value of <root>.delegate>
+      TYPE_PARAMETER name:Value index:0 variance: signature:[ /delegate|delegate(){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun delegate <Value> (): <root>.DelegateProvider<Value of <root>.delegate> declared in <root>'
+          BLOCK type=<root>.delegate.<no name provided><Value of <root>.delegate> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DelegateProvider<Value of <root>.delegate>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.delegate.<no name provided><Value of <root>.delegate>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.delegate.<no name provided><Value of <root>.delegate> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DelegateProvider<Value of <root>.delegate>]'
+              FUN name:provideDelegate visibility:public modality:OPEN <> ($this:<root>.delegate.<no name provided><Value of <root>.delegate>, receiver:<unbound IrClassSymbolImpl>?, prop:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl><Value of <root>.delegate> [operator]
+                overridden:
+                  public abstract fun provideDelegate (receiver: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl><T of <root>.DelegateProvider> [operator] declared in <root>.DelegateProvider
+                $this: VALUE_PARAMETER name:<this> type:<root>.delegate.<no name provided><Value of <root>.delegate>
+                VALUE_PARAMETER name:receiver index:0 type:<unbound IrClassSymbolImpl>?
+                VALUE_PARAMETER name:prop index:1 type:<unbound IrClassSymbolImpl><*>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun provideDelegate (receiver: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl><Value of <root>.delegate> [operator] declared in <root>.delegate.<no name provided>'
+                    TYPE_OP type=<unbound IrClassSymbolImpl><Value of <root>.delegate> origin=CAST typeOperand=<unbound IrClassSymbolImpl><Value of <root>.delegate>
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        <1>: <unbound IrClassSymbolImpl>
+                        1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.delegate.<no name provided>.provideDelegate'
+                                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.delegate.<no name provided>' type=<root>.delegate.<no name provided><Value of <root>.delegate> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        LOCAL_DELEGATED_PROPERTY name:value type:<unbound IrClassSymbolImpl> flags:val
+          VAR PROPERTY_DELEGATE name:value$delegate type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'public abstract fun provideDelegate (receiver: <unbound IrClassSymbolImpl>?, prop: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl><T of <root>.DelegateProvider> [operator] declared in <root>.DelegateProvider' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: CALL 'public final fun delegate <Value> (): <root>.DelegateProvider<Value of <root>.delegate> declared in <root>' type=<root>.DelegateProvider<<unbound IrClassSymbolImpl>> origin=null
+                <Value>: <unbound IrClassSymbolImpl>
+              receiver: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              prop: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val value: <unbound IrClassSymbolImpl> by (...)' delegate='val value$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' getter='local final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.box' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-value> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_VAR 'val value$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  2: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val value: <unbound IrClassSymbolImpl> by (...)' delegate='val value$delegate: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' getter='local final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.box' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'local final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=GET_LOCAL_PROPERTY

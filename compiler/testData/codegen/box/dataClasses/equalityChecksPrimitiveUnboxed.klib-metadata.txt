@@ -1,0 +1,165 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: VBoolean
+    // class name: VByte
+    // class name: VChar
+    // class name: VDouble
+    // class name: VFloat
+    // class name: VInt
+    // class name: VLong
+    // class name: VShort
+
+    public final data class VBoolean : kotlin/Any {
+
+      public constructor(value: kotlin/Boolean)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Boolean
+
+      public final /* synthesized */ fun copy(value: kotlin/Boolean /* = ... */): VBoolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Boolean
+        public final get
+    }
+
+    public final data class VByte : kotlin/Any {
+
+      public constructor(value: kotlin/Byte)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Byte
+
+      public final /* synthesized */ fun copy(value: kotlin/Byte /* = ... */): VByte
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Byte
+        public final get
+    }
+
+    public final data class VChar : kotlin/Any {
+
+      public constructor(value: kotlin/Char)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Char
+
+      public final /* synthesized */ fun copy(value: kotlin/Char /* = ... */): VChar
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Char
+        public final get
+    }
+
+    public final data class VDouble : kotlin/Any {
+
+      public constructor(value: kotlin/Double)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Double
+
+      public final /* synthesized */ fun copy(value: kotlin/Double /* = ... */): VDouble
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Double
+        public final get
+    }
+
+    public final data class VFloat : kotlin/Any {
+
+      public constructor(value: kotlin/Float)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Float
+
+      public final /* synthesized */ fun copy(value: kotlin/Float /* = ... */): VFloat
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Float
+        public final get
+    }
+
+    public final data class VInt : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(value: kotlin/Int /* = ... */): VInt
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    public final data class VLong : kotlin/Any {
+
+      public constructor(value: kotlin/Long)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Long
+
+      public final /* synthesized */ fun copy(value: kotlin/Long /* = ... */): VLong
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Long
+        public final get
+    }
+
+    public final data class VShort : kotlin/Any {
+
+      public constructor(value: kotlin/Short)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Short
+
+      public final /* synthesized */ fun copy(value: kotlin/Short /* = ... */): VShort
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Short
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

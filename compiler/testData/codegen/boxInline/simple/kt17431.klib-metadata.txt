@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: LabelHolder
+
+    public final class LabelHolder : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): kotlin/String
+
+      private final val kotlin/String?.label: kotlin/String
+        private final /* non-default */ get
+
+      private final val labels: kotlin/collections/HashMap<kotlin/String?, test/WeakReference<kotlin/String>>
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/WeakReference
+
+    public final class test/WeakReference<T#0 /* T */> : kotlin/Any {
+
+      public constructor(value: T#0)
+
+      public final val value: T#0
+        public final get
+    }
+
+    package {
+
+      public final inline fun <T#0 /* K */, T#1 /* V */> kotlin/collections/MutableMap<T#0, test/WeakReference<T#1>>.getOrPutWeak(key: T#0, defaultValue: kotlin/Function0<T#1>): T#1
+    }
+  }
+}

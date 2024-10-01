@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: i
+
+    // class name: i/User
+
+    public final class i/User : kotlin/Any {
+
+      public constructor(firstName: kotlin/String, lastName: kotlin/String, age: kotlin/Int)
+
+      public open fun toString(): kotlin/String
+
+      public final val age: kotlin/Int
+        public final get
+
+      public final val firstName: kotlin/String
+        public final get
+
+      public final val lastName: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Comparable<T#0>> kotlin/collections/Collection<T#0>.testMin(): T#0?
+    }
+  }
+}

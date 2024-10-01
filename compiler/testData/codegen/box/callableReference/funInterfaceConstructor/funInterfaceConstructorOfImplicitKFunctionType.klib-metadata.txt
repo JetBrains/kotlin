@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KRunnable
+
+    public abstract fun interface KRunnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val kr: kotlin/reflect/KFunction1<kotlin/Function0<kotlin/Unit>, KRunnable>
+        public final get
+    }
+  }
+}

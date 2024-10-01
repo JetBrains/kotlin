@@ -1,0 +1,30 @@
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Child
+
+    public open class Base : kotlin/Any {
+
+      public constructor()
+
+      public open val x: kotlin/String /* = ... */
+        public open get
+    }
+
+    public final class Child : Base {
+
+      public constructor()
+
+      public final fun xGetter(): kotlin/Function0<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

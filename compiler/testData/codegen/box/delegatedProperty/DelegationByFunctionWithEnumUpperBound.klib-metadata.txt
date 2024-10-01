@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Enumeration
+    // class name: Klass
+
+    public final enum class Enumeration : kotlin/Enum<Enumeration> {
+
+      private constructor()
+
+      OK,
+
+      // has Enum.entries
+    }
+
+    public final class Klass : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ var enumeration: Enumeration?
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: Enumeration?)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Enum<T#0>> delegate(): kotlin/properties/ReadWriteProperty<kotlin/Any?, T#0?>
+    }
+  }
+}

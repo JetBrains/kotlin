@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/plusAssignInsideLambda.kt
+    CLASS INTERFACE name:SendChannel signature:/SendChannel|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SendChannel<T of <root>.SendChannel>
+      TYPE_PARAMETER name:T index:0 variance:in signature:[ /SendChannel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:send signature:/SendChannel.send|send(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SendChannel<T of <root>.SendChannel>, value:T of <root>.SendChannel) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SendChannel<T of <root>.SendChannel>
+        VALUE_PARAMETER name:value index:0 type:T of <root>.SendChannel
+    FUN name:flux signature:/flux|flux(kotlin.coroutines.SuspendFunction1<SendChannel<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<T of <root>.flux>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /flux|flux(kotlin.coroutines.SuspendFunction1<SendChannel<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<T of <root>.flux>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    FUN name:collect signature:/collect|collect@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.collect, action:<unbound IrClassSymbolImpl><T of <root>.collect, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline,suspend]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /collect|collect@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.collect
+      VALUE_PARAMETER name:action index:0 type:<unbound IrClassSymbolImpl><T of <root>.collect, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'action: <unbound IrClassSymbolImpl><T of <root>.collect, <unbound IrClassSymbolImpl>> declared in <root>.collect' type=<unbound IrClassSymbolImpl><T of <root>.collect, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR '<this>: T of <root>.collect declared in <root>.collect' type=T of <root>.collect origin=null
+    FUN name:test signature:/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun flux <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<T of <root>.flux>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.SendChannel<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.SendChannel<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$flux type:<root>.SendChannel<<unbound IrClassSymbolImpl>>
+              BLOCK_BODY
+                VAR name:result type:<unbound IrClassSymbolImpl> [var]
+                  CONST String type=<unbound IrClassSymbolImpl> value=""
+                CALL 'public final fun collect <T> (action: <unbound IrClassSymbolImpl><T of <root>.collect, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline,suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  action: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.test.<anonymous>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.test.<anonymous>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.test.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public abstract fun send (value: T of <root>.SendChannel): <unbound IrClassSymbolImpl> [suspend] declared in <root>.SendChannel' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$flux: <root>.SendChannel<<unbound IrClassSymbolImpl>> declared in <root>.test.<anonymous>' type=<root>.SendChannel<<unbound IrClassSymbolImpl>> origin=null
+                  value: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.test.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

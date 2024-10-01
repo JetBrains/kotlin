@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Sign
+
+    public final enum class Sign : kotlin/Enum<Sign> {
+
+      private constructor(str: kotlin/String, func: kotlin/Function2<@kotlin/ParameterName(name = "x") kotlin/Int, @kotlin/ParameterName(name = "y") kotlin/Int, kotlin/Int>)
+
+      public final val func: kotlin/Function2<@kotlin/ParameterName(name = "x") kotlin/Int, @kotlin/ParameterName(name = "y") kotlin/Int, kotlin/Int>
+        public final get
+
+      public final val str: kotlin/String
+        public final get
+
+      plus,
+
+      mult,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,152 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/varargs.kt
+    FUN name:foo1 signature:/foo1|foo1(kotlin.IntArray...;kotlin.String;kotlin.Double){}[0] visibility:public modality:FINAL <> (p1:<unbound IrClassSymbolImpl>, p2:<unbound IrClassSymbolImpl>, p3:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p1 index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      VALUE_PARAMETER name:p2 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p3 index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo1 (vararg p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'p1: <unbound IrClassSymbolImpl> [vararg] declared in <root>.foo1' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'p1: <unbound IrClassSymbolImpl> [vararg] declared in <root>.foo1' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            GET_VAR 'p2: <unbound IrClassSymbolImpl> declared in <root>.foo1' type=<unbound IrClassSymbolImpl> origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'p3: <unbound IrClassSymbolImpl> declared in <root>.foo1' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:foo2 signature:/foo2|foo2(kotlin.Int;kotlin.Array<out|kotlin.String>...;kotlin.Double){}[0] visibility:public modality:FINAL <> (p1:<unbound IrClassSymbolImpl>, p2:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, p3:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p1 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p2 index:1 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      VALUE_PARAMETER name:p3 index:2 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo2 (p1: <unbound IrClassSymbolImpl>, vararg p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            GET_VAR 'p1: <unbound IrClassSymbolImpl> declared in <root>.foo2' type=<unbound IrClassSymbolImpl> origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'p2: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [vararg] declared in <root>.foo2' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'p2: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [vararg] declared in <root>.foo2' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'p3: <unbound IrClassSymbolImpl> declared in <root>.foo2' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:foo3 signature:/foo3|foo3(kotlin.Int;kotlin.String;kotlin.DoubleArray...){}[0] visibility:public modality:FINAL <> (p1:<unbound IrClassSymbolImpl>, p2:<unbound IrClassSymbolImpl>, p3:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p1 index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p2 index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:p3 index:2 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo3 (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, vararg p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            GET_VAR 'p1: <unbound IrClassSymbolImpl> declared in <root>.foo3' type=<unbound IrClassSymbolImpl> origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            GET_VAR 'p2: <unbound IrClassSymbolImpl> declared in <root>.foo3' type=<unbound IrClassSymbolImpl> origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: GET_VAR 'p3: <unbound IrClassSymbolImpl> [vararg] declared in <root>.foo3' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            CONST String type=<unbound IrClassSymbolImpl> value=" "
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: GET_VAR 'p3: <unbound IrClassSymbolImpl> [vararg] declared in <root>.foo3' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun foo1 (vararg p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                    CONST Int type=<unbound IrClassSymbolImpl> value=1
+                    CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  p2: CONST String type=<unbound IrClassSymbolImpl> value="3"
+                  p3: CONST Double type=<unbound IrClassSymbolImpl> value=4.0
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun foo1 (vararg p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                    SPREAD_ELEMENT
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                          CONST Int type=<unbound IrClassSymbolImpl> value=1
+                          CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  p2: CONST String type=<unbound IrClassSymbolImpl> value="3"
+                  p3: CONST Double type=<unbound IrClassSymbolImpl> value=4.0
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun foo2 (p1: <unbound IrClassSymbolImpl>, vararg p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  p2: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                    CONST String type=<unbound IrClassSymbolImpl> value="2"
+                    CONST String type=<unbound IrClassSymbolImpl> value="3"
+                  p3: CONST Double type=<unbound IrClassSymbolImpl> value=4.0
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun foo2 (p1: <unbound IrClassSymbolImpl>, vararg p2: <unbound IrClassSymbolImpl>, p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  p2: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                    SPREAD_ELEMENT
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                        <1>: <unbound IrClassSymbolImpl>
+                        1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="2"
+                          CONST String type=<unbound IrClassSymbolImpl> value="3"
+                  p3: CONST Double type=<unbound IrClassSymbolImpl> value=4.0
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun foo3 (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, vararg p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  p2: CONST String type=<unbound IrClassSymbolImpl> value="2"
+                  p3: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                    CONST Double type=<unbound IrClassSymbolImpl> value=3.0
+                    CONST Double type=<unbound IrClassSymbolImpl> value=4.0
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun foo3 (p1: <unbound IrClassSymbolImpl>, p2: <unbound IrClassSymbolImpl>, vararg p3: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  p1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  p2: CONST String type=<unbound IrClassSymbolImpl> value="2"
+                  p3: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                    SPREAD_ELEMENT
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        1: VARARG type=<unbound IrClassSymbolImpl> varargElementType=<unbound IrClassSymbolImpl>
+                          CONST Double type=<unbound IrClassSymbolImpl> value=3.0
+                          CONST Double type=<unbound IrClassSymbolImpl> value=4.0
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1 2 3 4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 6"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: PropertyOwner
+    // class name: Something
+    // class name: Something.Item
+
+    public abstract interface PropertyOwner : kotlin/Any {
+    }
+
+    public final class Something<T#0 /* T */ : PropertyOwner> : kotlin/Any {
+
+      public constructor(ref: T#0)
+
+      public final fun ping(): kotlin/Unit
+
+      public final val PropertyOwner.offset: kotlin/Int
+        public final /* non-default */ get
+
+      private final val ref: T#0
+        private final get
+
+      // nested class: Item
+    }
+
+    private final inner class Something.Item : kotlin/Any {
+
+      public constructor()
+
+      public final fun update(owner: T#0, offset: kotlin/Int /* = ... */): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var accumulator: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,40 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/CartRoutes
+    // class name: a/CartRoutes.RemoveOrderItem
+
+    public final object a/CartRoutes : kotlin/Any {
+
+      private constructor()
+
+      // nested class: RemoveOrderItem
+    }
+
+    public final class a/CartRoutes.RemoveOrderItem : kotlin/Any {
+
+      public constructor()
+
+      public final val result: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

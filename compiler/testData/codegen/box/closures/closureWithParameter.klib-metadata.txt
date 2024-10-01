@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun apply(arg: kotlin/String, f: kotlin/Function1<@kotlin/ParameterName(name = "p") kotlin/String, kotlin/String>): kotlin/String
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

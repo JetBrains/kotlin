@@ -1,0 +1,32 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public final class Test<T#0 /* T */> : kotlin/collections/Collection<T#0> {
+
+      public constructor()
+
+      public open operator fun contains(element: T#0): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<T#0>
+
+      internal final fun remove(x: T#0): kotlin/Boolean
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

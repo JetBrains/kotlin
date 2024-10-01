@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun kValue(crossinline s: kotlin/Function0<kotlin/String>): kotlin/String
+
+      public final inline fun lParams(initParams: kotlin/Function0<kotlin/String> /* = ... */): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,48 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public final class Foo<out T#0 /* T */> : kotlin/Any {
+
+      public constructor(t: T#0)
+
+      public final fun baz(b: kotlin/Function1<T#0, kotlin/String> /* = Bar^<T#0> */): kotlin/String
+
+      public final val t: T#0
+        public final get
+    }
+
+    package {
+
+      public typealias Bar<T#0 /* T */> = kotlin/Function1<T#0, kotlin/String> /* = kotlin/Function1<T#0, kotlin/String> */
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FooTest
+
+    public final class FooTest : kotlin/Any {
+
+      public constructor()
+
+      public final fun baz(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

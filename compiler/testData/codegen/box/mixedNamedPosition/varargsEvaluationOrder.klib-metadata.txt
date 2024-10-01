@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun doTest(id: kotlin/String, expected: kotlin/String, expectedLog: kotlin/String, test: kotlin/Function0<kotlin/String>): kotlin/Unit
+
+      public final fun foo1(vararg p1: kotlin/Int /* kotlin/IntArray */, p2: kotlin/String, p3: kotlin/Double): kotlin/String
+
+      public final fun foo2(p1: kotlin/Int, vararg p2: kotlin/String /* kotlin/Array<out kotlin/String> */, p3: kotlin/Double): kotlin/String
+
+      public final fun foo3(p1: kotlin/Int, p2: kotlin/String, vararg p3: kotlin/Double /* kotlin/DoubleArray */): kotlin/String
+
+      public final fun <T#0 /* T */> logged(value: T#0): T#0
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

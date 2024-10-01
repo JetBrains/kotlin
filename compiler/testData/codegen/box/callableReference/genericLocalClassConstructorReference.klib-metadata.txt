@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: L
+    // class name: Rec
+
+    public open class L<T#0 /* LL */> : kotlin/Any {
+
+      public constructor(ll: T#0)
+
+      public final val ll: T#0
+        public final get
+    }
+
+    public final class Rec<T#0 /* T */> : kotlin/Any {
+
+      public constructor(rt: T#0)
+
+      public final val rt: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* FT */> Rec<T#0>.fn(): L<T#0>
+
+      public final fun <T#0 /* T1 */, T#1 /* T2 */, T#2 /* R */> foo2(t1: T#0, t2: T#1, bb: kotlin/Function2<T#0, T#1, T#2>): T#2
+
+      public final val <T#0 /* PT */> Rec<T#0>.p: L<T#0>
+        public final /* non-default */ get
+    }
+  }
+}

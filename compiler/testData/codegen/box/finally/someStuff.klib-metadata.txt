@@ -1,0 +1,90 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Baobab
+    // class name: Bar
+    // class name: Baz
+    // class name: Darb
+    // class name: Foo
+    // class name: Hypo
+    // class name: Zanzibar
+
+    public final class Baobab : kotlin/Throwable {
+
+      public constructor()
+    }
+
+    public final class Bar : Foo {
+
+      public constructor()
+    }
+
+    public final class Baz : Foo {
+
+      public constructor()
+    }
+
+    public final class Darb : kotlin/Throwable {
+
+      public constructor()
+    }
+
+    public open class Foo : kotlin/Throwable {
+
+      public constructor()
+    }
+
+    public final class Hypo : kotlin/Throwable {
+
+      public constructor(catchedBaobab: kotlin/Boolean, thrownZanzibar: kotlin/Boolean, seenFinally: kotlin/Boolean)
+
+      public final val catchedBaobab: kotlin/Boolean
+        public final get
+
+      public final val seenFinally: kotlin/Boolean
+        public final get
+
+      public final val thrownZanzibar: kotlin/Boolean
+        public final get
+    }
+
+    public final class Zanzibar : kotlin/Throwable {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(i: kotlin/Int): kotlin/Unit
+
+      public final fun foo_for_test6(): kotlin/String
+
+      public final fun golb(): kotlin/Unit
+
+      public final fun ooo(): kotlin/Unit
+
+      public final fun test1(): kotlin/Boolean
+
+      public final fun test2(): kotlin/Boolean
+
+      public final fun test3(): kotlin/Boolean
+
+      public final fun test4(): kotlin/Boolean
+
+      public final fun test5(): kotlin/Boolean
+
+      public final fun test6(): kotlin/Boolean
+
+      public final fun test7(): kotlin/Boolean
+
+      public final fun test8(): kotlin/Boolean
+
+      public final fun zoot(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final object A : kotlin/Any {
+
+      private constructor()
+
+      public final fun test(): kotlin/Int
+
+      public final fun test2(): kotlin/Int
+
+      public final fun test3(): kotlin/Int
+
+      public final fun test4(): kotlin/Int
+
+      public final var holder: kotlin/String
+        public final get
+        public final set
+
+      private final var r: kotlin/Int
+        private final get
+        private final set
+
+      public final var r2: kotlin/Int
+        public final /* non-default */ get
+        public final set
+
+      public final var r3: kotlin/Int
+        public final get
+        public final /* non-default */ set(p: kotlin/Int)
+
+      public final var r4: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(p: kotlin/Int)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

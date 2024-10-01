@@ -1,0 +1,50 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: z
+
+    // class name: z/X
+    // class name: z/Z
+
+    public final class z/X : kotlin/Any {
+
+      public constructor()
+
+      public final fun kotlin/Int.foo(z: z/Z, value: kotlin/String /* = ... */): kotlin/String
+    }
+
+    public final value class z/Z : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+
+      // underlying property: s
+
+      // underlying type: kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,93 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericCallableReferenceArgumentsNonJVM.kt
+    FUN name:foo signature:/foo|foo(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> (x:T of <root>.foo) returnType:R of <root>.foo
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /foo|foo(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.foo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T, R> (x: T of <root>.foo): R of <root>.foo declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:fooReturnInt signature:/fooReturnInt|fooReturnInt(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.fooReturnInt) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /fooReturnInt|fooReturnInt(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.fooReturnInt
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun fooReturnInt <T> (x: T of <root>.fooReturnInt): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:check signature:/check|check(0:0;0:1;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> (x:T of <root>.check, y:R of <root>.check, f:<unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, tType:<unbound IrClassSymbolImpl>, rType:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /check|check(0:0;0:1;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /check|check(0:0;0:1;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:T of <root>.check
+      VALUE_PARAMETER name:y index:1 type:R of <root>.check
+      VALUE_PARAMETER name:f index:2 type:<unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>
+      VALUE_PARAMETER name:tType index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:rType index:4 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_VAR 'tType: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: signature:[ /check|check(0:0;0:1;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><T of <root>.check>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_VAR 'rType: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CLASS_REFERENCE 'TYPE_PARAMETER name:R index:1 variance: signature:[ /check|check(0:0;0:1;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><R of <root>.check>
+    FUN name:check signature:/check|check(kotlin.Function1<0:0,0:1>;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> (f:<unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, g:<unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, tType:<unbound IrClassSymbolImpl>, rType:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /check|check(kotlin.Function1<0:0,0:1>;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /check|check(kotlin.Function1<0:0,0:1>;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>
+      VALUE_PARAMETER name:g index:1 type:<unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>
+      VALUE_PARAMETER name:tType index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:rType index:3 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_VAR 'tType: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: signature:[ /check|check(kotlin.Function1<0:0,0:1>;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><T of <root>.check>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_VAR 'rType: <unbound IrClassSymbolImpl> declared in <root>.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CLASS_REFERENCE 'TYPE_PARAMETER name:R index:1 variance: signature:[ /check|check(kotlin.Function1<0:0,0:1>;kotlin.Function1<0:0,0:1>;kotlin.String;kotlin.String){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true' type=<unbound IrClassSymbolImpl><R of <root>.check>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: <unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, tType: <unbound IrClassSymbolImpl>, rType: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST String type=<unbound IrClassSymbolImpl> value=""
+          y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          f: FUNCTION_REFERENCE 'public final fun foo <T, R> (x: T of <root>.foo): R of <root>.foo declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+            <R>: <unbound IrClassSymbolImpl>
+          tType: CONST String type=<unbound IrClassSymbolImpl> value="String"
+          rType: CONST String type=<unbound IrClassSymbolImpl> value="Int"
+        CALL 'public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: <unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, tType: <unbound IrClassSymbolImpl>, rType: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          x: CONST String type=<unbound IrClassSymbolImpl> value=""
+          y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          f: FUNCTION_REFERENCE 'public final fun fooReturnInt <T> (x: T of <root>.fooReturnInt): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+          tType: CONST String type=<unbound IrClassSymbolImpl> value="String"
+          rType: CONST String type=<unbound IrClassSymbolImpl> value="Int"
+        CALL 'public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: <unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, tType: <unbound IrClassSymbolImpl>, rType: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl><*>
+          x: CONST String type=<unbound IrClassSymbolImpl> value=""
+          y: CONST String type=<unbound IrClassSymbolImpl> value=""
+          f: FUNCTION_REFERENCE 'public final fun fooReturnInt <T> (x: T of <root>.fooReturnInt): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+          tType: CONST String type=<unbound IrClassSymbolImpl> value="String"
+          rType: CONST String type=<unbound IrClassSymbolImpl> value="Comparable"
+        CALL 'public final fun check <T, R> (f: <unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, g: <unbound IrClassSymbolImpl><T of <root>.check, R of <root>.check>, tType: <unbound IrClassSymbolImpl>, rType: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          <R>: <unbound IrClassSymbolImpl>
+          f: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+          g: FUNCTION_REFERENCE 'public final fun foo <T, R> (x: T of <root>.foo): R of <root>.foo declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+            <R>: <unbound IrClassSymbolImpl>
+          tType: CONST String type=<unbound IrClassSymbolImpl> value="Int"
+          rType: CONST String type=<unbound IrClassSymbolImpl> value="String"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

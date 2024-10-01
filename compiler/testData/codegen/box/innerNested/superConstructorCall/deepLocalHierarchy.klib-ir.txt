@@ -1,0 +1,75 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/deepLocalHierarchy.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CLASS CLASS name:L1 modality:ABSTRACT visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.L1
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.L1 [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L1 modality:ABSTRACT visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.box.L1) returnType:<unbound IrClassSymbolImpl>
+            $this: VALUE_PARAMETER name:<this> type:<root>.box.L1
+        CLASS CLASS name:L2 modality:OPEN visibility:local superTypes:[<root>.box.L1]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.L2
+          CONSTRUCTOR visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.box.L2 [primary]
+            VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.L1'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L2 modality:OPEN visibility:local superTypes:[<root>.box.L1]'
+          PROPERTY name:s visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:s type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.box.L2.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.box.L2) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.L2
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.box.L2'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.L2 declared in <root>.box.L2.<get-s>' type=<root>.box.L2 origin=null
+          FUN name:foo visibility:public modality:OPEN <> ($this:<root>.box.L2) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.box.L1
+            $this: VALUE_PARAMETER name:<this> type:<root>.box.L2
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.box.L2'
+                CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.box.L2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.box.L2 declared in <root>.box.L2.foo' type=<root>.box.L2 origin=null
+        CLASS CLASS name:L3 modality:OPEN visibility:local superTypes:[<root>.box.L2]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.L3
+          CONSTRUCTOR visibility:public <> (unused:<unbound IrClassSymbolImpl>, value:<unbound IrClassSymbolImpl>) returnType:<root>.box.L3 [primary]
+            VALUE_PARAMETER name:unused index:0 type:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER name:value index:1 type:<unbound IrClassSymbolImpl>
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.box.L2'
+                s: GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.box.L3.<init>' type=<unbound IrClassSymbolImpl> origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L3 modality:OPEN visibility:local superTypes:[<root>.box.L2]'
+        CLASS CLASS name:L4 modality:OPEN visibility:local superTypes:[<root>.box.L3]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.L4
+          CONSTRUCTOR visibility:public <> (i:<unbound IrClassSymbolImpl>, j:<unbound IrClassSymbolImpl>, z:<unbound IrClassSymbolImpl>, l:<root>.box.L3) returnType:<root>.box.L4 [primary]
+            VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER name:j index:1 type:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER name:z index:2 type:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER name:l index:3 type:<root>.box.L3
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (unused: <unbound IrClassSymbolImpl>, value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.box.L3'
+                unused: CONST Double type=<unbound IrClassSymbolImpl> value=3.14
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L4 modality:OPEN visibility:local superTypes:[<root>.box.L3]'
+        CLASS CLASS name:L5 modality:FINAL visibility:local superTypes:[<root>.box.L4]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.L5
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.L5 [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (i: <unbound IrClassSymbolImpl>, j: <unbound IrClassSymbolImpl>, z: <unbound IrClassSymbolImpl>, l: <root>.box.L3) [primary] declared in <root>.box.L4'
+                i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                j: CONST Long type=<unbound IrClassSymbolImpl> value=0
+                z: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                l: CONSTRUCTOR_CALL 'public constructor <init> (unused: <unbound IrClassSymbolImpl>, value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.box.L3' type=<root>.box.L3 origin=null
+                  unused: CONST Double type=<unbound IrClassSymbolImpl> value=2.71
+                  value: CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L5 modality:FINAL visibility:local superTypes:[<root>.box.L4]'
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.L5' type=<root>.box.L5 origin=null

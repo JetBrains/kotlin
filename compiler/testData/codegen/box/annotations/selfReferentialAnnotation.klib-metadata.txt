@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Ann
+    // class name: MyRequiresOptIn
+    // class name: MyRequiresOptIn.MyLevel
+
+    public final annotation class Ann : kotlin/Annotation {
+
+      public constructor(@Ann(e = 1) e: kotlin/Int)
+
+      public final val e: kotlin/Int
+        public final get
+    }
+
+    @MyRequiresOptIn(a = "", b = MyRequiresOptIn.MyLevel.ERROR)
+    public final annotation class MyRequiresOptIn : kotlin/Annotation {
+
+      public constructor(a: kotlin/String /* = ... */, @MyRequiresOptIn(a = "", b = MyRequiresOptIn.MyLevel.WARNING) b: MyRequiresOptIn.MyLevel /* = ... */)
+
+      public final val a: kotlin/String
+        public final get
+
+      public final val b: MyRequiresOptIn.MyLevel
+        public final get
+
+      // nested class: MyLevel
+    }
+
+    public final enum class MyRequiresOptIn.MyLevel : kotlin/Enum<MyRequiresOptIn.MyLevel> {
+
+      private constructor()
+
+      WARNING,
+
+      ERROR,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

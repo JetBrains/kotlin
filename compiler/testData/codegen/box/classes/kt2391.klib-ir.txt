@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2391.kt
+    CLASS INTERFACE name:LoggerAware signature:/LoggerAware|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LoggerAware
+      PROPERTY name:logger signature:/LoggerAware.logger|{}logger[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-logger> signature:/LoggerAware.logger.<get-logger>|<get-logger>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.LoggerAware) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:logger signature:/LoggerAware.logger|{}logger[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LoggerAware
+    CLASS CLASS name:HttpServer signature:/HttpServer|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.LoggerAware]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.HttpServer
+      CONSTRUCTOR signature:/HttpServer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.HttpServer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:HttpServer signature:/HttpServer|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.LoggerAware]'
+      FUN name:start signature:/HttpServer.start|start(){}[0] visibility:public modality:FINAL <> ($this:<root>.HttpServer) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.HttpServer
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.HttpServer declared in <root>.HttpServer.start' type=<root>.HttpServer origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:MyHttpServer signature:/MyHttpServer|null[0] modality:FINAL visibility:public superTypes:[<root>.HttpServer]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyHttpServer
+      CONSTRUCTOR signature:/MyHttpServer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyHttpServer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.HttpServer'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyHttpServer signature:/MyHttpServer|null[0] modality:FINAL visibility:public superTypes:[<root>.HttpServer]'
+      PROPERTY name:logger signature:/MyHttpServer.logger|{}logger[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:logger signature:[ /MyHttpServer.logger|{}logger[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logger type:kotlin.text.StringBuilder visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-logger> signature:/MyHttpServer.logger.<get-logger>|<get-logger>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyHttpServer) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:logger signature:/MyHttpServer.logger|{}logger[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyHttpServer
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-logger> (): <unbound IrClassSymbolImpl> declared in <root>.MyHttpServer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:logger signature:[ /MyHttpServer.logger|{}logger[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:logger type:kotlin.text.StringBuilder visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyHttpServer declared in <root>.MyHttpServer.<get-logger>' type=<root>.MyHttpServer origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:server type:<root>.MyHttpServer [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyHttpServer' type=<root>.MyHttpServer origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val server: <root>.MyHttpServer [val] declared in <root>.box' type=<root>.MyHttpServer origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public open fun <get-logger> (): <unbound IrClassSymbolImpl> declared in <root>.MyHttpServer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'val server: <root>.MyHttpServer [val] declared in <root>.box' type=<root>.MyHttpServer origin=null

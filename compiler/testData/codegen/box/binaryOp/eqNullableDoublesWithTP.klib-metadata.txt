@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* A */ : kotlin/Double?, T#1 /* B */ : kotlin/Any> eq_doubleN_any(a: T#0, b: T#1): kotlin/Boolean
+
+      public final fun <T#0 /* A */ : kotlin/Double?, T#1 /* B */ : kotlin/Any?> eq_doubleN_anyN(a: T#0, b: T#1): kotlin/Boolean
+
+      public final fun <T#0 /* A */ : kotlin/Double?, T#1 /* B */ : kotlin/Double> eq_doubleN_double(a: T#0, b: T#1): kotlin/Boolean
+
+      public final fun <T#0 /* A */ : kotlin/Double?, T#1 /* B */ : kotlin/Double?> eq_doubleN_doubleN(a: T#0, b: T#1): kotlin/Boolean
+
+      public final fun <T#0 /* A */ : kotlin/Double, T#1 /* B */ : kotlin/Any> eq_double_any(a: T#0, b: T#1): kotlin/Boolean
+
+      public final fun <T#0 /* A */ : kotlin/Double, T#1 /* B */ : kotlin/Any?> eq_double_anyN(a: T#0, b: T#1): kotlin/Boolean
+
+      public final fun <T#0 /* A */ : kotlin/Double, T#1 /* B */ : kotlin/Double?> eq_double_doubleN(a: T#0, b: T#1): kotlin/Boolean
+    }
+  }
+}

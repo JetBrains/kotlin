@@ -1,0 +1,132 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Host
+    // class name: L
+    // class name: Obj
+    // class name: Str
+    // class name: Z
+
+    public final value class Host<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(xx: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public final fun testWithDefaultL(): L<kotlin/Long>
+
+      public final fun testWithDefaultL2(): L<kotlin/Long>
+
+      public final fun testWithDefaultObj(): Obj<kotlin/String>
+
+      public final fun testWithDefaultObj2(): Obj<kotlin/String>
+
+      public final fun testWithDefaultStr(): Str<kotlin/String>
+
+      public final fun testWithDefaultZ(): Z<kotlin/Int>
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final inline fun <T#1 /* R */> withDefaultL(fn: kotlin/Function1<L<kotlin/Long>, T#1>, x: L<kotlin/Long> /* = ... */): T#1
+
+      public final inline fun <T#1 /* R */> withDefaultL2(x: L<kotlin/Long> /* = ... */, fn: kotlin/Function1<L<kotlin/Long>, T#1>): T#1
+
+      public final inline fun <T#1 /* R */> withDefaultObj(fn: kotlin/Function1<Obj<kotlin/Any>, T#1>, x: Obj<kotlin/Any> /* = ... */): T#1
+
+      public final inline fun <T#1 /* R */> withDefaultObj2(x: Obj<kotlin/Any> /* = ... */, fn: kotlin/Function1<Obj<kotlin/Any>, T#1>): T#1
+
+      public final inline fun <T#1 /* R */> withDefaultStr(fn: kotlin/Function1<Str<kotlin/String>, T#1>, x: Str<kotlin/String> /* = ... */): T#1
+
+      public final inline fun <T#1 /* R */> withDefaultZ(fn: kotlin/Function1<Z<kotlin/Int>, T#1>, x: Z<kotlin/Int> /* = ... */): T#1
+
+      public final val xx: T#0
+        public final get
+
+      // underlying property: xx
+
+      // underlying type: T#0
+    }
+
+    public final value class L<T#0 /* T */ : kotlin/Long> : kotlin/Any {
+
+      public constructor(long: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val long: T#0
+        public final get
+
+      // underlying property: long
+
+      // underlying type: T#0
+    }
+
+    public final value class Obj<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(obj: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val obj: T#0
+        public final get
+
+      // underlying property: obj
+
+      // underlying type: T#0
+    }
+
+    public final value class Str<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(string: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: T#0
+        public final get
+
+      // underlying property: string
+
+      // underlying type: T#0
+    }
+
+    public final value class Z<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(int: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val int: T#0
+        public final get
+
+      // underlying property: int
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

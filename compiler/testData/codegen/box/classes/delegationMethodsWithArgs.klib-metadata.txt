@@ -1,0 +1,59 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/InputTextField
+    // class name: test/MooableTextField
+    // class name: test/SimpleTextField
+    // class name: test/TextField
+    // class name: test/TextFieldWrapper
+
+    public abstract interface test/InputTextField : test/TextField {
+
+      public abstract fun setText(text: kotlin/String): kotlin/Unit
+    }
+
+    public abstract interface test/MooableTextField : test/InputTextField {
+
+      public abstract fun moo(a: kotlin/Int, b: kotlin/Int, c: kotlin/Int): kotlin/Int
+    }
+
+    public final class test/SimpleTextField : test/MooableTextField {
+
+      public constructor()
+
+      public open fun getText(): kotlin/String
+
+      public open fun moo(a: kotlin/Int, b: kotlin/Int, c: kotlin/Int): kotlin/Int
+
+      public open fun setText(text: kotlin/String): kotlin/Unit
+
+      private final var text2: kotlin/String
+        private final get
+        private final set
+    }
+
+    public abstract interface test/TextField : kotlin/Any {
+
+      public abstract fun getText(): kotlin/String
+    }
+
+    public final class test/TextFieldWrapper : test/MooableTextField {
+
+      public constructor(textField: test/MooableTextField)
+
+      public open /* delegation */ fun getText(): kotlin/String
+
+      public open /* delegation */ fun moo(a: kotlin/Int, b: kotlin/Int, c: kotlin/Int): kotlin/Int
+
+      public open /* delegation */ fun setText(text: kotlin/String): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

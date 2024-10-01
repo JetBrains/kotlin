@@ -1,0 +1,29 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/anonymousObjectAndContrvariantProjection.kt
+    CLASS INTERFACE name:Invariant signature:/Invariant|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Invariant<A of <root>.Invariant>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /Invariant|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:publicFunc signature:/publicFunc|publicFunc@Invariant<in|kotlin.Number>(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Invariant<in <unbound IrClassSymbolImpl>>) returnType:<root>.Invariant<in <unbound IrClassSymbolImpl>>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Invariant<in <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun publicFunc (): <root>.Invariant<in <unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'private final fun privateFunc <B> (): <root>.privateFunc.<no name provided><B of <root>.privateFunc> declared in <root>' type=<root>.privateFunc.<no name provided><in <unbound IrClassSymbolImpl>> origin=null
+            <B>: <unbound IrClassSymbolImpl>?
+            $receiver: GET_VAR '<this>: <root>.Invariant<in <unbound IrClassSymbolImpl>> declared in <root>.publicFunc' type=<root>.Invariant<in <unbound IrClassSymbolImpl>> origin=null
+    FUN name:privateFunc signature:[ File '/anonymousObjectAndContrvariantProjection.kt' <- /privateFunc|privateFunc@Invariant<0:0>(){0§<kotlin.Any?>}[0] ] visibility:private modality:FINAL <B> ($receiver:<root>.Invariant<B of <root>.privateFunc>) returnType:<root>.privateFunc.<no name provided><B of <root>.privateFunc>
+      TYPE_PARAMETER name:B index:0 variance: signature:[ [ File '/anonymousObjectAndContrvariantProjection.kt' <- /privateFunc|privateFunc@Invariant<0:0>(){0§<kotlin.Any?>}[0] ] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Invariant<B of <root>.privateFunc>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun privateFunc <B> (): <root>.privateFunc.<no name provided><B of <root>.privateFunc> declared in <root>'
+          BLOCK type=<root>.privateFunc.<no name provided><B of <root>.privateFunc> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Invariant<B of <root>.privateFunc>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.privateFunc.<no name provided><B of <root>.privateFunc>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.privateFunc.<no name provided><B of <root>.privateFunc> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Invariant<B of <root>.privateFunc>]'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.privateFunc.<no name provided>' type=<root>.privateFunc.<no name provided><B of <root>.privateFunc> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

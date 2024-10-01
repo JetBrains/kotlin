@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/noclosure.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CLASS CLASS name:K modality:OPEN visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.K
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.K [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K modality:OPEN visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          PROPERTY name:o visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:o type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="O"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-o> visibility:public modality:FINAL <> ($this:<root>.box.K) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:o visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.K
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-o> (): <unbound IrClassSymbolImpl> declared in <root>.box.K'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:o type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.K declared in <root>.box.K.<get-o>' type=<root>.box.K origin=null
+        CLASS CLASS name:Bar modality:FINAL visibility:local superTypes:[<root>.box.K]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Bar
+          CONSTRUCTOR visibility:public <> () returnType:<root>.box.Bar [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.K'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:local superTypes:[<root>.box.K]'
+          PROPERTY name:k visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:k type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="K"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-k> visibility:public modality:FINAL <> ($this:<root>.box.Bar) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:k visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.Bar
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-k> (): <unbound IrClassSymbolImpl> declared in <root>.box.Bar'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.Bar declared in <root>.box.Bar.<get-k>' type=<root>.box.Bar origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun <get-o> (): <unbound IrClassSymbolImpl> declared in <root>.box.K' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.K' type=<root>.box.K origin=null
+            1: CALL 'public final fun <get-k> (): <unbound IrClassSymbolImpl> declared in <root>.box.Bar' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.Bar' type=<root>.box.Bar origin=null

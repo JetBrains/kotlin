@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:internalInlineFun signature:/internalInlineFun|internalInlineFun(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:internal modality:FINAL <T> (block:<unbound IrClassSymbolImpl><T of <root>.internalInlineFun>) returnType:T of <root>.internalInlineFun [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /internalInlineFun|internalInlineFun(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of <root>.internalInlineFun>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='internal final fun internalInlineFun <T> (block: <unbound IrClassSymbolImpl><T of <root>.internalInlineFun>): T of <root>.internalInlineFun [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.internalInlineFun origin=INVOKE
+            $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of <root>.internalInlineFun> declared in <root>.internalInlineFun' type=<unbound IrClassSymbolImpl><T of <root>.internalInlineFun> origin=VARIABLE_AS_FUNCTION
+    FUN name:privateInlineFun signature:[ File '/1.kt' <- /privateInlineFun|privateInlineFun(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] ] visibility:private modality:FINAL <T> (block:<unbound IrClassSymbolImpl><T of <root>.privateInlineFun>) returnType:T of <root>.privateInlineFun [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ [ File '/1.kt' <- /privateInlineFun|privateInlineFun(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] ] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of <root>.privateInlineFun>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun privateInlineFun <T> (block: <unbound IrClassSymbolImpl><T of <root>.privateInlineFun>): T of <root>.privateInlineFun [inline] declared in <root>'
+          CALL 'internal final fun internalInlineFun <T> (block: <unbound IrClassSymbolImpl><T of <root>.internalInlineFun>): T of <root>.internalInlineFun [inline] declared in <root>' type=T of <root>.privateInlineFun origin=null
+            <T>: T of <root>.privateInlineFun
+            block: GET_VAR 'block: <unbound IrClassSymbolImpl><T of <root>.privateInlineFun> declared in <root>.privateInlineFun' type=<unbound IrClassSymbolImpl><T of <root>.privateInlineFun> origin=null
+    FUN name:testO signature:/testO|testO(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'internal final fun internalInlineFun <T> (block: <unbound IrClassSymbolImpl><T of <root>.internalInlineFun>): T of <root>.internalInlineFun [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun testO (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="O"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testO (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="1"
+    FUN name:testK signature:/testK|testK(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'private final fun privateInlineFun <T> (block: <unbound IrClassSymbolImpl><T of <root>.privateInlineFun>): T of <root>.privateInlineFun [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun testK (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="K"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testK (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="2"
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun testO (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun testK (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

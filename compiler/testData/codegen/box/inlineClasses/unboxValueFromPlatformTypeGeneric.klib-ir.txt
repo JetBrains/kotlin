@@ -1,0 +1,115 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/unboxValueFromPlatformTypeGeneric.kt
+    CLASS CLASS name:SnekDirection signature:/SnekDirection|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SnekDirection<T of <root>.SnekDirection>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /SnekDirection|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/SnekDirection.<init>|<init>(1:0){}[0] visibility:public <> (direction:T of <root>.SnekDirection) returnType:<root>.SnekDirection<T of <root>.SnekDirection> [primary]
+        VALUE_PARAMETER name:direction index:0 type:T of <root>.SnekDirection
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SnekDirection signature:/SnekDirection|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:direction signature:/SnekDirection.direction|{}direction[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /SnekDirection.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:T of <root>.SnekDirection visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'direction: T of <root>.SnekDirection declared in <root>.SnekDirection.<init>' type=T of <root>.SnekDirection origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-direction> signature:/SnekDirection.direction.<get-direction>|<get-direction>(){}[0] visibility:public modality:FINAL <> ($this:<root>.SnekDirection<T of <root>.SnekDirection>) returnType:T of <root>.SnekDirection
+          correspondingProperty: PROPERTY name:direction signature:/SnekDirection.direction|{}direction[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SnekDirection<T of <root>.SnekDirection>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-direction> (): T of <root>.SnekDirection declared in <root>.SnekDirection'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /SnekDirection.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:T of <root>.SnekDirection visibility:private [final]' type=T of <root>.SnekDirection origin=null
+                receiver: GET_VAR '<this>: <root>.SnekDirection<T of <root>.SnekDirection> declared in <root>.SnekDirection.<get-direction>' type=<root>.SnekDirection<T of <root>.SnekDirection> origin=null
+      CLASS OBJECT name:Companion signature:/SnekDirection.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SnekDirection.Companion
+        CONSTRUCTOR signature:/SnekDirection.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.SnekDirection.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/SnekDirection.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:Up signature:/SnekDirection.Companion.Up|{}Up[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:Up signature:[ /SnekDirection.Companion.Up|{}Up[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:<root>.SnekDirection<<unbound IrClassSymbolImpl>> visibility:private [final]
+            EXPRESSION_BODY
+              CONSTRUCTOR_CALL 'public constructor <init> (direction: T of <root>.SnekDirection) [primary] declared in <root>.SnekDirection' type=<root>.SnekDirection<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                direction: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-Up> signature:/SnekDirection.Companion.Up.<get-Up>|<get-Up>(){}[0] visibility:public modality:FINAL <> ($this:<root>.SnekDirection.Companion) returnType:<root>.SnekDirection<<unbound IrClassSymbolImpl>>
+            correspondingProperty: PROPERTY name:Up signature:/SnekDirection.Companion.Up|{}Up[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.SnekDirection.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-Up> (): <root>.SnekDirection<<unbound IrClassSymbolImpl>> declared in <root>.SnekDirection.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:Up signature:[ /SnekDirection.Companion.Up|{}Up[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:<root>.SnekDirection<<unbound IrClassSymbolImpl>> visibility:private [final]' type=<root>.SnekDirection<<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.SnekDirection.Companion declared in <root>.SnekDirection.Companion.<get-Up>' type=<root>.SnekDirection.Companion origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/SnekDirection.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.SnekDirection<T of <root>.SnekDirection>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SnekDirection<T of <root>.SnekDirection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.SnekDirection'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="SnekDirection("
+              CONST String type=<unbound IrClassSymbolImpl> value="direction="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /SnekDirection.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:T of <root>.SnekDirection visibility:private [final]' type=T of <root>.SnekDirection origin=null
+                receiver: GET_VAR '<this>: <root>.SnekDirection<T of <root>.SnekDirection> declared in <root>.SnekDirection.toString' type=<root>.SnekDirection<T of <root>.SnekDirection> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/SnekDirection.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.SnekDirection<T of <root>.SnekDirection>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SnekDirection<T of <root>.SnekDirection>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.SnekDirection'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /SnekDirection.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:T of <root>.SnekDirection visibility:private [final]' type=T of <root>.SnekDirection origin=null
+                receiver: GET_VAR '<this>: <root>.SnekDirection<T of <root>.SnekDirection> declared in <root>.SnekDirection.hashCode' type=<root>.SnekDirection<T of <root>.SnekDirection> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/SnekDirection.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.SnekDirection<T of <root>.SnekDirection>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SnekDirection<T of <root>.SnekDirection>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.SnekDirection<T of <root>.SnekDirection>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.SnekDirection.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.SnekDirection'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.SnekDirection<T of <root>.SnekDirection> [val]
+            TYPE_OP type=<root>.SnekDirection<T of <root>.SnekDirection> origin=CAST typeOperand=<root>.SnekDirection<T of <root>.SnekDirection>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.SnekDirection.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /SnekDirection.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:T of <root>.SnekDirection visibility:private [final]' type=T of <root>.SnekDirection origin=null
+                    receiver: GET_VAR '<this>: <root>.SnekDirection<T of <root>.SnekDirection> declared in <root>.SnekDirection.equals' type=<root>.SnekDirection<T of <root>.SnekDirection> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:direction signature:[ /SnekDirection.direction|{}direction[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:direction type:T of <root>.SnekDirection visibility:private [final]] ] type:T of <root>.SnekDirection visibility:private [final]' type=T of <root>.SnekDirection origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.SnekDirection<T of <root>.SnekDirection> [val] declared in <root>.SnekDirection.equals' type=<root>.SnekDirection<T of <root>.SnekDirection> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.SnekDirection'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.SnekDirection'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:testUnbox signature:/testUnbox|testUnbox(){}[0] visibility:public modality:FINAL <> () returnType:<root>.SnekDirection<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:list type:<unbound IrClassSymbolImpl><<root>.SnekDirection<<unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.SnekDirection<<unbound IrClassSymbolImpl>>> origin=null
+            <1>: <root>.SnekDirection<<unbound IrClassSymbolImpl>>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <root>.SnekDirection<<unbound IrClassSymbolImpl>>> varargElementType=<root>.SnekDirection<<unbound IrClassSymbolImpl>>
+              CALL 'public final fun <get-Up> (): <root>.SnekDirection<<unbound IrClassSymbolImpl>> declared in <root>.SnekDirection.Companion' type=<root>.SnekDirection<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/SnekDirection.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.SnekDirection.Companion
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testUnbox (): <root>.SnekDirection<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.SnekDirection<<unbound IrClassSymbolImpl>> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val list: <unbound IrClassSymbolImpl><<root>.SnekDirection<<unbound IrClassSymbolImpl>>> [val] declared in <root>.testUnbox' type=<unbound IrClassSymbolImpl><<root>.SnekDirection<<unbound IrClassSymbolImpl>>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:<root>.SnekDirection<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun testUnbox (): <root>.SnekDirection<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.SnekDirection<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-direction> (): T of <root>.SnekDirection declared in <root>.SnekDirection' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a: <root>.SnekDirection<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.SnekDirection<<unbound IrClassSymbolImpl>> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"

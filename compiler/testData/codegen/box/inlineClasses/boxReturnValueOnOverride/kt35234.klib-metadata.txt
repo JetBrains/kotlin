@@ -1,0 +1,46 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NumberInlineClass
+    // class name: StringToDoubleTypeAdapter
+    // class name: TypeAdapter
+
+    public final value class NumberInlineClass : kotlin/Any {
+
+      public constructor(value: kotlin/Double)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Double
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Double
+    }
+
+    public final class StringToDoubleTypeAdapter : TypeAdapter<kotlin/String, NumberInlineClass> {
+
+      public constructor()
+
+      public open fun decode(string: kotlin/String): NumberInlineClass
+    }
+
+    public abstract interface TypeAdapter<T#0 /* FROM */, T#1 /* TO */> : kotlin/Any {
+
+      public abstract fun decode(string: T#0): T#1
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

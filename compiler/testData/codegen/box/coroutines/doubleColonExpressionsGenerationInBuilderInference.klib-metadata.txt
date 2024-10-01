@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: a.b
+
+    // class name: a/b/BatchInfo1
+    // class name: a/b/BatchInfo2
+    // class name: a/b/Obj
+
+    public final class a/b/BatchInfo1 : kotlin/Any {
+
+      public constructor(batchSize: kotlin/Int)
+
+      public final val batchSize: kotlin/Int
+        public final get
+    }
+
+    public final class a/b/BatchInfo2<T#0 /* T */> : kotlin/Any {
+
+      public constructor(data: T#0)
+
+      public final val data: T#0
+        public final get
+    }
+
+    public final object a/b/Obj : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,18 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String /* = R^ */
+
+      public final fun foo(): kotlin/reflect/KFunction0<kotlin/String /* = R^ */>
+
+      public final fun ret(): kotlin/String /* = R^ */
+
+      public typealias R = kotlin/String /* = kotlin/String */
+    }
+  }
+}

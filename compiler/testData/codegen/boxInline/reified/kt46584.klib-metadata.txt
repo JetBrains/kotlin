@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: OK
+
+    public final class OK : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <reified T#0 /* T */> bar(): kotlin/String
+
+      public final inline fun foo(crossinline x: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+  }
+}

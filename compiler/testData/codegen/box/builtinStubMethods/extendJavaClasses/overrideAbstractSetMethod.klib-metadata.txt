@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MySet
+
+    public final class MySet<T#0 /* K */, T#1 /* V */, T#2 /* E */ : kotlin/collections/Map.Entry<T#0, T#1>> : kotlin/collections/AbstractSet<T#2> {
+
+      public constructor()
+
+      public open operator fun contains(element: T#2): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<T#2>): kotlin/Boolean
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<T#2>
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(a01: kotlin/Int, a02: kotlin/Int, a03: kotlin/Int, a04: kotlin/Int, a05: kotlin/Int, a06: kotlin/Int, a07: kotlin/Int, a08: kotlin/Int, a09: kotlin/Int, a10: kotlin/Int, a11: kotlin/Int, a12: kotlin/Int, a13: kotlin/Int, a14: kotlin/Int, a15: kotlin/Int, a16: kotlin/Int, a17: kotlin/Int, a18: kotlin/Int, a19: kotlin/Int, a20: kotlin/Int, a21: kotlin/Int, a22: kotlin/Int, a23: kotlin/Int, a24: kotlin/Int, a25: kotlin/Int, a26: kotlin/Int, a27: kotlin/Int, a28: kotlin/Int, a29: kotlin/Int, a30: kotlin/Int, a31: kotlin/Int, a32: kotlin/Int, a33: kotlin/Int, a34: kotlin/Int, a35: kotlin/Int, a36: kotlin/Int, a37: kotlin/Int, a38: kotlin/Int, a39: kotlin/Int, a40: kotlin/Int): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

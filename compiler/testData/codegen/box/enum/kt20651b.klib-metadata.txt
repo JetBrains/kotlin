@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Callback
+    // class name: Foo
+
+    public abstract interface Callback : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/String
+    }
+
+    public final enum class Foo : kotlin/Enum<Foo> {
+
+      private constructor(x: kotlin/String, callback: Callback)
+
+      public final val callback: Callback
+        public final get
+
+      public final val x: kotlin/String
+        public final get
+
+      FOO,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

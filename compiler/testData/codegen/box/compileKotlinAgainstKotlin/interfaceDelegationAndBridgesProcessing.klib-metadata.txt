@@ -1,0 +1,64 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/CodeBlock
+    // class name: test/CodeBlockBase
+    // class name: test/CompositeCodeBlock
+    // class name: test/ForLoopBody
+    // class name: test/LineSeparatedCodeBlock
+
+    public abstract interface test/CodeBlock : kotlin/Any {
+
+      public abstract fun foo(): kotlin/String
+    }
+
+    public abstract class test/CodeBlockBase : test/CompositeCodeBlock {
+
+      public constructor()
+    }
+
+    public abstract interface test/CompositeCodeBlock : test/CodeBlock {
+
+      public open fun foo(): kotlin/String
+    }
+
+    public abstract interface test/ForLoopBody : test/CodeBlock {
+    }
+
+    public abstract class test/LineSeparatedCodeBlock : test/CodeBlockBase {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KotlinCodeBlock
+    // class name: KotlinForLoopBody
+
+    public open class KotlinCodeBlock : test/LineSeparatedCodeBlock {
+
+      public constructor()
+    }
+
+    public final class KotlinForLoopBody : KotlinCodeBlock, test/ForLoopBody {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

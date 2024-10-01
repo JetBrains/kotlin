@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Optional
+
+    @kotlin/OptionalExpectation
+    public final expect annotation class Optional : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun bar(): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      @Optional
+      public final fun foo(): kotlin/String
+    }
+  }
+}

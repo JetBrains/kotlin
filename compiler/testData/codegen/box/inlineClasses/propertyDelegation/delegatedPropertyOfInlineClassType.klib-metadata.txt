@@ -1,0 +1,120 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+    // class name: Demo
+    // class name: ICInt
+    // class name: ICLong
+    // class name: ICOverIC
+
+    public final class Delegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(f: kotlin/Function0<T#0>)
+
+      public final operator fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+
+      public final operator fun setValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>, value: T#0): kotlin/Unit
+
+      public final var f: kotlin/Function0<T#0>
+        public final get
+        public final set
+    }
+
+    public final object Demo : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val i0: ICInt
+        public final /* non-default */ get
+
+      public final /* delegated */ val i1: ICInt
+        public final /* non-default */ get
+
+      public final /* delegated */ var i2: ICInt
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: ICInt)
+
+      public final /* delegated */ val l0: ICLong
+        public final /* non-default */ get
+
+      public final /* delegated */ val l1: ICLong
+        public final /* non-default */ get
+
+      public final /* delegated */ var l2: ICLong
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: ICLong)
+
+      public final /* delegated */ val o0: ICOverIC
+        public final /* non-default */ get
+
+      public final /* delegated */ val o1: ICOverIC
+        public final /* non-default */ get
+
+      public final /* delegated */ var o2: ICOverIC
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: ICOverIC)
+    }
+
+    public final value class ICInt : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val i: kotlin/Int
+        public final get
+
+      // underlying property: i
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class ICLong : kotlin/Any {
+
+      public constructor(l: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val l: kotlin/Long
+        public final get
+
+      // underlying property: l
+
+      // underlying type: kotlin/Long
+    }
+
+    public final value class ICOverIC : kotlin/Any {
+
+      public constructor(o: ICLong)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val o: ICLong
+        public final get
+
+      // underlying property: o
+
+      // underlying type: ICLong
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

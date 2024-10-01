@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: I
+    // class name: Impl
+
+    public abstract interface I<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public abstract fun foo(func: kotlin/Function0<T#0?>): kotlin/Unit
+    }
+
+    public final class Impl<T#0 /* T */ : kotlin/Any> : I<T#0> {
+
+      public constructor()
+
+      public open fun foo(func: kotlin/Function0<T#0?>): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun I<*>.foo(): kotlin/Unit
+    }
+  }
+}

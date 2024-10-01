@@ -1,0 +1,233 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/flist.kt
+    CLASS CLASS name:FList signature:/FList|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FList<T of <root>.FList>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /FList|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/FList.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.FList<T of <root>.FList> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FList signature:/FList|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:head signature:/FList.head|{}head[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-head> signature:/FList.head.<get-head>|<get-head>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FList<T of <root>.FList>) returnType:T of <root>.FList
+          correspondingProperty: PROPERTY name:head signature:/FList.head|{}head[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FList<T of <root>.FList>
+      PROPERTY name:tail signature:/FList.tail|{}tail[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tail> signature:/FList.tail.<get-tail>|<get-tail>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FList<T of <root>.FList>) returnType:<root>.FList<T of <root>.FList>
+          correspondingProperty: PROPERTY name:tail signature:/FList.tail|{}tail[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FList<T of <root>.FList>
+      PROPERTY name:empty signature:/FList.empty|{}empty[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-empty> signature:/FList.empty.<get-empty>|<get-empty>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FList<T of <root>.FList>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:empty signature:/FList.empty|{}empty[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FList<T of <root>.FList>
+      CLASS OBJECT name:Companion signature:/FList.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FList.Companion
+        CONSTRUCTOR signature:/FList.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.FList.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/FList.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:emptyFList signature:/FList.Companion.emptyFList|{}emptyFList[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:emptyFList signature:[ /FList.Companion.emptyFList|{}emptyFList[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:emptyFList type:<root>.FList<kotlin.Any> visibility:private [final]] ] type:<root>.FList<<unbound IrClassSymbolImpl>> visibility:private [final]
+            EXPRESSION_BODY
+              BLOCK type=<root>.FList.Companion.emptyFList.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FList<<unbound IrClassSymbolImpl>>]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FList.Companion.emptyFList.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.FList.Companion.emptyFList.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FList'
+                        <T>: <unbound IrClassSymbolImpl>
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FList<<unbound IrClassSymbolImpl>>]'
+                  PROPERTY name:head visibility:public modality:OPEN [val]
+                    FUN name:<get-head> visibility:public modality:OPEN <> ($this:<root>.FList.Companion.emptyFList.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                      correspondingProperty: PROPERTY name:head visibility:public modality:OPEN [val]
+                      overridden:
+                        public abstract fun <get-head> (): T of <root>.FList declared in <root>.FList
+                      $this: VALUE_PARAMETER name:<this> type:<root>.FList.Companion.emptyFList.<no name provided>
+                      BLOCK_BODY
+                        THROW type=<unbound IrClassSymbolImpl>
+                          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  PROPERTY name:tail visibility:public modality:OPEN [val]
+                    FUN name:<get-tail> visibility:public modality:OPEN <> ($this:<root>.FList.Companion.emptyFList.<no name provided>) returnType:<root>.FList<<unbound IrClassSymbolImpl>>
+                      correspondingProperty: PROPERTY name:tail visibility:public modality:OPEN [val]
+                      overridden:
+                        public abstract fun <get-tail> (): <root>.FList<T of <root>.FList> declared in <root>.FList
+                      $this: VALUE_PARAMETER name:<this> type:<root>.FList.Companion.emptyFList.<no name provided>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-tail> (): <root>.FList<<unbound IrClassSymbolImpl>> declared in <root>.FList.Companion.emptyFList.<no name provided>'
+                          GET_VAR '<this>: <root>.FList.Companion.emptyFList.<no name provided> declared in <root>.FList.Companion.emptyFList.<no name provided>.<get-tail>' type=<root>.FList.Companion.emptyFList.<no name provided> origin=null
+                  PROPERTY name:empty visibility:public modality:OPEN [val]
+                    FUN name:<get-empty> visibility:public modality:OPEN <> ($this:<root>.FList.Companion.emptyFList.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                      correspondingProperty: PROPERTY name:empty visibility:public modality:OPEN [val]
+                      overridden:
+                        public abstract fun <get-empty> (): <unbound IrClassSymbolImpl> declared in <root>.FList
+                      $this: VALUE_PARAMETER name:<this> type:<root>.FList.Companion.emptyFList.<no name provided>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-empty> (): <unbound IrClassSymbolImpl> declared in <root>.FList.Companion.emptyFList.<no name provided>'
+                          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FList.Companion.emptyFList.<no name provided>' type=<root>.FList.Companion.emptyFList.<no name provided> origin=OBJECT_LITERAL
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-emptyFList> signature:/FList.Companion.emptyFList.<get-emptyFList>|<get-emptyFList>(){}[0] visibility:public modality:FINAL <> ($this:<root>.FList.Companion) returnType:<root>.FList<<unbound IrClassSymbolImpl>>
+            correspondingProperty: PROPERTY name:emptyFList signature:/FList.Companion.emptyFList|{}emptyFList[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.FList.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-emptyFList> (): <root>.FList<<unbound IrClassSymbolImpl>> declared in <root>.FList.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:emptyFList signature:[ /FList.Companion.emptyFList|{}emptyFList[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:emptyFList type:<root>.FList<kotlin.Any> visibility:private [final]] ] type:<root>.FList<<unbound IrClassSymbolImpl>> visibility:private [final]' type=<root>.FList<<unbound IrClassSymbolImpl>> origin=null
+                  receiver: GET_VAR '<this>: <root>.FList.Companion declared in <root>.FList.Companion.<get-emptyFList>' type=<root>.FList.Companion origin=null
+      FUN name:plus signature:/FList.plus|plus(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.FList<T of <root>.FList>, head:T of <root>.FList) returnType:<root>.FList<T of <root>.FList> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FList<T of <root>.FList>
+        VALUE_PARAMETER name:head index:0 type:T of <root>.FList
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun plus (head: T of <root>.FList): <root>.FList<T of <root>.FList> [operator] declared in <root>.FList'
+            BLOCK type=<root>.FList.plus.<no name provided><T of <root>.FList> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FList<T of <root>.FList>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FList.plus.<no name provided><T of <root>.FList>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.FList.plus.<no name provided><T of <root>.FList> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FList'
+                      <T>: T of <root>.FList
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FList<T of <root>.FList>]'
+                PROPERTY name:head visibility:public modality:OPEN [val]
+                  FUN name:<get-head> visibility:public modality:OPEN <> ($this:<root>.FList.plus.<no name provided><T of <root>.FList>) returnType:T of <root>.FList
+                    correspondingProperty: PROPERTY name:head visibility:public modality:OPEN [val]
+                    overridden:
+                      public abstract fun <get-head> (): T of <root>.FList declared in <root>.FList
+                    $this: VALUE_PARAMETER name:<this> type:<root>.FList.plus.<no name provided><T of <root>.FList>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-head> (): T of <root>.FList declared in <root>.FList.plus.<no name provided>'
+                        GET_VAR 'head: T of <root>.FList declared in <root>.FList.plus' type=T of <root>.FList origin=null
+                PROPERTY name:empty visibility:public modality:OPEN [val]
+                  FUN name:<get-empty> visibility:public modality:OPEN <> ($this:<root>.FList.plus.<no name provided><T of <root>.FList>) returnType:<unbound IrClassSymbolImpl>
+                    correspondingProperty: PROPERTY name:empty visibility:public modality:OPEN [val]
+                    overridden:
+                      public abstract fun <get-empty> (): <unbound IrClassSymbolImpl> declared in <root>.FList
+                    $this: VALUE_PARAMETER name:<this> type:<root>.FList.plus.<no name provided><T of <root>.FList>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-empty> (): <unbound IrClassSymbolImpl> declared in <root>.FList.plus.<no name provided>'
+                        CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                PROPERTY name:tail visibility:public modality:OPEN [val]
+                  FUN name:<get-tail> visibility:public modality:OPEN <> ($this:<root>.FList.plus.<no name provided><T of <root>.FList>) returnType:<root>.FList<T of <root>.FList>
+                    correspondingProperty: PROPERTY name:tail visibility:public modality:OPEN [val]
+                    overridden:
+                      public abstract fun <get-tail> (): <root>.FList<T of <root>.FList> declared in <root>.FList
+                    $this: VALUE_PARAMETER name:<this> type:<root>.FList.plus.<no name provided><T of <root>.FList>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-tail> (): <root>.FList<T of <root>.FList> declared in <root>.FList.plus.<no name provided>'
+                        GET_VAR '<this>: <root>.FList<T of <root>.FList> declared in <root>.FList.plus' type=<root>.FList<T of <root>.FList> origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FList.plus.<no name provided>' type=<root>.FList.plus.<no name provided><T of <root>.FList> origin=OBJECT_LITERAL
+    FUN name:emptyFList signature:/emptyFList|emptyFList(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:<root>.FList<T of <root>.emptyFList>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /emptyFList|emptyFList(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun emptyFList <T> (): <root>.FList<T of <root>.emptyFList> declared in <root>'
+          TYPE_OP type=<root>.FList<T of <root>.emptyFList> origin=CAST typeOperand=<root>.FList<T of <root>.emptyFList>
+            CALL 'public final fun <get-emptyFList> (): <root>.FList<<unbound IrClassSymbolImpl>> declared in <root>.FList.Companion' type=<root>.FList<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/FList.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.FList.Companion
+    FUN name:reverse signature:/reverse|reverse@FList<0:0>(FList<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.FList<T of <root>.reverse>, where:<root>.FList<T of <root>.reverse>) returnType:<root>.FList<T of <root>.reverse>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /reverse|reverse@FList<0:0>(FList<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.FList<T of <root>.reverse>
+      VALUE_PARAMETER name:where index:0 type:<root>.FList<T of <root>.reverse>
+        EXPRESSION_BODY
+          CALL 'public final fun emptyFList <T> (): <root>.FList<T of <root>.emptyFList> declared in <root>' type=<root>.FList<T of <root>.reverse> origin=null
+            <T>: T of <root>.reverse
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun reverse <T> (where: <root>.FList<T of <root>.reverse>): <root>.FList<T of <root>.reverse> declared in <root>'
+          WHEN type=<root>.FList<T of <root>.reverse> origin=IF
+            BRANCH
+              if: CALL 'public abstract fun <get-empty> (): <unbound IrClassSymbolImpl> declared in <root>.FList' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.FList<T of <root>.reverse> declared in <root>.reverse' type=<root>.FList<T of <root>.reverse> origin=null
+              then: GET_VAR 'where: <root>.FList<T of <root>.reverse> declared in <root>.reverse' type=<root>.FList<T of <root>.reverse> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun reverse <T> (where: <root>.FList<T of <root>.reverse>): <root>.FList<T of <root>.reverse> declared in <root>' type=<root>.FList<T of <root>.reverse> origin=null
+                <T>: T of <root>.reverse
+                $receiver: CALL 'public abstract fun <get-tail> (): <root>.FList<T of <root>.FList> declared in <root>.FList' type=<root>.FList<T of <root>.reverse> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.FList<T of <root>.reverse> declared in <root>.reverse' type=<root>.FList<T of <root>.reverse> origin=null
+                where: CALL 'public final fun plus (head: T of <root>.FList): <root>.FList<T of <root>.FList> [operator] declared in <root>.FList' type=<root>.FList<T of <root>.reverse> origin=PLUS
+                  $this: GET_VAR 'where: <root>.FList<T of <root>.reverse> declared in <root>.reverse' type=<root>.FList<T of <root>.reverse> origin=null
+                  head: CALL 'public abstract fun <get-head> (): T of <root>.FList declared in <root>.FList' type=T of <root>.reverse origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.FList<T of <root>.reverse> declared in <root>.reverse' type=<root>.FList<T of <root>.reverse> origin=null
+    FUN name:iterator signature:/iterator|iterator@FList<0:0>(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<root>.FList<T of <root>.iterator>) returnType:<unbound IrClassSymbolImpl><T of <root>.iterator> [operator]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /iterator|iterator@FList<0:0>(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.FList<T of <root>.iterator>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun iterator <T> (): <unbound IrClassSymbolImpl><T of <root>.iterator> [operator] declared in <root>'
+          BLOCK type=<root>.iterator.<no name provided><T of <root>.iterator> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><T of <root>.iterator>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.iterator.<no name provided><T of <root>.iterator>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.iterator.<no name provided><T of <root>.iterator> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><T of <root>.iterator>]'
+              PROPERTY name:cur visibility:private modality:FINAL [var]
+                FIELD PROPERTY_BACKING_FIELD name:cur type:<root>.FList<T of <root>.iterator> visibility:private
+                  EXPRESSION_BODY
+                    GET_VAR '<this>: <root>.FList<T of <root>.iterator> declared in <root>.iterator' type=<root>.FList<T of <root>.iterator> origin=null
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<get-cur> visibility:private modality:FINAL <> ($this:<root>.iterator.<no name provided><T of <root>.iterator>) returnType:<root>.FList<T of <root>.iterator>
+                  correspondingProperty: PROPERTY name:cur visibility:private modality:FINAL [var]
+                  $this: VALUE_PARAMETER name:<this> type:<root>.iterator.<no name provided><T of <root>.iterator>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-cur> (): <root>.FList<T of <root>.iterator> declared in <root>.iterator.<no name provided>'
+                      GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cur type:<root>.FList<T of <root>.iterator> visibility:private' type=<root>.FList<T of <root>.iterator> origin=null
+                        receiver: GET_VAR '<this>: <root>.iterator.<no name provided><T of <root>.iterator> declared in <root>.iterator.<no name provided>.<get-cur>' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=null
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<set-cur> visibility:private modality:FINAL <> ($this:<root>.iterator.<no name provided><T of <root>.iterator>, <set-?>:<root>.FList<T of <root>.iterator>) returnType:<unbound IrClassSymbolImpl>
+                  correspondingProperty: PROPERTY name:cur visibility:private modality:FINAL [var]
+                  $this: VALUE_PARAMETER name:<this> type:<root>.iterator.<no name provided><T of <root>.iterator>
+                  VALUE_PARAMETER name:<set-?> index:0 type:<root>.FList<T of <root>.iterator>
+                  BLOCK_BODY
+                    SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:cur type:<root>.FList<T of <root>.iterator> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: <root>.iterator.<no name provided><T of <root>.iterator> declared in <root>.iterator.<no name provided>.<set-cur>' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=null
+                      value: GET_VAR '<set-?>: <root>.FList<T of <root>.iterator> declared in <root>.iterator.<no name provided>.<set-cur>' type=<root>.FList<T of <root>.iterator> origin=null
+              FUN name:next visibility:public modality:OPEN <> ($this:<root>.iterator.<no name provided><T of <root>.iterator>) returnType:T of <root>.iterator [operator]
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.iterator.<no name provided><T of <root>.iterator>
+                BLOCK_BODY
+                  VAR name:res type:T of <root>.iterator [val]
+                    CALL 'public abstract fun <get-head> (): T of <root>.FList declared in <root>.FList' type=T of <root>.iterator origin=GET_PROPERTY
+                      $this: CALL 'private final fun <get-cur> (): <root>.FList<T of <root>.iterator> declared in <root>.iterator.<no name provided>' type=<root>.FList<T of <root>.iterator> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.iterator.<no name provided><T of <root>.iterator> declared in <root>.iterator.<no name provided>.next' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=null
+                  CALL 'private final fun <set-cur> (<set-?>: <root>.FList<T of <root>.iterator>): <unbound IrClassSymbolImpl> declared in <root>.iterator.<no name provided>' type=<unbound IrClassSymbolImpl> origin=EQ
+                    $this: GET_VAR '<this>: <root>.iterator.<no name provided><T of <root>.iterator> declared in <root>.iterator.<no name provided>.next' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=null
+                    <set-?>: CALL 'public abstract fun <get-tail> (): <root>.FList<T of <root>.FList> declared in <root>.FList' type=<root>.FList<T of <root>.iterator> origin=GET_PROPERTY
+                      $this: CALL 'private final fun <get-cur> (): <root>.FList<T of <root>.iterator> declared in <root>.iterator.<no name provided>' type=<root>.FList<T of <root>.iterator> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.iterator.<no name provided><T of <root>.iterator> declared in <root>.iterator.<no name provided>.next' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): T of <root>.iterator [operator] declared in <root>.iterator.<no name provided>'
+                    GET_VAR 'val res: T of <root>.iterator [val] declared in <root>.iterator.<no name provided>.next' type=T of <root>.iterator origin=null
+              FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.iterator.<no name provided><T of <root>.iterator>) returnType:<unbound IrClassSymbolImpl> [operator]
+                overridden:
+                  UNBOUND IrSimpleFunctionSymbolImpl
+                $this: VALUE_PARAMETER name:<this> type:<root>.iterator.<no name provided><T of <root>.iterator>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.iterator.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public abstract fun <get-empty> (): <unbound IrClassSymbolImpl> declared in <root>.FList' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: CALL 'private final fun <get-cur> (): <root>.FList<T of <root>.iterator> declared in <root>.iterator.<no name provided>' type=<root>.FList<T of <root>.iterator> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.iterator.<no name provided><T of <root>.iterator> declared in <root>.iterator.<no name provided>.hasNext' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.iterator.<no name provided>' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:r type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'public final fun iterator <T> (): <unbound IrClassSymbolImpl><T of <root>.iterator> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'public final fun reverse <T> (where: <root>.FList<T of <root>.reverse>): <root>.FList<T of <root>.reverse> declared in <root>' type=<root>.FList<<unbound IrClassSymbolImpl>> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                $receiver: CALL 'public final fun plus (head: T of <root>.FList): <root>.FList<T of <root>.FList> [operator] declared in <root>.FList' type=<root>.FList<<unbound IrClassSymbolImpl>> origin=PLUS
+                  $this: CALL 'public final fun plus (head: T of <root>.FList): <root>.FList<T of <root>.FList> [operator] declared in <root>.FList' type=<root>.FList<<unbound IrClassSymbolImpl>> origin=PLUS
+                    $this: CALL 'public final fun emptyFList <T> (): <root>.FList<T of <root>.emptyFList> declared in <root>' type=<root>.FList<<unbound IrClassSymbolImpl>> origin=null
+                      <T>: <unbound IrClassSymbolImpl>
+                    head: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  head: CONST String type=<unbound IrClassSymbolImpl> value="K"
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:s type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var r: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

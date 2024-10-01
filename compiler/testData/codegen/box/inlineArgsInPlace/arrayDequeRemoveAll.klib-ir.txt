@@ -1,0 +1,473 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/arrayDequeRemoveAll.kt
+    CLASS CLASS name:ArrayDeque signature:/ArrayDeque|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><E of <root>.ArrayDeque>]
+      annotations:
+        <unbound>(1 = ["INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /ArrayDeque|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:head signature:/ArrayDeque.head|{}head[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:head signature:[ /ArrayDeque.head|{}head[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-head> signature:/ArrayDeque.head.<get-head>|<get-head>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:head signature:/ArrayDeque.head|{}head[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:head signature:[ /ArrayDeque.head|{}head[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<get-head>' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-head> signature:/ArrayDeque.head.<set-head>|<set-head>(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:head signature:/ArrayDeque.head|{}head[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:head signature:[ /ArrayDeque.head|{}head[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<set-head>' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.<set-head>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:elementData signature:/ArrayDeque.elementData|{}elementData[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:elementData signature:[ /ArrayDeque.elementData|{}elementData[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-elementData> signature:/ArrayDeque.elementData.<get-elementData>|<get-elementData>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+          correspondingProperty: PROPERTY name:elementData signature:/ArrayDeque.elementData|{}elementData[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:elementData signature:[ /ArrayDeque.elementData|{}elementData[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<get-elementData>' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-elementData> signature:/ArrayDeque.elementData.<set-elementData>|<set-elementData>(kotlin.Array<kotlin.Any?>){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, <set-?>:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:elementData signature:/ArrayDeque.elementData|{}elementData[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:elementData signature:[ /ArrayDeque.elementData|{}elementData[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<set-elementData>' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque.<set-elementData>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+      PROPERTY name:size signature:/ArrayDeque.size|{}size[0] visibility:public modality:OPEN [var]
+        FIELD PROPERTY_BACKING_FIELD name:size signature:[ /ArrayDeque.size|{}size[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-size> signature:/ArrayDeque.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/ArrayDeque.size|{}size[0] visibility:public modality:OPEN [var]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size signature:[ /ArrayDeque.size|{}size[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<get-size>' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-size> signature:/ArrayDeque.size.<set-size>|<set-size>(kotlin.Int){}[0] visibility:private modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/ArrayDeque.size|{}size[0] visibility:public modality:OPEN [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size signature:[ /ArrayDeque.size|{}size[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<set-size>' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.<set-size>' type=<unbound IrClassSymbolImpl> origin=null
+      CONSTRUCTOR signature:/ArrayDeque.<init>|<init>(kotlin.collections.Collection<1:0>){}[0] visibility:public <> (elements:<unbound IrClassSymbolImpl><E of <root>.ArrayDeque>) returnType:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.ArrayDeque>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: E of <root>.ArrayDeque
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArrayDeque signature:/ArrayDeque|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><E of <root>.ArrayDeque>]'
+          CALL 'private final fun <set-elementData> (<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: GET_VAR 'elements: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque> declared in <root>.ArrayDeque.<init>' type=<unbound IrClassSymbolImpl><E of <root>.ArrayDeque> origin=null
+          CALL 'private open fun <set-size> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                $receiver: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              then: CALL 'private final fun <set-elementData> (<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=EQ
+                $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                <set-?>: CALL 'private final fun <get-emptyElementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque.Companion' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/ArrayDeque.Companion|null[0] modality:FINAL visibility:internal [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ArrayDeque.Companion
+      FUN name:add signature:/ArrayDeque.add|add(kotlin.Int;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>, element:E of <root>.ArrayDeque) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:E of <root>.ArrayDeque
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:removeAt signature:/ArrayDeque.removeAt|removeAt(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>) returnType:E of <root>.ArrayDeque
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:set signature:/ArrayDeque.set|set(kotlin.Int;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>, element:E of <root>.ArrayDeque) returnType:E of <root>.ArrayDeque [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:element index:1 type:E of <root>.ArrayDeque
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:get signature:/ArrayDeque.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>) returnType:E of <root>.ArrayDeque [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (index: <unbound IrClassSymbolImpl>): E of <root>.ArrayDeque [operator] declared in <root>.ArrayDeque'
+            CALL 'private final fun internalGet (internalIndex: <unbound IrClassSymbolImpl>): E of <root>.ArrayDeque [inline] declared in <root>.ArrayDeque' type=E of <root>.ArrayDeque origin=null
+              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.get' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              internalIndex: CALL 'private final fun internalIndex (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.get' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                index: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.get' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:internalGet signature:/ArrayDeque.internalGet|internalGet(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, internalIndex:<unbound IrClassSymbolImpl>) returnType:E of <root>.ArrayDeque [inline]
+        annotations:
+          <unbound>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:internalIndex index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun internalGet (internalIndex: <unbound IrClassSymbolImpl>): E of <root>.ArrayDeque [inline] declared in <root>.ArrayDeque'
+            TYPE_OP type=E of <root>.ArrayDeque origin=CAST typeOperand=E of <root>.ArrayDeque
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.internalGet' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                1: GET_VAR 'internalIndex: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.internalGet' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:positiveMod signature:/ArrayDeque.positiveMod|positiveMod(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun positiveMod (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque'
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+                  arg0: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.positiveMod' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.positiveMod' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                  $this: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.positiveMod' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.positiveMod' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.positiveMod' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:negativeMod signature:/ArrayDeque.negativeMod|negativeMod(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun negativeMod (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque'
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                  arg0: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.negativeMod' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.negativeMod' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.negativeMod' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.negativeMod' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:internalIndex signature:/ArrayDeque.internalIndex|internalIndex(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+        annotations:
+          <unbound>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun internalIndex (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>.ArrayDeque'
+            CALL 'private final fun positiveMod (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.internalIndex' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              index: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.internalIndex' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.internalIndex' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:incremented signature:/ArrayDeque.incremented|incremented(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun incremented (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque'
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.incremented' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    <1>: <unbound IrClassSymbolImpl>?
+                    $receiver: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.incremented' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.incremented' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:removeAll signature:/ArrayDeque.removeAll|removeAll(kotlin.collections.Collection<1:0>){}[0] visibility:public modality:OPEN <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, elements:<unbound IrClassSymbolImpl><E of <root>.ArrayDeque>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><E of <root>.ArrayDeque>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun removeAll (elements: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque'
+            CALL 'private final fun filterInPlace (predicate: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.removeAll' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              predicate: FUN_EXPR type=<unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:E of <root>.ArrayDeque) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:E of <root>.ArrayDeque
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: E of <root>.ArrayDeque): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque.removeAll'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR 'elements: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque> declared in <root>.ArrayDeque.removeAll' type=<unbound IrClassSymbolImpl><E of <root>.ArrayDeque> origin=null
+                          1: GET_VAR 'it: E of <root>.ArrayDeque declared in <root>.ArrayDeque.removeAll.<anonymous>' type=E of <root>.ArrayDeque origin=null
+      FUN name:filterInPlace signature:/ArrayDeque.filterInPlace|filterInPlace(kotlin.Function1<1:0,kotlin.Boolean>){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque<E of <root>.ArrayDeque>, predicate:<unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque<E of <root>.ArrayDeque>
+        VALUE_PARAMETER name:predicate index:0 type:<unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>?
+                    $receiver: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='private final fun filterInPlace (predicate: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.ArrayDeque'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR name:tail type:<unbound IrClassSymbolImpl> [val]
+            CALL 'private final fun internalIndex (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+              index: CALL 'public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+          VAR name:newTail type:<unbound IrClassSymbolImpl> [var]
+            CALL 'private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+          VAR name:modified type:<unbound IrClassSymbolImpl> [var]
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                arg0: CALL 'private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                arg1: GET_VAR 'val tail: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                        1: GET_VAR 'val tail: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:index type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        VAR name:element type:<unbound IrClassSymbolImpl>? [val]
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                            $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                            1: GET_VAR 'val index: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                              $this: GET_VAR 'predicate: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                              1: TYPE_OP type=E of <root>.ArrayDeque origin=CAST typeOperand=E of <root>.ArrayDeque
+                                GET_VAR 'val element: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl>? origin=null
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                                $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                                1: BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                  VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                                    GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                  SET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                      $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                                  GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                                2: TYPE_OP type=E of <root>.ArrayDeque origin=IMPLICIT_CAST typeOperand=E of <root>.ArrayDeque
+                                  GET_VAR 'val element: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl>? origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: SET_VAR 'var modified: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=EQ
+                              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>?
+                  $receiver: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                  1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  2: GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                  3: GET_VAR 'val tail: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CALL 'private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                        1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:index type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        VAR name:element type:<unbound IrClassSymbolImpl>? [val]
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                            $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                            1: GET_VAR 'val index: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                          $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                          1: GET_VAR 'val index: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                          2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                              $this: GET_VAR 'predicate: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                              1: TYPE_OP type=E of <root>.ArrayDeque origin=CAST typeOperand=E of <root>.ArrayDeque
+                                GET_VAR 'val element: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl>? origin=null
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                                $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                                1: BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                  VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                                    GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                  SET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                      $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                                  GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                                2: TYPE_OP type=E of <root>.ArrayDeque origin=IMPLICIT_CAST typeOperand=E of <root>.ArrayDeque
+                                  GET_VAR 'val element: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl>? origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: SET_VAR 'var modified: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=EQ
+                              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                SET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'private final fun positiveMod (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                    index: GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                  VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                        1: GET_VAR 'val tail: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                  WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                    condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                    body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                      VAR FOR_LOOP_VARIABLE name:index type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                      BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        VAR name:element type:<unbound IrClassSymbolImpl>? [val]
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                            $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                            1: GET_VAR 'val index: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                          $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                          1: GET_VAR 'val index: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                          2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                          BRANCH
+                            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                              $this: GET_VAR 'predicate: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                              1: TYPE_OP type=E of <root>.ArrayDeque origin=CAST typeOperand=E of <root>.ArrayDeque
+                                GET_VAR 'val element: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl>? origin=null
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                                $this: CALL 'private final fun <get-elementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                                1: GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                                2: TYPE_OP type=E of <root>.ArrayDeque origin=IMPLICIT_CAST typeOperand=E of <root>.ArrayDeque
+                                  GET_VAR 'val element: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl>? origin=null
+                              SET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=EQ
+                                CALL 'private final fun incremented (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                                  index: GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                              SET_VAR 'var modified: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=EQ
+                                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: GET_VAR 'var modified: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+              then: CALL 'private open fun <set-size> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=EQ
+                $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                <set-?>: CALL 'private final fun negativeMod (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+                  index: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                    $this: GET_VAR 'var newTail: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CALL 'private final fun <get-head> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayDeque<E of <root>.ArrayDeque> declared in <root>.ArrayDeque.filterInPlace' type=<root>.ArrayDeque<E of <root>.ArrayDeque> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun filterInPlace (predicate: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>.ArrayDeque'
+            GET_VAR 'var modified: <unbound IrClassSymbolImpl> [var] declared in <root>.ArrayDeque.filterInPlace' type=<unbound IrClassSymbolImpl> origin=null
+      CLASS OBJECT name:Companion signature:/ArrayDeque.Companion|null[0] modality:FINAL visibility:internal [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayDeque.Companion
+        CONSTRUCTOR signature:/ArrayDeque.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ArrayDeque.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/ArrayDeque.Companion|null[0] modality:FINAL visibility:internal [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:emptyElementData signature:/ArrayDeque.Companion.emptyElementData|{}emptyElementData[0] visibility:private modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:emptyElementData signature:[ /ArrayDeque.Companion.emptyElementData|{}emptyElementData[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-emptyElementData> signature:/ArrayDeque.Companion.emptyElementData.<get-emptyElementData>|<get-emptyElementData>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ArrayDeque.Companion) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+            correspondingProperty: PROPERTY name:emptyElementData signature:/ArrayDeque.Companion.emptyElementData|{}emptyElementData[0] visibility:private modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.ArrayDeque.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-emptyElementData> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayDeque.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:emptyElementData signature:[ /ArrayDeque.Companion.emptyElementData|{}emptyElementData[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:head type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                  receiver: GET_VAR '<this>: <root>.ArrayDeque.Companion declared in <root>.ArrayDeque.Companion.<get-emptyElementData>' type=<root>.ArrayDeque.Companion origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:ad type:<root>.ArrayDeque<<unbound IrClassSymbolImpl>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (elements: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque>) declared in <root>.ArrayDeque' type=<root>.ArrayDeque<<unbound IrClassSymbolImpl>> origin=null
+            <class: E>: <unbound IrClassSymbolImpl>
+            elements: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="X"
+                CONST String type=<unbound IrClassSymbolImpl> value="Z"
+                CONST String type=<unbound IrClassSymbolImpl> value="O"
+                CONST String type=<unbound IrClassSymbolImpl> value="K"
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public open fun removeAll (elements: <unbound IrClassSymbolImpl><E of <root>.ArrayDeque>): <unbound IrClassSymbolImpl> declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val ad: <root>.ArrayDeque<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayDeque<<unbound IrClassSymbolImpl>> origin=null
+            elements: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="X"
+                CONST String type=<unbound IrClassSymbolImpl> value="Z"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public open fun get (index: <unbound IrClassSymbolImpl>): E of <root>.ArrayDeque [operator] declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'val ad: <root>.ArrayDeque<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayDeque<<unbound IrClassSymbolImpl>> origin=null
+              index: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            1: CALL 'public open fun get (index: <unbound IrClassSymbolImpl>): E of <root>.ArrayDeque [operator] declared in <root>.ArrayDeque' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'val ad: <root>.ArrayDeque<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.ArrayDeque<<unbound IrClassSymbolImpl>> origin=null
+              index: CONST Int type=<unbound IrClassSymbolImpl> value=1

@@ -1,0 +1,440 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/companionObjectReceiverInheritsFromOuter.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:instance signature:/A.instance|instance(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun instance (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      PROPERTY name:instanceProp signature:/A.instanceProp|{}instanceProp[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:instanceProp signature:[ /A.instanceProp|{}instanceProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:instanceProp type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-instanceProp> signature:/A.instanceProp.<get-instanceProp>|<get-instanceProp>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:instanceProp signature:/A.instanceProp|{}instanceProp[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-instanceProp> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:instanceProp signature:[ /A.instanceProp|{}instanceProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:instanceProp type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-instanceProp>' type=<root>.A origin=null
+      CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Companion
+        CONSTRUCTOR signature:/A.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]'
+        FUN name:companion signature:/A.Companion.companion|companion(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun companion (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        PROPERTY name:companionProp signature:/A.Companion.companionProp|{}companionProp[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:companionProp signature:[ /A.Companion.companionProp|{}companionProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:instanceProp type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionProp> signature:/A.Companion.companionProp.<get-companionProp>|<get-companionProp>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:companionProp signature:/A.Companion.companionProp|{}companionProp[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-companionProp> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionProp signature:[ /A.Companion.companionProp|{}companionProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:instanceProp type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.A.Companion declared in <root>.A.Companion.<get-companionProp>' type=<root>.A.Companion origin=null
+    FUN name:ext signature:/ext|ext@A(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.A) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.A
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    PROPERTY name:extProp signature:/extProp|@A{}extProp[0] visibility:public modality:FINAL [val]
+      FUN name:<get-extProp> signature:/extProp.<get-extProp>|<get-extProp>@A(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:extProp signature:/extProp|@A{}extProp[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:companionExt signature:/companionExt|companionExt@A.Companion(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun companionExt (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    PROPERTY name:companionExtProp signature:/companionExtProp|@A.Companion{}companionExtProp[0] visibility:public modality:FINAL [val]
+      FUN name:<get-companionExtProp> signature:/companionExtProp.<get-companionExtProp>|<get-companionExtProp>@A.Companion(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:companionExtProp signature:/companionExtProp|@A.Companion{}companionExtProp[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.A.Companion
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-companionExtProp> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:call signature:/call|call(kotlin.Function0<kotlin.Boolean>){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.call' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:callExtension signature:/callExtension|callExtension(kotlin.Function1<A,kotlin.Boolean>;A){}[0] visibility:public modality:FINAL <> (f:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver:<root>.A) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:f index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:receiver index:1 type:<root>.A
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun callExtension (f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> declared in <root>.callExtension' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'receiver: <root>.A declared in <root>.callExtension' type=<root>.A origin=null
+    FUN name:callParameter signature:/callParameter|callParameter(kotlin.Function1<A,kotlin.Boolean>;A){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter:<root>.A) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:parameter index:1 type:<root>.A
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> declared in <root>.callParameter' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'parameter: <root>.A declared in <root>.callParameter' type=<root>.A origin=null
+    FUN name:callContext signature:/callContext|callContext(kotlin.Function1<A,kotlin.Boolean>;A){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver:<root>.A) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:receiver index:1 type:<root>.A
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun callContext (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> declared in <root>.callContext' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'receiver: <root>.A declared in <root>.callContext' type=<root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun companion (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun companion (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun companionExt (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun companionExt (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound function 8"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'UNBOUND IrPropertySymbolImpl' field=null getter='UNBOUND IrSimpleFunctionSymbolImpl' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'UNBOUND IrPropertySymbolImpl' field=null getter='UNBOUND IrSimpleFunctionSymbolImpl' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final companionProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A.Companion' field=null getter='public final fun <get-companionProp> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final companionProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A.Companion' field=null getter='public final fun <get-companionProp> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final companionExtProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-companionExtProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final companionExtProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-companionExtProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  $receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail bound prop 8"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun instance (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final instanceProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A' field=null getter='public final fun <get-instanceProp> (): <unbound IrClassSymbolImpl> declared in <root>.A' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callExtension (f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun instance (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callExtension (f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callExtension (f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final instanceProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A' field=null getter='public final fun <get-instanceProp> (): <unbound IrClassSymbolImpl> declared in <root>.A' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callExtension (f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 8"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callContext (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun instance (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callContext (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callContext (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final instanceProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A' field=null getter='public final fun <get-instanceProp> (): <unbound IrClassSymbolImpl> declared in <root>.A' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callContext (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, receiver: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound 8"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <root>.A.Companion
+          <2>: <unbound IrClassSymbolImpl>
+          1: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+          2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A.Companion, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A.Companion) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$with type:<root>.A.Companion
+              BLOCK_BODY
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                          $this: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail implicit bound function 1"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: FUNCTION_REFERENCE 'public final fun companion (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                          $this: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail implicit bound function 2"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                          $receiver: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail implicit bound function 3"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: FUNCTION_REFERENCE 'public final fun companionExt (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                          $receiver: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail implicit bound function 4"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: PROPERTY_REFERENCE 'UNBOUND IrPropertySymbolImpl' field=null getter='UNBOUND IrSimpleFunctionSymbolImpl' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          $this: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail imlicit bound prop 5"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: PROPERTY_REFERENCE 'public final companionProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A.Companion' field=null getter='public final fun <get-companionProp> (): <unbound IrClassSymbolImpl> declared in <root>.A.Companion' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          $this: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail imlicit bound prop 6"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          $receiver: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail imlicit bound prop 7"
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun call (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        f: PROPERTY_REFERENCE 'public final companionExtProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-companionExtProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                          $receiver: GET_VAR '$this$with: <root>.A.Companion declared in <root>.box.<anonymous>' type=<root>.A.Companion origin=null
+                    then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                      CONST String type=<unbound IrClassSymbolImpl> value="Fail imlicit bound prop 8"
+        VAR name:instance type:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun instance (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        VAR name:ext type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun ext (): <unbound IrClassSymbolImpl> declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        VAR name:instanceProp type:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val]
+          PROPERTY_REFERENCE 'public final instanceProp: <unbound IrClassSymbolImpl> [val] declared in <root>.A' field=null getter='public final fun <get-instanceProp> (): <unbound IrClassSymbolImpl> declared in <root>.A' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+        VAR name:extProp type:<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val]
+          PROPERTY_REFERENCE 'public final extProp: <unbound IrClassSymbolImpl> [val] declared in <root>' field=null getter='public final fun <get-extProp> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: GET_VAR 'val instance: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound variable 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: GET_VAR 'val ext: @[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound variable 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: GET_VAR 'val instanceProp: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound variable 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun callParameter (f: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>>, parameter: <root>.A): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                f: GET_VAR 'val extProp: <unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A, <unbound IrClassSymbolImpl>> origin=null
+                parameter: GET_OBJECT 'CLASS OBJECT name:Companion signature:/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.A]' type=<root>.A.Companion
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail unbound variable 4"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

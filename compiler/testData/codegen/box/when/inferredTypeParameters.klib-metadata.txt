@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+
+    public final class A<out T#0 /* T */> : C<T#0, kotlin/Nothing> {
+
+      public constructor(x: T#0)
+
+      public final val x: T#0
+        public final get
+    }
+
+    public final class B<out T#0 /* U */> : C<kotlin/Nothing, T#0> {
+
+      public constructor(x: T#0)
+
+      public final val x: T#0
+        public final get
+    }
+
+    public sealed class C<out T#0 /* T */, out T#1 /* U */> : kotlin/Any {
+
+      protected constructor()
+
+      // sealed subclass: A
+
+      // sealed subclass: B
+    }
+
+    package {
+
+      public final fun bar(x: kotlin/String): C<kotlin/Int, kotlin/String>
+
+      public final fun baz(x: kotlin/Any): kotlin/String
+
+      public final fun baz(x: kotlin/String): kotlin/String
+
+      public final fun box(): kotlin/String
+
+      public typealias Z<T#0 /* U */> = B<T#0> /* = B<T#0> */
+    }
+  }
+}

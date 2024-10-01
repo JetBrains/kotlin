@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delft
+    // class name: Grouping
+    // class name: IntConvertible
+    // class name: N
+
+    public final class Delft<T#0 /* DelftTP */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun getComparator(other: T#0): kotlin/Function0<kotlin/Boolean>
+    }
+
+    public abstract interface Grouping<T#0 /* GroupingInputTP */, out T#1 /* GroupingOutputTP */> : kotlin/Any {
+
+      public abstract fun keyOf(element: T#0): T#1
+    }
+
+    public abstract interface IntConvertible : kotlin/Any {
+
+      public abstract fun toInt(): kotlin/Int
+    }
+
+    public final class N : IntConvertible {
+
+      public constructor(v: kotlin/Int)
+
+      public open fun toInt(): kotlin/Int
+
+      public final val v: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* BarTP */ : IntConvertible> computeSum(array: kotlin/Array<T#0>): kotlin/Int
+
+      public final fun <T#0 /* FooTP */> foo(init: kotlin/Int, v: T#0, l: @kotlin/ExtensionFunctionType kotlin/Function2<kotlin/Int, T#0, kotlin/Int>): kotlin/Int
+
+      public final fun <T#0 /* GroupingByTP */> groupingBy(keySelector: kotlin/Function1<kotlin/Char, T#0>): Grouping<kotlin/Char, T#0>
+    }
+  }
+}

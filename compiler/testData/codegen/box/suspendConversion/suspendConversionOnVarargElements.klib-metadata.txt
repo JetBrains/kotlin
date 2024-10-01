@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testSuspendConversionInVarargElementsAll(f1: kotlin/Function0<kotlin/Unit>, f2: kotlin/Function0<kotlin/Unit>, f3: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun testSuspendConversionInVarargElementsSome(sf1: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>, f2: kotlin/Function0<kotlin/Unit>, sf3: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final fun useSuspendVararg(vararg sfn: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* kotlin/Array<out suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>> */): kotlin/Unit
+    }
+  }
+}

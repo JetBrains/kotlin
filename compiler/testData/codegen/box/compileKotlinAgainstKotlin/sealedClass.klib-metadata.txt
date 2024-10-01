@@ -1,0 +1,75 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: a
+
+    // class name: a/Empty
+    // class name: a/NestedAndTopLevel
+    // class name: a/NestedAndTopLevel.Nested
+    // class name: a/OnlyNested
+    // class name: a/OnlyNested.Nested
+    // class name: a/TopLevel
+
+    public sealed class a/Empty : kotlin/Any {
+
+      protected constructor()
+    }
+
+    public sealed class a/NestedAndTopLevel : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: Nested
+
+      // sealed subclass: a/NestedAndTopLevel.Nested
+
+      // sealed subclass: a/TopLevel
+    }
+
+    public final class a/NestedAndTopLevel.Nested : a/NestedAndTopLevel {
+
+      public constructor()
+    }
+
+    public sealed class a/OnlyNested : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: Nested
+
+      // sealed subclass: a/OnlyNested.Nested
+    }
+
+    public final class a/OnlyNested.Nested : a/OnlyNested {
+
+      public constructor()
+    }
+
+    public final class a/TopLevel : a/NestedAndTopLevel {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun empty(e: a/Empty): kotlin/String
+
+      public final fun nestedAndTopLevel(natl: a/NestedAndTopLevel): kotlin/String
+
+      public final fun onlyNested(on: a/OnlyNested): kotlin/String
+    }
+  }
+}

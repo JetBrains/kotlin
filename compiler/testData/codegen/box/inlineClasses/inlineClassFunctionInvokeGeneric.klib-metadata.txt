@@ -1,0 +1,97 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NStr
+    // class name: NStr2
+    // class name: Str
+    // class name: Z
+
+    public final value class NStr<T#0 /* T */ : kotlin/String?> : kotlin/Any {
+
+      public constructor(string: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: T#0
+        public final get
+
+      // underlying property: string
+
+      // underlying type: T#0
+    }
+
+    public final value class NStr2<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(string: T#0?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: T#0?
+        public final get
+
+      // underlying property: string
+
+      // underlying type: T#0?
+    }
+
+    public final value class Str<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(string: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val string: T#0
+        public final get
+
+      // underlying property: string
+
+      // underlying type: T#0
+    }
+
+    public final value class Z<T#0 /* T */ : kotlin/Int> : kotlin/Any {
+
+      public constructor(int: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val int: T#0
+        public final get
+
+      // underlying property: int
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/String?> fooNStr(x: NStr<T#0>): NStr<T#0>
+
+      public final fun <T#0 /* T */ : kotlin/String> fooNStr2(x: NStr2<T#0>): NStr2<T#0>
+
+      public final fun <T#0 /* T */ : kotlin/String> fooStr(x: Str<T#0>): Str<T#0>
+
+      public final fun <T#0 /* T */ : kotlin/Int> fooZ(x: Z<T#0>): Z<T#0>
+    }
+  }
+}

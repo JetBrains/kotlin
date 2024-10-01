@@ -1,0 +1,59 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun takeLong(@kotlin/internal/ImplicitIntegerCoercion l: kotlin/Long): kotlin/Unit
+
+      public final fun takeUByte(@kotlin/internal/ImplicitIntegerCoercion u: kotlin/UByte): kotlin/Unit
+
+      public final fun takeUBytes(@kotlin/internal/ImplicitIntegerCoercion vararg u: kotlin/UByte /* kotlin/UByteArray */): kotlin/Unit
+
+      public final fun takeUInt(@kotlin/internal/ImplicitIntegerCoercion u: kotlin/UInt): kotlin/Unit
+
+      public final fun takeULong(@kotlin/internal/ImplicitIntegerCoercion u: kotlin/ULong): kotlin/Unit
+
+      public final fun takeUShort(@kotlin/internal/ImplicitIntegerCoercion u: kotlin/UShort): kotlin/Unit
+
+      @kotlin/internal/ImplicitIntegerCoercion
+      public final const val BIGGER_THAN_UBYTE: kotlin/Int /* = 256 */
+        public final get
+
+      @kotlin/internal/ImplicitIntegerCoercion
+      public final const val EXPLICIT_INT: kotlin/Int /* = 255 */
+        public final get
+
+      @kotlin/internal/ImplicitIntegerCoercion
+      public final const val IMPLICIT_INT: kotlin/Int /* = 255 */
+        public final get
+
+      @kotlin/internal/ImplicitIntegerCoercion
+      public final const val LONG_CONST: kotlin/Long /* = 255L */
+        public final get
+
+      @kotlin/internal/ImplicitIntegerCoercion
+      public final val NON_CONST: kotlin/Int /* = ... */
+        public final get
+
+      @kotlin/internal/ImplicitIntegerCoercion
+      public final const val UINT_CONST: kotlin/UInt /* = 42u */
+        public final get
+    }
+  }
+
+  library fragment {
+    // package name: kotlin.internal
+
+    // class name: kotlin/internal/ImplicitIntegerCoercion
+
+    public final annotation class kotlin/internal/ImplicitIntegerCoercion : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}

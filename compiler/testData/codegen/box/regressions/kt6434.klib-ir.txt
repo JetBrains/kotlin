@@ -1,0 +1,154 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt6434.kt
+    CLASS ENUM_CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.E>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+      CONSTRUCTOR signature:/E.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.E [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.E
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.E>]'
+      ENUM_ENTRY name:VALUE signature:/E.VALUE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
+      ENUM_ENTRY name:VALUE2 signature:/E.VALUE2|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.E>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.E
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.E>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(kotlin.collections.Map<E,kotlin.Int>){}[0] visibility:public <> (nums:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>) returnType:<root>.C [primary]
+        VALUE_PARAMETER name:nums index:0 type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:nums signature:/C.nums|{}nums[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:nums signature:[ /C.nums|{}nums[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:nums type:kotlin.collections.Map<<root>.E, kotlin.Int> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'nums: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C.<init>' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nums> signature:/C.nums.<get-nums>|<get-nums>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:nums signature:/C.nums|{}nums[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-nums> (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nums signature:[ /C.nums|{}nums[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:nums type:kotlin.collections.Map<<root>.E, kotlin.Int> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-nums>' type=<root>.C origin=null
+      PROPERTY name:normalizedNums signature:/C.normalizedNums|{}normalizedNums[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:normalizedNums signature:[ /C.normalizedNums|{}normalizedNums[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:nums type:kotlin.collections.Map<<root>.E, kotlin.Int> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'private final fun loadNormalizedNums (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-normalizedNums> signature:/C.normalizedNums.<get-normalizedNums>|<get-normalizedNums>(){}[0] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:normalizedNums signature:/C.normalizedNums|{}normalizedNums[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-normalizedNums> (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:normalizedNums signature:[ /C.normalizedNums|{}normalizedNums[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:nums type:kotlin.collections.Map<<root>.E, kotlin.Int> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-normalizedNums>' type=<root>.C origin=null
+      FUN name:loadNormalizedNums signature:/C.loadNormalizedNums|loadNormalizedNums(){}[0] visibility:private modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          VAR name:vals type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-nums> (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.C declared in <root>.C.loadNormalizedNums' type=<root>.C origin=null
+          VAR name:min type:<unbound IrClassSymbolImpl> [val]
+            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                $receiver: GET_VAR 'val vals: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          VAR name:max type:<unbound IrClassSymbolImpl> [val]
+            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                $receiver: GET_VAR 'val vals: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          VAR name:rangeDiff type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                $this: GET_VAR 'val max: <unbound IrClassSymbolImpl> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 'val min: <unbound IrClassSymbolImpl> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl> origin=null
+          VAR name:normalizedNums type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <root>.E
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>> origin=null
+                <1>: <root>.E
+                <2>: <unbound IrClassSymbolImpl>
+                <3>: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+                $receiver: CALL 'public final fun <get-nums> (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.C declared in <root>.C.loadNormalizedNums' type=<root>.C origin=null
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (kvp:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+                    VALUE_PARAMETER name:kvp index:0 type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+                    BLOCK_BODY
+                      VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> [val]
+                        GET_VAR 'kvp: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C.loadNormalizedNums.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                      VAR name:e type:<root>.E [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.E origin=COMPONENT_N(index=1)
+                          <1>: <root>.E
+                          <2>: <unbound IrClassSymbolImpl>
+                          $receiver: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> [val] declared in <root>.C.loadNormalizedNums.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                      VAR name:num type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=2)
+                          <1>: <root>.E
+                          <2>: <unbound IrClassSymbolImpl>
+                          $receiver: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> [val] declared in <root>.C.loadNormalizedNums.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                      VAR name:normalized type:<unbound IrClassSymbolImpl> [val]
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=DIV
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                            $this: GET_VAR 'val num: <unbound IrClassSymbolImpl> [val] declared in <root>.C.loadNormalizedNums.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            1: GET_VAR 'val min: <unbound IrClassSymbolImpl> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl> origin=null
+                          1: GET_VAR 'val rangeDiff: <unbound IrClassSymbolImpl> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl> origin=null
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (kvp: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C.loadNormalizedNums'
+                        CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                          <class: 1>: <root>.E
+                          <class: 2>: <unbound IrClassSymbolImpl>
+                          1: GET_VAR 'val e: <root>.E [val] declared in <root>.C.loadNormalizedNums.<anonymous>' type=<root>.E origin=null
+                          2: GET_VAR 'val normalized: <unbound IrClassSymbolImpl> [val] declared in <root>.C.loadNormalizedNums.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun loadNormalizedNums (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C'
+            GET_VAR 'val normalizedNums: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> [val] declared in <root>.C.loadNormalizedNums' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-normalizedNums> (): <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> declared in <root>.C' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> (nums: <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>) [primary] declared in <root>.C' type=<root>.C origin=null
+                    nums: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                      <1>: <root>.E
+                      <2>: <unbound IrClassSymbolImpl>
+                      1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>>
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                          <1>: <root>.E
+                          <2>: <unbound IrClassSymbolImpl>
+                          $receiver: GET_ENUM 'ENUM_ENTRY name:VALUE signature:/E.VALUE|null[0]' type=<root>.E
+                          1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.E, <unbound IrClassSymbolImpl>> origin=null
+                          <1>: <root>.E
+                          <2>: <unbound IrClassSymbolImpl>
+                          $receiver: GET_ENUM 'ENUM_ENTRY name:VALUE2 signature:/E.VALUE2|null[0]' type=<root>.E
+                          1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CONST String type=<unbound IrClassSymbolImpl> value="0.0, 1.0"
+                arg1: GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail "
+                GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: GameError
+
+    public final class GameError : kotlin/Exception {
+
+      public constructor(msg: kotlin/String)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

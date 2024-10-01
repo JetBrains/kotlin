@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: E
+
+    public final class C : kotlin/Any {
+
+      public constructor(e: E)
+
+      public final val e: E
+        public final get
+
+      public final val result: kotlin/String
+        public final get
+    }
+
+    public final enum class E : kotlin/Enum<E> {
+
+      private constructor()
+
+      A,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun launch(block: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?>): kotlin/String
+    }
+  }
+}

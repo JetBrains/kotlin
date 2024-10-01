@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun anyVararg(vararg xs: kotlin/Any? /* kotlin/Array<out kotlin/Any?> */): kotlin/Unit
+
+      public final fun booleanVararg(vararg xs: kotlin/Boolean /* kotlin/BooleanArray */): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun byteVararg(vararg xs: kotlin/Byte /* kotlin/ByteArray */): kotlin/Unit
+
+      public final fun doubleVararg(vararg xs: kotlin/Double /* kotlin/DoubleArray */): kotlin/Unit
+
+      public final fun floatVararg(vararg xs: kotlin/Float /* kotlin/FloatArray */): kotlin/Unit
+
+      public final fun <T#0 /* T */> genericVararg(vararg xs: T#0 /* kotlin/Array<out T#0> */): kotlin/Unit
+
+      public final fun intVararg(vararg xs: kotlin/Int /* kotlin/IntArray */): kotlin/Unit
+
+      public final fun longVararg(vararg xs: kotlin/Long /* kotlin/LongArray */): kotlin/Unit
+
+      public final fun shortVararg(vararg xs: kotlin/Short /* kotlin/ShortArray */): kotlin/Unit
+    }
+  }
+}

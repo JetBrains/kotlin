@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: InlineString
+
+    public final class InlineString : kotlin/Any {
+
+      public constructor(res: kotlin/String)
+
+      public final inline fun foo(s: kotlin/Function0<kotlin/String>): kotlin/String
+
+      public final inline fun foo11(s: kotlin/Function1<@kotlin/ParameterName(name = "l") kotlin/String, kotlin/String>): kotlin/String
+
+      public final inline fun fooRes(s: kotlin/Function1<@kotlin/ParameterName(name = "l") kotlin/String, kotlin/String>): kotlin/String
+
+      public final inline fun fooRes2(s: kotlin/Function2<@kotlin/ParameterName(name = "l") kotlin/String, @kotlin/ParameterName(name = "t") kotlin/String, kotlin/String>): kotlin/String
+
+      public final val res: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test0Param(): kotlin/String
+
+      public final fun test1Param(): kotlin/String
+
+      public final fun test1ParamCaptured(): kotlin/String
+
+      public final fun test1ParamFromCallContext(): kotlin/String
+
+      public final fun test1ParamMissed(): kotlin/String
+
+      public final fun test2Params(): kotlin/String
+
+      public final fun test2ParamsWithCaptured(): kotlin/String
+    }
+  }
+}

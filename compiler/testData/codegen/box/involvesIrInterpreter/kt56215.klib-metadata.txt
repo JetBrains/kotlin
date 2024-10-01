@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ObjectWithExtension
+
+    public final object ObjectWithExtension : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun ObjectWithExtension.extensionFun(): kotlin/String
+
+      public final fun ObjectWithExtension?.nullableExtensionFun(): kotlin/String
+    }
+  }
+}

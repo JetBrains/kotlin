@@ -1,0 +1,88 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/enclosingThis.kt
+    PROPERTY name:m signature:/m|{}m[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:m signature:[ /m|{}m[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun mul (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> declared in <root>.Point' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Point' type=<root>.Point origin=null
+              x: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              y: CONST Int type=<unbound IrClassSymbolImpl> value=3
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-m> signature:/m.<get-m>|<get-m>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point>
+        correspondingProperty: PROPERTY name:m signature:/m|{}m[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-m> (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:m signature:[ /m|{}m[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> origin=null
+    CLASS CLASS name:Point signature:/Point|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Point
+      CONSTRUCTOR signature:/Point.<init>|<init>(kotlin.Int;kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<root>.Point [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Point signature:/Point|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/Point.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Point.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Point.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Point.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Point) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/Point.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Point
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Point'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Point.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-x>' type=<root>.Point origin=null
+      PROPERTY name:y signature:/Point.y|{}y[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:y signature:[ /Point.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.Point.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> signature:/Point.y.<get-y>|<get-y>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Point) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:y signature:/Point.y|{}y[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Point
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-y> (): <unbound IrClassSymbolImpl> declared in <root>.Point'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y signature:[ /Point.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-y>' type=<root>.Point origin=null
+      FUN name:mul signature:/Point.mul|mul(){}[0] visibility:public modality:FINAL <> ($this:<root>.Point) returnType:<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Point
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun mul (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> declared in <root>.Point'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Point> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (scalar:<unbound IrClassSymbolImpl>) returnType:<root>.Point
+                VALUE_PARAMETER name:scalar index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (scalar: <unbound IrClassSymbolImpl>): <root>.Point declared in <root>.Point.mul'
+                    CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Point' type=<root>.Point origin=null
+                      x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                        $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Point' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.Point declared in <root>.Point.mul' type=<root>.Point origin=null
+                        1: GET_VAR 'scalar: <unbound IrClassSymbolImpl> declared in <root>.Point.mul.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      y: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                        $this: CALL 'public final fun <get-y> (): <unbound IrClassSymbolImpl> declared in <root>.Point' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: <root>.Point declared in <root>.Point.mul' type=<root>.Point origin=null
+                        1: GET_VAR 'scalar: <unbound IrClassSymbolImpl> declared in <root>.Point.mul.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:answer type:<root>.Point [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Point origin=INVOKE
+            $this: CALL 'public final fun <get-m> (): <unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> declared in <root>' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "scalar")] <unbound IrClassSymbolImpl>, <root>.Point> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Point' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val answer: <root>.Point [val] declared in <root>.box' type=<root>.Point origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: CALL 'public final fun <get-y> (): <unbound IrClassSymbolImpl> declared in <root>.Point' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val answer: <root>.Point [val] declared in <root>.box' type=<root>.Point origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=15
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="FAIL"

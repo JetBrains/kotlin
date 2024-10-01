@@ -1,0 +1,75 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Flow
+    // class name: FlowCollector
+    // class name: Foo6
+    // class name: Foo7
+
+    public final class Flow<out T#0 /* R */> : kotlin/Any {
+
+      public constructor(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+
+      private final val block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>
+        private final get
+    }
+
+    public abstract interface FlowCollector<in T#0 /* T */> : kotlin/Any {
+    }
+
+    public final class Foo6 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class Foo7<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun <T#0 /* K */> FlowCollector<T#0>.bar(): T#0
+
+      public final fun bar2(): kotlin/Int
+
+      public final fun <T#0 /* K */> T#0.bar3(): T#0
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* L */> flow(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<FlowCollector<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): Flow<T#0>
+
+      public final fun <T#0 /* K */> FlowCollector<T#0>.foo(): T#0
+
+      public final fun foo2(): kotlin/Float
+
+      public final fun <T#0 /* K */> T#0.foo3(): T#0
+
+      public final fun foo7(): Foo7<kotlin/Int>
+
+      public final fun poll71(): Flow<kotlin/String>
+
+      public final fun poll73(): Flow<kotlin/String>
+
+      public final fun poll75(): Flow<kotlin/String>
+
+      public final fun poll85(): Flow<kotlin/String>
+
+      public final val bar4: kotlin/Int
+        public final /* non-default */ get
+
+      public final val <T#0 /* K */> FlowCollector<T#0>.bar5: T#0
+        public final /* non-default */ get
+
+      public final var foo4: kotlin/Float
+        public final /* non-default */ get
+        public final /* non-default */ set(value: kotlin/Float)
+
+      public final val <T#0 /* K */> FlowCollector<T#0>.foo5: T#0
+        public final /* non-default */ get
+    }
+  }
+}

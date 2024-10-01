@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.Companion
+
+    public abstract fun interface A : kotlin/Any {
+
+      public abstract fun invoke(s: kotlin/String): kotlin/Unit
+
+      private final fun privateFun(): kotlin/Unit
+
+      private final var privateProperty: kotlin/String
+        private final /* non-default */ get
+        private final /* non-default */ set(value: kotlin/String)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun s(a: A): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(f: kotlin/Function1<kotlin/String, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,233 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.id(): T#0
+
+      public final const val byteFourVal: kotlin/Byte /* = ... */
+        public final get
+
+      public final const val byteMinusOneVal: kotlin/Byte /* = ... */
+        public final get
+
+      public final const val byteOneVal: kotlin/Byte /* = ... */
+        public final get
+
+      public final const val byteThreeVal: kotlin/Byte /* = ... */
+        public final get
+
+      public final const val byteTwoVal: kotlin/Byte /* = ... */
+        public final get
+
+      public final const val charFourVal: kotlin/Char /* = ... */
+        public final get
+
+      public final const val charOneVal: kotlin/Char /* = ... */
+        public final get
+
+      public final const val charThreeVal: kotlin/Char /* = ... */
+        public final get
+
+      public final const val charTwoVal: kotlin/Char /* = ... */
+        public final get
+
+      public final const val doubleFourVal: kotlin/Double /* = ... */
+        public final get
+
+      public final const val doubleMinusOneVal: kotlin/Double /* = ... */
+        public final get
+
+      public final const val doubleOneVal: kotlin/Double /* = ... */
+        public final get
+
+      public final const val doubleThreeVal: kotlin/Double /* = ... */
+        public final get
+
+      public final const val doubleTwoVal: kotlin/Double /* = ... */
+        public final get
+
+      public final const val equalsBoolean1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsBoolean2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsBoolean3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsByte1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsByte2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsByte3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsByte4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsChar1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsChar2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsChar3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsChar4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsDouble1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsDouble2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsDouble3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsDouble4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsFloat1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsFloat2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsFloat3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsFloat4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsInt1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsInt2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsInt3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsInt4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsLong1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsLong2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsLong3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsLong4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsShort1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsShort2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsShort3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsShort4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsString1: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsString2: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsString3: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val equalsString4: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val falseVal: kotlin/Boolean /* = ... */
+        public final get
+
+      public final const val floatFourVal: kotlin/Float /* = ... */
+        public final get
+
+      public final const val floatMinusOneVal: kotlin/Float /* = ... */
+        public final get
+
+      public final const val floatOneVal: kotlin/Float /* = ... */
+        public final get
+
+      public final const val floatThreeVal: kotlin/Float /* = ... */
+        public final get
+
+      public final const val floatTwoVal: kotlin/Float /* = ... */
+        public final get
+
+      public final const val intFourVal: kotlin/Int /* = ... */
+        public final get
+
+      public final const val intMinusOneVal: kotlin/Int /* = ... */
+        public final get
+
+      public final const val intOneVal: kotlin/Int /* = ... */
+        public final get
+
+      public final const val intThreeVal: kotlin/Int /* = ... */
+        public final get
+
+      public final const val intTwoVal: kotlin/Int /* = ... */
+        public final get
+
+      public final const val longFourVal: kotlin/Long /* = ... */
+        public final get
+
+      public final const val longMinusOneVal: kotlin/Long /* = ... */
+        public final get
+
+      public final const val longOneVal: kotlin/Long /* = ... */
+        public final get
+
+      public final const val longThreeVal: kotlin/Long /* = ... */
+        public final get
+
+      public final const val longTwoVal: kotlin/Long /* = ... */
+        public final get
+
+      public final const val otherStr: kotlin/String /* = ... */
+        public final get
+
+      public final const val shortFourVal: kotlin/Short /* = ... */
+        public final get
+
+      public final const val shortMinusOneVal: kotlin/Short /* = ... */
+        public final get
+
+      public final const val shortOneVal: kotlin/Short /* = ... */
+        public final get
+
+      public final const val shortThreeVal: kotlin/Short /* = ... */
+        public final get
+
+      public final const val shortTwoVal: kotlin/Short /* = ... */
+        public final get
+
+      public final const val someStr: kotlin/String /* = ... */
+        public final get
+
+      public final const val trueVal: kotlin/Boolean /* = ... */
+        public final get
+    }
+  }
+}

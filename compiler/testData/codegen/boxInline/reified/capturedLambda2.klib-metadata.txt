@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* R */> foo(): kotlin/Function0<kotlin/String>
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <reified T#0 /* R */, T#1 /* T */> bar(crossinline tasksFactory: kotlin/Function0<T#1>): kotlin/Function0<T#1>
+
+      public final inline fun <T#0 /* T */> call(f: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

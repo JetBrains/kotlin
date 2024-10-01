@@ -1,0 +1,71 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Box
+    // class name: Result
+    // class name: Result.Companion
+    // class name: Result.Failure
+
+    public final class Box<T#0 /* T */> : kotlin/Any {
+
+      public constructor(x: T#0)
+
+      public final val x: T#0
+        public final get
+    }
+
+    public final value class Result<out T#0 /* T */> : kotlin/Any {
+
+      public constructor(value: kotlin/Any?)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val isFailure: kotlin/Boolean
+        public final /* non-default */ get
+
+      public final val value: kotlin/Any?
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: Failure
+
+      // underlying property: value
+
+      // underlying type: kotlin/Any?
+    }
+
+    public final companion object Result.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final inline fun <T#1 /* T */> failure(exception: kotlin/Throwable): Result<T#1>
+
+      public final inline fun <T#1 /* T */> success(value: T#1): Result<T#1>
+    }
+
+    public final class Result.Failure : kotlin/Any {
+
+      public constructor(exception: kotlin/Throwable)
+
+      public final val exception: kotlin/Throwable
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* R */> runCatching(block: kotlin/Function0<T#0>): Result<T#0>
+    }
+  }
+}

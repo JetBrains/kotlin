@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Shape
+
+    public final class Shape : kotlin/Any {
+
+      public constructor(result: kotlin/String)
+
+      public final fun getShape2(): Shape?
+
+      public final var innerShape: Shape?
+        public final get
+        public final set
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getOK(): kotlin/String
+
+      public final fun getShape(): Shape?
+
+      public final var holder: kotlin/String
+        public final get
+        public final set
+
+      public final var mainShape: Shape?
+        public final get
+        public final set
+    }
+  }
+}

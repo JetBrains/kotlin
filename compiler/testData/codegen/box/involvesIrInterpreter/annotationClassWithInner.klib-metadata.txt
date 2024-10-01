@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Anno
+    // class name: Anno.Inner
+
+    public final annotation class Anno : kotlin/Annotation {
+
+      public constructor()
+
+      // nested class: Inner
+    }
+
+    public final class Anno.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final val shouldNotBeEvaluated: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val a: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}

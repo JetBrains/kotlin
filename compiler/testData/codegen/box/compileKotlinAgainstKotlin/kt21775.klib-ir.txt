@@ -1,0 +1,97 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:lib fileName:/lib.kt
+    CLASS CLASS name:TestObserver signature:lib/TestObserver|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.TestObserver<T of lib.TestObserver>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ lib/TestObserver|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:lib/TestObserver.<init>|<init>(){}[0] visibility:public <> () returnType:lib.TestObserver<T of lib.TestObserver> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestObserver signature:lib/TestObserver|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:assertValue signature:lib/TestObserver.assertValue|assertValue(kotlin.Function1<1:0,kotlin.Boolean>){}[0] visibility:public modality:FINAL <> ($this:lib.TestObserver<T of lib.TestObserver>, valuePredicate:<unbound IrClassSymbolImpl><T of lib.TestObserver, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:lib.TestObserver<T of lib.TestObserver>
+        VALUE_PARAMETER name:valuePredicate index:0 type:<unbound IrClassSymbolImpl><T of lib.TestObserver, <unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun assertValue (valuePredicate: <unbound IrClassSymbolImpl><T of lib.TestObserver, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in lib.TestObserver'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Single signature:lib/Single|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.Single<T of lib.Single>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ lib/Single|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:lib/Single.<init>|<init>(){}[0] visibility:public <> () returnType:lib.Single<T of lib.Single> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Single signature:lib/Single|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:lib/Single.test|test(){}[0] visibility:public modality:FINAL <> ($this:lib.Single<T of lib.Single>) returnType:lib.TestObserver<T of lib.Single>
+        $this: VALUE_PARAMETER name:<this> type:lib.Single<T of lib.Single>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): lib.TestObserver<T of lib.Single> declared in lib.Single'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Employee signature:lib/Employee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.Employee
+      CONSTRUCTOR signature:lib/Employee.<init>|<init>(){}[0] visibility:public <> () returnType:lib.Employee [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Employee signature:lib/Employee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Either signature:lib/Either|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.Either<T of lib.Either>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ lib/Either|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:lib/Either.<init>|<init>(){}[0] visibility:public <> () returnType:lib.Either<T of lib.Either> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Either signature:lib/Either|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    TYPEALIAS name:DomainEither signature:lib/DomainEither|null[0] visibility:public expandedType:lib.Either<T of lib.DomainEither>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ lib/DomainEither|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    TYPEALIAS name:DomainSingle signature:lib/DomainSingle|null[0] visibility:public expandedType:lib.Single<lib.Either<T of lib.DomainSingle>>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ lib/DomainSingle|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:provideDomainSingle signature:lib/provideDomainSingle|provideDomainSingle(){}[0] visibility:public modality:FINAL <> () returnType:lib.Single<lib.Either<lib.Employee>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDomainSingle (): lib.Single<lib.Either<lib.Employee>> declared in lib'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:CreateEmployeeUseCaseAccessor signature:lib/CreateEmployeeUseCaseAccessor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.CreateEmployeeUseCaseAccessor
+      CONSTRUCTOR signature:lib/CreateEmployeeUseCaseAccessor.<init>|<init>(){}[0] visibility:public <> () returnType:lib.CreateEmployeeUseCaseAccessor [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CreateEmployeeUseCaseAccessor signature:lib/CreateEmployeeUseCaseAccessor|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:testNormalName signature:lib/CreateEmployeeUseCaseAccessor.testNormalName|testNormalName(){}[0] visibility:public modality:FINAL <> ($this:lib.CreateEmployeeUseCaseAccessor) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:lib.CreateEmployeeUseCaseAccessor
+        BLOCK_BODY
+          VAR name:testObs type:lib.TestObserver<lib.Either<lib.Employee>> [val]
+            CALL 'public final fun test (): lib.TestObserver<T of lib.Single> declared in lib.Single' type=lib.TestObserver<lib.Either<lib.Employee>> origin=null
+              $this: CALL 'public final fun provideDomainSingle (): lib.Single<lib.Either<lib.Employee>> declared in lib' type=lib.Single<lib.Either<lib.Employee>> origin=null
+          CALL 'public final fun assertValue (valuePredicate: <unbound IrClassSymbolImpl><T of lib.TestObserver, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in lib.TestObserver' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val testObs: lib.TestObserver<lib.Either<lib.Employee>> [val] declared in lib.CreateEmployeeUseCaseAccessor.testNormalName' type=lib.TestObserver<lib.Either<lib.Employee>> origin=null
+            valuePredicate: FUN_EXPR type=<unbound IrClassSymbolImpl><lib.Either<lib.Employee>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:lib.Either<lib.Employee>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:lib.Either<lib.Employee>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: lib.Either<lib.Employee>): <unbound IrClassSymbolImpl> declared in lib.CreateEmployeeUseCaseAccessor.testNormalName'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:CreateEmployeeUseCaseTest signature:/CreateEmployeeUseCaseTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CreateEmployeeUseCaseTest
+      CONSTRUCTOR signature:/CreateEmployeeUseCaseTest.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.CreateEmployeeUseCaseTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CreateEmployeeUseCaseTest signature:/CreateEmployeeUseCaseTest|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:testNormalName signature:/CreateEmployeeUseCaseTest.testNormalName|testNormalName(){}[0] visibility:public modality:FINAL <> ($this:<root>.CreateEmployeeUseCaseTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.CreateEmployeeUseCaseTest
+        BLOCK_BODY
+          VAR name:testObs type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val testObs: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.CreateEmployeeUseCaseTest.testNormalName' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.CreateEmployeeUseCaseTest.testNormalName'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

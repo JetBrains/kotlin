@@ -1,0 +1,90 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/classes.kt
+    CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+      CONSTRUCTOR signature:test/C.<init>|<init>(){}[0] visibility:public <> () returnType:test.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:check signature:test/check|check(kotlin.String;kotlin.reflect.KType){}[0] visibility:public modality:FINAL <> (expected:<unbound IrClassSymbolImpl>, actual:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expected index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:actual index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'expected: <unbound IrClassSymbolImpl> declared in test.check' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'actual: <unbound IrClassSymbolImpl> declared in test.check' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Any"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.String"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.String?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Unit"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="test.C"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: test.C
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="test.C?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: test.C?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.collections.List<kotlin.String>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.collections.Map<in kotlin.Number, *>?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>, *>?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Enum<*>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><*>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Enum<kotlin.annotation.AnnotationRetention>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<kotlin.Any>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<*>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><*>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<kotlin.IntArray>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Array<in kotlin.Array<test.C>?>"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl><test.C>?>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Int"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Int?"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun check (expected: <unbound IrClassSymbolImpl>, actual: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          expected: CONST String type=<unbound IrClassSymbolImpl> value="kotlin.Boolean"
+          actual: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

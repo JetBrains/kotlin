@@ -1,0 +1,111 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseTerminal
+    // class name: BaseTerminal.Success
+    // class name: CountingInterpreter
+    // class name: CountingInterpreter.Intermediary
+    // class name: CountingInterpreter.Intermediary.KeepCounting
+    // class name: Interpreter
+    // class name: Interpreter.Intermediary
+    // class name: Interpreter.Step
+    // class name: Interpreter.Terminal
+
+    public sealed interface BaseTerminal<T#0 /* I */ : Interpreter<*, out BaseTerminal<T#0>, T#0>> : Interpreter.Terminal<T#0> {
+
+      // nested class: Success
+
+      // sealed subclass: BaseTerminal.Success
+    }
+
+    public final data class BaseTerminal.Success<T#1 /* I */ : Interpreter<*, out BaseTerminal<T#1>, T#1>> : BaseTerminal<T#1> {
+
+      public constructor(result: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(result: kotlin/Int /* = ... */): BaseTerminal.Success<T#1>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val result: kotlin/Int
+        public final get
+    }
+
+    public final class CountingInterpreter : Interpreter<CountingInterpreter.Intermediary, BaseTerminal.Success<CountingInterpreter>, CountingInterpreter> {
+
+      public constructor()
+
+      public open fun next(currentStep: CountingInterpreter.Intermediary): kotlin/Function0<Interpreter.Step<CountingInterpreter>>
+
+      public final var count: kotlin/Int
+        public final get
+        public final set
+
+      // nested class: Intermediary
+    }
+
+    public sealed interface CountingInterpreter.Intermediary : Interpreter.Intermediary<CountingInterpreter> {
+
+      // nested class: KeepCounting
+
+      // sealed subclass: CountingInterpreter.Intermediary.KeepCounting
+    }
+
+    public final data class CountingInterpreter.Intermediary.KeepCounting : CountingInterpreter.Intermediary {
+
+      public constructor(togo: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(togo: kotlin/Int /* = ... */): CountingInterpreter.Intermediary.KeepCounting
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val togo: kotlin/Int
+        public final get
+    }
+
+    public abstract class Interpreter<T#0 /* IS */ : Interpreter.Intermediary<T#2>, T#1 /* TS */ : Interpreter.Terminal<T#2>, T#2 /* SELF */ : Interpreter<T#0, T#1, T#2>> : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun next(currentStep: T#0): kotlin/Function0<Interpreter.Step<T#2>>
+
+      // nested class: Step
+
+      // nested class: Intermediary
+
+      // nested class: Terminal
+    }
+
+    public abstract interface Interpreter.Intermediary<T#3 /* INTERPRETER */ : Interpreter<out Interpreter.Intermediary<T#3>, out Interpreter.Terminal<T#3>, T#3>> : Interpreter.Step<T#3> {
+    }
+
+    public sealed interface Interpreter.Step<T#3 /* INTERPRETER */ : Interpreter<out Interpreter.Intermediary<T#3>, out Interpreter.Terminal<T#3>, T#3>> : kotlin/Any {
+
+      // sealed subclass: Interpreter.Intermediary
+
+      // sealed subclass: Interpreter.Terminal
+    }
+
+    public abstract interface Interpreter.Terminal<T#3 /* INTERPRETER */ : Interpreter<out Interpreter.Intermediary<T#3>, out Interpreter.Terminal<T#3>, T#3>> : Interpreter.Step<T#3> {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var dec: kotlin/Int
+        public final get
+        public final set
+
+      public final var inc: kotlin/Int
+        public final get
+        public final set
+
+      public final var propDec: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(a: kotlin/Int)
+
+      public final var propInc: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(a: kotlin/Int)
+    }
+  }
+}

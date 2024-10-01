@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: regressions
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f(xs: kotlin/collections/Iterator<kotlin/Int>): kotlin/Int
+    }
+  }
+}

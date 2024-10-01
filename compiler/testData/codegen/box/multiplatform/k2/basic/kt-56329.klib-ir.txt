@@ -1,0 +1,33 @@
+MODULE_FRAGMENT name:<jvm>
+  FILE fqName:<root> fileName:/common.kt
+    FUN name:ok signature:/ok|ok(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ok (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun foo <T> (y: T of <root>.foo): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              y: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            1: CALL 'public final fun foo <T> (y: T of <root>.foo, x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              y: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              x: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="K"
+  FILE fqName:<root> fileName:/main.kt
+    TYPEALIAS name:S signature:/S|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl>[actual]
+    FUN name:foo signature:/foo|foo(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (y:T of <root>.foo) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:y index:0 type:T of <root>.foo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T> (y: T of <root>.foo): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+    FUN name:foo signature:/foo|foo(0:0;kotlin.String){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (y:T of <root>.foo, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(0:0;kotlin.String){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:y index:0 type:T of <root>.foo
+      VALUE_PARAMETER name:x index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T> (y: T of <root>.foo, x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun ok (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

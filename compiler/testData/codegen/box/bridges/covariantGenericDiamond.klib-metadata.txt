@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: AImpl
+    // class name: B
+    // class name: BImpl
+
+    public abstract interface A : kotlin/Any {
+
+      public abstract val result: kotlin/Any
+        public abstract get
+    }
+
+    public abstract class AImpl<out T#0 /* Self */ : kotlin/Any> : A {
+
+      public constructor(result: T#0)
+
+      public open val result: T#0
+        public open get
+    }
+
+    public abstract interface B : A {
+
+      public abstract val result: kotlin/String
+        public abstract get
+    }
+
+    public final class BImpl : AImpl<kotlin/String>, B {
+
+      public constructor(result: kotlin/String)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

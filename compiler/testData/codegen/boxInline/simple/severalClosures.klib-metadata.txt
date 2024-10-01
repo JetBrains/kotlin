@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inline
+
+    public final class Inline : kotlin/Any {
+
+      public constructor()
+
+      public final inline fun foo1(closure1: kotlin/Function1<@kotlin/ParameterName(name = "l") kotlin/Int, kotlin/Int>, param1: kotlin/Int, closure2: kotlin/Function1<@kotlin/ParameterName(name = "l") kotlin/Double, kotlin/Double>, param2: kotlin/Double): kotlin/Double
+
+      public final inline fun foo2(closure1: kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>, param1: kotlin/Int, closure2: kotlin/Function3<kotlin/Double, kotlin/Int, kotlin/Int, kotlin/Double>, param2: kotlin/Double, param3: kotlin/Int): kotlin/Double
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): kotlin/Double
+
+      public final fun test1WithCaptured(): kotlin/Double
+
+      public final fun test2(): kotlin/Double
+    }
+  }
+}

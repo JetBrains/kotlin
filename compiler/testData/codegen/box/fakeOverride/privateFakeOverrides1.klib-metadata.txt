@@ -1,0 +1,106 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+    // class name: G
+    // class name: H
+
+    private open class A : kotlin/Any {
+
+      public constructor()
+
+      public open fun foo1(): kotlin/String
+
+      internal open fun foo2(): kotlin/String
+
+      protected open fun foo3(): kotlin/String
+
+      private final fun foo4(): kotlin/String
+    }
+
+    private final class B : A {
+
+      public constructor()
+
+      public open fun foo1(): kotlin/String
+
+      internal open fun foo2(): kotlin/String
+
+      protected open fun foo3(): kotlin/String
+
+      private final fun foo4(): kotlin/String
+
+      public final fun foo5(): kotlin/String
+
+      public final fun foo6(): kotlin/String
+    }
+
+    private abstract interface C : kotlin/Any {
+
+      public open fun foo(): kotlin/String
+    }
+
+    private final class D : C {
+
+      public constructor()
+
+      public open fun foo(): kotlin/String
+    }
+
+    private abstract class G : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun foo1(): kotlin/Unit
+
+      internal abstract fun foo2(): kotlin/Unit
+
+      protected abstract fun foo3(): kotlin/Unit
+
+      private final fun foo4(): kotlin/String
+    }
+
+    private final class H : A {
+
+      public constructor()
+
+      public open fun foo1(): kotlin/String
+
+      internal open fun foo2(): kotlin/String
+
+      protected open fun foo3(): kotlin/String
+
+      private final fun foo4(): kotlin/String
+
+      public final fun foo5(): kotlin/String
+
+      public final fun foo6(): kotlin/String
+    }
+
+    package {
+
+      public final fun runner(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

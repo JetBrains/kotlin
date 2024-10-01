@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+
+      public final operator inline fun kotlin/String.getValue(thiz: kotlin/Any?, property: kotlin/reflect/KProperty<*>): kotlin/String
+
+      public final operator fun kotlin/Int.provideDelegate(thiz: kotlin/Any?, property: kotlin/reflect/KProperty<*>): kotlin/String
+    }
+  }
+}

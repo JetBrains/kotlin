@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: name
+
+    // class name: name/Test
+
+    public final class name/Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun kotlin/Long.t(): kotlin/Int
+
+      public final fun tt(): kotlin/Int
+
+      public final var i: kotlin/Int
+        public final get
+        public final set
+
+      public final val ten: kotlin/Long /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: D
+
+    public final class D : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#0 /* T */> bar1(): kotlin/reflect/KType
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> bar1(): kotlin/reflect/KType
+
+      public final fun <T#0 /* T */> bar2(): kotlin/reflect/KType
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

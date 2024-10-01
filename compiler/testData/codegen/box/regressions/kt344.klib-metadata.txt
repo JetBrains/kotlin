@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun s0(): kotlin/Boolean
+
+      public final fun s1(): kotlin/Boolean
+
+      public final fun t1(): kotlin/Boolean
+
+      public final fun t10(): kotlin/Boolean
+
+      public final fun t11(x0: kotlin/Int): kotlin/Int
+
+      public final fun t2(): kotlin/Boolean
+
+      public final fun t3(): kotlin/Boolean
+
+      public final fun t4(): kotlin/Boolean
+
+      public final fun t5(): kotlin/Boolean
+
+      public final fun t6(): kotlin/Boolean
+
+      public final fun t7(): kotlin/Boolean
+
+      public final fun t8(): kotlin/Boolean
+
+      public final fun t9(x0: kotlin/Int): kotlin/Boolean
+    }
+  }
+}

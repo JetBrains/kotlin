@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseClass
+    // class name: BaseInterface
+    // class name: Common
+    // class name: ConcreteType
+    // class name: ConcreteType2
+    // class name: Consumer
+    // class name: GenericHolder
+    // class name: Top
+
+    public abstract class BaseClass : Common {
+
+      public constructor()
+    }
+
+    public abstract interface BaseInterface : Common {
+    }
+
+    public abstract interface Common : Top {
+    }
+
+    public final class ConcreteType : BaseClass, BaseInterface {
+
+      public constructor()
+    }
+
+    public final class ConcreteType2 : BaseClass, BaseInterface {
+
+      public constructor()
+    }
+
+    public abstract fun interface Consumer<T#0 /* T */ : Top> : kotlin/Any {
+
+      public abstract fun accept(t: T#0): kotlin/Unit
+    }
+
+    public final class GenericHolder<T#0 /* T */ : Top> : kotlin/Any {
+
+      public constructor()
+
+      public final fun doOnSuccess(onSuccess: Consumer<in T#0>): kotlin/Unit
+    }
+
+    public abstract interface Top : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun example(input: kotlin/Int): kotlin/Unit
+
+      public final fun functionReference(x: kotlin/Any): kotlin/Unit
+    }
+  }
+}

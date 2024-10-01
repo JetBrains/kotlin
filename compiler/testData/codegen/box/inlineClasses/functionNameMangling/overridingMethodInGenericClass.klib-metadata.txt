@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Derived
+    // class name: GenericBase
+    // class name: Str
+
+    public final class Derived : GenericBase<Str> {
+
+      public constructor()
+
+      public open fun foo(x: Str): Str
+    }
+
+    public abstract class GenericBase<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun foo(x: T#0): T#0
+    }
+
+    public final value class Str : kotlin/Any {
+
+      public constructor(str: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val str: kotlin/String
+        public final get
+
+      // underlying property: str
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: First
+    // class name: MClass
+    // class name: Some
+
+    public abstract interface First : kotlin/Any {
+    }
+
+    public final class MClass : First, Some<MClass> {
+
+      public constructor(p: kotlin/String)
+
+      public final val p: kotlin/String
+        public final get
+    }
+
+    public abstract interface Some<T#0 /* T */ : First & Some<T#0>> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val a: Some<*>?
+        public final get
+    }
+  }
+}

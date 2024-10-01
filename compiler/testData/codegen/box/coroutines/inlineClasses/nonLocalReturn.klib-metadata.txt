@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<T#0>, kotlin/Any?>): T#0
+
+      public final suspend fun foo(): kotlin/Result<kotlin/String>
+
+      public final suspend fun <T#0 /* T */> runSuspend(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<T#0>, kotlin/Any?>): T#0
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Derived
+
+    public open class Base : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class Derived : Base {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun Derived.inc(): Derived
+    }
+  }
+}

@@ -1,0 +1,66 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: ABase
+    // class name: BBase
+    // class name: D
+
+    public final class A : ABase {
+
+      public constructor()
+
+      public open fun zzz(): kotlin/String
+
+      public final val z: kotlin/String /* = ... */
+        public final get
+
+      // nested class: B
+    }
+
+    public final inner class A.B : BBase {
+
+      public constructor()
+
+      public final fun bar(d: D): kotlin/String
+
+      public final fun D.foo(): kotlin/String
+
+      public open fun zzz(): kotlin/String
+
+      public final val z: kotlin/String /* = ... */
+        public final get
+    }
+
+    public open class ABase : kotlin/Any {
+
+      public constructor()
+
+      public open fun zzz(): kotlin/String
+    }
+
+    public open class BBase : kotlin/Any {
+
+      public constructor()
+
+      public open fun zzz(): kotlin/String
+    }
+
+    public final class D : kotlin/Any {
+
+      public constructor()
+
+      public final val z: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

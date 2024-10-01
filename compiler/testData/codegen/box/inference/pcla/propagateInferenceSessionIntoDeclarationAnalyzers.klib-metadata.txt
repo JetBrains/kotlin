@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Callback
+    // class name: FlowX
+    // class name: ProducerScopeX
+    // class name: SendChannelX
+
+    public abstract interface Callback : kotlin/Any {
+
+      public abstract fun onSuccess(): kotlin/Unit
+    }
+
+    public final class FlowX<out T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface ProducerScopeX<in T#0 /* E */> : kotlin/Any {
+
+      public abstract fun foo(x: T#0): kotlin/Unit
+
+      public abstract val channel: SendChannelX<T#0>
+        public abstract get
+    }
+
+    public abstract interface SendChannelX<in T#0 /* E */> : kotlin/Any {
+
+      public abstract fun close(cause: kotlin/Throwable? /* = ... */): kotlin/Boolean
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> callbackFlowX(block: @kotlin/ExtensionFunctionType kotlin/Function1<ProducerScopeX<T#0>, kotlin/Unit>): FlowX<T#0>
+
+      public final fun foo(): FlowX<kotlin/String>
+    }
+  }
+}

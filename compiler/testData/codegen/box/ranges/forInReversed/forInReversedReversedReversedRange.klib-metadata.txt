@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun charRange(): kotlin/ranges/CharRange
+
+      public final fun intRange(): kotlin/ranges/IntRange
+
+      public final fun longRange(): kotlin/ranges/LongRange
+    }
+  }
+}

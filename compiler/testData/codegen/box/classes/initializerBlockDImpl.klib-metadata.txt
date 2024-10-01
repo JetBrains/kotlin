@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: World
+    // class name: World.Item
+
+    public final class World : kotlin/Any {
+
+      public constructor()
+
+      public final val foo: World.Item
+        public final get
+
+      public final val items: kotlin/collections/ArrayList<World.Item>
+        public final get
+
+      // nested class: Item
+    }
+
+    public final inner class World.Item : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

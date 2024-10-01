@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val kotlin/Int.myInc: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <T#0 /* R */> map(transform: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

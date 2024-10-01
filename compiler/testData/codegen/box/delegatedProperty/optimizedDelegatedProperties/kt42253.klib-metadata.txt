@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: ForceOutOfOrder
+
+    public final object C : kotlin/Any {
+
+      private constructor()
+
+      public final inline fun inlineFun(): kotlin/String
+    }
+
+    public final object ForceOutOfOrder : kotlin/Any {
+
+      private constructor()
+
+      public final fun callInline(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator inline fun kotlin/String.getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BoundedBuildee
+    // class name: DifferentType
+    // class name: TargetType
+    // class name: TargetTypeBase
+
+    public final class BoundedBuildee<T#0 /* BTV */ : TargetTypeBase> : kotlin/Any {
+
+      public constructor()
+
+      public final fun setBoundedTypeVariable(value: T#0): kotlin/Unit
+
+      private final var storage: T#0
+        private final get
+        private final set
+    }
+
+    public final class DifferentType : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class TargetType : TargetTypeBase {
+
+      public constructor()
+    }
+
+    public open class TargetTypeBase : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun <T#0 /* PBTV */ : TargetTypeBase> boundedBuild(instructions: @kotlin/ExtensionFunctionType kotlin/Function1<BoundedBuildee<T#0>, kotlin/Unit>): BoundedBuildee<T#0>
+
+      public final fun box(): kotlin/String
+
+      public final fun BoundedBuildee<TargetType>.setBoundedTypeVariable(arg: DifferentType): kotlin/Unit
+    }
+  }
+}

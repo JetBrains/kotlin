@@ -1,0 +1,56 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt45431.kt
+    CLASS CLASS name:DP signature:/DP|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DP
+      CONSTRUCTOR signature:/DP.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DP [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DP signature:/DP|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:provideDelegate signature:/DP.provideDelegate|provideDelegate(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($this:<root>.DP, t:<unbound IrClassSymbolImpl>?, kp:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.DP
+        VALUE_PARAMETER name:t index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:kp index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDelegate (t: <unbound IrClassSymbolImpl>?, kp: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.DP'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.DP.provideDelegate'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:H signature:/H|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
+      CONSTRUCTOR signature:/H.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.H [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H signature:/H|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/H.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H.Companion
+        CONSTRUCTOR signature:/H.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.H.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/H.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:property signature:/H.Companion.property|{}property[0] visibility:public modality:FINAL [delegated,val]
+          FIELD PROPERTY_DELEGATE name:property$delegate signature:[ /H.Companion.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:property$delegate type:kotlin.Lazy<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+            EXPRESSION_BODY
+              CALL 'public final fun provideDelegate (t: <unbound IrClassSymbolImpl>?, kp: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [operator] declared in <root>.DP' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DP' type=<root>.DP origin=null
+                t: GET_VAR '<this>: <root>.H.Companion declared in <root>.H.Companion' type=<root>.H.Companion origin=null
+                kp: PROPERTY_REFERENCE 'public final property: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.H.Companion' field=null getter='public final fun <get-property> (): <unbound IrClassSymbolImpl> declared in <root>.H.Companion' setter=null type=<unbound IrClassSymbolImpl><<root>.H.Companion, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-property> signature:/H.Companion.property.<get-property>|<get-property>(){}[0] visibility:public modality:FINAL <> ($this:<root>.H.Companion) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:property signature:/H.Companion.property|{}property[0] visibility:public modality:FINAL [delegated,val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.H.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-property> (): <unbound IrClassSymbolImpl> declared in <root>.H.Companion'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:property$delegate signature:[ /H.Companion.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:property$delegate type:kotlin.Lazy<kotlin.String> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final] declared in <root>.H.Companion' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    receiver: GET_VAR '<this>: <root>.H.Companion declared in <root>.H.Companion.<get-property>' type=<root>.H.Companion origin=null
+                  1: GET_VAR '<this>: <root>.H.Companion declared in <root>.H.Companion.<get-property>' type=<root>.H.Companion origin=null
+                  2: PROPERTY_REFERENCE 'public final property: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>.H.Companion' field=null getter='public final fun <get-property> (): <unbound IrClassSymbolImpl> declared in <root>.H.Companion' setter=null type=<unbound IrClassSymbolImpl><<root>.H.Companion, <unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-property> (): <unbound IrClassSymbolImpl> declared in <root>.H.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/H.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.H.Companion

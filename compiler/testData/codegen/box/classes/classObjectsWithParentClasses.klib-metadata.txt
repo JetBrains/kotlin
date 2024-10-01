@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+    // class name: Test.Companion
+    // class name: Test.InnerClass
+    // class name: Test.NotInnerClass
+
+    public open class Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun test(): Test.InnerClass
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: InnerClass
+
+      // nested class: NotInnerClass
+    }
+
+    public final companion object Test.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun testStatic(ic: Test.InnerClass): Test.NotInnerClass
+    }
+
+    public open inner class Test.InnerClass : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    public open class Test.NotInnerClass : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,49 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: I1
+    // class name: I2
+    // class name: I3
+    // class name: I4
+    // class name: X
+    // class name: Y
+
+    public abstract interface I1 : I2 {
+    }
+
+    public abstract interface I2 : kotlin/Any {
+
+      public abstract fun <T#0 /* A */> f(a: T#0): T#0
+    }
+
+    public abstract interface I3<T#0 /* B */> : I4<T#0> {
+    }
+
+    public abstract interface I4<T#0 /* B */> : kotlin/Any {
+
+      public abstract fun f(b: T#0): T#0
+    }
+
+    public final class X : I1 {
+
+      public constructor()
+
+      public open fun <T#0 /* A */> f(a: T#0): T#0
+    }
+
+    public final class Y<T#0 /* B */> : I3<T#0> {
+
+      public constructor()
+
+      public open fun f(b: T#0): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T1 */, reified T#1 /* T2 */> createArray(n: kotlin/Int, crossinline block: kotlin/Function0<kotlin/Pair<T#0, T#1>>): kotlin/Pair<kotlin/Array<T#0>, kotlin/Array<T#1>>
+
+      public final inline fun <T#0 /* T1 */, T#1 /* T2 */, T#2 /* T3 */, T#3 /* T4 */, T#4 /* T5 */, T#5 /* T6 */, reified T#6 /* R */> recursive(crossinline block: kotlin/Function0<T#6>): kotlin/Pair<kotlin/Array<T#6>, kotlin/Array<T#6>>
+    }
+  }
+}

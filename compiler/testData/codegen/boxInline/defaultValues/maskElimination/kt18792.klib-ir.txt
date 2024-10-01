@@ -1,0 +1,36 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:SceneContainer2 signature:test/SceneContainer2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.SceneContainer2
+      CONSTRUCTOR signature:test/SceneContainer2.<init>|<init>(){}[0] visibility:public <> () returnType:test.SceneContainer2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SceneContainer2 signature:test/SceneContainer2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:pushTo signature:test/SceneContainer2.pushTo|pushTo(kotlin.Long;kotlin.String){}[0] visibility:public modality:FINAL <> ($this:test.SceneContainer2, time:<unbound IrClassSymbolImpl>, transition:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+        $this: VALUE_PARAMETER name:<this> type:test.SceneContainer2
+        VALUE_PARAMETER name:time index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CALL 'public final fun <get-seconds> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VALUE_PARAMETER name:transition index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="TR"
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun pushTo (time: <unbound IrClassSymbolImpl>, transition: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test.SceneContainer2'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    PROPERTY name:seconds signature:test/seconds|@kotlin.Number{}seconds[0] visibility:public modality:FINAL [val]
+      FUN name:<get-seconds> signature:test/seconds.<get-seconds>|<get-seconds>@kotlin.Number(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+        correspondingProperty: PROPERTY name:seconds signature:test/seconds|@kotlin.Number{}seconds[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-seconds> (): <unbound IrClassSymbolImpl> [inline] declared in test'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in test.<get-seconds>' type=<unbound IrClassSymbolImpl> origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun pushTo (time: <unbound IrClassSymbolImpl>, transition: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in test.SceneContainer2' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.SceneContainer2' type=test.SceneContainer2 origin=null
+            time: CALL 'public final fun <get-seconds> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $receiver: CONST Double type=<unbound IrClassSymbolImpl> value=0.2

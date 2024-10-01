@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/I1
+    // class name: test/I2
+    // class name: test/I3
+    // class name: test/I4
+    // class name: test/I5
+    // class name: test/I6
+    // class name: test/I7
+
+    public final class test/C<T#0 /* T1 */, T#1 /* T2 */, T#2 /* T3 */, T#3 /* T4 */, T#4 /* T5 */, T#5 /* T6 */, T#6 /* T7 */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface test/I1 : kotlin/Any {
+    }
+
+    public abstract interface test/I2 : kotlin/Any {
+    }
+
+    public abstract interface test/I3 : kotlin/Any {
+    }
+
+    public abstract interface test/I4 : kotlin/Any {
+    }
+
+    public abstract interface test/I5 : kotlin/Any {
+    }
+
+    public abstract interface test/I6 : kotlin/Any {
+    }
+
+    public abstract interface test/I7 : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

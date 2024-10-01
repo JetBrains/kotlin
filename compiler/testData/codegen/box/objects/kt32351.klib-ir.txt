@@ -1,0 +1,74 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt32351.kt
+    CLASS INTERFACE name:Runnable signature:/Runnable|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Runnable
+      FUN name:run signature:/Runnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Runnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Runnable
+    CLASS CLASS name:AnonymousClassInLambda signature:/AnonymousClassInLambda|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AnonymousClassInLambda
+      CONSTRUCTOR signature:/AnonymousClassInLambda.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AnonymousClassInLambda [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AnonymousClassInLambda signature:/AnonymousClassInLambda|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:run signature:/AnonymousClassInLambda.run|run(){}[0] visibility:public modality:FINAL <> ($this:<root>.AnonymousClassInLambda) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.AnonymousClassInLambda
+        BLOCK_BODY
+          VAR name:x type:<unbound IrClassSymbolImpl> [var]
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+          VAR name:threads type:<unbound IrClassSymbolImpl><<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              <2>: <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided> declared in <root>.AnonymousClassInLambda.run'
+                      BLOCK type=<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Runnable]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Runnable]'
+                          FUN name:run visibility:public modality:OPEN <> ($this:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                            overridden:
+                              public abstract fun run (): <unbound IrClassSymbolImpl> declared in <root>.Runnable
+                            $this: VALUE_PARAMETER name:<this> type:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>
+                            BLOCK_BODY
+                              TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                                BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                  VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                                    GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.AnonymousClassInLambda.run' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                  SET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.AnonymousClassInLambda.run' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                      $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>.run' type=<unbound IrClassSymbolImpl> origin=null
+                                  GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>.run' type=<unbound IrClassSymbolImpl> origin=null
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>' type=<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>
+            $receiver: GET_VAR 'val threads: <unbound IrClassSymbolImpl><<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>> [val] declared in <root>.AnonymousClassInLambda.run' type=<unbound IrClassSymbolImpl><<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>
+                BLOCK_BODY
+                  CALL 'public open fun run (): <unbound IrClassSymbolImpl> declared in <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'it: <root>.AnonymousClassInLambda.run.<anonymous>.<no name provided> declared in <root>.AnonymousClassInLambda.run.<anonymous>' type=<root>.AnonymousClassInLambda.run.<anonymous>.<no name provided> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun run (): <unbound IrClassSymbolImpl> declared in <root>.AnonymousClassInLambda'
+            GET_VAR 'var x: <unbound IrClassSymbolImpl> [var] declared in <root>.AnonymousClassInLambda.run' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun run (): <unbound IrClassSymbolImpl> declared in <root>.AnonymousClassInLambda' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AnonymousClassInLambda' type=<root>.AnonymousClassInLambda origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="Fail"

@@ -1,0 +1,31 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    package {
+
+      public final fun <T#0 /* Msg */> noEffect(): kotlin/Function1<kotlin/Function1<T#0, kotlin/Unit> /* = lib/Dispatch^<T#0> */, kotlin/Unit> /* = lib/Effect^<T#0> */
+
+      public typealias Dispatch<T#0 /* Msg */> = kotlin/Function1<T#0, kotlin/Unit> /* = kotlin/Function1<T#0, kotlin/Unit> */
+
+      public typealias Effect<T#0 /* Msg */> = kotlin/Function1<kotlin/Function1<T#0, kotlin/Unit> /* = lib/Dispatch^<T#0> */, kotlin/Unit> /* = kotlin/Function1<kotlin/Function1<T#0, kotlin/Unit> /* = lib/Dispatch^<T#0> */, kotlin/Unit> */
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

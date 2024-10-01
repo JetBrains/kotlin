@@ -1,0 +1,137 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Z
+    // class name: Z2
+    // class name: Z2MutableCollection
+    // class name: ZMutableCollection
+
+    public final value class Z : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class Z2 : kotlin/Any {
+
+      public constructor(x: Z)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: Z
+        public final get
+
+      // underlying property: x
+
+      // underlying type: Z
+    }
+
+    public final value class Z2MutableCollection : kotlin/collections/MutableCollection<Z2> {
+
+      public constructor(ms: kotlin/collections/MutableCollection<Z2>)
+
+      public open fun add(element: Z2): kotlin/Boolean
+
+      public open fun addAll(elements: kotlin/collections/Collection<Z2>): kotlin/Boolean
+
+      public open fun clear(): kotlin/Unit
+
+      public open operator fun contains(element: Z2): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<Z2>): kotlin/Boolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/MutableIterator<Z2>
+
+      public open fun remove(element: Z2): kotlin/Boolean
+
+      public open fun removeAll(elements: kotlin/collections/Collection<Z2>): kotlin/Boolean
+
+      public open fun retainAll(elements: kotlin/collections/Collection<Z2>): kotlin/Boolean
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      private final val ms: kotlin/collections/MutableCollection<Z2>
+        private final get
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      // underlying property: ms
+
+      // underlying type: kotlin/collections/MutableCollection<Z2>
+    }
+
+    public final value class ZMutableCollection : kotlin/collections/MutableCollection<Z> {
+
+      public constructor(ms: kotlin/collections/MutableCollection<Z>)
+
+      public open fun add(element: Z): kotlin/Boolean
+
+      public open fun addAll(elements: kotlin/collections/Collection<Z>): kotlin/Boolean
+
+      public open fun clear(): kotlin/Unit
+
+      public open operator fun contains(element: Z): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<Z>): kotlin/Boolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/MutableIterator<Z>
+
+      public open fun remove(element: Z): kotlin/Boolean
+
+      public open fun removeAll(elements: kotlin/collections/Collection<Z>): kotlin/Boolean
+
+      public open fun retainAll(elements: kotlin/collections/Collection<Z>): kotlin/Boolean
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      private final val ms: kotlin/collections/MutableCollection<Z>
+        private final get
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      // underlying property: ms
+
+      // underlying type: kotlin/collections/MutableCollection<Z>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun z2(x: kotlin/Int): Z2
+    }
+  }
+}

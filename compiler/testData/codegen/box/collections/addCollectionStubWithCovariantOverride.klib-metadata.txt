@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractAdd
+    // class name: AbstractStringCollection
+    // class name: StringCollection
+
+    public abstract class AbstractAdd : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun add(s: kotlin/String): kotlin/Any
+    }
+
+    public abstract class AbstractStringCollection : AbstractAdd, kotlin/collections/Collection<kotlin/String> {
+
+      public constructor()
+    }
+
+    public final class StringCollection : AbstractStringCollection {
+
+      public constructor()
+
+      public open fun add(s: kotlin/String): kotlin/String
+
+      public open operator fun contains(element: kotlin/String): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<kotlin/String>
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(a: AbstractAdd): kotlin/String
+
+      public final fun test2(a: AbstractStringCollection): kotlin/String
+    }
+  }
+}

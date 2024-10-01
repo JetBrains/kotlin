@@ -1,0 +1,163 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:Data signature:test/Data|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Data
+      CONSTRUCTOR signature:test/Data.<init>|<init>(){}[0] visibility:public <> () returnType:test.Data [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Data signature:test/Data|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Input signature:test/Input|null[0] modality:FINAL visibility:public superTypes:[test.Closeable]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Input
+      CONSTRUCTOR signature:test/Input.<init>|<init>(test.Data){}[0] visibility:public <> (d:test.Data) returnType:test.Input [primary]
+        VALUE_PARAMETER name:d index:0 type:test.Data
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Input signature:test/Input|null[0] modality:FINAL visibility:public superTypes:[test.Closeable]'
+      PROPERTY name:d signature:test/Input.d|{}d[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:d signature:[ test/Input.d|{}d[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:d type:test.Data visibility:private [final]] ] type:test.Data visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'd: test.Data declared in test.Input.<init>' type=test.Data origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> signature:test/Input.d.<get-d>|<get-d>(){}[0] visibility:public modality:FINAL <> ($this:test.Input) returnType:test.Data
+          correspondingProperty: PROPERTY name:d signature:test/Input.d|{}d[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Input
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-d> (): test.Data declared in test.Input'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d signature:[ test/Input.d|{}d[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:d type:test.Data visibility:private [final]] ] type:test.Data visibility:private [final]' type=test.Data origin=null
+                receiver: GET_VAR '<this>: test.Input declared in test.Input.<get-d>' type=test.Input origin=null
+      FUN name:data signature:test/Input.data|data(){}[0] visibility:public modality:FINAL <> ($this:test.Input) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Input
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun data (): <unbound IrClassSymbolImpl> declared in test.Input'
+            CONST Int type=<unbound IrClassSymbolImpl> value=100
+    CLASS CLASS name:Output signature:test/Output|null[0] modality:FINAL visibility:public superTypes:[test.Closeable]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Output
+      CONSTRUCTOR signature:test/Output.<init>|<init>(test.Data){}[0] visibility:public <> (d:test.Data) returnType:test.Output [primary]
+        VALUE_PARAMETER name:d index:0 type:test.Data
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Output signature:test/Output|null[0] modality:FINAL visibility:public superTypes:[test.Closeable]'
+      PROPERTY name:d signature:test/Output.d|{}d[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:d signature:[ test/Output.d|{}d[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:d type:test.Data visibility:private [final]] ] type:test.Data visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'd: test.Data declared in test.Output.<init>' type=test.Data origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> signature:test/Output.d.<get-d>|<get-d>(){}[0] visibility:public modality:FINAL <> ($this:test.Output) returnType:test.Data
+          correspondingProperty: PROPERTY name:d signature:test/Output.d|{}d[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Output
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-d> (): test.Data declared in test.Output'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d signature:[ test/Output.d|{}d[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:d type:test.Data visibility:private [final]] ] type:test.Data visibility:private [final]' type=test.Data origin=null
+                receiver: GET_VAR '<this>: test.Output declared in test.Output.<get-d>' type=test.Output origin=null
+      FUN name:doOutput signature:test/Output.doOutput|doOutput(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:test.Output, data:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Output
+        VALUE_PARAMETER name:data index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun doOutput (data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.Output'
+            GET_VAR 'data: <unbound IrClassSymbolImpl> declared in test.Output.doOutput' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:Closeable signature:test/Closeable|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Closeable
+      FUN name:close signature:test/Closeable.close|close(){}[0] visibility:public modality:OPEN <> ($this:test.Closeable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Closeable
+        BLOCK_BODY
+    FUN name:use signature:test/use|use@0:0(kotlin.Function1<0:0,0:1>){0§<test.Closeable>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <T, R> ($receiver:T of test.use, block:<unbound IrClassSymbolImpl><T of test.use, R of test.use>) returnType:R of test.use [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/use|use@0:0(kotlin.Function1<0:0,0:1>){0§<test.Closeable>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[test.Closeable] reified:false] ] superTypes:[test.Closeable] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ test/use|use@0:0(kotlin.Function1<0:0,0:1>){0§<test.Closeable>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of test.use
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><T of test.use, R of test.use>
+      BLOCK_BODY
+        VAR name:closed type:<unbound IrClassSymbolImpl> [var]
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun use <T, R> (block: <unbound IrClassSymbolImpl><T of test.use, R of test.use>): R of test.use [inline] declared in test'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of test.use origin=INVOKE
+                $this: GET_VAR 'block: <unbound IrClassSymbolImpl><T of test.use, R of test.use> declared in test.use' type=<unbound IrClassSymbolImpl><T of test.use, R of test.use> origin=VARIABLE_AS_FUNCTION
+                1: GET_VAR '<this>: T of test.use declared in test.use' type=T of test.use origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in test.use
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              SET_VAR 'var closed: <unbound IrClassSymbolImpl> [var] declared in test.use' type=<unbound IrClassSymbolImpl> origin=EQ
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              TRY type=<unbound IrClassSymbolImpl>
+                try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public open fun close (): <unbound IrClassSymbolImpl> declared in test.Closeable' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: T of test.use declared in test.use' type=T of test.use origin=null
+                CATCH parameter=val closeException: <unbound IrClassSymbolImpl> [val] declared in test.use
+                  VAR CATCH_PARAMETER name:closeException type:<unbound IrClassSymbolImpl> [val]
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in test.use' type=<unbound IrClassSymbolImpl> origin=null
+          finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'var closed: <unbound IrClassSymbolImpl> [var] declared in test.use' type=<unbound IrClassSymbolImpl> origin=null
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'public open fun close (): <unbound IrClassSymbolImpl> declared in test.Closeable' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '<this>: T of test.use declared in test.use' type=T of test.use origin=null
+    FUN name:copyTo signature:test/copyTo|copyTo@test.Input(test.Output;kotlin.Int){}[0] visibility:public modality:FINAL <> ($receiver:test.Input, output:test.Output, size:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:test.Input
+      VALUE_PARAMETER name:output index:0 type:test.Output
+      VALUE_PARAMETER name:size index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun copyTo (output: test.Output, size: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun doOutput (data: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.Output' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'output: test.Output declared in test.copyTo' type=test.Output origin=null
+              data: CALL 'public final fun data (): <unbound IrClassSymbolImpl> declared in test.Input' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR '<this>: test.Input declared in test.copyTo' type=test.Input origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:test1 signature:/test1|test1@test.Data(test.Data){}[0] visibility:public modality:FINAL <> ($receiver:test.Data, d:test.Data) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:test.Data
+      VALUE_PARAMETER name:d index:0 type:test.Data
+      BLOCK_BODY
+        VAR name:input2 type:test.Input [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (d: test.Data) [primary] declared in test.Input' type=test.Input origin=null
+            d: GET_VAR '<this>: test.Data declared in <root>.test1' type=test.Data origin=null
+        VAR name:input type:test.Input [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (d: test.Data) [primary] declared in test.Input' type=test.Input origin=null
+            d: GET_VAR '<this>: test.Data declared in <root>.test1' type=test.Data origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test1 (d: test.Data): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun use <T, R> (block: <unbound IrClassSymbolImpl><T of test.use, R of test.use>): R of test.use [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: test.Input
+            <R>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val input: test.Input [val] declared in <root>.test1' type=test.Input origin=null
+            block: FUN_EXPR type=<unbound IrClassSymbolImpl><test.Input, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:test.Input) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:test.Input
+                BLOCK_BODY
+                  VAR name:output type:test.Output [val]
+                    CONSTRUCTOR_CALL 'public constructor <init> (d: test.Data) [primary] declared in test.Output' type=test.Output origin=null
+                      d: GET_VAR 'd: test.Data declared in <root>.test1' type=test.Data origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: test.Input): <unbound IrClassSymbolImpl> declared in <root>.test1'
+                    CALL 'public final fun use <T, R> (block: <unbound IrClassSymbolImpl><T of test.use, R of test.use>): R of test.use [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                      <T>: test.Output
+                      <R>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR 'val output: test.Output [val] declared in <root>.test1.<anonymous>' type=test.Output origin=null
+                      block: FUN_EXPR type=<unbound IrClassSymbolImpl><test.Output, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:test.Output) returnType:<unbound IrClassSymbolImpl>
+                          VALUE_PARAMETER name:it index:0 type:test.Output
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: test.Output): <unbound IrClassSymbolImpl> declared in <root>.test1.<anonymous>'
+                              CALL 'public final fun copyTo (output: test.Output, size: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                                $receiver: GET_VAR 'val input: test.Input [val] declared in <root>.test1' type=test.Input origin=null
+                                output: GET_VAR 'val output: test.Output [val] declared in <root>.test1.<anonymous>' type=test.Output origin=null
+                                size: CONST Int type=<unbound IrClassSymbolImpl> value=10
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun test1 (d: test.Data): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Data' type=test.Data origin=null
+            d: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Data' type=test.Data origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONST Int type=<unbound IrClassSymbolImpl> value=100
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="test1: "
+                GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

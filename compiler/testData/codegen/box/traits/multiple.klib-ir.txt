@@ -1,0 +1,65 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/multiple.kt
+    CLASS INTERFACE name:AL signature:/AL|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AL
+      FUN name:get signature:/AL.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.AL, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+        $this: VALUE_PARAMETER name:<this> type:<root>.AL
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>.AL'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS INTERFACE name:ALE signature:/ALE|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.AL]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ALE<T of <root>.ALE>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ALE|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:getOrNull signature:/ALE.getOrNull|getOrNull(kotlin.Int;1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.ALE<T of <root>.ALE>, index:<unbound IrClassSymbolImpl>, value:T of <root>.ALE) returnType:T of <root>.ALE
+        $this: VALUE_PARAMETER name:<this> type:<root>.ALE<T of <root>.ALE>
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:value index:1 type:T of <root>.ALE
+        BLOCK_BODY
+          VAR name:r type:T of <root>.ALE? [val]
+            TYPE_OP type=T of <root>.ALE? origin=SAFE_CAST typeOperand=T of <root>.ALE
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                $this: GET_VAR '<this>: <root>.ALE<T of <root>.ALE> declared in <root>.ALE.getOrNull' type=<root>.ALE<T of <root>.ALE> origin=null
+                1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.ALE.getOrNull' type=<unbound IrClassSymbolImpl> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getOrNull (index: <unbound IrClassSymbolImpl>, value: T of <root>.ALE): T of <root>.ALE declared in <root>.ALE'
+            BLOCK type=T of <root>.ALE origin=ELVIS
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:T of <root>.ALE? [val]
+                GET_VAR 'val r: T of <root>.ALE? [val] declared in <root>.ALE.getOrNull' type=T of <root>.ALE? origin=null
+              WHEN type=T of <root>.ALE origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_elvis_lhs: T of <root>.ALE? [val] declared in <root>.ALE.getOrNull' type=T of <root>.ALE? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: GET_VAR 'value: T of <root>.ALE declared in <root>.ALE.getOrNull' type=T of <root>.ALE origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: GET_VAR 'val tmp0_elvis_lhs: T of <root>.ALE? [val] declared in <root>.ALE.getOrNull' type=T of <root>.ALE? origin=null
+    CLASS CLASS name:SmartArrayList signature:/SmartArrayList|null[0] modality:OPEN visibility:public superTypes:[<root>.ALE<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SmartArrayList
+      CONSTRUCTOR signature:/SmartArrayList.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SmartArrayList [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SmartArrayList signature:/SmartArrayList|null[0] modality:OPEN visibility:public superTypes:[<root>.ALE<<unbound IrClassSymbolImpl>>]'
+    CLASS CLASS name:SmartArrayList2 signature:/SmartArrayList2|null[0] modality:FINAL visibility:public superTypes:[<root>.SmartArrayList; <root>.AL]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SmartArrayList2
+      CONSTRUCTOR signature:/SmartArrayList2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.SmartArrayList2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SmartArrayList'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SmartArrayList2 signature:/SmartArrayList2|null[0] modality:FINAL visibility:public superTypes:[<root>.SmartArrayList; <root>.AL]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:<root>.SmartArrayList2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.SmartArrayList2' type=<root>.SmartArrayList2 origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CONST String type=<unbound IrClassSymbolImpl> value="239"
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val c: <root>.SmartArrayList2 [val] declared in <root>.box' type=<root>.SmartArrayList2 origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  2: CONST String type=<unbound IrClassSymbolImpl> value="239"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

@@ -1,0 +1,73 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt69534.kt
+    CLASS CLASS name:Sas signature:/Sas|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sas
+      CONSTRUCTOR signature:/Sas.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.Sas [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sas signature:/Sas|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Sas2 signature:/Sas2|null[0] modality:FINAL visibility:public superTypes:[<root>.Sas]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sas2<E of <root>.Sas2>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /Sas2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/Sas2.<init>|<init>(1:0){}[0] visibility:public <> (error:E of <root>.Sas2) returnType:<root>.Sas2<E of <root>.Sas2> [primary]
+        VALUE_PARAMETER name:error index:0 type:E of <root>.Sas2
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.Sas'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sas2 signature:/Sas2|null[0] modality:FINAL visibility:public superTypes:[<root>.Sas]'
+      PROPERTY name:error signature:/Sas2.error|{}error[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:error signature:[ /Sas2.error|{}error[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:error type:E of <root>.Sas2 visibility:private [final]] ] type:E of <root>.Sas2 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'error: E of <root>.Sas2 declared in <root>.Sas2.<init>' type=E of <root>.Sas2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-error> signature:/Sas2.error.<get-error>|<get-error>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Sas2<E of <root>.Sas2>) returnType:E of <root>.Sas2
+          correspondingProperty: PROPERTY name:error signature:/Sas2.error|{}error[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Sas2<E of <root>.Sas2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:error signature:[ /Sas2.error|{}error[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:error type:E of <root>.Sas2 visibility:private [final]] ] type:E of <root>.Sas2 visibility:private [final]' type=E of <root>.Sas2 origin=null
+                receiver: GET_VAR '<this>: <root>.Sas2<E of <root>.Sas2> declared in <root>.Sas2.<get-error>' type=<root>.Sas2<E of <root>.Sas2> origin=null
+    FUN name:foo signature:/foo|foo@Sas(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Sas) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Sas
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.Sas [val]
+              GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Sas2<*>
+                  GET_VAR 'val tmp0_subject: <root>.Sas [val] declared in <root>.foo' type=<root>.Sas origin=null
+                then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                        CALL 'public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: TYPE_OP type=<root>.Sas2<*> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<*>
+                            GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        THROW type=<unbound IrClassSymbolImpl>
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                            CALL 'public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                              $this: TYPE_OP type=<root>.Sas2<*> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<*>
+                                GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR name:sas type:<root>.Sas2<<unbound IrClassSymbolImpl>> [val]
+              CONSTRUCTOR_CALL 'public constructor <init> (error: E of <root>.Sas2) [primary] declared in <root>.Sas2' type=<root>.Sas2<<unbound IrClassSymbolImpl>> origin=null
+                <class: E>: <unbound IrClassSymbolImpl>
+                error: CONST String type=<unbound IrClassSymbolImpl> value="Error"
+            CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'val sas: <root>.Sas2<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Sas2<<unbound IrClassSymbolImpl>> origin=null
+          CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+            VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/H
+
+    public abstract interface test/A : test/H<test/A> {
+    }
+
+    public abstract interface test/H<T#0 /* T */> : kotlin/Any {
+
+      public abstract val parent: T#0?
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

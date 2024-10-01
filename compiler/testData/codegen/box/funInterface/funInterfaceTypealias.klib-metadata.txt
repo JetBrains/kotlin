@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: KConsumer
+    // class name: KRunnable
+
+    public abstract fun interface KConsumer<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun accept(value: T#0): kotlin/Unit
+    }
+
+    public abstract fun interface KRunnable : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> bar(f: KConsumer<T#0>): KConsumer<T#0>
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(f: KRunnable): KRunnable
+
+      public typealias KRunnableAlias = KRunnable /* = KRunnable */
+
+      public typealias StringConsumer = KConsumer<kotlin/String> /* = KConsumer<kotlin/String> */
+    }
+  }
+}

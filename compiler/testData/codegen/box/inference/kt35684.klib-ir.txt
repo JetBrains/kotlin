@@ -1,0 +1,39 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt35684.kt
+    FUN name:test signature:/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun sequence <U> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Inv<U of <root>.sequence>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <U>: <root>.Inv<<unbound IrClassSymbolImpl>>
+          block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+              $receiver: VALUE_PARAMETER name:$this$sequence type:<root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>>
+              BLOCK_BODY
+                CALL 'public abstract fun yield (element: T of <root>.Inv): <unbound IrClassSymbolImpl> declared in <root>.Inv' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$sequence: <root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>> declared in <root>.test.<anonymous>' type=<root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>> origin=null
+                  element: CALL 'public final fun materialize <K> (): <root>.Inv<K of <root>.materialize> declared in <root>' type=<root>.Inv<<unbound IrClassSymbolImpl>> origin=null
+                    <K>: <unbound IrClassSymbolImpl>
+                CALL 'public abstract fun yield (element: T of <root>.Inv): <unbound IrClassSymbolImpl> declared in <root>.Inv' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR '$this$sequence: <root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>> declared in <root>.test.<anonymous>' type=<root>.Inv<<root>.Inv<<unbound IrClassSymbolImpl>>> origin=null
+                  element: CALL 'public final fun materialize <K> (): <root>.Inv<K of <root>.materialize> declared in <root>' type=<root>.Inv<<unbound IrClassSymbolImpl>> origin=null
+                    <K>: <unbound IrClassSymbolImpl>
+    FUN name:sequence signature:/sequence|sequence(kotlin.coroutines.SuspendFunction1<Inv<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <U> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Inv<U of <root>.sequence>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:U index:0 variance: signature:[ /sequence|sequence(kotlin.coroutines.SuspendFunction1<Inv<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Inv<U of <root>.sequence>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+    CLASS INTERFACE name:Inv signature:/Inv|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inv<T of <root>.Inv>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Inv|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:yield signature:/Inv.yield|yield(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Inv<T of <root>.Inv>, element:T of <root>.Inv) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Inv<T of <root>.Inv>
+        VALUE_PARAMETER name:element index:0 type:T of <root>.Inv
+    FUN name:materialize signature:/materialize|materialize(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <K> () returnType:<root>.Inv<K of <root>.materialize>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /materialize|materialize(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun materialize <K> (): <root>.Inv<K of <root>.materialize> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

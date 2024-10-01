@@ -1,0 +1,139 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:i fileName:/kt1800.kt
+    CLASS CLASS name:User signature:i/User|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:i.User
+      CONSTRUCTOR signature:i/User.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int){}[0] visibility:public <> (firstName:<unbound IrClassSymbolImpl>, lastName:<unbound IrClassSymbolImpl>, age:<unbound IrClassSymbolImpl>) returnType:i.User [primary]
+        VALUE_PARAMETER name:firstName index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:lastName index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:age index:2 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:User signature:i/User|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:firstName signature:i/User.firstName|{}firstName[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:firstName signature:[ i/User.firstName|{}firstName[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:firstName type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'firstName: <unbound IrClassSymbolImpl> declared in i.User.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-firstName> signature:i/User.firstName.<get-firstName>|<get-firstName>(){}[0] visibility:public modality:FINAL <> ($this:i.User) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:firstName signature:i/User.firstName|{}firstName[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:i.User
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-firstName> (): <unbound IrClassSymbolImpl> declared in i.User'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:firstName signature:[ i/User.firstName|{}firstName[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:firstName type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: i.User declared in i.User.<get-firstName>' type=i.User origin=null
+      PROPERTY name:lastName signature:i/User.lastName|{}lastName[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:lastName signature:[ i/User.lastName|{}lastName[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:firstName type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'lastName: <unbound IrClassSymbolImpl> declared in i.User.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lastName> signature:i/User.lastName.<get-lastName>|<get-lastName>(){}[0] visibility:public modality:FINAL <> ($this:i.User) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:lastName signature:i/User.lastName|{}lastName[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:i.User
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-lastName> (): <unbound IrClassSymbolImpl> declared in i.User'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lastName signature:[ i/User.lastName|{}lastName[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:firstName type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: i.User declared in i.User.<get-lastName>' type=i.User origin=null
+      PROPERTY name:age signature:i/User.age|{}age[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:age signature:[ i/User.age|{}age[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:firstName type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'age: <unbound IrClassSymbolImpl> declared in i.User.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> signature:i/User.age.<get-age>|<get-age>(){}[0] visibility:public modality:FINAL <> ($this:i.User) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:age signature:i/User.age|{}age[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:i.User
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-age> (): <unbound IrClassSymbolImpl> declared in i.User'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:age signature:[ i/User.age|{}age[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:firstName type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: i.User declared in i.User.<get-age>' type=i.User origin=null
+      FUN name:toString signature:i/User.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:i.User) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:i.User
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in i.User'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CALL 'public final fun <get-firstName> (): <unbound IrClassSymbolImpl> declared in i.User' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: i.User declared in i.User.toString' type=i.User origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=" "
+              CALL 'public final fun <get-lastName> (): <unbound IrClassSymbolImpl> declared in i.User' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: i.User declared in i.User.toString' type=i.User origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=", age "
+              CALL 'public final fun <get-age> (): <unbound IrClassSymbolImpl> declared in i.User' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: i.User declared in i.User.toString' type=i.User origin=null
+    FUN name:testMin signature:i/testMin|testMin@kotlin.collections.Collection<0:0>(){0§<kotlin.Comparable<0:0>>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of i.testMin>) returnType:T of i.testMin?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ i/testMin|testMin@kotlin.collections.Collection<0:0>(){0§<kotlin.Comparable<0:0>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of i.testMin>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><T of i.testMin>] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of i.testMin>
+      BLOCK_BODY
+        VAR name:minValue type:T of i.testMin? [var]
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><T of i.testMin> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of i.testMin> origin=FOR_LOOP_ITERATOR
+              $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of i.testMin> declared in i.testMin' type=<unbound IrClassSymbolImpl><T of i.testMin> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of i.testMin> [val] declared in i.testMin' type=<unbound IrClassSymbolImpl><T of i.testMin> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:value type:T of i.testMin [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of i.testMin origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of i.testMin> [val] declared in i.testMin' type=<unbound IrClassSymbolImpl><T of i.testMin> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'var minValue: T of i.testMin? [var] declared in i.testMin' type=T of i.testMin? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                          arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR 'val value: T of i.testMin [val] declared in i.testMin' type=T of i.testMin origin=null
+                            1: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of i.testMin & Any} origin=EXCLEXCL
+                              <T0>: {T of i.testMin & Any}
+                              arg0: GET_VAR 'var minValue: T of i.testMin? [var] declared in i.testMin' type=T of i.testMin? origin=null
+                          arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      SET_VAR 'var minValue: T of i.testMin? [var] declared in i.testMin' type=<unbound IrClassSymbolImpl> origin=EQ
+                        GET_VAR 'val value: T of i.testMin [val] declared in i.testMin' type=T of i.testMin origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testMin <T> (): T of i.testMin? declared in i'
+          GET_VAR 'var minValue: T of i.testMin? [var] declared in i.testMin' type=T of i.testMin? origin=null
+    FUN name:box signature:i/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:users type:<unbound IrClassSymbolImpl><i.User> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><i.User> origin=null
+            <1>: i.User
+            1: VARARG type=<unbound IrClassSymbolImpl><out i.User> varargElementType=i.User
+              CONSTRUCTOR_CALL 'public constructor <init> (firstName: <unbound IrClassSymbolImpl>, lastName: <unbound IrClassSymbolImpl>, age: <unbound IrClassSymbolImpl>) [primary] declared in i.User' type=i.User origin=null
+                firstName: CONST String type=<unbound IrClassSymbolImpl> value="John"
+                lastName: CONST String type=<unbound IrClassSymbolImpl> value="Doe"
+                age: CONST Int type=<unbound IrClassSymbolImpl> value=30
+              CONSTRUCTOR_CALL 'public constructor <init> (firstName: <unbound IrClassSymbolImpl>, lastName: <unbound IrClassSymbolImpl>, age: <unbound IrClassSymbolImpl>) [primary] declared in i.User' type=i.User origin=null
+                firstName: CONST String type=<unbound IrClassSymbolImpl> value="Jane"
+                lastName: CONST String type=<unbound IrClassSymbolImpl> value="Doe"
+                age: CONST Int type=<unbound IrClassSymbolImpl> value=27
+        VAR name:ages type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: i.User
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val users: <unbound IrClassSymbolImpl><i.User> [val] declared in i.box' type=<unbound IrClassSymbolImpl><i.User> origin=null
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><i.User, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:i.User) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:i.User
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: i.User): <unbound IrClassSymbolImpl> declared in i.box'
+                    CALL 'public final fun <get-age> (): <unbound IrClassSymbolImpl> declared in i.User' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'it: i.User declared in i.box.<anonymous>' type=i.User origin=null
+        VAR name:minAge type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'public final fun testMin <T> (): T of i.testMin? declared in i' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val ages: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in i.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in i'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val minAge: <unbound IrClassSymbolImpl>? [val] declared in i.box' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=27
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

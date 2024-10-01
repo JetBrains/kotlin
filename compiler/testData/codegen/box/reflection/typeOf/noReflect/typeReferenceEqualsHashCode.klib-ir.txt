@@ -1,0 +1,148 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/typeReferenceEqualsHashCode.kt
+    CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+      CONSTRUCTOR signature:test/C.<init>|<init>(){}[0] visibility:public <> () returnType:test.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:assertEqual signature:test/assertEqual|assertEqual(kotlin.reflect.KType;kotlin.reflect.KType){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="Fail equals: "
+                  GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                  GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="Fail hashCode: "
+                  GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                  GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertEqual' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:assertNotEqual signature:test/assertNotEqual|assertNotEqual(kotlin.reflect.KType;kotlin.reflect.KType){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="Fail equals: "
+                  GET_VAR 'a: <unbound IrClassSymbolImpl> declared in test.assertNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=" == "
+                  GET_VAR 'b: <unbound IrClassSymbolImpl> declared in test.assertNotEqual' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:equal signature:test/equal|equal(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <A, B> () returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:A index:0 variance: signature:[ test/equal|equal(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:B index:1 variance: signature:[ test/equal|equal(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        CALL 'public final fun assertEqual (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: A of test.equal
+          b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: B of test.equal
+    FUN name:notEqual signature:test/notEqual|notEqual(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <A, B> () returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:A index:0 variance: signature:[ test/notEqual|notEqual(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:B index:1 variance: signature:[ test/notEqual|notEqual(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        CALL 'public final fun assertNotEqual (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: A of test.notEqual
+          b: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: B of test.notEqual
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>
+          <B>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>?
+          <B>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>
+          <B>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: test.C
+          <B>: test.C
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: test.C?
+          <B>: test.C?
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><*>
+          <B>: <unbound IrClassSymbolImpl><*>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>
+          <B>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun equal <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>?
+          <B>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun notEqual <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>
+          <B>: <unbound IrClassSymbolImpl>?
+        CALL 'public final fun notEqual <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl>
+          <B>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun notEqual <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        CALL 'public final fun notEqual <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        CALL 'public final fun notEqual <A, B> (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+          <A>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          <B>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

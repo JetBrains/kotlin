@@ -1,0 +1,92 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testEmptyUIntLoop(): kotlin/Unit
+
+      public final fun testEmptyULongLoop(): kotlin/Unit
+
+      public final fun testEmptyULongLoop2(): kotlin/Unit
+
+      public final fun testMaxUItoMinUI(): kotlin/Unit
+
+      public final fun testMaxULtoMinUL(): kotlin/Unit
+
+      public final fun testSimpleUIntLoop(): kotlin/Unit
+
+      public final fun testSimpleULongLoop(): kotlin/Unit
+
+      public final fun testULongLoop(): kotlin/Unit
+
+      public final fun testWrappingUIntLoop(): kotlin/Unit
+
+      public final fun testWrappingULongLoop(): kotlin/Unit
+
+      public final val M: kotlin/ULong
+        public final get
+
+      public final val MA: kotlin/ULong
+        public final get
+
+      public final val MB: kotlin/ULong
+        public final get
+
+      public final const val MaxUI: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val MaxUL: kotlin/ULong /* = 18446744073709551615uL */
+        public final get
+
+      public final const val MinUI: kotlin/UInt /* = 0u */
+        public final get
+
+      public final const val MinUL: kotlin/ULong /* = 0uL */
+        public final get
+
+      public final val N: kotlin/UInt
+        public final get
+
+      public final val NA: kotlin/UInt
+        public final get
+
+      public final val NB: kotlin/UInt
+        public final get
+
+      public final val range1: kotlin/ranges/UIntRange
+        public final get
+
+      public final val range10: kotlin/ranges/UIntRange
+        public final get
+
+      public final val range2: kotlin/ranges/UIntRange
+        public final get
+
+      public final val range3: kotlin/ranges/ULongRange
+        public final get
+
+      public final val range4: kotlin/ranges/ULongRange
+        public final get
+
+      public final val range5: kotlin/ranges/ULongRange
+        public final get
+
+      public final val range6: kotlin/ranges/ULongRange
+        public final get
+
+      public final val range7: kotlin/ranges/UIntRange
+        public final get
+
+      public final val range8: kotlin/ranges/ULongRange
+        public final get
+
+      public final val range9: kotlin/ranges/ULongRange
+        public final get
+    }
+  }
+}

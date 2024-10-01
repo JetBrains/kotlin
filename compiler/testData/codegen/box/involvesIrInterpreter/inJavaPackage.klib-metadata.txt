@@ -1,0 +1,34 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: java2d
+
+    // class name: java2d/A
+    // class name: java2d/A.Companion
+
+    public final class java2d/A : kotlin/Any {
+
+      public constructor()
+
+      public final fun getConst(): kotlin/String
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object java2d/A.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final const val OK: kotlin/String /* = "OK" */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

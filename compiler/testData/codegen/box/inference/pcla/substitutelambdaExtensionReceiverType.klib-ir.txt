@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/substitutelambdaExtensionReceiverType.kt
+    FUN name:plusAssign signature:/plusAssign|plusAssign@kotlin.sequences.SequenceScope<kotlin.String>(kotlin.sequences.SequenceScope<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, x:<unbound IrClassSymbolImpl><T of <root>.plusAssign>) returnType:<unbound IrClassSymbolImpl> [operator]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /plusAssign|plusAssign@kotlin.sequences.SequenceScope<kotlin.String>(kotlin.sequences.SequenceScope<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><T of <root>.plusAssign>
+      BLOCK_BODY
+    FUN name:mySequence signature:/mySequence|mySequence(kotlin.coroutines.SuspendFunction1<kotlin.sequences.SequenceScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><T of <root>.mySequence>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mySequence|mySequence(kotlin.coroutines.SuspendFunction1<kotlin.sequences.SequenceScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mySequence <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><T of <root>.mySequence> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.mySequence> origin=null
+            <1>: T of <root>.mySequence
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><T of <root>.mySequence>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><T of <root>.mySequence> declared in <root>.mySequence'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.mySequence> origin=null
+                      <1>: T of <root>.mySequence
+                      1: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>, <unbound IrClassSymbolImpl>> declared in <root>.mySequence' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:main signature:/main|main(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:y type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun mySequence <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.mySequence>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><T of <root>.mySequence> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$mySequence type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR '$this$mySequence: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.main.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="result"
+                  CALL 'public final fun plusAssign <T> (x: <unbound IrClassSymbolImpl><T of <root>.plusAssign>): <unbound IrClassSymbolImpl> [operator] declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    <T>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR '$this$mySequence: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.main.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PLUSEQ
+                    x: GET_VAR '$this$mySequence: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.main.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun main (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: C.Inner
+    // class name: Runnable
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      private final fun kotlin/String.ext(): kotlin/String
+
+      private final fun f(): kotlin/Unit
+
+      public final fun foo(): kotlin/String
+
+      // nested class: Inner
+    }
+
+    private final inner class C.Inner : kotlin/Any {
+
+      public constructor()
+
+      public final fun innerFun(): kotlin/Unit
+    }
+
+    public abstract interface Runnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

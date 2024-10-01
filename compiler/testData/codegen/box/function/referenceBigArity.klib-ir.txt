@@ -1,0 +1,147 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/referenceBigArity.kt
+    FUN name:фу signature:/фу|фу(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> (а:<unbound IrClassSymbolImpl>, б:<unbound IrClassSymbolImpl>, в:<unbound IrClassSymbolImpl>, г:<unbound IrClassSymbolImpl>, д:<unbound IrClassSymbolImpl>, е:<unbound IrClassSymbolImpl>, ё:<unbound IrClassSymbolImpl>, ж:<unbound IrClassSymbolImpl>, з:<unbound IrClassSymbolImpl>, и:<unbound IrClassSymbolImpl>, й:<unbound IrClassSymbolImpl>, к:<unbound IrClassSymbolImpl>, л:<unbound IrClassSymbolImpl>, м:<unbound IrClassSymbolImpl>, н:<unbound IrClassSymbolImpl>, о:<unbound IrClassSymbolImpl>, п:<unbound IrClassSymbolImpl>, р:<unbound IrClassSymbolImpl>, с:<unbound IrClassSymbolImpl>, т:<unbound IrClassSymbolImpl>, у:<unbound IrClassSymbolImpl>, ф:<unbound IrClassSymbolImpl>, х:<unbound IrClassSymbolImpl>, ц:<unbound IrClassSymbolImpl>, ч:<unbound IrClassSymbolImpl>, ш:<unbound IrClassSymbolImpl>, щ:<unbound IrClassSymbolImpl>, ъ:<unbound IrClassSymbolImpl>, ы:<unbound IrClassSymbolImpl>, ь:<unbound IrClassSymbolImpl>, э:<unbound IrClassSymbolImpl>, ю:<unbound IrClassSymbolImpl>, я:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:а index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:б index:1 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:в index:2 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:г index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:д index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:е index:5 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ё index:6 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ж index:7 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:з index:8 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:и index:9 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:й index:10 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:к index:11 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:л index:12 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:м index:13 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:н index:14 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:о index:15 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:п index:16 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:р index:17 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:с index:18 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:т index:19 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:у index:20 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ф index:21 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:х index:22 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ц index:23 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ч index:24 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ш index:25 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:щ index:26 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ъ index:27 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ы index:28 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ь index:29 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:э index:30 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:ю index:31 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:я index:32 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun фу (а: <unbound IrClassSymbolImpl>, б: <unbound IrClassSymbolImpl>, в: <unbound IrClassSymbolImpl>, г: <unbound IrClassSymbolImpl>, д: <unbound IrClassSymbolImpl>, е: <unbound IrClassSymbolImpl>, ё: <unbound IrClassSymbolImpl>, ж: <unbound IrClassSymbolImpl>, з: <unbound IrClassSymbolImpl>, и: <unbound IrClassSymbolImpl>, й: <unbound IrClassSymbolImpl>, к: <unbound IrClassSymbolImpl>, л: <unbound IrClassSymbolImpl>, м: <unbound IrClassSymbolImpl>, н: <unbound IrClassSymbolImpl>, о: <unbound IrClassSymbolImpl>, п: <unbound IrClassSymbolImpl>, р: <unbound IrClassSymbolImpl>, с: <unbound IrClassSymbolImpl>, т: <unbound IrClassSymbolImpl>, у: <unbound IrClassSymbolImpl>, ф: <unbound IrClassSymbolImpl>, х: <unbound IrClassSymbolImpl>, ц: <unbound IrClassSymbolImpl>, ч: <unbound IrClassSymbolImpl>, ш: <unbound IrClassSymbolImpl>, щ: <unbound IrClassSymbolImpl>, ъ: <unbound IrClassSymbolImpl>, ы: <unbound IrClassSymbolImpl>, ь: <unbound IrClassSymbolImpl>, э: <unbound IrClassSymbolImpl>, ю: <unbound IrClassSymbolImpl>, я: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                                                          $this: GET_VAR 'а: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                                          1: GET_VAR 'б: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                                        1: GET_VAR 'в: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                                      1: GET_VAR 'г: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                                    1: GET_VAR 'д: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                                  1: GET_VAR 'е: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                                1: GET_VAR 'ё: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                              1: GET_VAR 'ж: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                            1: GET_VAR 'з: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                          1: GET_VAR 'и: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                        1: GET_VAR 'й: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                      1: GET_VAR 'к: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                    1: GET_VAR 'л: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                  1: GET_VAR 'м: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                                1: GET_VAR 'н: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                              1: GET_VAR 'о: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                            1: GET_VAR 'п: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                          1: GET_VAR 'р: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                        1: GET_VAR 'с: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                      1: GET_VAR 'т: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                    1: GET_VAR 'у: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                  1: GET_VAR 'ф: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                                1: GET_VAR 'х: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                              1: GET_VAR 'ц: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                            1: GET_VAR 'ч: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                          1: GET_VAR 'ш: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                        1: GET_VAR 'щ: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'ъ: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                    1: GET_VAR 'ы: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                  1: GET_VAR 'ь: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+                1: GET_VAR 'э: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+              1: GET_VAR 'ю: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'я: <unbound IrClassSymbolImpl> declared in <root>.фу' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:ref type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun фу (а: <unbound IrClassSymbolImpl>, б: <unbound IrClassSymbolImpl>, в: <unbound IrClassSymbolImpl>, г: <unbound IrClassSymbolImpl>, д: <unbound IrClassSymbolImpl>, е: <unbound IrClassSymbolImpl>, ё: <unbound IrClassSymbolImpl>, ж: <unbound IrClassSymbolImpl>, з: <unbound IrClassSymbolImpl>, и: <unbound IrClassSymbolImpl>, й: <unbound IrClassSymbolImpl>, к: <unbound IrClassSymbolImpl>, л: <unbound IrClassSymbolImpl>, м: <unbound IrClassSymbolImpl>, н: <unbound IrClassSymbolImpl>, о: <unbound IrClassSymbolImpl>, п: <unbound IrClassSymbolImpl>, р: <unbound IrClassSymbolImpl>, с: <unbound IrClassSymbolImpl>, т: <unbound IrClassSymbolImpl>, у: <unbound IrClassSymbolImpl>, ф: <unbound IrClassSymbolImpl>, х: <unbound IrClassSymbolImpl>, ц: <unbound IrClassSymbolImpl>, ч: <unbound IrClassSymbolImpl>, ш: <unbound IrClassSymbolImpl>, щ: <unbound IrClassSymbolImpl>, ъ: <unbound IrClassSymbolImpl>, ы: <unbound IrClassSymbolImpl>, ь: <unbound IrClassSymbolImpl>, э: <unbound IrClassSymbolImpl>, ю: <unbound IrClassSymbolImpl>, я: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=528
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val ref: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            4: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            5: CONST Int type=<unbound IrClassSymbolImpl> value=4
+            6: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            7: CONST Int type=<unbound IrClassSymbolImpl> value=6
+            8: CONST Int type=<unbound IrClassSymbolImpl> value=7
+            9: CONST Int type=<unbound IrClassSymbolImpl> value=8
+            10: CONST Int type=<unbound IrClassSymbolImpl> value=9
+            11: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            12: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            13: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            14: CONST Int type=<unbound IrClassSymbolImpl> value=13
+            15: CONST Int type=<unbound IrClassSymbolImpl> value=14
+            16: CONST Int type=<unbound IrClassSymbolImpl> value=15
+            17: CONST Int type=<unbound IrClassSymbolImpl> value=16
+            18: CONST Int type=<unbound IrClassSymbolImpl> value=17
+            19: CONST Int type=<unbound IrClassSymbolImpl> value=18
+            20: CONST Int type=<unbound IrClassSymbolImpl> value=19
+            21: CONST Int type=<unbound IrClassSymbolImpl> value=20
+            22: CONST Int type=<unbound IrClassSymbolImpl> value=21
+            23: CONST Int type=<unbound IrClassSymbolImpl> value=22
+            24: CONST Int type=<unbound IrClassSymbolImpl> value=23
+            25: CONST Int type=<unbound IrClassSymbolImpl> value=24
+            26: CONST Int type=<unbound IrClassSymbolImpl> value=25
+            27: CONST Int type=<unbound IrClassSymbolImpl> value=26
+            28: CONST Int type=<unbound IrClassSymbolImpl> value=27
+            29: CONST Int type=<unbound IrClassSymbolImpl> value=28
+            30: CONST Int type=<unbound IrClassSymbolImpl> value=29
+            31: CONST Int type=<unbound IrClassSymbolImpl> value=30
+            32: CONST Int type=<unbound IrClassSymbolImpl> value=31
+            33: CONST Int type=<unbound IrClassSymbolImpl> value=32
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

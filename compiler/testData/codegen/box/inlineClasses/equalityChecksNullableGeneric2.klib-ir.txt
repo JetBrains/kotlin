@@ -1,0 +1,693 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/equalityChecksNullableGeneric2.kt
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /A|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/A.<init>|<init>(1:0?){}[0] visibility:public <> (x:T of <root>.A?) returnType:<root>.A<T of <root>.A> [primary]
+        VALUE_PARAMETER name:x index:0 type:T of <root>.A?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/A.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: T of <root>.A? declared in <root>.A.<init>' type=T of <root>.A? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>) returnType:T of <root>.A?
+          correspondingProperty: PROPERTY name:x signature:/A.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.A? declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]' type=T of <root>.A? origin=null
+                receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<get-x>' type=<root>.A<T of <root>.A> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/A.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.A<T of <root>.A>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="A("
+              CONST String type=<unbound IrClassSymbolImpl> value="x="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]' type=T of <root>.A? origin=null
+                receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.toString' type=<root>.A<T of <root>.A> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/A.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.A<T of <root>.A>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]' type=T of <root>.A? origin=null
+                    receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.hashCode' type=<root>.A<T of <root>.A> origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]' type=T of <root>.A? origin=null
+                    receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.hashCode' type=<root>.A<T of <root>.A> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/A.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.A<T of <root>.A>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.A<T of <root>.A>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.A.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.A'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.A<T of <root>.A> [val]
+            TYPE_OP type=<root>.A<T of <root>.A> origin=CAST typeOperand=<root>.A<T of <root>.A>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.A.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]' type=T of <root>.A? origin=null
+                    receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.equals' type=<root>.A<T of <root>.A> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.A? visibility:private [final]] ] type:T of <root>.A? visibility:private [final]' type=T of <root>.A? origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.A<T of <root>.A> [val] declared in <root>.A.equals' type=<root>.A<T of <root>.A> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.A'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.A'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:isNullVacuousLeft signature:/isNullVacuousLeft|isNullVacuousLeft(A<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isNullVacuousLeft>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isNullVacuousLeft|isNullVacuousLeft(A<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isNullVacuousLeft>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isNullVacuousLeft <T> (s: <root>.A<T of <root>.isNullVacuousLeft>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isNullVacuousLeft> declared in <root>.isNullVacuousLeft' type=<root>.A<T of <root>.isNullVacuousLeft> origin=null
+            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:isNullVacuousRight signature:/isNullVacuousRight|isNullVacuousRight(A<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isNullVacuousRight>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isNullVacuousRight|isNullVacuousRight(A<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isNullVacuousRight>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isNullVacuousRight <T> (s: <root>.A<T of <root>.isNullVacuousRight>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            arg1: GET_VAR 's: <root>.A<T of <root>.isNullVacuousRight> declared in <root>.isNullVacuousRight' type=<root>.A<T of <root>.isNullVacuousRight> origin=null
+    FUN name:isNullLeft signature:/isNullLeft|isNullLeft(A<0:0>?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isNullLeft>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isNullLeft|isNullLeft(A<0:0>?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isNullLeft>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isNullLeft <T> (s: <root>.A<T of <root>.isNullLeft>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isNullLeft>? declared in <root>.isNullLeft' type=<root>.A<T of <root>.isNullLeft>? origin=null
+            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:isNullRight signature:/isNullRight|isNullRight(A<0:0>?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isNullRight>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isNullRight|isNullRight(A<0:0>?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isNullRight>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isNullRight <T> (s: <root>.A<T of <root>.isNullRight>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            arg1: GET_VAR 's: <root>.A<T of <root>.isNullRight>? declared in <root>.isNullRight' type=<root>.A<T of <root>.isNullRight>? origin=null
+    FUN name:isEqualSame signature:/isEqualSame|isEqualSame(A<0:0>;A<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isEqualSame>, t:<root>.A<T of <root>.isEqualSame>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualSame|isEqualSame(A<0:0>;A<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isEqualSame>
+      VALUE_PARAMETER name:t index:1 type:<root>.A<T of <root>.isEqualSame>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualSame <T> (s: <root>.A<T of <root>.isEqualSame>, t: <root>.A<T of <root>.isEqualSame>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isEqualSame> declared in <root>.isEqualSame' type=<root>.A<T of <root>.isEqualSame> origin=null
+            arg1: GET_VAR 't: <root>.A<T of <root>.isEqualSame> declared in <root>.isEqualSame' type=<root>.A<T of <root>.isEqualSame> origin=null
+    FUN name:isEqualAnyLeft signature:/isEqualAnyLeft|isEqualAnyLeft(A<0:0>;kotlin.Any?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isEqualAnyLeft>, t:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualAnyLeft|isEqualAnyLeft(A<0:0>;kotlin.Any?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isEqualAnyLeft>
+      VALUE_PARAMETER name:t index:1 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualAnyLeft <T> (s: <root>.A<T of <root>.isEqualAnyLeft>, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isEqualAnyLeft> declared in <root>.isEqualAnyLeft' type=<root>.A<T of <root>.isEqualAnyLeft> origin=null
+            arg1: GET_VAR 't: <unbound IrClassSymbolImpl>? declared in <root>.isEqualAnyLeft' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:isEqualAnyRight signature:/isEqualAnyRight|isEqualAnyRight(kotlin.Any?;A<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<unbound IrClassSymbolImpl>?, t:<root>.A<T of <root>.isEqualAnyRight>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualAnyRight|isEqualAnyRight(kotlin.Any?;A<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:t index:1 type:<root>.A<T of <root>.isEqualAnyRight>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualAnyRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyRight>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.isEqualAnyRight' type=<unbound IrClassSymbolImpl>? origin=null
+            arg1: GET_VAR 't: <root>.A<T of <root>.isEqualAnyRight> declared in <root>.isEqualAnyRight' type=<root>.A<T of <root>.isEqualAnyRight> origin=null
+    FUN name:isEqualSameNullable signature:/isEqualSameNullable|isEqualSameNullable(A<0:0>?;A<0:0>?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isEqualSameNullable>?, t:<root>.A<T of <root>.isEqualSameNullable>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualSameNullable|isEqualSameNullable(A<0:0>?;A<0:0>?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isEqualSameNullable>?
+      VALUE_PARAMETER name:t index:1 type:<root>.A<T of <root>.isEqualSameNullable>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isEqualSameNullable>? declared in <root>.isEqualSameNullable' type=<root>.A<T of <root>.isEqualSameNullable>? origin=null
+            arg1: GET_VAR 't: <root>.A<T of <root>.isEqualSameNullable>? declared in <root>.isEqualSameNullable' type=<root>.A<T of <root>.isEqualSameNullable>? origin=null
+    FUN name:isEqualAnyNullableLeft signature:/isEqualAnyNullableLeft|isEqualAnyNullableLeft(A<0:0>?;kotlin.Any?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isEqualAnyNullableLeft>?, t:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualAnyNullableLeft|isEqualAnyNullableLeft(A<0:0>?;kotlin.Any?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isEqualAnyNullableLeft>?
+      VALUE_PARAMETER name:t index:1 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isEqualAnyNullableLeft>? declared in <root>.isEqualAnyNullableLeft' type=<root>.A<T of <root>.isEqualAnyNullableLeft>? origin=null
+            arg1: GET_VAR 't: <unbound IrClassSymbolImpl>? declared in <root>.isEqualAnyNullableLeft' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:isEqualAnyNullableRight signature:/isEqualAnyNullableRight|isEqualAnyNullableRight(kotlin.Any?;A<0:0>?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<unbound IrClassSymbolImpl>?, t:<root>.A<T of <root>.isEqualAnyNullableRight>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualAnyNullableRight|isEqualAnyNullableRight(kotlin.Any?;A<0:0>?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:t index:1 type:<root>.A<T of <root>.isEqualAnyNullableRight>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <unbound IrClassSymbolImpl>? declared in <root>.isEqualAnyNullableRight' type=<unbound IrClassSymbolImpl>? origin=null
+            arg1: GET_VAR 't: <root>.A<T of <root>.isEqualAnyNullableRight>? declared in <root>.isEqualAnyNullableRight' type=<root>.A<T of <root>.isEqualAnyNullableRight>? origin=null
+    FUN name:isEqualNullableUnboxedLeft signature:/isEqualNullableUnboxedLeft|isEqualNullableUnboxedLeft(A<0:0>;A<0:0>?){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isEqualNullableUnboxedLeft>, t:<root>.A<T of <root>.isEqualNullableUnboxedLeft>?) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualNullableUnboxedLeft|isEqualNullableUnboxedLeft(A<0:0>;A<0:0>?){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isEqualNullableUnboxedLeft>
+      VALUE_PARAMETER name:t index:1 type:<root>.A<T of <root>.isEqualNullableUnboxedLeft>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualNullableUnboxedLeft <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedLeft>, t: <root>.A<T of <root>.isEqualNullableUnboxedLeft>?): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isEqualNullableUnboxedLeft> declared in <root>.isEqualNullableUnboxedLeft' type=<root>.A<T of <root>.isEqualNullableUnboxedLeft> origin=null
+            arg1: GET_VAR 't: <root>.A<T of <root>.isEqualNullableUnboxedLeft>? declared in <root>.isEqualNullableUnboxedLeft' type=<root>.A<T of <root>.isEqualNullableUnboxedLeft>? origin=null
+    FUN name:isEqualNullableUnboxedRight signature:/isEqualNullableUnboxedRight|isEqualNullableUnboxedRight(A<0:0>?;A<0:0>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> (s:<root>.A<T of <root>.isEqualNullableUnboxedRight>?, t:<root>.A<T of <root>.isEqualNullableUnboxedRight>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /isEqualNullableUnboxedRight|isEqualNullableUnboxedRight(A<0:0>?;A<0:0>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:s index:0 type:<root>.A<T of <root>.isEqualNullableUnboxedRight>?
+      VALUE_PARAMETER name:t index:1 type:<root>.A<T of <root>.isEqualNullableUnboxedRight>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun isEqualNullableUnboxedRight <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedRight>?, t: <root>.A<T of <root>.isEqualNullableUnboxedRight>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 's: <root>.A<T of <root>.isEqualNullableUnboxedRight>? declared in <root>.isEqualNullableUnboxedRight' type=<root>.A<T of <root>.isEqualNullableUnboxedRight>? origin=null
+            arg1: GET_VAR 't: <root>.A<T of <root>.isEqualNullableUnboxedRight> declared in <root>.isEqualNullableUnboxedRight' type=<root>.A<T of <root>.isEqualNullableUnboxedRight> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullVacuousLeft <T> (s: <root>.A<T of <root>.isNullVacuousLeft>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullVacuousRight <T> (s: <root>.A<T of <root>.isNullVacuousRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 2"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullLeft <T> (s: <root>.A<T of <root>.isNullLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 3"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullRight <T> (s: <root>.A<T of <root>.isNullRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 4"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isNullLeft <T> (s: <root>.A<T of <root>.isNullLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 5"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isNullRight <T> (s: <root>.A<T of <root>.isNullRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 6"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualSame <T> (s: <root>.A<T of <root>.isEqualSame>, t: <root>.A<T of <root>.isEqualSame>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 7"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualSame <T> (s: <root>.A<T of <root>.isEqualSame>, t: <root>.A<T of <root>.isEqualSame>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 8"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyLeft <T> (s: <root>.A<T of <root>.isEqualAnyLeft>, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 9"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyLeft <T> (s: <root>.A<T of <root>.isEqualAnyLeft>, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 10"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualAnyLeft <T> (s: <root>.A<T of <root>.isEqualAnyLeft>, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 11"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 12"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 13"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualAnyRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 14"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 15"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 16"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 17"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 18"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 19"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 20"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 21"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 22"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 23"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 24"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 25"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 26"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 27"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 28"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 29"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 30"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 31"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullVacuousLeft <T> (s: <root>.A<T of <root>.isNullVacuousLeft>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 32"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullVacuousRight <T> (s: <root>.A<T of <root>.isNullVacuousRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 33"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullLeft <T> (s: <root>.A<T of <root>.isNullLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 34"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isNullRight <T> (s: <root>.A<T of <root>.isNullRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 35"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyLeft <T> (s: <root>.A<T of <root>.isEqualAnyLeft>, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 36"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 37"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableLeft <T> (s: <root>.A<T of <root>.isEqualAnyNullableLeft>?, t: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 38"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualAnyNullableRight <T> (s: <unbound IrClassSymbolImpl>?, t: <root>.A<T of <root>.isEqualAnyNullableRight>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 39"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 42"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualSameNullable <T> (s: <root>.A<T of <root>.isEqualSameNullable>?, t: <root>.A<T of <root>.isEqualSameNullable>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 43"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualNullableUnboxedLeft <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedLeft>, t: <root>.A<T of <root>.isEqualNullableUnboxedLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 44"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualNullableUnboxedLeft <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedLeft>, t: <root>.A<T of <root>.isEqualNullableUnboxedLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 45"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualNullableUnboxedRight <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedRight>?, t: <root>.A<T of <root>.isEqualNullableUnboxedRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 46"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun isEqualNullableUnboxedRight <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedRight>?, t: <root>.A<T of <root>.isEqualNullableUnboxedRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                <T>: <unbound IrClassSymbolImpl>
+                s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                  <class: T>: <unbound IrClassSymbolImpl>
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 47"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualNullableUnboxedLeft <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedLeft>, t: <root>.A<T of <root>.isEqualNullableUnboxedLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 48"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualNullableUnboxedRight <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedRight>?, t: <root>.A<T of <root>.isEqualNullableUnboxedRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 49"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualNullableUnboxedRight <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedRight>?, t: <root>.A<T of <root>.isEqualNullableUnboxedRight>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 50"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun isEqualNullableUnboxedLeft <T> (s: <root>.A<T of <root>.isEqualNullableUnboxedLeft>, t: <root>.A<T of <root>.isEqualNullableUnboxedLeft>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              s: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.A?) [primary] declared in <root>.A' type=<root>.A<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              t: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail 51"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

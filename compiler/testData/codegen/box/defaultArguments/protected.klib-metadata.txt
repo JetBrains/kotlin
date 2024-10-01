@@ -1,0 +1,34 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: bar
+
+    // class name: bar/Bar
+
+    public final class bar/Bar : foo/Foo {
+
+      public constructor()
+
+      public final fun execute(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/Foo
+
+    public open class foo/Foo : kotlin/Any {
+
+      public constructor()
+
+      protected final fun foo(value: kotlin/Boolean /* = ... */): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      private final fun packageFun(): kotlin/String
+
+      internal final inline fun packageInline(p: kotlin/Function2<kotlin/String, kotlin/String, kotlin/String>): kotlin/String
+
+      internal final fun samePackageCall(): kotlin/String
+
+      private final val packageProp: kotlin/String /* = ... */
+        private final get
+    }
+  }
+}

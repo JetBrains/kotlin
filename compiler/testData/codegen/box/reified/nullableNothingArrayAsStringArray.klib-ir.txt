@@ -1,0 +1,31 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nullableNothingArrayAsStringArray.kt
+    FUN name:useStringArray signature:/useStringArray|useStringArray(kotlin.Array<out|kotlin.String?>){}[0] visibility:public modality:FINAL <> (arr:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:arr index:0 type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun useStringArray (arr: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl>? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'arr: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?> declared in <root>.useStringArray' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:arr type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?> varargElementType=<unbound IrClassSymbolImpl>?
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun useStringArray (arr: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                  arr: GET_VAR 'val arr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL: "
+                CALL 'public final fun useStringArray (arr: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                  arr: GET_VAR 'val arr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: JsonCodingParser
+    // class name: JsonParser
+    // class name: Test
+
+    public abstract interface JsonCodingParser : JsonParser {
+    }
+
+    public abstract interface JsonParser : kotlin/Any {
+    }
+
+    public final class Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun fooTest(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun JsonCodingParser.parseValue(source: kotlin/String): kotlin/Any
+
+      public final fun JsonParser.parseValue(source: kotlin/String): kotlin/Any
+
+      public final fun testDecoding(decode: kotlin/Function1<kotlin/String, kotlin/Any>): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

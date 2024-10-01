@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: KRunnable
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun f(): kotlin/Unit
+    }
+
+    public abstract fun interface KRunnable : kotlin/Any {
+
+      public abstract fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun runTwice(r: KRunnable): kotlin/Unit
+    }
+  }
+}

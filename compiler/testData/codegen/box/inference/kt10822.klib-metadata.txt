@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: ARoot
+    // class name: B
+    // class name: Y
+    // class name: Z
+
+    public abstract interface A : kotlin/Any {
+
+      public open fun foo(): kotlin/Unit
+    }
+
+    public abstract interface ARoot<T#0 /* T */> : kotlin/Any {
+
+      public open infix fun <T#1 /* U */ : A> consume(init: @kotlin/ExtensionFunctionType kotlin/Function1<T#0, T#1>): T#1
+
+      public open operator fun <T#1 /* U */ : A> invoke(init: @kotlin/ExtensionFunctionType kotlin/Function1<T#0, T#1>): T#1
+
+      public abstract val self: T#0
+        public abstract get
+    }
+
+    public abstract interface B : A {
+
+      public open fun hoo(): kotlin/Unit
+    }
+
+    public final class Y : ARoot<Y> {
+
+      public constructor()
+
+      public open val self: Y
+        public open /* non-default */ get
+    }
+
+    public final class Z : kotlin/Any {
+
+      public constructor()
+
+      public final infix fun <T#0 /* T */ : A> doer(init: @kotlin/ExtensionFunctionType kotlin/Function1<Z, T#0>): T#0
+
+      public final operator fun <T#0 /* T */ : A> invoke(init: @kotlin/ExtensionFunctionType kotlin/Function1<Z, T#0>): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : A> doer(init: kotlin/Function0<T#0>): T#0
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

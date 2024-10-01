@@ -1,0 +1,67 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: S1
+    // class name: S2
+    // class name: X1
+    // class name: X2
+
+    public final value class S1<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s1: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s1: T#0
+        public final get
+
+      // underlying property: s1
+
+      // underlying type: T#0
+    }
+
+    public final value class S2<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(s2: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s2: T#0
+        public final get
+
+      // underlying property: s2
+
+      // underlying type: T#0
+    }
+
+    public final object X1 : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final object X2 : kotlin/Any {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> test(s1: S1<kotlin/String>, x: T#0): kotlin/Unit
+
+      public final fun <T#0 /* T */> test(s2: S2<kotlin/String>, x: T#0): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ATrait
+    // class name: B
+    // class name: C
+    // class name: C.D
+
+    public abstract interface ATrait : kotlin/Any {
+
+      public open fun foo2(): kotlin/String
+    }
+
+    public open class B : ATrait {
+
+      public constructor()
+    }
+
+    public final class C : B {
+
+      public constructor()
+
+      // nested class: D
+    }
+
+    public final inner class C.D : kotlin/Any {
+
+      public constructor()
+
+      public final val foo: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

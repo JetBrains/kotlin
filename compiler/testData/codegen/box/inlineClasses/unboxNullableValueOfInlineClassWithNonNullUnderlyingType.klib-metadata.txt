@@ -1,0 +1,125 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BoxAny
+    // class name: BoxFoo
+    // class name: BoxT
+    // class name: IFoo
+    // class name: Str
+    // class name: Str2
+    // class name: StrArr
+
+    public final class BoxAny : kotlin/Any {
+
+      public constructor(boxed: kotlin/Any?)
+
+      public final val boxed: kotlin/Any?
+        public final get
+    }
+
+    public final class BoxFoo : kotlin/Any {
+
+      public constructor(boxed: IFoo?)
+
+      public final val boxed: IFoo?
+        public final get
+    }
+
+    public final class BoxT<T#0 /* T */> : kotlin/Any {
+
+      public constructor(boxed: T#0)
+
+      public final val boxed: T#0
+        public final get
+    }
+
+    public abstract interface IFoo : kotlin/Any {
+    }
+
+    public final value class Str : IFoo {
+
+      public constructor(value: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/String
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/String
+    }
+
+    public final value class Str2 : IFoo {
+
+      public constructor(value: Str)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: Str
+        public final get
+
+      // underlying property: value
+
+      // underlying type: Str
+    }
+
+    public final value class StrArr : IFoo {
+
+      public constructor(value: kotlin/Array<kotlin/String>)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Array<kotlin/String>
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Array<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun box2ToNullableAny(x: Str2?): BoxAny
+
+      public final fun box2ToNullableInterface(x: Str2?): BoxFoo
+
+      public final fun box2ToTypeParameter(x: Str2?): BoxT<Str2?>
+
+      public final fun boxArrToNullableAny(x: StrArr?): BoxAny
+
+      public final fun boxArrToNullableInterface(x: StrArr?): BoxFoo
+
+      public final fun boxArrToTypeParameter(x: StrArr?): BoxT<StrArr?>
+
+      public final fun boxToNullableAny(x: Str?): BoxAny
+
+      public final fun boxToNullableInterface(x: Str?): BoxFoo
+
+      public final fun boxToTypeParameter(x: Str?): BoxT<Str?>
+
+      public final fun useNullableStr(x: Str?): kotlin/Unit
+
+      public final fun useNullableStr2(x: Str2?): kotlin/Unit
+
+      public final fun useNullableStrArr(x: StrArr?): kotlin/Unit
+    }
+  }
+}

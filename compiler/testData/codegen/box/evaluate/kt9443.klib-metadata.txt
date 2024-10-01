@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseClass
+    // class name: ImplClass
+
+    public abstract class BaseClass : kotlin/Any {
+
+      public constructor()
+
+      public final fun run(): kotlin/Pair<kotlin/String, kotlin/Boolean>
+
+      protected open val menuId: kotlin/Int /* = ... */
+        protected open get
+    }
+
+    public final class ImplClass : BaseClass {
+
+      public constructor()
+
+      protected open val menuId: kotlin/Int /* = ... */
+        protected open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

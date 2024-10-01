@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun g(b: kotlin/Function2<kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/String>, kotlin/Array<kotlin/String>>): kotlin/Array<kotlin/String>
+
+      public final inline fun h(b: kotlin/Function2<kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/String>, kotlin/Array<kotlin/String>>): kotlin/Array<kotlin/String>
+    }
+  }
+}

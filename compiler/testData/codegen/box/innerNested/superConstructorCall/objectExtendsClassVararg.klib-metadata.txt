@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SomeClass
+
+    public open class SomeClass : kotlin/Any {
+
+      public constructor(some: kotlin/Double, other: kotlin/Int, vararg args: kotlin/String /* kotlin/Array<out kotlin/String> */)
+
+      public final fun result(): kotlin/String
+
+      public final val args: kotlin/Array<out kotlin/String>
+        public final get
+
+      public final val other: kotlin/Int
+        public final get
+
+      public final val some: kotlin/Double
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

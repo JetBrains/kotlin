@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun case1(): kotlin/Int
+
+      public final inline fun failNPE(s: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun <reified T#0 /* T */, reified T#1 /* R */> T#0.castTo(): T#1
+    }
+  }
+}

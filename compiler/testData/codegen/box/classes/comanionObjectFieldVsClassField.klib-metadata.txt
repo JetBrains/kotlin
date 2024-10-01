@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Host
+    // class name: Host.Companion
+
+    public final class Host : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/String
+
+      public final val ok: kotlin/String /* = ... */
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Host.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun bar(s: kotlin/String): kotlin/String
+
+      public final val ok: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

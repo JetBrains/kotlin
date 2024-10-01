@@ -1,0 +1,51 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/CompilerBug1
+    // class name: foo/CompilerBug2
+    // class name: foo/CompilerBug3
+
+    public final class foo/CompilerBug1 : kotlin/Any {
+
+      public constructor(result: kotlin/String)
+
+      public final fun completed(value: kotlin/String): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class foo/CompilerBug2 : kotlin/Any {
+
+      public constructor(result: kotlin/String)
+
+      public final fun completed(value: kotlin/String): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class foo/CompilerBug3 : kotlin/Any {
+
+      public constructor(result: kotlin/String)
+
+      public final fun completed(value: kotlin/String): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun doSomething(lambda: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

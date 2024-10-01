@@ -1,0 +1,76 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inRangeWithSmartCast.kt
+    FUN name:check signature:/check|check(kotlin.Any?){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun check (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: CONST Int type=<unbound IrClassSymbolImpl> value=239
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=240
+                  1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+        THROW type=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:check signature:/check|check(kotlin.Any?;kotlin.Any?;kotlin.Any?){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>?, l:<unbound IrClassSymbolImpl>?, r:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:l index:1 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:r index:2 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                  BRANCH
+                    if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                      GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                    then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                      GET_VAR 'l: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'r: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun check (x: <unbound IrClassSymbolImpl>?, l: <unbound IrClassSymbolImpl>?, r: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                    $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                      GET_VAR 'l: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                    1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                      GET_VAR 'r: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+                  1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl>? declared in <root>.check' type=<unbound IrClassSymbolImpl>? origin=null
+        THROW type=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=239
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>?, l: <unbound IrClassSymbolImpl>?, r: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=239
+            l: CONST Int type=<unbound IrClassSymbolImpl> value=239
+            r: CONST Int type=<unbound IrClassSymbolImpl> value=240
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              x: CONST Int type=<unbound IrClassSymbolImpl> value=238
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun check (x: <unbound IrClassSymbolImpl>?, l: <unbound IrClassSymbolImpl>?, r: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              x: CONST Int type=<unbound IrClassSymbolImpl> value=238
+              l: CONST Int type=<unbound IrClassSymbolImpl> value=239
+              r: CONST Int type=<unbound IrClassSymbolImpl> value=240
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

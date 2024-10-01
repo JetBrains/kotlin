@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: p
+
+    // class name: p/C
+
+    private final class p/C : kotlin/Any {
+
+      public constructor(y: kotlin/Int)
+
+      public final val initChild: kotlin/Function0<kotlin/Any>
+        public final get
+
+      public final val y: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

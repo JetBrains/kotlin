@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Fourple
+
+    public final class Fourple<T#0 /* A */, T#1 /* B */, T#2 /* C */, T#3 /* D */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun array(): kotlin/Array<out kotlin/Number>
+
+      public final fun box(): kotlin/String
+
+      public final fun list(): kotlin/collections/List<kotlin/String>
+
+      public final fun projections(): Fourple<kotlin/String, in kotlin/String, out kotlin/String, *>
+
+      public final fun string(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(set: kotlin/collections/MutableSet<kotlin/Int>): kotlin/collections/Set<kotlin/Int>
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Int
+    }
+  }
+}

@@ -1,0 +1,26 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:x fileName:/kt249.kt
+    CLASS CLASS name:Outer signature:x/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:x.Outer
+      CONSTRUCTOR signature:x/Outer.<init>|<init>(){}[0] visibility:public <> () returnType:x.Outer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:x/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:x/Outer.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:x.Outer.Companion
+        CONSTRUCTOR signature:x/Outer.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:x.Outer.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:x/Outer.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        CLASS CLASS name:Inner signature:x/Outer.Companion.Inner|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:x.Outer.Companion.Inner
+          CONSTRUCTOR signature:x/Outer.Companion.Inner.<init>|<init>(){}[0] visibility:public <> () returnType:x.Outer.Companion.Inner [primary]
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner signature:x/Outer.Companion.Inner|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:x/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:inner type:x.Outer.Companion.Inner [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in x.Outer.Companion.Inner' type=x.Outer.Companion.Inner origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in x'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

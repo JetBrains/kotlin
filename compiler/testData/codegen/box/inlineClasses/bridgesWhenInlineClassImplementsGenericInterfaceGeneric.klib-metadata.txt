@@ -1,0 +1,65 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: InlinedBase
+    // class name: InlinedComparable
+
+    public abstract interface Base<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun Base<T#0>.foo(a: Base<T#0>, b: T#0): Base<T#0>
+    }
+
+    public final value class InlinedBase<T#0 /* T */ : kotlin/Int> : Base<InlinedBase<T#0>> {
+
+      public constructor(x: T#0)
+
+      public final fun double(): InlinedBase<T#0>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open fun Base<InlinedBase<T#0>>.foo(a: Base<InlinedBase<T#0>>, b: InlinedBase<T#0>): Base<InlinedBase<T#0>>
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    public final value class InlinedComparable<T#0 /* T */ : kotlin/Int> : kotlin/Comparable<InlinedComparable<T#0>> {
+
+      public constructor(x: T#0)
+
+      public open operator fun compareTo(other: InlinedComparable<T#0>): kotlin/Int
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val x: T#0
+        public final get
+
+      // underlying property: x
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> generic(c: kotlin/Comparable<T#0>, element: T#0): kotlin/Int
+    }
+  }
+}

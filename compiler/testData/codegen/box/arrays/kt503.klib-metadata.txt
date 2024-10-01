@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun <T#0 /* T */> array(vararg a: T#0 /* kotlin/Array<out T#0> */): kotlin/Array<out T#0>
+
+      public final fun box(): kotlin/String
+
+      public final fun iarr(vararg a: kotlin/Int /* kotlin/IntArray */): kotlin/IntArray
+
+      public final fun thirdElementIsThree(a: kotlin/IntArray): kotlin/Boolean
+    }
+  }
+}

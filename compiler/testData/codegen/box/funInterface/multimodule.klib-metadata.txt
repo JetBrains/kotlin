@@ -1,0 +1,65 @@
+// MODULE: m1
+library {
+  // module name: <m1>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: I
+
+    public abstract fun interface I : kotlin/Any {
+
+      public abstract fun f(): kotlin/String
+    }
+
+    package {
+
+      public final fun rn(i: I): kotlin/String
+
+      public final inline fun rnInline(i: I): kotlin/String
+
+      public final inline fun rnInlineCtor(s: kotlin/String): I
+    }
+  }
+}
+
+// MODULE: m2
+library {
+  // module name: <m2>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: II
+
+    public abstract fun interface II : kotlin/Any {
+
+      public abstract fun f(): kotlin/String
+    }
+
+    package {
+
+      public final fun rn2(f: kotlin/Function0<kotlin/String>): kotlin/String
+
+      public final inline fun rn2Inline(noinline f: kotlin/Function0<kotlin/String>): kotlin/String
+
+      public final inline fun rnInlineCtorProxy(s: kotlin/String): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun id(i: II): II
+    }
+  }
+}

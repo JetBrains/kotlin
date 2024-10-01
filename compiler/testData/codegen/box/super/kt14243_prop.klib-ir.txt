@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt14243_prop.kt
+    CLASS INTERFACE name:Z signature:/Z|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z<T of <root>.Z>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Z|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:value signature:/Z.value|{}value[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Z.value.<get-value>|<get-value>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Z<T of <root>.Z>) returnType:T of <root>.Z
+          correspondingProperty: PROPERTY name:value signature:/Z.value|{}value[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+      PROPERTY name:z signature:/Z.z|{}z[0] visibility:public modality:OPEN [val]
+        FUN name:<get-z> signature:/Z.z.<get-z>|<get-z>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z<T of <root>.Z>) returnType:T of <root>.Z
+          correspondingProperty: PROPERTY name:z signature:/Z.z|{}z[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-z> (): T of <root>.Z declared in <root>.Z'
+              CALL 'public abstract fun <get-value> (): T of <root>.Z declared in <root>.Z' type=T of <root>.Z origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Z<T of <root>.Z> declared in <root>.Z.<get-z>' type=<root>.Z<T of <root>.Z> origin=null
+    CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl
+      CONSTRUCTOR signature:/ZImpl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>]'
+      PROPERTY name:value signature:/ZImpl.value|{}value[0] visibility:public modality:OPEN [val]
+        FUN name:<get-value> signature:/ZImpl.value.<get-value>|<get-value>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZImpl) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/ZImpl.value|{}value[0] visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-value> (): T of <root>.Z declared in <root>.Z
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZImpl
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.ZImpl'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.ZImpl]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZImpl2
+      CONSTRUCTOR signature:/ZImpl2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ZImpl2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZImpl2 signature:/ZImpl2|null[0] modality:OPEN visibility:public superTypes:[<root>.ZImpl]'
+      PROPERTY name:z signature:/ZImpl2.z|{}z[0] visibility:public modality:OPEN [val]
+        FUN name:<get-z> signature:/ZImpl2.z.<get-z>|<get-z>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZImpl2) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:z signature:/ZImpl2.z|{}z[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZImpl2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-z> (): <unbound IrClassSymbolImpl> declared in <root>.ZImpl2'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' superQualifier='CLASS CLASS name:ZImpl signature:/ZImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Z<<unbound IrClassSymbolImpl>>]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ZImpl2 declared in <root>.ZImpl2.<get-z>' type=<root>.ZImpl2 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ZImpl2' type=<root>.ZImpl2 origin=null

@@ -1,0 +1,54 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/earlyReturnInsideCrossinlineLambda.kt
+    FUN name:runReadAction signature:/runReadAction|runReadAction(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (runnable:<unbound IrClassSymbolImpl><T of <root>.runReadAction>) returnType:T of <root>.runReadAction [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /runReadAction|runReadAction(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:runnable index:0 type:<unbound IrClassSymbolImpl><T of <root>.runReadAction> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runReadAction <T> (runnable: <unbound IrClassSymbolImpl><T of <root>.runReadAction>): T of <root>.runReadAction [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.runReadAction origin=INVOKE
+            $this: GET_VAR 'runnable: <unbound IrClassSymbolImpl><T of <root>.runReadAction> [crossinline] declared in <root>.runReadAction' type=<unbound IrClassSymbolImpl><T of <root>.runReadAction> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:infer signature:/Foo.infer|infer(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <K> ($this:<root>.Foo) returnType:K of <root>.Foo.infer
+        TYPE_PARAMETER name:K index:0 variance: signature:[ /Foo.infer|infer(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun infer <K> (): K of <root>.Foo.infer declared in <root>.Foo'
+            TYPE_OP type=K of <root>.Foo.infer origin=CAST typeOperand=K of <root>.Foo.infer
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:bar signature:/bar|bar(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CONST Int type=<unbound IrClassSymbolImpl> value=42
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun runReadAction <T> (runnable: <unbound IrClassSymbolImpl><T of <root>.runReadAction>): T of <root>.runReadAction [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            runnable: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                        CALL 'public final fun bar (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                      WHEN type=<unbound IrClassSymbolImpl> origin=null
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                            arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                          then: RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                            CONST String type=<unbound IrClassSymbolImpl> value="Failed"
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl>? origin=null
+                  VAR name:foo type:<root>.Foo [val]
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Foo' type=<root>.Foo origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'public final fun infer <K> (): K of <root>.Foo.infer declared in <root>.Foo' type=<unbound IrClassSymbolImpl> origin=null
+                      <K>: <unbound IrClassSymbolImpl>
+                      $this: GET_VAR 'val foo: <root>.Foo [val] declared in <root>.box.<anonymous>' type=<root>.Foo origin=null

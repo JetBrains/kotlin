@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+    // class name: FooImpl
+    // class name: MapWithPlusOperator
+
+    public abstract interface Foo<T#0 /* T */> : kotlin/Any {
+    }
+
+    public final class FooImpl<T#0 /* T */> : Foo<T#0> {
+
+      public constructor()
+    }
+
+    public final class MapWithPlusOperator<T#0 /* K */, T#1 /* V */> : kotlin/Any {
+
+      public constructor(m: kotlin/collections/MutableMap<T#0, T#1>)
+
+      public final val m: kotlin/collections/MutableMap<T#0, T#1>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> myflow(block: @kotlin/ExtensionFunctionType kotlin/Function1<Foo<T#0>, kotlin/Unit>): Foo<T#0>
+
+      public final operator fun <T#0 /* K */, T#1 /* V */> MapWithPlusOperator<in T#0, in T#1>.plus(pair: kotlin/Pair<T#0, T#1>): MapWithPlusOperator<T#0, T#1>
+
+      public final fun test(map: kotlin/collections/MutableMap<kotlin/Int, kotlin/Any>): Foo<kotlin/Any>
+
+      public final var publicOk: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

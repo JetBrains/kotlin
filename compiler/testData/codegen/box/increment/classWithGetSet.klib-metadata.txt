@@ -1,0 +1,97 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AByte
+    // class name: ADouble
+    // class name: AFloat
+    // class name: AInt
+    // class name: ALong
+    // class name: AShort
+
+    public final class AByte : kotlin/Any {
+
+      public constructor(value: kotlin/Byte)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Byte
+
+      public final operator fun set(i: kotlin/Int, newValue: kotlin/Byte): kotlin/Unit
+
+      public final var value: kotlin/Byte
+        public final get
+        public final set
+    }
+
+    public final class ADouble : kotlin/Any {
+
+      public constructor(value: kotlin/Double)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Double
+
+      public final operator fun set(i: kotlin/Int, newValue: kotlin/Double): kotlin/Unit
+
+      public final var value: kotlin/Double
+        public final get
+        public final set
+    }
+
+    public final class AFloat : kotlin/Any {
+
+      public constructor(value: kotlin/Float)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Float
+
+      public final operator fun set(i: kotlin/Int, newValue: kotlin/Float): kotlin/Unit
+
+      public final var value: kotlin/Float
+        public final get
+        public final set
+    }
+
+    public final class AInt : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Int
+
+      public final operator fun set(i: kotlin/Int, newValue: kotlin/Int): kotlin/Unit
+
+      public final var value: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public final class ALong : kotlin/Any {
+
+      public constructor(value: kotlin/Long)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Long
+
+      public final operator fun set(i: kotlin/Int, newValue: kotlin/Long): kotlin/Unit
+
+      public final var value: kotlin/Long
+        public final get
+        public final set
+    }
+
+    public final class AShort : kotlin/Any {
+
+      public constructor(value: kotlin/Short)
+
+      public final operator fun get(i: kotlin/Int): kotlin/Short
+
+      public final operator fun set(i: kotlin/Int, newValue: kotlin/Short): kotlin/Unit
+
+      public final var value: kotlin/Short
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

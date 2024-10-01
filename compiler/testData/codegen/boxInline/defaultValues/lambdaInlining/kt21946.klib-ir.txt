@@ -1,0 +1,40 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS INTERFACE name:Call signature:test/Call|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Call
+      FUN name:run signature:test/Call.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:test.Call) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.Call
+    FUN name:test signature:test/test|test(kotlin.String;kotlin.Function0<test.Call>){}[0] visibility:public modality:FINAL <> (p:<unbound IrClassSymbolImpl>, s:<unbound IrClassSymbolImpl><test.Call>) returnType:test.Call [inline]
+      VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:1 type:<unbound IrClassSymbolImpl><test.Call>
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><test.test.<anonymous>.<no name provided>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:test.test.<anonymous>.<no name provided>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): test.test.<anonymous>.<no name provided> declared in test.test'
+                  BLOCK type=test.test.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Call]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.test.<anonymous>.<no name provided>
+                      CONSTRUCTOR visibility:public <> () returnType:test.test.<anonymous>.<no name provided> [primary]
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[test.Call]'
+                      FUN name:run visibility:public modality:OPEN <> ($this:test.test.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                        overridden:
+                          public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Call
+                        $this: VALUE_PARAMETER name:<this> type:test.test.<anonymous>.<no name provided>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='public open fun run (): <unbound IrClassSymbolImpl> declared in test.test.<anonymous>.<no name provided>'
+                            GET_VAR 'p: <unbound IrClassSymbolImpl> declared in test.test' type=<unbound IrClassSymbolImpl> origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.test.<anonymous>.<no name provided>' type=test.test.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (p: <unbound IrClassSymbolImpl>, s: <unbound IrClassSymbolImpl><test.Call>): test.Call [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test.Call origin=INVOKE
+            $this: GET_VAR 's: <unbound IrClassSymbolImpl><test.Call> declared in test.test' type=<unbound IrClassSymbolImpl><test.Call> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public abstract fun run (): <unbound IrClassSymbolImpl> declared in test.Call' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun test (p: <unbound IrClassSymbolImpl>, s: <unbound IrClassSymbolImpl><test.Call>): test.Call [inline] declared in test' type=test.Call origin=null
+              p: CONST String type=<unbound IrClassSymbolImpl> value="OK"

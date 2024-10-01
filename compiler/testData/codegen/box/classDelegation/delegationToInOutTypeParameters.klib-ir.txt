@@ -1,0 +1,289 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/delegationToInOutTypeParameters.kt
+    CLASS INTERFACE name:InOutBase signature:/InOutBase|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InOutBase<T of <root>.InOutBase, K of <root>.InOutBase>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /InOutBase|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:K index:1 variance:in signature:[ /InOutBase|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:foo signature:/InOutBase.foo|foo(1:1){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.InOutBase<T of <root>.InOutBase, K of <root>.InOutBase>, a:K of <root>.InOutBase) returnType:T of <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.InOutBase<T of <root>.InOutBase, K of <root>.InOutBase>
+        VALUE_PARAMETER name:a index:0 type:K of <root>.InOutBase
+    CLASS CLASS name:BaseImplInOut signature:/BaseImplInOut|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut<D of <root>.BaseImplInOut>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /BaseImplInOut|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.BaseImplInOut) returnType:<root>.BaseImplInOut<D of <root>.BaseImplInOut> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut signature:/BaseImplInOut|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      PROPERTY name:a signature:/BaseImplInOut.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.BaseImplInOut declared in <root>.BaseImplInOut.<init>' type=D of <root>.BaseImplInOut origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut<D of <root>.BaseImplInOut>) returnType:D of <root>.BaseImplInOut
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut<D of <root>.BaseImplInOut>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.BaseImplInOut declared in <root>.BaseImplInOut'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut visibility:private [final]' type=D of <root>.BaseImplInOut origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut<D of <root>.BaseImplInOut> declared in <root>.BaseImplInOut.<get-a>' type=<root>.BaseImplInOut<D of <root>.BaseImplInOut> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut.foo|foo(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut<D of <root>.BaseImplInOut>, a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut<D of <root>.BaseImplInOut>
+        VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BaseImplInOut'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut visibility:private [final]' type=D of <root>.BaseImplInOut origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut<D of <root>.BaseImplInOut> declared in <root>.BaseImplInOut.foo' type=<root>.BaseImplInOut<D of <root>.BaseImplInOut> origin=null
+              a: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.BaseImplInOut.foo' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:BaseImplInOut2 signature:/BaseImplInOut2|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut2<D of <root>.BaseImplInOut2>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /BaseImplInOut2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut2.<init>|<init>(InOutBase<1:0,1:0>){}[0] visibility:public <> (a:<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2>) returnType:<root>.BaseImplInOut2<D of <root>.BaseImplInOut2> [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut2 signature:/BaseImplInOut2|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2>]'
+      PROPERTY name:a signature:/BaseImplInOut2.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> declared in <root>.BaseImplInOut2.<init>' type=<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut2.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut2<D of <root>.BaseImplInOut2>) returnType:<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2>
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut2.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut2<D of <root>.BaseImplInOut2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> declared in <root>.BaseImplInOut2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> visibility:private [final]' type=<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut2<D of <root>.BaseImplInOut2> declared in <root>.BaseImplInOut2.<get-a>' type=<root>.BaseImplInOut2<D of <root>.BaseImplInOut2> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut2.foo|foo(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut2<D of <root>.BaseImplInOut2>, a:D of <root>.BaseImplInOut2) returnType:D of <root>.BaseImplInOut2
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut2<D of <root>.BaseImplInOut2>
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut2
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: D of <root>.BaseImplInOut2): D of <root>.BaseImplInOut2 declared in <root>.BaseImplInOut2'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=D of <root>.BaseImplInOut2 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut2.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> visibility:private [final]' type=<root>.InOutBase<D of <root>.BaseImplInOut2, D of <root>.BaseImplInOut2> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut2<D of <root>.BaseImplInOut2> declared in <root>.BaseImplInOut2.foo' type=<root>.BaseImplInOut2<D of <root>.BaseImplInOut2> origin=null
+              a: GET_VAR 'a: D of <root>.BaseImplInOut2 declared in <root>.BaseImplInOut2.foo' type=D of <root>.BaseImplInOut2 origin=null
+    CLASS CLASS name:BaseImplInOut3 signature:/BaseImplInOut3|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /BaseImplInOut3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:K index:1 variance: signature:[ /BaseImplInOut3|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[D of <root>.BaseImplInOut3] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut3.<init>|<init>(InOutBase<1:0,1:1>){}[0] visibility:public <> (a:<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>) returnType:<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut3 signature:/BaseImplInOut3|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>]'
+      PROPERTY name:a signature:/BaseImplInOut3.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut3.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> declared in <root>.BaseImplInOut3.<init>' type=<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut3.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>) returnType:<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut3.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> declared in <root>.BaseImplInOut3'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut3.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> visibility:private [final]' type=<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> declared in <root>.BaseImplInOut3.<get-a>' type=<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut3.foo|foo(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>, a:K of <root>.BaseImplInOut3) returnType:D of <root>.BaseImplInOut3
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3>
+        VALUE_PARAMETER name:a index:0 type:K of <root>.BaseImplInOut3
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: K of <root>.BaseImplInOut3): D of <root>.BaseImplInOut3 declared in <root>.BaseImplInOut3'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=D of <root>.BaseImplInOut3 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut3.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> visibility:private [final]' type=<root>.InOutBase<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> declared in <root>.BaseImplInOut3.foo' type=<root>.BaseImplInOut3<D of <root>.BaseImplInOut3, K of <root>.BaseImplInOut3> origin=null
+              a: GET_VAR 'a: K of <root>.BaseImplInOut3 declared in <root>.BaseImplInOut3.foo' type=K of <root>.BaseImplInOut3 origin=null
+    CLASS CLASS name:BaseImplInOut4 signature:/BaseImplInOut4|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut4<D of <root>.BaseImplInOut4>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /BaseImplInOut4|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut4.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.BaseImplInOut4) returnType:<root>.BaseImplInOut4<D of <root>.BaseImplInOut4> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut4
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut4 signature:/BaseImplInOut4|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+      PROPERTY name:a signature:/BaseImplInOut4.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut4.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut4 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.BaseImplInOut4 declared in <root>.BaseImplInOut4.<init>' type=D of <root>.BaseImplInOut4 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut4.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut4<D of <root>.BaseImplInOut4>) returnType:D of <root>.BaseImplInOut4
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut4.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut4<D of <root>.BaseImplInOut4>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.BaseImplInOut4 declared in <root>.BaseImplInOut4'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut4.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut4 visibility:private [final]' type=D of <root>.BaseImplInOut4 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut4<D of <root>.BaseImplInOut4> declared in <root>.BaseImplInOut4.<get-a>' type=<root>.BaseImplInOut4<D of <root>.BaseImplInOut4> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut4.foo|foo(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut4<D of <root>.BaseImplInOut4>, a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut4<D of <root>.BaseImplInOut4>
+        VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.BaseImplInOut4'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut4.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut4 visibility:private [final]' type=D of <root>.BaseImplInOut4 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut4<D of <root>.BaseImplInOut4> declared in <root>.BaseImplInOut4.foo' type=<root>.BaseImplInOut4<D of <root>.BaseImplInOut4> origin=null
+              a: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.BaseImplInOut4.foo' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:BaseImplInOut5 signature:/BaseImplInOut5|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /BaseImplInOut5|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>] reified:false
+      TYPE_PARAMETER name:K index:1 variance: signature:[ /BaseImplInOut5|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut5.<init>|<init>(1:0){}[0] visibility:public <> (a:D of <root>.BaseImplInOut5) returnType:<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut5
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut5 signature:/BaseImplInOut5|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>]'
+      PROPERTY name:a signature:/BaseImplInOut5.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut5.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut5 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.BaseImplInOut5 declared in <root>.BaseImplInOut5.<init>' type=D of <root>.BaseImplInOut5 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut5.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>) returnType:D of <root>.BaseImplInOut5
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut5.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.BaseImplInOut5 declared in <root>.BaseImplInOut5'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut5.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut5 visibility:private [final]' type=D of <root>.BaseImplInOut5 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5> declared in <root>.BaseImplInOut5.<get-a>' type=<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut5.foo|foo(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>, a:K of <root>.BaseImplInOut5) returnType:D of <root>.BaseImplInOut5
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5>
+        VALUE_PARAMETER name:a index:0 type:K of <root>.BaseImplInOut5
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: K of <root>.BaseImplInOut5): D of <root>.BaseImplInOut5 declared in <root>.BaseImplInOut5'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=D of <root>.BaseImplInOut5 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut5.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut5 visibility:private [final]' type=D of <root>.BaseImplInOut5 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5> declared in <root>.BaseImplInOut5.foo' type=<root>.BaseImplInOut5<D of <root>.BaseImplInOut5, K of <root>.BaseImplInOut5> origin=null
+              a: GET_VAR 'a: K of <root>.BaseImplInOut5 declared in <root>.BaseImplInOut5.foo' type=K of <root>.BaseImplInOut5 origin=null
+    CLASS CLASS name:BaseImplInOut6 signature:/BaseImplInOut6|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /BaseImplInOut6|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /BaseImplInOut6|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut6.<init>|<init>(1:1){}[0] visibility:public <> (a:D of <root>.BaseImplInOut6) returnType:<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut6
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut6 signature:/BaseImplInOut6|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>]'
+      PROPERTY name:a signature:/BaseImplInOut6.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut6.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut6 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.BaseImplInOut6 declared in <root>.BaseImplInOut6.<init>' type=D of <root>.BaseImplInOut6 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut6.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>) returnType:D of <root>.BaseImplInOut6
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut6.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.BaseImplInOut6 declared in <root>.BaseImplInOut6'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut6.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut6 visibility:private [final]' type=D of <root>.BaseImplInOut6 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6> declared in <root>.BaseImplInOut6.<get-a>' type=<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut6.foo|foo(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>, a:D of <root>.BaseImplInOut6) returnType:A of <root>.BaseImplInOut6
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6>
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut6
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: D of <root>.BaseImplInOut6): A of <root>.BaseImplInOut6 declared in <root>.BaseImplInOut6'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=A of <root>.BaseImplInOut6 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut6.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut6 visibility:private [final]' type=D of <root>.BaseImplInOut6 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6> declared in <root>.BaseImplInOut6.foo' type=<root>.BaseImplInOut6<A of <root>.BaseImplInOut6, D of <root>.BaseImplInOut6> origin=null
+              a: GET_VAR 'a: D of <root>.BaseImplInOut6 declared in <root>.BaseImplInOut6.foo' type=D of <root>.BaseImplInOut6 origin=null
+    CLASS CLASS name:BaseImplInOut7 signature:/BaseImplInOut7|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>
+      TYPE_PARAMETER name:D index:0 variance: signature:[ /BaseImplInOut7|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut7, D of <root>.BaseImplInOut7>] reified:false
+      TYPE_PARAMETER name:A index:1 variance: signature:[ /BaseImplInOut7|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[D of <root>.BaseImplInOut7] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut7.<init>|<init>(1:1){}[0] visibility:public <> (a:A of <root>.BaseImplInOut7) returnType:<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7> [primary]
+        VALUE_PARAMETER name:a index:0 type:A of <root>.BaseImplInOut7
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut7 signature:/BaseImplInOut7|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>]'
+      PROPERTY name:a signature:/BaseImplInOut7.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut7.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:A of <root>.BaseImplInOut7 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: A of <root>.BaseImplInOut7 declared in <root>.BaseImplInOut7.<init>' type=A of <root>.BaseImplInOut7 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut7.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>) returnType:A of <root>.BaseImplInOut7
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut7.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): A of <root>.BaseImplInOut7 declared in <root>.BaseImplInOut7'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut7.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:A of <root>.BaseImplInOut7 visibility:private [final]' type=A of <root>.BaseImplInOut7 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7> declared in <root>.BaseImplInOut7.<get-a>' type=<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut7.foo|foo(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>, a:A of <root>.BaseImplInOut7) returnType:D of <root>.BaseImplInOut7
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7>
+        VALUE_PARAMETER name:a index:0 type:A of <root>.BaseImplInOut7
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: A of <root>.BaseImplInOut7): D of <root>.BaseImplInOut7 declared in <root>.BaseImplInOut7'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=D of <root>.BaseImplInOut7 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut7.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:A of <root>.BaseImplInOut7 visibility:private [final]' type=A of <root>.BaseImplInOut7 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7> declared in <root>.BaseImplInOut7.foo' type=<root>.BaseImplInOut7<D of <root>.BaseImplInOut7, A of <root>.BaseImplInOut7> origin=null
+              a: GET_VAR 'a: A of <root>.BaseImplInOut7 declared in <root>.BaseImplInOut7.foo' type=A of <root>.BaseImplInOut7 origin=null
+    CLASS CLASS name:BaseImplInOut8 signature:/BaseImplInOut8|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>
+      TYPE_PARAMETER name:D index:0 variance:out signature:[ /BaseImplInOut8|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:A index:1 variance:in signature:[ /BaseImplInOut8|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut8.<init>|<init>(InOutBase<1:0,1:1>){}[0] visibility:public <> (a:<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>) returnType:<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> [primary]
+        VALUE_PARAMETER name:a index:0 type:<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut8 signature:/BaseImplInOut8|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>]'
+      PROPERTY name:a signature:/BaseImplInOut8.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut8.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: <root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> declared in <root>.BaseImplInOut8.<init>' type=<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut8.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>) returnType:<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut8.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): <root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> declared in <root>.BaseImplInOut8'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut8.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> visibility:private [final]' type=<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> declared in <root>.BaseImplInOut8.<get-a>' type=<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut8.foo|foo(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>, a:A of <root>.BaseImplInOut8) returnType:D of <root>.BaseImplInOut8
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8>
+        VALUE_PARAMETER name:a index:0 type:A of <root>.BaseImplInOut8
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: A of <root>.BaseImplInOut8): D of <root>.BaseImplInOut8 declared in <root>.BaseImplInOut8'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=D of <root>.BaseImplInOut8 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut8.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> visibility:private [final]' type=<root>.InOutBase<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> declared in <root>.BaseImplInOut8.foo' type=<root>.BaseImplInOut8<D of <root>.BaseImplInOut8, A of <root>.BaseImplInOut8> origin=null
+              a: GET_VAR 'a: A of <root>.BaseImplInOut8 declared in <root>.BaseImplInOut8.foo' type=A of <root>.BaseImplInOut8 origin=null
+    CLASS CLASS name:BaseImplInOut9 signature:/BaseImplInOut9|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /BaseImplInOut9|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<*, *>] reified:false
+      TYPE_PARAMETER name:D index:1 variance: signature:[ /BaseImplInOut9|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:K index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.InOutBase<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>] reified:false
+      CONSTRUCTOR signature:/BaseImplInOut9.<init>|<init>(1:1){}[0] visibility:public <> (a:D of <root>.BaseImplInOut9) returnType:<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9> [primary]
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut9
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImplInOut9 signature:/BaseImplInOut9|null[0] modality:FINAL visibility:public superTypes:[<root>.InOutBase<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>]'
+      PROPERTY name:a signature:/BaseImplInOut9.a|{}a[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut9.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut9 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'a: D of <root>.BaseImplInOut9 declared in <root>.BaseImplInOut9.<init>' type=D of <root>.BaseImplInOut9 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> signature:/BaseImplInOut9.a.<get-a>|<get-a>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>) returnType:D of <root>.BaseImplInOut9
+          correspondingProperty: PROPERTY name:a signature:/BaseImplInOut9.a|{}a[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-a> (): D of <root>.BaseImplInOut9 declared in <root>.BaseImplInOut9'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut9.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut9 visibility:private [final]' type=D of <root>.BaseImplInOut9 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9> declared in <root>.BaseImplInOut9.<get-a>' type=<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9> origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/BaseImplInOut9.foo|foo(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>, a:D of <root>.BaseImplInOut9) returnType:A of <root>.BaseImplInOut9
+        overridden:
+          public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase
+        $this: VALUE_PARAMETER name:<this> type:<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9>
+        VALUE_PARAMETER name:a index:0 type:D of <root>.BaseImplInOut9
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (a: D of <root>.BaseImplInOut9): A of <root>.BaseImplInOut9 declared in <root>.BaseImplInOut9'
+            CALL 'public abstract fun foo (a: K of <root>.InOutBase): T of <root>.InOutBase declared in <root>.InOutBase' type=A of <root>.BaseImplInOut9 origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a signature:[ /BaseImplInOut9.a|{}a[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:a type:D of <root>.BaseImplInOut visibility:private [final]] ] type:D of <root>.BaseImplInOut9 visibility:private [final]' type=D of <root>.BaseImplInOut9 origin=null
+                receiver: GET_VAR '<this>: <root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9> declared in <root>.BaseImplInOut9.foo' type=<root>.BaseImplInOut9<A of <root>.BaseImplInOut9, D of <root>.BaseImplInOut9> origin=null
+              a: GET_VAR 'a: D of <root>.BaseImplInOut9 declared in <root>.BaseImplInOut9.foo' type=D of <root>.BaseImplInOut9 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

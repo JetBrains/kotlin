@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun ubyte_downTo(): kotlin/Unit
+
+      public final fun ubyte_downTo2(): kotlin/Unit
+
+      public final fun ubyte_downTo3(): kotlin/Unit
+
+      public final fun ubyte_rangeTo(): kotlin/Unit
+
+      public final fun ubyte_rangeTo2(): kotlin/Unit
+
+      public final fun ubyte_rangeTo3(): kotlin/Unit
+
+      public final fun ubyte_rangeUntil(): kotlin/Unit
+
+      public final fun ubyte_rangeUntil2(): kotlin/Unit
+
+      public final fun ubyte_rangeUntil3(): kotlin/Unit
+
+      public final fun ushort_downTo(): kotlin/Unit
+
+      public final fun ushort_downTo2(): kotlin/Unit
+
+      public final fun ushort_downTo3(): kotlin/Unit
+
+      public final fun ushort_rangeTo(): kotlin/Unit
+
+      public final fun ushort_rangeTo2(): kotlin/Unit
+
+      public final fun ushort_rangeTo3(): kotlin/Unit
+
+      public final fun ushort_rangeUntil(): kotlin/Unit
+
+      public final fun ushort_rangeUntil2(): kotlin/Unit
+
+      public final fun ushort_rangeUntil3(): kotlin/Unit
+    }
+  }
+}

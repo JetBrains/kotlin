@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: FList
+    // class name: FList.Companion
+
+    public abstract class FList<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun plus(head: T#0): FList<T#0>
+
+      public abstract val empty: kotlin/Boolean
+        public abstract get
+
+      public abstract val head: T#0
+        public abstract get
+
+      public abstract val tail: FList<T#0>
+        public abstract get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object FList.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val emptyFList: FList<kotlin/Any>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> emptyFList(): FList<T#0>
+
+      public final operator fun <T#0 /* T */> FList<T#0>.iterator(): kotlin/collections/Iterator<T#0>
+
+      public final fun <T#0 /* T */> FList<T#0>.reverse(where: FList<T#0> /* = ... */): FList<T#0>
+    }
+  }
+}

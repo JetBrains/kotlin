@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo2
+    // class name: Main
+
+    public final object Foo2 : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun kotlin/Any?.get(key: kotlin/String): kotlin/String
+    }
+
+    public final object Main : kotlin/Any {
+
+      private constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */, T#1 /* R */> myWith(receiver: T#0, block: @kotlin/ExtensionFunctionType kotlin/Function1<T#0, T#1>): T#1
+    }
+  }
+}

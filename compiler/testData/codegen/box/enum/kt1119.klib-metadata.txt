@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Direction
+
+    public final enum class Direction : kotlin/Enum<Direction> {
+
+      private constructor()
+
+      public abstract fun f(): kotlin/String
+
+      NORTH,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

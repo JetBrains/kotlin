@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: foo
+
+    // class name: foo/Base
+    // class name: foo/Derived
+
+    public abstract class foo/Base : kotlin/Any {
+
+      public constructor()
+
+      public final val x: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final class foo/Derived : foo/Base, kotlin/Comparable<foo/Derived> {
+
+      public constructor()
+
+      public open operator fun compareTo(other: foo/Derived): kotlin/Int
+
+      public final val y: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

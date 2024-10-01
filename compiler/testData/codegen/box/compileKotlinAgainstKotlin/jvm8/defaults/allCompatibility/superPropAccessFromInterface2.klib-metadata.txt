@@ -1,0 +1,41 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public abstract interface Test : kotlin/Any {
+
+      public open val defaultImplTrigger: kotlin/String
+        public open /* non-default */ get
+
+      public open val prop: kotlin/String
+        public open /* non-default */ get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test2
+
+    public abstract interface Test2 : Test {
+
+      public open val prop: kotlin/String
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

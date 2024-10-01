@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(): kotlin/String
+
+      public final fun test2(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    public abstract class test/A<T#0 /* R */> : kotlin/Any {
+
+      public constructor(param: T#0)
+
+      public abstract fun getK(): T#0
+
+      public abstract fun getO(): T#0
+
+      public final val param: T#0
+        public final get
+    }
+
+    package {
+
+      public final inline fun <T#0 /* R */> doWork(crossinline jobO: kotlin/Function0<T#0>, crossinline jobK: kotlin/Function0<T#0>, param: T#0): test/A<T#0>
+
+      public final inline fun <T#0 /* R */> doWorkInConstructor(crossinline jobO: kotlin/Function0<T#0>, crossinline jobK: kotlin/Function0<T#0>, crossinline param: kotlin/Function0<T#0>): test/A<T#0>
+    }
+  }
+}

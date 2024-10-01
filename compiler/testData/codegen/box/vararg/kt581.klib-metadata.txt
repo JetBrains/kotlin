@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: whats.the.difference
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun iarray(vararg a: kotlin/Int /* kotlin/IntArray */): kotlin/IntArray
+
+      public final fun kotlin/IntArray.lastIndex(): kotlin/Int
+
+      public final val kotlin/IntArray.indices: kotlin/ranges/IntRange
+        public final /* non-default */ get
+    }
+  }
+}

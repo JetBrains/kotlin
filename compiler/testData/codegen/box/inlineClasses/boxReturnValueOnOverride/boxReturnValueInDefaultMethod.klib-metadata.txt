@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: X
+
+    public final value class A : X<A> {
+
+      public constructor(value: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open operator fun plus(n: kotlin/Int): A
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Int
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Int
+    }
+
+    public abstract interface X<T#0 /* T */> : kotlin/Any {
+
+      public open fun next(): T#0
+
+      public abstract operator fun plus(n: kotlin/Int): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

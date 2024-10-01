@@ -1,0 +1,65 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3571.kt
+    CLASS CLASS name:Thing signature:/Thing|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Thing
+      CONSTRUCTOR signature:/Thing.<init>|<init>(kotlin.CharSequence){}[0] visibility:public <> (delegate:<unbound IrClassSymbolImpl>) returnType:<root>.Thing [primary]
+        VALUE_PARAMETER name:delegate index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Thing signature:/Thing|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/Thing.$$delegate_0|[0] type:<unbound IrClassSymbolImpl> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'delegate: <unbound IrClassSymbolImpl> declared in <root>.Thing.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:get signature:/Thing.get|get(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.Thing, index:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Thing
+        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (index: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.Thing'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/Thing.$$delegate_0|[0] type:<unbound IrClassSymbolImpl> visibility:private [final] declared in <root>.Thing' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Thing declared in <root>.Thing.get' type=<root>.Thing origin=null
+              1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.Thing.get' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DELEGATED_MEMBER name:subSequence signature:/Thing.subSequence|subSequence(kotlin.Int;kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.Thing, startIndex:<unbound IrClassSymbolImpl>, endIndex:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Thing
+        VALUE_PARAMETER name:startIndex index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:endIndex index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun subSequence (startIndex: <unbound IrClassSymbolImpl>, endIndex: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Thing'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/Thing.$$delegate_0|[0] type:<unbound IrClassSymbolImpl> visibility:private [final] declared in <root>.Thing' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Thing declared in <root>.Thing.subSequence' type=<root>.Thing origin=null
+              1: GET_VAR 'startIndex: <unbound IrClassSymbolImpl> declared in <root>.Thing.subSequence' type=<unbound IrClassSymbolImpl> origin=null
+              2: GET_VAR 'endIndex: <unbound IrClassSymbolImpl> declared in <root>.Thing.subSequence' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY DELEGATED_MEMBER name:length signature:/Thing.length|{}length[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-length> signature:/Thing.length.<get-length>|<get-length>(){}[0] visibility:public modality:OPEN <> ($this:<root>.Thing) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:length signature:/Thing.length|{}length[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.Thing
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-length> (): <unbound IrClassSymbolImpl> declared in <root>.Thing'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/Thing.$$delegate_0|[0] type:<unbound IrClassSymbolImpl> visibility:private [final] declared in <root>.Thing' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Thing declared in <root>.Thing.<get-length>' type=<root>.Thing origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:l type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun <get-length> (): <unbound IrClassSymbolImpl> declared in <root>.Thing' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (delegate: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Thing' type=<root>.Thing origin=null
+              delegate: CONST String type=<unbound IrClassSymbolImpl> value="hello there"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val l: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail "
+                GET_VAR 'val l: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

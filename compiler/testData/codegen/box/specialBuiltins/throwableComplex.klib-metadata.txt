@@ -1,0 +1,58 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Base2
+    // class name: OverBase
+    // class name: OverOverride
+    // class name: Override
+
+    public open class Base : kotlin/Throwable {
+
+      public constructor(message: kotlin/String? /* = ... */, cause: kotlin/Throwable? /* = ... */)
+    }
+
+    public open class Base2 : Base {
+
+      public constructor(message: kotlin/String? /* = ... */, cause: kotlin/Throwable? /* = ... */)
+    }
+
+    public open class OverBase : Override {
+
+      public constructor(message: kotlin/String? /* = ... */, cause: kotlin/Throwable? /* = ... */)
+    }
+
+    public open class OverOverride : OverBase {
+
+      public constructor(message: kotlin/String? /* = ... */, cause: kotlin/Throwable? /* = ... */)
+
+      public open val cause: kotlin/Throwable?
+        public open /* non-default */ get
+
+      public open val message: kotlin/String?
+        public open /* non-default */ get
+    }
+
+    public open class Override : Base2 {
+
+      public constructor(message: kotlin/String? /* = ... */, cause: kotlin/Throwable? /* = ... */)
+
+      public final var i: kotlin/Int
+        public final get
+        public final set
+
+      public open val message: kotlin/String?
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun check(t: kotlin/Throwable, msg: kotlin/String): kotlin/Unit
+    }
+  }
+}

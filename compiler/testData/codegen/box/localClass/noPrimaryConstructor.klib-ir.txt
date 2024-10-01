@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/noPrimaryConstructor.kt
+    FUN name:box signature:/box|box(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.Local
+          CONSTRUCTOR visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.box.Local
+            VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> superQualifierSymbol=<root>.box.Local origin=null
+                receiver: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local' type=<root>.box.Local origin=null
+                value: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.box.Local.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          CONSTRUCTOR visibility:public <> (z:<unbound IrClassSymbolImpl>) returnType:<root>.box.Local
+            VALUE_PARAMETER name:z index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> superQualifierSymbol=<root>.box.Local origin=null
+                receiver: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local' type=<root>.box.Local origin=null
+                value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'z: <unbound IrClassSymbolImpl> declared in <root>.box.Local.<init>' type=<unbound IrClassSymbolImpl> origin=null
+          PROPERTY name:x visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.box.Local) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.box.Local
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.box.Local'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.box.Local declared in <root>.box.Local.<get-x>' type=<root>.box.Local origin=null
+          FUN name:result visibility:public modality:FINAL <> ($this:<root>.box.Local) returnType:<unbound IrClassSymbolImpl>
+            $this: VALUE_PARAMETER name:<this> type:<root>.box.Local
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local'
+                GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.box.Local' type=<root>.box.Local origin=null
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=42
+            1: CALL 'public final fun result (): <unbound IrClassSymbolImpl> declared in <root>.box.Local' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> (z: <unbound IrClassSymbolImpl>) declared in <root>.box.Local' type=<root>.box.Local origin=null
+                z: CONST String type=<unbound IrClassSymbolImpl> value="zzz"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="OKOK"
+          2: CALL 'public final fun box (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

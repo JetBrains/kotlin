@@ -1,0 +1,49 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : test/Base {
+
+      public constructor()
+
+      protected open fun method(): kotlin/String
+
+      public final fun test1(): kotlin/String
+
+      public final fun test2(): kotlin/String
+
+      protected open val prop: kotlin/String /* = ... */
+        protected open get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Base
+
+    public open class test/Base : kotlin/Any {
+
+      public constructor()
+
+      protected open fun method(): kotlin/String
+
+      protected open val prop: kotlin/String /* = ... */
+        protected open get
+    }
+
+    package {
+
+      public final inline fun call(crossinline s: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+  }
+}

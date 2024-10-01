@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IssueState
+
+    public final enum class IssueState : kotlin/Enum<IssueState> {
+
+      private constructor()
+
+      public open fun ToString(): kotlin/String
+
+      FIXED,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

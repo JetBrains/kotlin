@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Level
+
+    public final enum class Level : kotlin/Enum<Level> {
+
+      private constructor()
+
+      O,
+
+      K,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun kotlin/Any?.doTheThing(): kotlin/String
+    }
+  }
+}

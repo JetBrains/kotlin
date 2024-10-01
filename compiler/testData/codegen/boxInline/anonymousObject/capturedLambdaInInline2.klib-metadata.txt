@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun bar(crossinline y: kotlin/Function0<kotlin/String>): kotlin/Function0<kotlin/String>
+
+      public final inline fun <T#0 /* T */> call(f: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

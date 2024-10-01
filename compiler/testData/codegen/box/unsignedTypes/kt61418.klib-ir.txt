@@ -1,0 +1,25 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt61418_test.kt
+    FUN name:f signature:/f|f(kotlin.collections.List<kotlin.Int>){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        annotations:
+          ImplicitIntegerCoercion
+      BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun f (x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONST Int type=<unbound IrClassSymbolImpl> value=3
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:kotlin.internal fileName:/signedToUnsignedConversions_annotation.kt
+    CLASS ANNOTATION_CLASS name:ImplicitIntegerCoercion signature:kotlin.internal/ImplicitIntegerCoercion|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.internal.ImplicitIntegerCoercion
+      CONSTRUCTOR signature:kotlin.internal/ImplicitIntegerCoercion.<init>|<init>(){}[0] visibility:public <> () returnType:kotlin.internal.ImplicitIntegerCoercion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:ImplicitIntegerCoercion signature:kotlin.internal/ImplicitIntegerCoercion|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'

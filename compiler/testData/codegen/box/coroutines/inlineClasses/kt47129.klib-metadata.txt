@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> runBlocking(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<T#0>, kotlin/Any?>): T#0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: kotlin/Int): kotlin/Boolean
+
+      public final fun foo(vararg x: kotlin/Int /* kotlin/IntArray */): kotlin/Boolean
+    }
+  }
+}

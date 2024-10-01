@@ -1,0 +1,54 @@
+// MODULE: a
+library {
+  // module name: <a>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Derived
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Unit
+    }
+
+    public open class Derived : Base {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: b
+library {
+  // module name: <b>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Impl
+
+    public abstract class Base : kotlin/Any {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Unit
+    }
+
+    public final class Impl : Derived {
+
+      public constructor()
+
+      public open fun foo(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: It
+    // class name: X
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class It : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class X : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun It.hasNext(): kotlin/Boolean
+
+      public final operator fun C.iterator(): It
+
+      public final operator fun It.next(): kotlin/Int
+
+      public final fun test(): kotlin/Unit
+
+      public final var hasNext: kotlin/Boolean
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: kotlin/Int): kotlin/Unit
+    }
+  }
+}

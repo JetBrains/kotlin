@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun kotlin/String.getValue(receiver: kotlin/Any?, p: kotlin/Any): kotlin/String
+
+      public final operator fun kotlin/String.provideDelegate(host: kotlin/Any?, p: kotlin/Any): kotlin/String
+
+      public final inline fun <T#0 /* T */> runLogged(entry: kotlin/String, action: kotlin/Function0<T#0>): T#0
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

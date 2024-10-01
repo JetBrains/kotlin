@@ -1,0 +1,141 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt45084.kt
+    CLASS CLASS name:Z signature:/Z|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
+      CONSTRUCTOR signature:/Z.<init>|<init>(kotlin.Long){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Z [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z signature:/Z|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/Z.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.Z.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Z.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/Z.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Z
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.<get-value>' type=<root>.Z origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/Z.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Z("
+              CONST String type=<unbound IrClassSymbolImpl> value="value="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.toString' type=<root>.Z origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/Z.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.hashCode' type=<root>.Z origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/Z.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Z, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Z
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Z.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Z'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Z [val]
+            TYPE_OP type=<root>.Z origin=CAST typeOperand=<root>.Z
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Z.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.equals' type=<root>.Z origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Z.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Long visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Z [val] declared in <root>.Z.equals' type=<root>.Z origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Z'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Z'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:f signature:/f|f(kotlin.Function23<Z,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Long,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (g:<unbound IrClassSymbolImpl><@[<unbound>(1 = "z")] <root>.Z, @[<unbound>(1 = "p01")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p02")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p03")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p04")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p05")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p06")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p07")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p08")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p09")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p10")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p11")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p12")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p13")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p14")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p15")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p16")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p17")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p18")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p19")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p20")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p21")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p22")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:g index:0 type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "z")] <root>.Z, @[<unbound>(1 = "p01")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p02")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p03")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p04")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p05")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p06")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p07")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p08")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p09")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p10")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p11")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p12")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p13")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p14")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p15")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p16")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p17")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p18")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p19")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p20")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p21")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p22")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'g: <unbound IrClassSymbolImpl><@[<unbound>(1 = "z")] <root>.Z, @[<unbound>(1 = "p01")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p02")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p03")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p04")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p05")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p06")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p07")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p08")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p09")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p10")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p11")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p12")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p13")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p14")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p15")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p16")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p17")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p18")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p19")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p20")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p21")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p22")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.f' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "z")] <root>.Z, @[<unbound>(1 = "p01")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p02")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p03")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p04")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p05")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p06")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p07")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p08")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p09")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p10")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p11")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p12")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p13")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p14")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p15")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p16")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p17")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p18")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p19")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p20")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p21")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p22")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Z' type=<root>.Z origin=null
+            value: CONST Long type=<unbound IrClassSymbolImpl> value=42
+          2: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          3: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          4: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          5: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          6: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          7: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          8: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          9: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          10: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          11: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          12: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          13: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          14: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          15: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          16: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          17: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          18: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          19: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          20: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          21: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          22: CONST Long type=<unbound IrClassSymbolImpl> value=0
+          23: CONST Long type=<unbound IrClassSymbolImpl> value=0
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        CALL 'public final fun f (g: <unbound IrClassSymbolImpl><@[<unbound>(1 = "z")] <root>.Z, @[<unbound>(1 = "p01")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p02")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p03")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p04")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p05")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p06")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p07")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p08")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p09")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p10")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p11")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p12")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p13")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p14")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p15")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p16")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p17")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p18")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p19")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p20")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p21")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "p22")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          g: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Z, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (z:<root>.Z, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>, <unused var>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER name:z index:0 type:<root>.Z
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:2 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:3 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:4 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:5 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:6 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:7 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:8 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:9 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:10 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:11 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:12 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:13 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:14 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:15 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:16 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:17 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:18 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:19 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:20 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:21 type:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:22 type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Z' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'z: <root>.Z declared in <root>.box.<anonymous>' type=<root>.Z origin=null
+                        arg1: CONST Long type=<unbound IrClassSymbolImpl> value=42
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

@@ -1,0 +1,190 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/closureCapturingGenericParam.kt
+    CLASS INTERFACE name:IntConvertible signature:/IntConvertible|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntConvertible
+      FUN name:toInt signature:/IntConvertible.toInt|toInt(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.IntConvertible) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntConvertible
+    FUN name:foo signature:/foo|foo(kotlin.Int;0:0;kotlin.Function2<kotlin.Int,0:0,kotlin.Int>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FooTP> (init:<unbound IrClassSymbolImpl>, v:FooTP of <root>.foo, l:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, FooTP of <root>.foo, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:FooTP index:0 variance: signature:[ /foo|foo(kotlin.Int;0:0;kotlin.Function2<kotlin.Int,0:0,kotlin.Int>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:FooTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:init index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:v index:1 type:FooTP of <root>.foo
+      VALUE_PARAMETER name:l index:2 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, FooTP of <root>.foo, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <FooTP> (init: <unbound IrClassSymbolImpl>, v: FooTP of <root>.foo, l: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, FooTP of <root>.foo, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'l: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, FooTP of <root>.foo, <unbound IrClassSymbolImpl>> declared in <root>.foo' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, FooTP of <root>.foo, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'init: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+            2: GET_VAR 'v: FooTP of <root>.foo declared in <root>.foo' type=FooTP of <root>.foo origin=null
+    FUN name:computeSum signature:/computeSum|computeSum(kotlin.Array<0:0>){0§<IntConvertible>}[0] visibility:public modality:FINAL <BarTP> (array:<unbound IrClassSymbolImpl><BarTP of <root>.computeSum>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:BarTP index:0 variance: signature:[ /computeSum|computeSum(kotlin.Array<0:0>){0§<IntConvertible>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:FooTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.IntConvertible] reified:false
+      VALUE_PARAMETER name:array index:0 type:<unbound IrClassSymbolImpl><BarTP of <root>.computeSum>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun computeSum <BarTP> (array: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo <FooTP> (init: <unbound IrClassSymbolImpl>, v: FooTP of <root>.foo, l: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, FooTP of <root>.foo, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <FooTP>: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum>
+            init: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            v: GET_VAR 'array: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum> declared in <root>.computeSum' type=<unbound IrClassSymbolImpl><BarTP of <root>.computeSum> origin=null
+            l: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><BarTP of <root>.computeSum>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, it:<unbound IrClassSymbolImpl><BarTP of <root>.computeSum>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$foo type:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><BarTP of <root>.computeSum>
+                BLOCK_BODY
+                  VAR name:res type:<unbound IrClassSymbolImpl> [var]
+                    GET_VAR '$this$foo: <unbound IrClassSymbolImpl> declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                    VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><BarTP of <root>.computeSum> [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><BarTP of <root>.computeSum> origin=FOR_LOOP_ITERATOR
+                        $this: GET_VAR 'it: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum> declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl><BarTP of <root>.computeSum> origin=null
+                    WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                      condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                        $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum> [val] declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl><BarTP of <root>.computeSum> origin=null
+                      body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                        VAR FOR_LOOP_VARIABLE name:element type:BarTP of <root>.computeSum [val]
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=BarTP of <root>.computeSum origin=FOR_LOOP_NEXT
+                            $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum> [val] declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl><BarTP of <root>.computeSum> origin=null
+                        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            1: CALL 'public abstract fun toInt (): <unbound IrClassSymbolImpl> declared in <root>.IntConvertible' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR 'val element: BarTP of <root>.computeSum [val] declared in <root>.computeSum.<anonymous>' type=BarTP of <root>.computeSum origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum>): <unbound IrClassSymbolImpl> declared in <root>.computeSum'
+                    GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.computeSum.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:N signature:/N|null[0] modality:FINAL visibility:public superTypes:[<root>.IntConvertible]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.N
+      CONSTRUCTOR signature:/N.<init>|<init>(kotlin.Int){}[0] visibility:public <> (v:<unbound IrClassSymbolImpl>) returnType:<root>.N [primary]
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:N signature:/N|null[0] modality:FINAL visibility:public superTypes:[<root>.IntConvertible]'
+      PROPERTY name:v signature:/N.v|{}v[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:v signature:[ /N.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.N.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:/N.v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL <> ($this:<root>.N) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:v signature:/N.v|{}v[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.N
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in <root>.N'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ /N.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.N declared in <root>.N.<get-v>' type=<root>.N origin=null
+      FUN name:toInt signature:/N.toInt|toInt(){}[0] visibility:public modality:OPEN <> ($this:<root>.N) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun toInt (): <unbound IrClassSymbolImpl> declared in <root>.IntConvertible
+        $this: VALUE_PARAMETER name:<this> type:<root>.N
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toInt (): <unbound IrClassSymbolImpl> declared in <root>.N'
+            CALL 'public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in <root>.N' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.N declared in <root>.N.toInt' type=<root>.N origin=null
+    CLASS INTERFACE name:Grouping signature:/Grouping|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Grouping<GroupingInputTP of <root>.Grouping, GroupingOutputTP of <root>.Grouping>
+      TYPE_PARAMETER name:GroupingInputTP index:0 variance: signature:[ /Grouping|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:FooTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:GroupingOutputTP index:1 variance:out signature:[ /Grouping|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:GroupingOutputTP index:1 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:keyOf signature:/Grouping.keyOf|keyOf(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Grouping<GroupingInputTP of <root>.Grouping, GroupingOutputTP of <root>.Grouping>, element:GroupingInputTP of <root>.Grouping) returnType:GroupingOutputTP of <root>.Grouping
+        $this: VALUE_PARAMETER name:<this> type:<root>.Grouping<GroupingInputTP of <root>.Grouping, GroupingOutputTP of <root>.Grouping>
+        VALUE_PARAMETER name:element index:0 type:GroupingInputTP of <root>.Grouping
+    FUN name:groupingBy signature:/groupingBy|groupingBy(kotlin.Function1<kotlin.Char,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <GroupingByTP> (keySelector:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>) returnType:<root>.Grouping<<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>
+      TYPE_PARAMETER name:GroupingByTP index:0 variance: signature:[ /groupingBy|groupingBy(kotlin.Function1<kotlin.Char,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:FooTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:keySelector index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:foo visibility:local modality:FINAL <T> (p0:T of <root>.groupingBy.foo, p1:GroupingByTP of <root>.groupingBy) returnType:<unbound IrClassSymbolImpl>
+          TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+          VALUE_PARAMETER name:p0 index:0 type:T of <root>.groupingBy.foo
+          VALUE_PARAMETER name:p1 index:1 type:GroupingByTP of <root>.groupingBy
+          BLOCK_BODY
+        CALL 'local final fun foo <T> (p0: T of <root>.groupingBy.foo, p1: GroupingByTP of <root>.groupingBy): <unbound IrClassSymbolImpl> declared in <root>.groupingBy' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          p0: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          p1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=GroupingByTP of <root>.groupingBy origin=INVOKE
+            $this: GET_VAR 'keySelector: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> declared in <root>.groupingBy' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> origin=VARIABLE_AS_FUNCTION
+            1: CONST Char type=<unbound IrClassSymbolImpl> value='a'
+        CLASS CLASS name:A modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.groupingBy.A<T of <root>.groupingBy.A, GroupingByTP of <root>.groupingBy>
+          TYPE_PARAMETER name:T index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+          CONSTRUCTOR visibility:public <> (p0:T of <root>.groupingBy.A, p1:GroupingByTP of <root>.groupingBy) returnType:<root>.groupingBy.A<T of <root>.groupingBy.A, GroupingByTP of <root>.groupingBy> [primary]
+            VALUE_PARAMETER name:p0 index:0 type:T of <root>.groupingBy.A
+            VALUE_PARAMETER name:p1 index:1 type:GroupingByTP of <root>.groupingBy
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'public constructor <init> (p0: T of <root>.groupingBy.A, p1: GroupingByTP of <root>.groupingBy) [primary] declared in <root>.groupingBy.A' type=<root>.groupingBy.A<<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> origin=null
+            <class: T>: <unbound IrClassSymbolImpl>
+            p0: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            p1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=GroupingByTP of <root>.groupingBy origin=INVOKE
+              $this: GET_VAR 'keySelector: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> declared in <root>.groupingBy' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> origin=VARIABLE_AS_FUNCTION
+              1: CONST Char type=<unbound IrClassSymbolImpl> value='a'
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun groupingBy <GroupingByTP> (keySelector: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>): <root>.Grouping<<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> declared in <root>'
+          BLOCK type=<root>.groupingBy.<no name provided><GroupingByTP of <root>.groupingBy> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Grouping<<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.groupingBy.<no name provided><GroupingByTP of <root>.groupingBy>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.groupingBy.<no name provided><GroupingByTP of <root>.groupingBy> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Grouping<<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>]'
+              FUN name:keyOf visibility:public modality:OPEN <> ($this:<root>.groupingBy.<no name provided><GroupingByTP of <root>.groupingBy>, element:<unbound IrClassSymbolImpl>) returnType:GroupingByTP of <root>.groupingBy
+                overridden:
+                  public abstract fun keyOf (element: GroupingInputTP of <root>.Grouping): GroupingOutputTP of <root>.Grouping declared in <root>.Grouping
+                $this: VALUE_PARAMETER name:<this> type:<root>.groupingBy.<no name provided><GroupingByTP of <root>.groupingBy>
+                VALUE_PARAMETER name:element index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun keyOf (element: <unbound IrClassSymbolImpl>): GroupingByTP of <root>.groupingBy declared in <root>.groupingBy.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=GroupingByTP of <root>.groupingBy origin=INVOKE
+                      $this: GET_VAR 'keySelector: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> declared in <root>.groupingBy' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> origin=VARIABLE_AS_FUNCTION
+                      1: GET_VAR 'element: <unbound IrClassSymbolImpl> declared in <root>.groupingBy.<no name provided>.keyOf' type=<unbound IrClassSymbolImpl> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.groupingBy.<no name provided>' type=<root>.groupingBy.<no name provided><GroupingByTP of <root>.groupingBy> origin=OBJECT_LITERAL
+    CLASS CLASS name:Delft signature:/Delft|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Delft<DelftTP of <root>.Delft>
+      TYPE_PARAMETER name:DelftTP index:0 variance: signature:[ /Delft|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:FooTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Delft.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Delft<DelftTP of <root>.Delft> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delft signature:/Delft|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getComparator signature:/Delft.getComparator|getComparator(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.Delft<DelftTP of <root>.Delft>, other:DelftTP of <root>.Delft) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Delft<DelftTP of <root>.Delft>
+        VALUE_PARAMETER name:other index:0 type:DelftTP of <root>.Delft
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getComparator (other: DelftTP of <root>.Delft): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Delft'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.Delft.getComparator'
+                    CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR '<this>: <root>.Delft<DelftTP of <root>.Delft> declared in <root>.Delft.getComparator' type=<root>.Delft<DelftTP of <root>.Delft> origin=null
+                      arg1: GET_VAR 'other: DelftTP of <root>.Delft declared in <root>.Delft.getComparator' type=DelftTP of <root>.Delft origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun computeSum <BarTP> (array: <unbound IrClassSymbolImpl><BarTP of <root>.computeSum>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <BarTP>: <root>.N
+                  array: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.N> origin=null
+                    <1>: <root>.N
+                    1: VARARG type=<unbound IrClassSymbolImpl><out <root>.N> varargElementType=<root>.N
+                      CONSTRUCTOR_CALL 'public constructor <init> (v: <unbound IrClassSymbolImpl>) [primary] declared in <root>.N' type=<root>.N origin=null
+                        v: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                      CONSTRUCTOR_CALL 'public constructor <init> (v: <unbound IrClassSymbolImpl>) [primary] declared in <root>.N' type=<root>.N origin=null
+                        v: CONST Int type=<unbound IrClassSymbolImpl> value=14
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=16
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public abstract fun keyOf (element: GroupingInputTP of <root>.Grouping): GroupingOutputTP of <root>.Grouping declared in <root>.Grouping' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CALL 'public final fun groupingBy <GroupingByTP> (keySelector: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy>): <root>.Grouping<<unbound IrClassSymbolImpl>, GroupingByTP of <root>.groupingBy> declared in <root>' type=<root>.Grouping<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                    <GroupingByTP>: <unbound IrClassSymbolImpl>
+                    keySelector: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                        VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                            GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  element: CONST Char type=<unbound IrClassSymbolImpl> value='A'
+                arg1: CONST Char type=<unbound IrClassSymbolImpl> value='A'
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="Fail2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

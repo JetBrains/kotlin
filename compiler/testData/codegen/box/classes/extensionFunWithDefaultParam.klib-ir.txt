@@ -1,0 +1,137 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/extensionFunWithDefaultParam.kt
+    CLASS CLASS name:MyLogic signature:/MyLogic|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyLogic
+      CONSTRUCTOR signature:/MyLogic.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyLogic [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyLogic signature:/MyLogic|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:postfix signature:/MyLogic.postfix|{}postfix[0] visibility:protected modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:postfix signature:[ /MyLogic.postfix|{}postfix[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:postfix type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="ZZZ"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-postfix> signature:/MyLogic.postfix.<get-postfix>|<get-postfix>(){}[0] visibility:protected modality:OPEN <> ($this:<root>.MyLogic) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:postfix signature:/MyLogic.postfix|{}postfix[0] visibility:protected modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyLogic
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-postfix> (): <unbound IrClassSymbolImpl> declared in <root>.MyLogic'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:postfix signature:[ /MyLogic.postfix|{}postfix[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:postfix type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyLogic declared in <root>.MyLogic.<get-postfix>' type=<root>.MyLogic origin=null
+      FUN name:foo signature:/MyLogic.foo|foo@kotlin.String(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MyLogic, $receiver:<unbound IrClassSymbolImpl>, prefix:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyLogic
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:prefix index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="XXX"
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (prefix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyLogic'
+            CALL 'protected final fun transform (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyLogic' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.MyLogic declared in <root>.MyLogic.foo' type=<root>.MyLogic origin=null
+              a: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: GET_VAR 'prefix: <unbound IrClassSymbolImpl> declared in <root>.MyLogic.foo' type=<unbound IrClassSymbolImpl> origin=null
+                  1: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.MyLogic.foo' type=<unbound IrClassSymbolImpl> origin=null
+                1: CALL 'protected open fun <get-postfix> (): <unbound IrClassSymbolImpl> declared in <root>.MyLogic' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.MyLogic declared in <root>.MyLogic.foo' type=<root>.MyLogic origin=null
+      FUN name:transform signature:/MyLogic.transform|transform(kotlin.String){}[0] visibility:protected modality:FINAL <> ($this:<root>.MyLogic, a:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyLogic
+        VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected final fun transform (a: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyLogic'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.MyLogic.transform' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=":"
+              GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.MyLogic.transform' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:result signature:/MyLogic.result|result(){}[0] visibility:public modality:FINAL <> ($this:<root>.MyLogic) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyLogic
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun result (): <unbound IrClassSymbolImpl> declared in <root>.MyLogic'
+            CALL 'public open fun foo (prefix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyLogic' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.MyLogic declared in <root>.MyLogic.result' type=<root>.MyLogic origin=null
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="YYY"
+    CLASS CLASS name:MyLogicWithDifferentPostfix signature:/MyLogicWithDifferentPostfix|null[0] modality:OPEN visibility:public superTypes:[<root>.MyLogic]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyLogicWithDifferentPostfix
+      CONSTRUCTOR signature:/MyLogicWithDifferentPostfix.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyLogicWithDifferentPostfix [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyLogic'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyLogicWithDifferentPostfix signature:/MyLogicWithDifferentPostfix|null[0] modality:OPEN visibility:public superTypes:[<root>.MyLogic]'
+      PROPERTY name:postfix signature:/MyLogicWithDifferentPostfix.postfix|{}postfix[0] visibility:protected modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:postfix signature:[ /MyLogicWithDifferentPostfix.postfix|{}postfix[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:postfix type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="WWW"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-postfix> signature:/MyLogicWithDifferentPostfix.postfix.<get-postfix>|<get-postfix>(){}[0] visibility:protected modality:OPEN <> ($this:<root>.MyLogicWithDifferentPostfix) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:postfix signature:/MyLogicWithDifferentPostfix.postfix|{}postfix[0] visibility:protected modality:OPEN [val]
+          overridden:
+            protected open fun <get-postfix> (): <unbound IrClassSymbolImpl> declared in <root>.MyLogic
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyLogicWithDifferentPostfix
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected open fun <get-postfix> (): <unbound IrClassSymbolImpl> declared in <root>.MyLogicWithDifferentPostfix'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:postfix signature:[ /MyLogicWithDifferentPostfix.postfix|{}postfix[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:postfix type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyLogicWithDifferentPostfix declared in <root>.MyLogicWithDifferentPostfix.<get-postfix>' type=<root>.MyLogicWithDifferentPostfix origin=null
+    CLASS CLASS name:MyLogicSpecified signature:/MyLogicSpecified|null[0] modality:FINAL visibility:public superTypes:[<root>.MyLogic]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyLogicSpecified
+      CONSTRUCTOR signature:/MyLogicSpecified.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyLogicSpecified [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyLogic'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyLogicSpecified signature:/MyLogicSpecified|null[0] modality:FINAL visibility:public superTypes:[<root>.MyLogic]'
+      FUN name:foo signature:/MyLogicSpecified.foo|foo@kotlin.String(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.MyLogicSpecified, $receiver:<unbound IrClassSymbolImpl>, prefix:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun foo (prefix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyLogic
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyLogicSpecified
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:prefix index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (prefix: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyLogicSpecified'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              GET_VAR 'prefix: <unbound IrClassSymbolImpl> declared in <root>.MyLogicSpecified.foo' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value="::"
+              GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.MyLogicSpecified.foo' type=<unbound IrClassSymbolImpl> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value="::"
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MyLogicSpecified declared in <root>.MyLogicSpecified.foo' type=<root>.MyLogicSpecified origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun result (): <unbound IrClassSymbolImpl> declared in <root>.MyLogic' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyLogic' type=<root>.MyLogic origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="XXXYYYZZZ:XXXYYYZZZ"
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="fail1: "
+                  GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:result2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyLogicWithDifferentPostfix' type=<root>.MyLogicWithDifferentPostfix origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="XXXYYYWWW:XXXYYYWWW"
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="fail2: "
+                  GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:result3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyLogicSpecified' type=<root>.MyLogicSpecified origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="XXX::YYY::ZZZ"
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="fail3: "
+                  GET_VAR 'val result3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

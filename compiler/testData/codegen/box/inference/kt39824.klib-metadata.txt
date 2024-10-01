@@ -1,0 +1,96 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DIContext
+    // class name: DIContext.Companion
+    // class name: DIContext.Lazy
+    // class name: DIContext.Value
+    // class name: TypeToken
+
+    public abstract interface DIContext<T#0 /* C */ : kotlin/Any> : kotlin/Any {
+
+      public open fun print(): kotlin/Unit
+
+      public abstract val type: TypeToken<T#0>
+        public abstract get
+
+      public abstract val value: T#0
+        public abstract get
+
+      // companion object: Companion
+
+      // nested class: Value
+
+      // nested class: Lazy
+
+      // nested class: Companion
+    }
+
+    public final companion object DIContext.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun <T#1 /* C */ : kotlin/Any> invoke(type: TypeToken<T#1>, value: T#1): DIContext<T#1>
+
+      public final operator fun <T#1 /* C */ : kotlin/Any> invoke(type: TypeToken<T#1>, getValue: kotlin/Function0<T#1>): DIContext<T#1>
+    }
+
+    public final class DIContext.Lazy<T#1 /* C */ : kotlin/Any> : DIContext<T#1> {
+
+      public constructor(type: TypeToken<T#1>, getValue: kotlin/Function0<T#1>)
+
+      public final val getValue: kotlin/Function0<T#1>
+        public final get
+
+      public open val type: TypeToken<T#1>
+        public open get
+
+      public open /* delegated */ val value: T#1
+        public open /* non-default */ get
+    }
+
+    public final data class DIContext.Value<T#1 /* C */ : kotlin/Any> : DIContext<T#1> {
+
+      public constructor(type: TypeToken<T#1>, value: T#1)
+
+      public final /* synthesized */ operator fun component1(): TypeToken<T#1>
+
+      public final /* synthesized */ operator fun component2(): T#1
+
+      public final /* synthesized */ fun copy(type: TypeToken<T#1> /* = ... */, value: T#1 /* = ... */): DIContext.Value<T#1>
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val type: TypeToken<T#1>
+        public open get
+
+      public open val value: T#1
+        public open get
+    }
+
+    public final class TypeToken<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* C */ : kotlin/Any> diContext(context: T#0): DIContext<T#0>
+
+      public final fun <T#0 /* C */ : kotlin/Any> diContext(getContext: kotlin/Function0<T#0>): DIContext<T#0>
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun _arrayOf(vararg arg: kotlin/String /* kotlin/Array<out kotlin/String> */): kotlin/Array<out kotlin/String>
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(a: kotlin/Array<out kotlin/String>, b: kotlin/Array<out kotlin/String>): kotlin/collections/List<kotlin/String>
+    }
+  }
+}

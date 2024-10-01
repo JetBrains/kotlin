@@ -1,0 +1,77 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: JsStaticTest
+    // class name: JsStaticTest.Companion
+    // class name: JvmStaticTest
+
+    public final class JsStaticTest : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object JsStaticTest.Companion : kotlin/Any {
+
+      private constructor()
+
+      @kotlin/js/JsStatic
+      public final fun annotatedFunction(): kotlin/String
+
+      public final val annotatedGetter: kotlin/String
+        @kotlin/js/JsStatic
+        public final /* non-default */ get
+
+      @kotlin/js/JsStatic
+      public final val annotatedProperty: kotlin/String /* = ... */
+        public final get
+
+      public final var annotatedSetter: kotlin/String
+        public final /* non-default */ get
+        @kotlin/js/JsStatic
+        public final /* non-default */ set(newValue: kotlin/String)
+    }
+
+    public final object JvmStaticTest : kotlin/Any {
+
+      private constructor()
+
+      @kotlin/jvm/JvmStatic
+      public final fun annotatedFunction(): kotlin/String
+
+      public final val annotatedGetter: kotlin/String
+        @kotlin/jvm/JvmStatic
+        public final /* non-default */ get
+
+      @kotlin/jvm/JvmStatic
+      public final val annotatedProperty: kotlin/String /* = ... */
+        public final get
+
+      public final var annotatedSetter: kotlin/String
+        public final /* non-default */ get
+        @kotlin/jvm/JvmStatic
+        public final /* non-default */ set(newValue: kotlin/String)
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

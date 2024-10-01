@@ -1,0 +1,238 @@
+// MODULE: lib1
+MODULE_FRAGMENT name:<lib1>
+  FILE fqName:<root> fileName:/DemoClassInternal1.kt
+    CLASS CLASS name:DemoClassInternal signature:/DemoClassInternal|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DemoClassInternal
+      CONSTRUCTOR signature:/DemoClassInternal.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DemoClassInternal [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DemoClassInternal signature:/DemoClassInternal|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:demo signature:/DemoClassInternal.demo|demo(){}[0] visibility:internal modality:OPEN <> ($this:<root>.DemoClassInternal) returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          <unbound>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DemoClassInternal
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='internal open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.DemoClassInternal'
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+  FILE fqName:<root> fileName:/TestDemo1.kt
+    FUN name:testDemoInline signature:/testDemoInline|testDemoInline(DemoClassInternal){}[0] visibility:public modality:FINAL <> (d:<root>.DemoClassInternal) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:d index:0 type:<root>.DemoClassInternal
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testDemoInline (d: <root>.DemoClassInternal): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'internal open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.DemoClassInternal' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'd: <root>.DemoClassInternal declared in <root>.testDemoInline' type=<root>.DemoClassInternal origin=null
+    FUN name:testDemo signature:/testDemo|testDemo(DemoClassInternal){}[0] visibility:public modality:FINAL <> (d:<root>.DemoClassInternal) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:d index:0 type:<root>.DemoClassInternal
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testDemo (d: <root>.DemoClassInternal): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'internal open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.DemoClassInternal' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'd: <root>.DemoClassInternal declared in <root>.testDemo' type=<root>.DemoClassInternal origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/Box.kt
+    FUN name:testMyDemo1 signature:/testMyDemo1|testMyDemo1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo1 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo1' type=<root>.MyDemo1 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo1 [val] declared in <root>.testMyDemo1' type=<root>.MyDemo1 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo1 [val] declared in <root>.testMyDemo1' type=<root>.MyDemo1 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:testMyDemo2 signature:/testMyDemo2|testMyDemo2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo2' type=<root>.MyDemo2 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo2 [val] declared in <root>.testMyDemo2' type=<root>.MyDemo2 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo2 [val] declared in <root>.testMyDemo2' type=<root>.MyDemo2 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo2' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val myDemo: <root>.MyDemo2 [val] declared in <root>.testMyDemo2' type=<root>.MyDemo2 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+    FUN name:testMyDemo3 signature:/testMyDemo3|testMyDemo3(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo3 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo3' type=<root>.MyDemo3 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo3 [val] declared in <root>.testMyDemo3' type=<root>.MyDemo3 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo3 [val] declared in <root>.testMyDemo3' type=<root>.MyDemo3 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo3' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val myDemo: <root>.MyDemo3 [val] declared in <root>.testMyDemo3' type=<root>.MyDemo3 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+    FUN name:testMyDemo4 signature:/testMyDemo4|testMyDemo4(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo4 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo4' type=<root>.MyDemo4 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo4 [val] declared in <root>.testMyDemo4' type=<root>.MyDemo4 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo4 [val] declared in <root>.testMyDemo4' type=<root>.MyDemo4 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:testMyDemo5 signature:/testMyDemo5|testMyDemo5(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo5 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo5' type=<root>.MyDemo5 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo5 [val] declared in <root>.testMyDemo5' type=<root>.MyDemo5 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo5 [val] declared in <root>.testMyDemo5' type=<root>.MyDemo5 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo5' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val myDemo: <root>.MyDemo5 [val] declared in <root>.testMyDemo5' type=<root>.MyDemo5 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=5
+    FUN name:testMyDemo6 signature:/testMyDemo6|testMyDemo6(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo6 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo6' type=<root>.MyDemo6 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo6 [val] declared in <root>.testMyDemo6' type=<root>.MyDemo6 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo6 [val] declared in <root>.testMyDemo6' type=<root>.MyDemo6 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val myDemo: <root>.MyDemo6 [val] declared in <root>.testMyDemo6' type=<root>.MyDemo6 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=3
+    FUN name:testMyDemo7 signature:/testMyDemo7|testMyDemo7(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:myDemo type:<root>.MyDemo7 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo7' type=<root>.MyDemo7 origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo7 [val] declared in <root>.testMyDemo7' type=<root>.MyDemo7 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=7
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'val myDemo: <root>.MyDemo7 [val] declared in <root>.testMyDemo7' type=<root>.MyDemo7 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=7
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo7' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val myDemo: <root>.MyDemo7 [val] declared in <root>.testMyDemo7' type=<root>.MyDemo7 origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=7
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testMyDemo1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMyDemo2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMyDemo3 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMyDemo4 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMyDemo5 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMyDemo6 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testMyDemo7 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:<root> fileName:/MyDemo.kt
+    CLASS CLASS name:MyDemo1 signature:/MyDemo1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo1
+      CONSTRUCTOR signature:/MyDemo1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo1 signature:/MyDemo1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:MyDemo2 signature:/MyDemo2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo2
+      CONSTRUCTOR signature:/MyDemo2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo2 signature:/MyDemo2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:demo signature:/MyDemo2.demo|demo(){}[0] visibility:public modality:FINAL <> ($this:<root>.MyDemo2) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo2
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo2'
+            CONST Int type=<unbound IrClassSymbolImpl> value=2
+    CLASS CLASS name:MyDemo3 signature:/MyDemo3|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo3
+      CONSTRUCTOR signature:/MyDemo3.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo3 signature:/MyDemo3|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:demo signature:/MyDemo3.demo|demo(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyDemo3) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo3
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo3'
+            CONST Int type=<unbound IrClassSymbolImpl> value=3
+    CLASS CLASS name:MyDemo4 signature:/MyDemo4|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo4
+      CONSTRUCTOR signature:/MyDemo4.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo4 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo1'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo4 signature:/MyDemo4|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo1]'
+    CLASS CLASS name:MyDemo5 signature:/MyDemo5|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo5
+      CONSTRUCTOR signature:/MyDemo5.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo5 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo1'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo5 signature:/MyDemo5|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo1]'
+      FUN name:demo signature:/MyDemo5.demo|demo(){}[0] visibility:public modality:FINAL <> ($this:<root>.MyDemo5) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo5
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo5'
+            CONST Int type=<unbound IrClassSymbolImpl> value=5
+    CLASS CLASS name:MyDemo6 signature:/MyDemo6|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo3]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo6
+      CONSTRUCTOR signature:/MyDemo6.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo6 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo3'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo6 signature:/MyDemo6|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo3]'
+    CLASS CLASS name:MyDemo7 signature:/MyDemo7|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo3]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyDemo7
+      CONSTRUCTOR signature:/MyDemo7.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyDemo7 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyDemo3'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyDemo7 signature:/MyDemo7|null[0] modality:FINAL visibility:public superTypes:[<root>.MyDemo3]'
+      FUN name:demo signature:/MyDemo7.demo|demo(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyDemo7) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo3
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyDemo7
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun demo (): <unbound IrClassSymbolImpl> declared in <root>.MyDemo7'
+            CONST Int type=<unbound IrClassSymbolImpl> value=7

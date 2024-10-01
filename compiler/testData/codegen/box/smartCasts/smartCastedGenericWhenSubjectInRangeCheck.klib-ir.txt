@@ -1,0 +1,70 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/smartCastedGenericWhenSubjectInRangeCheck.kt
+    FUN name:test_1 signature:/test_1|test_1(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (arg:T of <root>.test_1) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /test_1|test_1(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.test_1
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'arg: T of <root>.test_1 declared in <root>.test_1' type=T of <root>.test_1 origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun test_1 <T> (arg: T of <root>.test_1): <unbound IrClassSymbolImpl> declared in <root>'
+                BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<unbound IrClassSymbolImpl> [val]
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                      GET_VAR 'arg: T of <root>.test_1 declared in <root>.test_1' type=T of <root>.test_1 origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                          $this: CONST Char type=<unbound IrClassSymbolImpl> value='A'
+                          1: CONST Char type=<unbound IrClassSymbolImpl> value='Z'
+                        1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                          GET_VAR 'val tmp0_subject: <unbound IrClassSymbolImpl> [val] declared in <root>.test_1' type=<unbound IrClassSymbolImpl> origin=null
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="Not in range"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test_1 <T> (arg: T of <root>.test_1): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="Not char"
+    FUN name:test_2 signature:/test_2|test_2(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (arg:T of <root>.test_2) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /test_2|test_2(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.test_2
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'arg: T of <root>.test_2 declared in <root>.test_2' type=T of <root>.test_2 origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun test_2 <T> (arg: T of <root>.test_2): <unbound IrClassSymbolImpl> declared in <root>'
+                BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                  VAR name:s type:T of <root>.test_2 [val]
+                    TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                      GET_VAR 'arg: T of <root>.test_2 declared in <root>.test_2' type=T of <root>.test_2 origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE
+                          $this: CONST Char type=<unbound IrClassSymbolImpl> value='A'
+                          1: CONST Char type=<unbound IrClassSymbolImpl> value='Z'
+                        1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                          GET_VAR 'val s: T of <root>.test_2 [val] declared in <root>.test_2' type=T of <root>.test_2 origin=null
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CONST String type=<unbound IrClassSymbolImpl> value="Not in range"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test_2 <T> (arg: T of <root>.test_2): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="Not char"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:<unbound IrClassSymbolImpl> [val]
+          CONST Char type=<unbound IrClassSymbolImpl> value='B'
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun test_1 <T> (arg: T of <root>.test_1): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              arg: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun test_2 <T> (arg: T of <root>.test_2): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              arg: GET_VAR 'val c: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

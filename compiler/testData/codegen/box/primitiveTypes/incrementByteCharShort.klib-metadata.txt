@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun byteArg(b: kotlin/Byte): kotlin/Unit
+
+      public final fun charArg(c: kotlin/Char): kotlin/Unit
+
+      public final fun shortArg(s: kotlin/Short): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BuilderScope
+    // class name: ResultProvider
+
+    public abstract interface BuilderScope<T#0 /* BS */> : kotlin/Any {
+
+      public abstract fun <T#1 /* B1 */> getResult(result: ResultProvider<T#0, T#1>): T#1
+
+      public abstract fun <T#1 /* B2 */> getResult2(result: ResultProvider<T#0, T#1>): T#1
+    }
+
+    public abstract interface ResultProvider<T#0 /* AR */, T#1 /* BR */> : kotlin/Any {
+
+      public abstract fun provideResult(): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* AB1 */, T#1 /* BB1 */> build(block: @kotlin/ExtensionFunctionType kotlin/Function1<BuilderScope<T#0>, T#1>): ResultProvider<T#0, T#1>
+
+      public final fun <T#0 /* AB2 */, T#1 /* BB2 */> build2(block: @kotlin/ExtensionFunctionType kotlin/Function1<BuilderScope<T#0>, T#1>): ResultProvider<T#0, T#1>
+
+      public final val result: ResultProvider<kotlin/Any, kotlin/Any>
+        public final get
+
+      public final val resultProvider: ResultProvider<kotlin/Any, kotlin/Any>
+        public final get
+    }
+  }
+}

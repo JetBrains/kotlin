@@ -1,0 +1,63 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:lib fileName:/A.kt
+    CLASS INTERFACE name:A signature:lib/A|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.A
+      FUN name:f signature:lib/A.f|f(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:lib.A, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:lib.A
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:B signature:lib/B|null[0] modality:FINAL visibility:public superTypes:[lib.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.B
+      CONSTRUCTOR signature:lib/B.<init>|<init>(){}[0] visibility:public <> () returnType:lib.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:lib/B|null[0] modality:FINAL visibility:public superTypes:[lib.A]'
+      FUN name:f signature:lib/B.f|f(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:lib.B, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun f (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in lib.A
+        $this: VALUE_PARAMETER name:<this> type:lib.B
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun f (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in lib.B'
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in lib.B.f' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:C signature:lib/C|null[0] modality:FINAL visibility:public superTypes:[lib.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.C
+      CONSTRUCTOR signature:lib/C.<init>|<init>(lib.A){}[0] visibility:public <> (x:lib.A) returnType:lib.C [primary]
+        VALUE_PARAMETER name:x index:0 type:lib.A
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:lib/C|null[0] modality:FINAL visibility:public superTypes:[lib.A]'
+      PROPERTY name:x signature:lib/C.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ lib/C.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:lib.A visibility:private [final]] ] type:lib.A visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: lib.A declared in lib.C.<init>' type=lib.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:lib/C.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:lib.C) returnType:lib.A
+          correspondingProperty: PROPERTY name:x signature:lib/C.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:lib.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): lib.A declared in lib.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ lib/C.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:lib.A visibility:private [final]] ] type:lib.A visibility:private [final]' type=lib.A origin=null
+                receiver: GET_VAR '<this>: lib.C declared in lib.C.<get-x>' type=lib.C origin=null
+      FUN DELEGATED_MEMBER name:f signature:lib/C.f|f(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:lib.C, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun f (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in lib.A
+        $this: VALUE_PARAMETER name:<this> type:lib.C
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun f (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in lib.C'
+            CALL 'public abstract fun f (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in lib.A' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ lib/C.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:lib.A visibility:private [final]] ] type:lib.A visibility:private [final]' type=lib.A origin=null
+                receiver: GET_VAR '<this>: lib.C declared in lib.C.f' type=lib.C origin=null
+              x: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in lib.C.f' type=<unbound IrClassSymbolImpl> origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/B.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null

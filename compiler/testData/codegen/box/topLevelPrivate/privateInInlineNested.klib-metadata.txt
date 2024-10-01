@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      internal final inline fun call(p: kotlin/Function0<kotlin/String>): kotlin/String
+
+      internal final inline fun inlineFun(): kotlin/String
+
+      private final fun test(): kotlin/String
+
+      private final val prop: kotlin/String /* = ... */
+        private final get
+    }
+  }
+}

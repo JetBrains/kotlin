@@ -1,0 +1,62 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NotEmptyList
+
+    private final object NotEmptyList : kotlin/collections/MutableList<kotlin/Any> {
+
+      private constructor()
+
+      public open fun add(element: kotlin/Any): kotlin/Boolean
+
+      public open fun add(index: kotlin/Int, element: kotlin/Any): kotlin/Unit
+
+      public open fun addAll(elements: kotlin/collections/Collection<kotlin/Any>): kotlin/Boolean
+
+      public open fun addAll(index: kotlin/Int, elements: kotlin/collections/Collection<kotlin/Any>): kotlin/Boolean
+
+      public open fun clear(): kotlin/Unit
+
+      public open operator fun contains(element: kotlin/Any): kotlin/Boolean
+
+      public open fun containsAll(elements: kotlin/collections/Collection<kotlin/Any>): kotlin/Boolean
+
+      public open operator fun get(index: kotlin/Int): kotlin/Any
+
+      public open fun indexOf(element: kotlin/Any): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/MutableIterator<kotlin/Any>
+
+      public open fun lastIndexOf(element: kotlin/Any): kotlin/Int
+
+      public open fun listIterator(): kotlin/collections/MutableListIterator<kotlin/Any>
+
+      public open fun listIterator(index: kotlin/Int): kotlin/collections/MutableListIterator<kotlin/Any>
+
+      public open fun remove(element: kotlin/Any): kotlin/Boolean
+
+      public open fun removeAll(elements: kotlin/collections/Collection<kotlin/Any>): kotlin/Boolean
+
+      public open fun removeAt(index: kotlin/Int): kotlin/Any
+
+      public open fun retainAll(elements: kotlin/collections/Collection<kotlin/Any>): kotlin/Boolean
+
+      public open operator fun set(index: kotlin/Int, element: kotlin/Any): kotlin/Any
+
+      public open fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/MutableList<kotlin/Any>
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

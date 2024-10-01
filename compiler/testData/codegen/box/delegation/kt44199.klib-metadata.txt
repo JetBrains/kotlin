@@ -1,0 +1,47 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Annotations
+    // class name: NameWrapperDelegate
+    // class name: WrapperDelegate
+
+    public final object Annotations : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val O: kotlin/String
+        public final /* non-default */ get
+
+      public final /* delegated */ val Second: kotlin/String
+        public final /* non-default */ get
+    }
+
+    public final class NameWrapperDelegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(build: kotlin/Function1<kotlin/String, T#0>)
+
+      public final operator inline fun provideDelegate(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): WrapperDelegate<T#0>
+
+      public final val build: kotlin/Function1<kotlin/String, T#0>
+        public final get
+    }
+
+    public final class WrapperDelegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(value: T#0)
+
+      public final operator inline fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+
+      public final val value: T#0
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

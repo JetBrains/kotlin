@@ -1,0 +1,103 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/receiverUsesOuterTVButReturnTypeIsProper.kt
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+      TYPE_PARAMETER name:CT index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<CT of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:r signature:/Buildee.r|{}r[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:r signature:[ /Buildee.r|{}r[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:r type:CT of <root>.Buildee? visibility:private] ] type:CT of <root>.Buildee? visibility:private
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-r> signature:/Buildee.r.<get-r>|<get-r>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>) returnType:CT of <root>.Buildee?
+          correspondingProperty: PROPERTY name:r signature:/Buildee.r|{}r[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-r> (): CT of <root>.Buildee? declared in <root>.Buildee'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r signature:[ /Buildee.r|{}r[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:r type:CT of <root>.Buildee? visibility:private] ] type:CT of <root>.Buildee? visibility:private' type=CT of <root>.Buildee? origin=null
+                receiver: GET_VAR '<this>: <root>.Buildee<CT of <root>.Buildee> declared in <root>.Buildee.<get-r>' type=<root>.Buildee<CT of <root>.Buildee> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-r> signature:/Buildee.r.<set-r>|<set-r>(1:0?){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>, <set-?>:CT of <root>.Buildee?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:r signature:/Buildee.r|{}r[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+          VALUE_PARAMETER name:<set-?> index:0 type:CT of <root>.Buildee?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r signature:[ /Buildee.r|{}r[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:r type:CT of <root>.Buildee? visibility:private] ] type:CT of <root>.Buildee? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Buildee<CT of <root>.Buildee> declared in <root>.Buildee.<set-r>' type=<root>.Buildee<CT of <root>.Buildee> origin=null
+              value: GET_VAR '<set-?>: CT of <root>.Buildee? declared in <root>.Buildee.<set-r>' type=CT of <root>.Buildee? origin=null
+      FUN name:yield signature:/Buildee.yield|yield(1:0){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>, arg:CT of <root>.Buildee) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+        VALUE_PARAMETER name:arg index:0 type:CT of <root>.Buildee
+        BLOCK_BODY
+          CALL 'public final fun <set-r> (<set-?>: CT of <root>.Buildee?): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR '<this>: <root>.Buildee<CT of <root>.Buildee> declared in <root>.Buildee.yield' type=<root>.Buildee<CT of <root>.Buildee> origin=null
+            <set-?>: GET_VAR 'arg: CT of <root>.Buildee declared in <root>.Buildee.yield' type=CT of <root>.Buildee origin=null
+    FUN name:build signature:/build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FT> (instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<FT of <root>.build>
+      TYPE_PARAMETER name:FT index:0 variance: signature:[ /build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructions index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<FT of <root>.build> origin=null
+            <1>: <root>.Buildee<FT of <root>.build>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<FT of <root>.build> origin=null
+              <class: CT>: FT of <root>.build
+            1: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> declared in <root>.build' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:Logger signature:/Logger|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Logger
+      CONSTRUCTOR signature:/Logger.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Logger [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Logger signature:/Logger|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:error signature:/Logger.error|error(){}[0] visibility:public modality:FINAL <> ($this:<root>.Logger) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Logger
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value=""
+    FUN name:logger signature:/logger|logger(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (arg:T of <root>.logger) returnType:<root>.Logger
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /logger|logger(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:arg index:0 type:T of <root>.logger
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun logger <T> (arg: T of <root>.logger): <root>.Logger declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Logger' type=<root>.Logger origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:b type:<root>.Buildee<<unbound IrClassSymbolImpl>> [val]
+          CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<unbound IrClassSymbolImpl>> origin=null
+            <FT>: <unbound IrClassSymbolImpl>
+            instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: CONST String type=<unbound IrClassSymbolImpl> value=""
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'public final fun yield (arg: CT of <root>.Buildee): <unbound IrClassSymbolImpl> declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: GET_VAR '$this$build: <root>.Buildee<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<root>.Buildee<<unbound IrClassSymbolImpl>> origin=null
+                          arg: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'public final fun error (): <unbound IrClassSymbolImpl> declared in <root>.Logger' type=<unbound IrClassSymbolImpl> origin=null
+                          $this: CALL 'public final fun logger <T> (arg: T of <root>.logger): <root>.Logger declared in <root>' type=<root>.Logger origin=null
+                            <T>: <root>.Buildee<<unbound IrClassSymbolImpl>>
+                            arg: GET_VAR '$this$build: <root>.Buildee<<unbound IrClassSymbolImpl>> declared in <root>.box.<anonymous>' type=<root>.Buildee<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+              CALL 'public final fun <get-r> (): CT of <root>.Buildee? declared in <root>.Buildee' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                $this: GET_VAR 'val b: <root>.Buildee<<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<root>.Buildee<<unbound IrClassSymbolImpl>> origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: GET_VAR 'val tmp0_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null

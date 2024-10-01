@@ -1,0 +1,312 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TestFn0
+    // class name: TestFn1
+    // class name: TestFn10
+    // class name: TestFn11
+    // class name: TestFn12
+    // class name: TestFn13
+    // class name: TestFn14
+    // class name: TestFn15
+    // class name: TestFn16
+    // class name: TestFn17
+    // class name: TestFn18
+    // class name: TestFn19
+    // class name: TestFn2
+    // class name: TestFn20
+    // class name: TestFn21
+    // class name: TestFn22
+    // class name: TestFn3
+    // class name: TestFn4
+    // class name: TestFn5
+    // class name: TestFn6
+    // class name: TestFn7
+    // class name: TestFn8
+    // class name: TestFn9
+    // class name: TestFnBase
+
+    public final object TestFn0 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn1 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn10 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn11 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn12 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn13 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn14 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn15 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn16 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn17 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn18 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn19 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn2 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn20 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn21 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn22 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn3 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn4 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn5 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn6 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn7 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn8 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public final object TestFn9 : TestFnBase {
+
+      private constructor()
+
+      public open fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public open fun testGood(x: kotlin/Any): kotlin/Unit
+    }
+
+    public abstract class TestFnBase : kotlin/Any {
+
+      public constructor(type: kotlin/String)
+
+      protected final fun assertIs(x: kotlin/Any, condition: kotlin/Boolean): kotlin/Unit
+
+      protected final fun assertIsNot(x: kotlin/Any, condition: kotlin/Boolean): kotlin/Unit
+
+      public abstract fun testBad(x: kotlin/Any): kotlin/Unit
+
+      public abstract fun testGood(x: kotlin/Any): kotlin/Unit
+
+      public final val type: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun fn0(): kotlin/Unit
+
+      public final fun fn1(x0: kotlin/Any): kotlin/Unit
+
+      public final fun fn10(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any): kotlin/Unit
+
+      public final fun fn11(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any): kotlin/Unit
+
+      public final fun fn12(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any): kotlin/Unit
+
+      public final fun fn13(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any): kotlin/Unit
+
+      public final fun fn14(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any): kotlin/Unit
+
+      public final fun fn15(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any): kotlin/Unit
+
+      public final fun fn16(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any): kotlin/Unit
+
+      public final fun fn17(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any, x16: kotlin/Any): kotlin/Unit
+
+      public final fun fn18(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any, x16: kotlin/Any, x17: kotlin/Any): kotlin/Unit
+
+      public final fun fn19(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any, x16: kotlin/Any, x17: kotlin/Any, x18: kotlin/Any): kotlin/Unit
+
+      public final fun fn2(x0: kotlin/Any, x1: kotlin/Any): kotlin/Unit
+
+      public final fun fn20(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any, x16: kotlin/Any, x17: kotlin/Any, x18: kotlin/Any, x19: kotlin/Any): kotlin/Unit
+
+      public final fun fn21(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any, x16: kotlin/Any, x17: kotlin/Any, x18: kotlin/Any, x19: kotlin/Any, x20: kotlin/Any): kotlin/Unit
+
+      public final fun fn22(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any, x9: kotlin/Any, x10: kotlin/Any, x11: kotlin/Any, x12: kotlin/Any, x13: kotlin/Any, x14: kotlin/Any, x15: kotlin/Any, x16: kotlin/Any, x17: kotlin/Any, x18: kotlin/Any, x19: kotlin/Any, x20: kotlin/Any, x21: kotlin/Any): kotlin/Unit
+
+      public final fun fn3(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any): kotlin/Unit
+
+      public final fun fn4(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any): kotlin/Unit
+
+      public final fun fn5(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any): kotlin/Unit
+
+      public final fun fn6(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any): kotlin/Unit
+
+      public final fun fn7(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any): kotlin/Unit
+
+      public final fun fn8(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any): kotlin/Unit
+
+      public final fun fn9(x0: kotlin/Any, x1: kotlin/Any, x2: kotlin/Any, x3: kotlin/Any, x4: kotlin/Any, x5: kotlin/Any, x6: kotlin/Any, x7: kotlin/Any, x8: kotlin/Any): kotlin/Unit
+
+      public final val fns: kotlin/Array<kotlin/Any>
+        public final get
+
+      public final val tests: kotlin/Array<TestFnBase>
+        public final get
+    }
+  }
+}

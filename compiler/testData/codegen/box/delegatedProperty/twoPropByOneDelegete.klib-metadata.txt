@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Delegate
+
+    public final class A : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public final fun foo(): kotlin/Int
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final /* delegated */ val prop: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    public final class Delegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(f: kotlin/Function1<T#0, kotlin/Int>)
+
+      public final operator fun getValue(t: T#0, p: kotlin/reflect/KProperty<*>): kotlin/Int
+
+      public final val f: kotlin/Function1<T#0, kotlin/Int>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val p: Delegate<A>
+        public final get
+    }
+  }
+}

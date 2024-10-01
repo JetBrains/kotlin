@@ -1,0 +1,116 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:WeakReference signature:test/WeakReference|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.WeakReference<T of test.WeakReference>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/WeakReference|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:test/WeakReference.<init>|<init>(1:0){}[0] visibility:public <> (value:T of test.WeakReference) returnType:test.WeakReference<T of test.WeakReference> [primary]
+        VALUE_PARAMETER name:value index:0 type:T of test.WeakReference
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:WeakReference signature:test/WeakReference|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:test/WeakReference.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/WeakReference.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.WeakReference visibility:private [final]] ] type:T of test.WeakReference visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: T of test.WeakReference declared in test.WeakReference.<init>' type=T of test.WeakReference origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:test/WeakReference.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:test.WeakReference<T of test.WeakReference>) returnType:T of test.WeakReference
+          correspondingProperty: PROPERTY name:value signature:test/WeakReference.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.WeakReference<T of test.WeakReference>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): T of test.WeakReference declared in test.WeakReference'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ test/WeakReference.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:T of test.WeakReference visibility:private [final]] ] type:T of test.WeakReference visibility:private [final]' type=T of test.WeakReference origin=null
+                receiver: GET_VAR '<this>: test.WeakReference<T of test.WeakReference> declared in test.WeakReference.<get-value>' type=test.WeakReference<T of test.WeakReference> origin=null
+    FUN name:getOrPutWeak signature:test/getOrPutWeak|getOrPutWeak@kotlin.collections.MutableMap<0:0,test.WeakReference<0:1>>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <K, V> ($receiver:<unbound IrClassSymbolImpl><K of test.getOrPutWeak, test.WeakReference<V of test.getOrPutWeak>>, key:K of test.getOrPutWeak, defaultValue:<unbound IrClassSymbolImpl><V of test.getOrPutWeak>) returnType:V of test.getOrPutWeak [inline]
+      TYPE_PARAMETER name:K index:0 variance: signature:[ test/getOrPutWeak|getOrPutWeak@kotlin.collections.MutableMap<0:0,test.WeakReference<0:1>>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ test/getOrPutWeak|getOrPutWeak@kotlin.collections.MutableMap<0:0,test.WeakReference<0:1>>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><K of test.getOrPutWeak, test.WeakReference<V of test.getOrPutWeak>>
+      VALUE_PARAMETER name:key index:0 type:K of test.getOrPutWeak
+      VALUE_PARAMETER name:defaultValue index:1 type:<unbound IrClassSymbolImpl><V of test.getOrPutWeak>
+      BLOCK_BODY
+        VAR name:value type:V of test.getOrPutWeak? [val]
+          BLOCK type=V of test.getOrPutWeak? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:test.WeakReference<V of test.getOrPutWeak>? [val]
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test.WeakReference<V of test.getOrPutWeak>? origin=null
+                $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><K of test.getOrPutWeak, test.WeakReference<V of test.getOrPutWeak>> declared in test.getOrPutWeak' type=<unbound IrClassSymbolImpl><K of test.getOrPutWeak, test.WeakReference<V of test.getOrPutWeak>> origin=null
+                1: GET_VAR 'key: K of test.getOrPutWeak declared in test.getOrPutWeak' type=K of test.getOrPutWeak origin=null
+            WHEN type=V of test.getOrPutWeak? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: test.WeakReference<V of test.getOrPutWeak>? [val] declared in test.getOrPutWeak' type=test.WeakReference<V of test.getOrPutWeak>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun <get-value> (): T of test.WeakReference declared in test.WeakReference' type=V of test.getOrPutWeak origin=GET_PROPERTY
+                  $this: GET_VAR 'val tmp0_safe_receiver: test.WeakReference<V of test.getOrPutWeak>? [val] declared in test.getOrPutWeak' type=test.WeakReference<V of test.getOrPutWeak>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getOrPutWeak <K, V> (key: K of test.getOrPutWeak, defaultValue: <unbound IrClassSymbolImpl><V of test.getOrPutWeak>): V of test.getOrPutWeak [inline] declared in test'
+          WHEN type=V of test.getOrPutWeak origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val value: V of test.getOrPutWeak? [val] declared in test.getOrPutWeak' type=V of test.getOrPutWeak? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: BLOCK type=V of test.getOrPutWeak origin=null
+                VAR name:answer type:V of test.getOrPutWeak [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=V of test.getOrPutWeak origin=INVOKE
+                    $this: GET_VAR 'defaultValue: <unbound IrClassSymbolImpl><V of test.getOrPutWeak> declared in test.getOrPutWeak' type=<unbound IrClassSymbolImpl><V of test.getOrPutWeak> origin=VARIABLE_AS_FUNCTION
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test.WeakReference<V of test.getOrPutWeak>? origin=null
+                    $this: GET_VAR '<this>: <unbound IrClassSymbolImpl><K of test.getOrPutWeak, test.WeakReference<V of test.getOrPutWeak>> declared in test.getOrPutWeak' type=<unbound IrClassSymbolImpl><K of test.getOrPutWeak, test.WeakReference<V of test.getOrPutWeak>> origin=null
+                    1: GET_VAR 'key: K of test.getOrPutWeak declared in test.getOrPutWeak' type=K of test.getOrPutWeak origin=null
+                    2: CONSTRUCTOR_CALL 'public constructor <init> (value: T of test.WeakReference) [primary] declared in test.WeakReference' type=test.WeakReference<V of test.getOrPutWeak> origin=null
+                      <class: T>: V of test.getOrPutWeak
+                      value: GET_VAR 'val answer: V of test.getOrPutWeak [val] declared in test.getOrPutWeak' type=V of test.getOrPutWeak origin=null
+                GET_VAR 'val answer: V of test.getOrPutWeak [val] declared in test.getOrPutWeak' type=V of test.getOrPutWeak origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: BLOCK type={V of test.getOrPutWeak & Any} origin=null
+                GET_VAR 'val value: V of test.getOrPutWeak? [val] declared in test.getOrPutWeak' type=V of test.getOrPutWeak? origin=null
+  FILE fqName:<root> fileName:/2.kt
+    CLASS CLASS name:LabelHolder signature:/LabelHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LabelHolder
+      CONSTRUCTOR signature:/LabelHolder.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.LabelHolder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LabelHolder signature:/LabelHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:/LabelHolder.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.LabelHolder) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.LabelHolder
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.LabelHolder'
+            CALL 'private final fun <get-label> (): <unbound IrClassSymbolImpl> declared in <root>.LabelHolder' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.LabelHolder declared in <root>.LabelHolder.test' type=<root>.LabelHolder origin=null
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="hello"
+      PROPERTY name:labels signature:/LabelHolder.labels|{}labels[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:labels signature:[ /LabelHolder.labels|{}labels[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:labels type:kotlin.collections.HashMap<kotlin.String?, test.WeakReference<kotlin.String>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              <2>: test.WeakReference<<unbound IrClassSymbolImpl>>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-labels> signature:/LabelHolder.labels.<get-labels>|<get-labels>(){}[0] visibility:private modality:FINAL <> ($this:<root>.LabelHolder) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>>
+          correspondingProperty: PROPERTY name:labels signature:/LabelHolder.labels|{}labels[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LabelHolder
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-labels> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> declared in <root>.LabelHolder'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:labels signature:[ /LabelHolder.labels|{}labels[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:labels type:kotlin.collections.HashMap<kotlin.String?, test.WeakReference<kotlin.String>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> origin=null
+                receiver: GET_VAR '<this>: <root>.LabelHolder declared in <root>.LabelHolder.<get-labels>' type=<root>.LabelHolder origin=null
+      PROPERTY name:label signature:/LabelHolder.label|@kotlin.String?{}label[0] visibility:private modality:FINAL [val]
+        FUN name:<get-label> signature:/LabelHolder.label.<get-label>|<get-label>@kotlin.String?(){}[0] visibility:private modality:FINAL <> ($this:<root>.LabelHolder, $receiver:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:label signature:/LabelHolder.label|@kotlin.String?{}label[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LabelHolder
+          $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-label> (): <unbound IrClassSymbolImpl> declared in <root>.LabelHolder'
+              CALL 'public final fun getOrPutWeak <K, V> (key: K of test.getOrPutWeak, defaultValue: <unbound IrClassSymbolImpl><V of test.getOrPutWeak>): V of test.getOrPutWeak [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                <K>: <unbound IrClassSymbolImpl>?
+                <V>: <unbound IrClassSymbolImpl>
+                $receiver: CALL 'private final fun <get-labels> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> declared in <root>.LabelHolder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?, test.WeakReference<<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.LabelHolder declared in <root>.LabelHolder.<get-label>' type=<root>.LabelHolder origin=null
+                key: GET_VAR '<this>: <unbound IrClassSymbolImpl>? declared in <root>.LabelHolder.<get-label>' type=<unbound IrClassSymbolImpl>? origin=null
+                defaultValue: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                    BLOCK_BODY
+                      RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.LabelHolder.<get-label>'
+                        CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.LabelHolder' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.LabelHolder' type=<root>.LabelHolder origin=null

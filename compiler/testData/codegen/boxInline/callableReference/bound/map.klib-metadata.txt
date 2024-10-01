@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor(z: kotlin/String)
+
+      public final fun map(s: kotlin/String): kotlin/String
+
+      public final val z: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun stub(f: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+  }
+}

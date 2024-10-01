@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Game
+    // class name: Game.Companion
+
+    public final enum class Game : kotlin/Enum<Game> {
+
+      private constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      ROCK,
+
+      PAPER,
+
+      SCISSORS,
+
+      // has Enum.entries
+    }
+
+    public final companion object Game.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): Game
+
+      public final val bar: Game
+        public final get
+
+      public final val scissors: Game
+        public final get
+
+      public final val values2: kotlin/Array<Game>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

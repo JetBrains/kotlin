@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt47449.kt
+    TYPEALIAS name:EmptyFunctionResult signature:/EmptyFunctionResult|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl><T of <root>.EmptyFunctionResult>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /EmptyFunctionResult|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    TYPEALIAS name:LoggingFunctionType signature:/LoggingFunctionType|null[0] visibility:public expandedType:<unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, T of <root>.LoggingFunctionType>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /LoggingFunctionType|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun tryAndLog <T> (title: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl>, logger: <unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *>, throwableAction: <unbound IrClassSymbolImpl><T of <root>.tryAndLog>): T of <root>.tryAndLog? [inline] declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            throwableAction: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  THROW type=<unbound IrClassSymbolImpl>
+                    CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:tryAndLog signature:/tryAndLog|tryAndLog(kotlin.String;kotlin.String;kotlin.Function3<kotlin.String,kotlin.String,kotlin.Throwable?,*>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (title:<unbound IrClassSymbolImpl>, message:<unbound IrClassSymbolImpl>, logger:<unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *>, throwableAction:<unbound IrClassSymbolImpl><T of <root>.tryAndLog>) returnType:T of <root>.tryAndLog? [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /tryAndLog|tryAndLog(kotlin.String;kotlin.String;kotlin.Function3<kotlin.String,kotlin.String,kotlin.Throwable?,*>;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:title index:0 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      VALUE_PARAMETER name:message index:1 type:<unbound IrClassSymbolImpl>
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      VALUE_PARAMETER name:logger index:2 type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *>
+        EXPRESSION_BODY
+          FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            $this: GET_OBJECT 'CLASS OBJECT name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<root>.LLogger]' type=<root>.L
+      VALUE_PARAMETER name:throwableAction index:3 type:<unbound IrClassSymbolImpl><T of <root>.tryAndLog>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun tryAndLog <T> (title: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl>, logger: <unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *>, throwableAction: <unbound IrClassSymbolImpl><T of <root>.tryAndLog>): T of <root>.tryAndLog? [inline] declared in <root>'
+          TRY type=T of <root>.tryAndLog?
+            try: BLOCK type=T of <root>.tryAndLog origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.tryAndLog origin=INVOKE
+                $this: GET_VAR 'throwableAction: <unbound IrClassSymbolImpl><T of <root>.tryAndLog> declared in <root>.tryAndLog' type=<unbound IrClassSymbolImpl><T of <root>.tryAndLog> origin=VARIABLE_AS_FUNCTION
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.tryAndLog
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+                    $this: GET_VAR 'logger: <unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *> declared in <root>.tryAndLog' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *> origin=VARIABLE_AS_FUNCTION
+                    1: GET_VAR 'title: <unbound IrClassSymbolImpl> declared in <root>.tryAndLog' type=<unbound IrClassSymbolImpl> origin=null
+                    2: GET_VAR 'message: <unbound IrClassSymbolImpl> declared in <root>.tryAndLog' type=<unbound IrClassSymbolImpl> origin=null
+                    3: GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.tryAndLog' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun tryAndLog <T> (title: <unbound IrClassSymbolImpl>, message: <unbound IrClassSymbolImpl>, logger: <unbound IrClassSymbolImpl><@[<unbound>(1 = "tag")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "message")] <unbound IrClassSymbolImpl>, @[<unbound>(1 = "throwable")] <unbound IrClassSymbolImpl>?, *>, throwableAction: <unbound IrClassSymbolImpl><T of <root>.tryAndLog>): T of <root>.tryAndLog? [inline] declared in <root>'
+                  CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS CLASS name:LLogger signature:/LLogger|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LLogger
+      CONSTRUCTOR signature:/LLogger.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.LLogger [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LLogger signature:/LLogger|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:error signature:/LLogger.error|error(kotlin.String;kotlin.String;kotlin.Throwable?){}[0] visibility:public modality:FINAL <> ($this:<root>.LLogger, tag:<unbound IrClassSymbolImpl>, message:<unbound IrClassSymbolImpl>, exception:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.LLogger
+        VALUE_PARAMETER name:tag index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:message index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:exception index:2 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+    CLASS OBJECT name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<root>.LLogger]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L
+      CONSTRUCTOR signature:/L.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.L [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.LLogger'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<root>.LLogger]'

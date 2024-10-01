@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: IC1
+    // class name: IC2
+
+    public final class A : IC1, IC2 {
+
+      public constructor()
+
+      public open operator fun component1(): kotlin/String
+
+      public open operator fun component2(): kotlin/String
+    }
+
+    public abstract interface IC1 : kotlin/Any {
+
+      public abstract operator fun component1(): kotlin/String
+    }
+
+    public abstract interface IC2 : kotlin/Any {
+
+      public abstract operator fun component2(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(x: kotlin/Any): kotlin/String
+    }
+  }
+}

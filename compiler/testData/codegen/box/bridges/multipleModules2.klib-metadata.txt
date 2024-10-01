@@ -1,0 +1,65 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Tag
+    // class name: TagBoolean
+    // class name: TagBoolean.False
+    // class name: TagBoolean.True
+
+    public sealed class Tag : kotlin/Any {
+
+      protected constructor()
+
+      public abstract fun value(): kotlin/Any
+
+      // sealed subclass: TagBoolean
+    }
+
+    public sealed class TagBoolean : Tag {
+
+      protected constructor()
+
+      public abstract fun value(): kotlin/String
+
+      // nested class: True
+
+      // nested class: False
+
+      // sealed subclass: TagBoolean.False
+
+      // sealed subclass: TagBoolean.True
+    }
+
+    public final object TagBoolean.False : TagBoolean {
+
+      private constructor()
+
+      public open fun value(): kotlin/String
+    }
+
+    public final object TagBoolean.True : TagBoolean {
+
+      private constructor()
+
+      public open fun value(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> invoke(f: kotlin/Function1<T#0?, T#0> /* = F^<T#0> */): T#0
+
+      public typealias F<T#0 /* X */> = kotlin/Function1<T#0?, T#0> /* = kotlin/Function1<T#0?, T#0> */
+    }
+  }
+}

@@ -1,0 +1,52 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Ann
+    // class name: Class
+    // class name: Class.Obj
+
+    public final annotation class Ann : kotlin/Annotation {
+
+      public constructor(p: kotlin/String)
+
+      public final val p: kotlin/String
+        public final get
+    }
+
+    public final class Class : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Obj
+    }
+
+    public final object Class.Obj : kotlin/Any {
+
+      private constructor()
+
+      public final const val Const: kotlin/String /* = "const" */
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @Ann(p = "const+")
+      public final fun f(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Broken
+    // class name: Works
+
+    public final class Broken : kotlin/Function0<kotlin/String> {
+
+      public constructor()
+
+      public open operator fun invoke(): kotlin/String
+    }
+
+    public final class Works : kotlin/Function0<kotlin/Any> {
+
+      public constructor()
+
+      public open operator fun invoke(): kotlin/Any
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

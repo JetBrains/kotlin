@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt49526a.kt
+    FUN name:id signature:/id|id(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.id) returnType:T of <root>.id
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /id|id(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.id
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>'
+          GET_VAR 'x: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+    FUN name:intersect signature:/intersect|intersect(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.intersect, y:T of <root>.intersect) returnType:T of <root>.intersect
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /intersect|intersect(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.intersect
+      VALUE_PARAMETER name:y index:1 type:T of <root>.intersect
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intersect <T> (x: T of <root>.intersect, y: T of <root>.intersect): T of <root>.intersect declared in <root>'
+          GET_VAR 'x: T of <root>.intersect declared in <root>.intersect' type=T of <root>.intersect origin=null
+    CLASS INTERFACE name:I1 signature:/I1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
+    CLASS INTERFACE name:I2 signature:/I2|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2
+    CLASS CLASS name:C1 signature:/C1|null[0] modality:FINAL visibility:public superTypes:[<root>.I1; <root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1
+      CONSTRUCTOR signature:/C1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 signature:/C1|null[0] modality:FINAL visibility:public superTypes:[<root>.I1; <root>.I2]'
+      FUN name:toString signature:/C1.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.C1) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C1
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.C1'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:C2 signature:/C2|null[0] modality:FINAL visibility:public superTypes:[<root>.I1; <root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2
+      CONSTRUCTOR signature:/C2.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 signature:/C2|null[0] modality:FINAL visibility:public superTypes:[<root>.I1; <root>.I2]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<root>.I1 origin=IMPLICIT_CAST typeOperand=<root>.I1
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                $receiver: CALL 'public final fun intersect <T> (x: T of <root>.intersect, y: T of <root>.intersect): T of <root>.intersect declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C1' type=<root>.C1 origin=null
+                  y: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C2' type=<root>.C2 origin=null
+                1: FUNCTION_REFERENCE 'public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  <T>: <unbound IrClassSymbolImpl>

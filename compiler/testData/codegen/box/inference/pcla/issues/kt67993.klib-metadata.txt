@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buildee
+    // class name: Klass
+
+    public final class Buildee<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor()
+
+      public final fun consume(arg: T#0): kotlin/Unit
+
+      public final fun produce(): T#0
+
+      private final lateinit var variable: T#0
+        private final get
+        private final set
+    }
+
+    public final class Klass : kotlin/Any {
+
+      public constructor()
+
+      public final val buildee: Buildee<kotlin/String>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Any> build(instructions: @kotlin/ExtensionFunctionType kotlin/Function1<Buildee<T#0>, kotlin/Unit>): Buildee<T#0>
+    }
+  }
+}

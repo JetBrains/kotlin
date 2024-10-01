@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test1(holder: test/Holder, p: kotlin/Int): kotlin/String
+
+      public final inline fun test2(holder: test/Holder, l: kotlin/Function1<@kotlin/ParameterName(name = "s") kotlin/Int, kotlin/Unit>): kotlin/String
+
+      public final val FINALLY_CHAIN: kotlin/String /* = ... */
+        public final get
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Holder
+
+    public final class test/Holder : kotlin/Any {
+
+      public constructor()
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final inline fun <T#0 /* R */> doCall(block: kotlin/Function0<T#0>, h: test/Holder): T#0
+    }
+  }
+}

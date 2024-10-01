@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CoroutineScope
+    // class name: ReceiveChannel
+
+    public abstract interface CoroutineScope : kotlin/Any {
+    }
+
+    public abstract interface ReceiveChannel<out T#0 /* E */> : kotlin/Any {
+
+      public abstract fun cancel(): kotlin/Unit
+
+      public abstract fun receive(): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builder(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final suspend fun delay(i: kotlin/Int): kotlin/Unit
+
+      public final suspend fun test(): kotlin/Unit
+
+      public final fun ticker(delayMillis: kotlin/Long, initialDelayMillis: kotlin/Long /* = ... */): ReceiveChannel<kotlin/Unit>
+
+      public final suspend fun <T#0 /* T */> withTimeoutOrNull(timeMillis: kotlin/Long, block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<CoroutineScope, kotlin/coroutines/Continuation<T#0>, kotlin/Any?>): T#0?
+    }
+  }
+}

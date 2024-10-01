@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ val memberLazyVal: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ val topLevelLazyVal: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+}

@@ -1,0 +1,47 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/finalMethod.kt
+    CLASS INTERFACE name:I1 signature:/I1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1<T of <root>.I1>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /I1|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:defaultX signature:/I1.defaultX|defaultX(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I1<T of <root>.I1>) returnType:T of <root>.I1
+        $this: VALUE_PARAMETER name:<this> type:<root>.I1<T of <root>.I1>
+      FUN name:foo signature:/I1.foo|foo(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I1<T of <root>.I1>, x:T of <root>.I1) returnType:T of <root>.I1
+        $this: VALUE_PARAMETER name:<this> type:<root>.I1<T of <root>.I1>
+        VALUE_PARAMETER name:x index:0 type:T of <root>.I1
+          EXPRESSION_BODY
+            CALL 'public abstract fun defaultX (): T of <root>.I1 declared in <root>.I1' type=T of <root>.I1 origin=null
+              $this: GET_VAR '<this>: <root>.I1<T of <root>.I1> declared in <root>.I1.foo' type=<root>.I1<T of <root>.I1> origin=null
+    CLASS INTERFACE name:I2 signature:/I2|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I1<<unbound IrClassSymbolImpl>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.I2]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<root>.I2]'
+      FUN name:defaultX signature:/C.defaultX|defaultX(){}[0] visibility:public modality:OPEN <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun defaultX (): <unbound IrClassSymbolImpl> declared in <root>.C'
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+      FUN name:foo signature:/C.foo|foo(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:<root>.C, x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.C'
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.C.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:c type:<root>.I2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val c: <root>.I2 [val] declared in <root>.box' type=<root>.I2 origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

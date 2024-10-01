@@ -1,0 +1,48 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A2
+    // class name: B
+
+    public open class A2 : a/A {
+
+      public constructor()
+    }
+
+    public final class B : A2 {
+
+      public constructor()
+
+      public final fun test(): kotlin/Function0<kotlin/String>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: a
+
+    // class name: a/A
+
+    public open class a/A : kotlin/Any {
+
+      public constructor()
+
+      public final fun fk(): kotlin/Function0<kotlin/String>
+
+      protected final var vk: kotlin/String
+        protected final get
+        private final /* non-default */ set(value: kotlin/String)
+
+      protected final var vo: kotlin/String
+        protected final get
+        private final /* non-default */ set(value: kotlin/String)
+    }
+  }
+}

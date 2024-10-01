@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SuspendRunnable
+
+    public abstract fun interface SuspendRunnable : kotlin/Any {
+
+      public abstract suspend fun invoke(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(s: SuspendRunnable): kotlin/Unit
+
+      public final fun test(f: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Container
+
+    public final class test/Container<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* X */> createOtherX(): kotlin/reflect/KTypeParameter
+
+      public final fun <T#0 /* X */> createX(): kotlin/reflect/KTypeParameter
+
+      public final val isJS: kotlin/Boolean
+        public final get
+    }
+  }
+}

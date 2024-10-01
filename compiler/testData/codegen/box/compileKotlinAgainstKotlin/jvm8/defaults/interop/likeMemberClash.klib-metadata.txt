@@ -1,0 +1,48 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Check
+    // class name: CheckClass
+    // class name: SubCheck
+
+    public abstract interface Check : kotlin/Any {
+
+      public open fun test(): kotlin/String
+    }
+
+    public open class CheckClass : Check {
+
+      public constructor()
+    }
+
+    public abstract interface SubCheck : Check {
+
+      public open fun test(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SubCheckClass
+
+    public final class SubCheckClass : CheckClass, SubCheck {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

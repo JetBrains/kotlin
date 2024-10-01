@@ -1,0 +1,34 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/syntheticAccessor.kt
+    PROPERTY name:prop signature:[ File '/syntheticAccessor.kt' <- test/prop|{}prop[0] ] visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:prop signature:[ [ File '/syntheticAccessor.kt' <- test/prop|{}prop[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:[ File '/syntheticAccessor.kt' <- test/prop.<get-prop>|<get-prop>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:prop signature:[ File '/syntheticAccessor.kt' <- test/prop|{}prop[0] ] visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ [ File '/syntheticAccessor.kt' <- test/prop|{}prop[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:eval signature:test/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (fn:<unbound IrClassSymbolImpl><T of test.eval>) returnType:T of test.eval
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><T of test.eval>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of test.eval>): T of test.eval declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.eval origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of test.eval> declared in test.eval' type=<unbound IrClassSymbolImpl><T of test.eval> origin=VARIABLE_AS_FUNCTION
+    FUN name:test signature:[ File '/syntheticAccessor.kt' <- test/test|test(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun test (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of test.eval>): T of test.eval declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in test.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'private final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      1: CALL 'private final fun test (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null

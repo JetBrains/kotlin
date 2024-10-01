@@ -1,0 +1,199 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt38540.kt
+    CLASS ENUM_CLASS name:Node signature:/Node|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Node>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Node
+      CONSTRUCTOR signature:/Node.<init>|<init>(kotlin.Boolean;kotlin.collections.Set<Node>;kotlin.Boolean){}[0] visibility:private <> (external:<unbound IrClassSymbolImpl>, dependsOn:<unbound IrClassSymbolImpl><<root>.Node>, required:<unbound IrClassSymbolImpl>) returnType:<root>.Node [primary]
+        VALUE_PARAMETER name:external index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:dependsOn index:1 type:<unbound IrClassSymbolImpl><<root>.Node>
+        VALUE_PARAMETER name:required index:2 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.Node
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Node signature:/Node|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Node>]'
+      PROPERTY name:external signature:/Node.external|{}external[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:external signature:[ /Node.external|{}external[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:external type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'external: <unbound IrClassSymbolImpl> declared in <root>.Node.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-external> signature:/Node.external.<get-external>|<get-external>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Node) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:external signature:/Node.external|{}external[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Node
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-external> (): <unbound IrClassSymbolImpl> declared in <root>.Node'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:external signature:[ /Node.external|{}external[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:external type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Node declared in <root>.Node.<get-external>' type=<root>.Node origin=null
+      PROPERTY name:dependsOn signature:/Node.dependsOn|{}dependsOn[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:dependsOn signature:[ /Node.dependsOn|{}dependsOn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:external type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Node> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'dependsOn: <unbound IrClassSymbolImpl><<root>.Node> declared in <root>.Node.<init>' type=<unbound IrClassSymbolImpl><<root>.Node> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dependsOn> signature:/Node.dependsOn.<get-dependsOn>|<get-dependsOn>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Node) returnType:<unbound IrClassSymbolImpl><<root>.Node>
+          correspondingProperty: PROPERTY name:dependsOn signature:/Node.dependsOn|{}dependsOn[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Node
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-dependsOn> (): <unbound IrClassSymbolImpl><<root>.Node> declared in <root>.Node'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dependsOn signature:[ /Node.dependsOn|{}dependsOn[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:external type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.Node> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+                receiver: GET_VAR '<this>: <root>.Node declared in <root>.Node.<get-dependsOn>' type=<root>.Node origin=null
+      PROPERTY name:required signature:/Node.required|{}required[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:required signature:[ /Node.required|{}required[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:external type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'required: <unbound IrClassSymbolImpl> declared in <root>.Node.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-required> signature:/Node.required.<get-required>|<get-required>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Node) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:required signature:/Node.required|{}required[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Node
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-required> (): <unbound IrClassSymbolImpl> declared in <root>.Node'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:required signature:[ /Node.required|{}required[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:external type:kotlin.Boolean visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Node declared in <root>.Node.<get-required>' type=<root>.Node origin=null
+      ENUM_ENTRY name:A signature:/Node.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:B signature:/Node.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:C signature:/Node.C|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:D signature:/Node.D|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:E signature:/Node.E|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:F signature:/Node.F|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:G signature:/Node.G|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+      ENUM_ENTRY name:H signature:/Node.H|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:I signature:/Node.I|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:J signature:/Node.J|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:K signature:/Node.K|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+              1: GET_ENUM 'ENUM_ENTRY name:I signature:/Node.I|null[0]' type=<root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:L signature:/Node.L|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+              1: GET_ENUM 'ENUM_ENTRY name:I signature:/Node.I|null[0]' type=<root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:M signature:/Node.M|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+              1: GET_ENUM 'ENUM_ENTRY name:I signature:/Node.I|null[0]' type=<root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:N signature:/Node.N|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:O signature:/Node.O|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:AG signature:/Node.AG|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      ENUM_ENTRY name:FIELD_REPORT signature:/Node.FIELD_REPORT|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (external: <unbound IrClassSymbolImpl>, dependsOn: <unbound IrClassSymbolImpl><<root>.Node>, required: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Node'
+            external: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            dependsOn: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.Node> origin=null
+              <1>: <root>.Node
+              1: VARARG type=<unbound IrClassSymbolImpl><out <root>.Node> varargElementType=<root>.Node
+                GET_ENUM 'ENUM_ENTRY name:AG signature:/Node.AG|null[0]' type=<root>.Node
+                GET_ENUM 'ENUM_ENTRY name:O signature:/Node.O|null[0]' type=<root>.Node
+                GET_ENUM 'ENUM_ENTRY name:J signature:/Node.J|null[0]' type=<root>.Node
+            required: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/Node.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Node>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/Node.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Node
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Node.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/Node.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.Node>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/Node.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-dependsOn> (): <unbound IrClassSymbolImpl><<root>.Node> declared in <root>.Node' type=<unbound IrClassSymbolImpl><<root>.Node> origin=GET_PROPERTY
+              $this: GET_ENUM 'ENUM_ENTRY name:FIELD_REPORT signature:/Node.FIELD_REPORT|null[0]' type=<root>.Node
+            1: GET_ENUM 'ENUM_ENTRY name:AG signature:/Node.AG|null[0]' type=<root>.Node
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-dependsOn> (): <unbound IrClassSymbolImpl><<root>.Node> declared in <root>.Node' type=<unbound IrClassSymbolImpl><<root>.Node> origin=GET_PROPERTY
+              $this: GET_ENUM 'ENUM_ENTRY name:FIELD_REPORT signature:/Node.FIELD_REPORT|null[0]' type=<root>.Node
+            1: GET_ENUM 'ENUM_ENTRY name:O signature:/Node.O|null[0]' type=<root>.Node
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-dependsOn> (): <unbound IrClassSymbolImpl><<root>.Node> declared in <root>.Node' type=<unbound IrClassSymbolImpl><<root>.Node> origin=GET_PROPERTY
+              $this: GET_ENUM 'ENUM_ENTRY name:FIELD_REPORT signature:/Node.FIELD_REPORT|null[0]' type=<root>.Node
+            1: GET_ENUM 'ENUM_ENTRY name:J signature:/Node.J|null[0]' type=<root>.Node
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

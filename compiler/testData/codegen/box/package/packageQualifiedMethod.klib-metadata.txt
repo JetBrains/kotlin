@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: Foo
+
+    package {
+
+      public final fun bar(): kotlin/Int
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

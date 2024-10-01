@@ -1,0 +1,195 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:As fileName:/generalAccess.kt
+    PROPERTY name:staticProperty signature:As/staticProperty|{}staticProperty[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:staticProperty signature:[ As/staticProperty|{}staticProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="1"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-staticProperty> signature:As/staticProperty.<get-staticProperty>|<get-staticProperty>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:staticProperty signature:As/staticProperty|{}staticProperty[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-staticProperty> (): <unbound IrClassSymbolImpl> declared in As'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:staticProperty signature:[ As/staticProperty|{}staticProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:staticExt signature:As/staticExt|@kotlin.String{}staticExt[0] visibility:public modality:FINAL [val]
+      FUN name:<get-staticExt> signature:As/staticExt.<get-staticExt>|<get-staticExt>@kotlin.String(){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:staticExt signature:As/staticExt|@kotlin.String{}staticExt[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-staticExt> (): <unbound IrClassSymbolImpl> declared in As'
+            CONST String type=<unbound IrClassSymbolImpl> value="1"
+    CLASS CLASS name:A signature:As/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:As.A
+      CONSTRUCTOR signature:As/A.<init>|<init>(kotlin.String){}[0] visibility:public <> (init:<unbound IrClassSymbolImpl>) returnType:As.A [primary]
+        VALUE_PARAMETER name:init index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:As/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:init signature:As/A.init|{}init[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:init signature:[ As/A.init|{}init[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'init: <unbound IrClassSymbolImpl> declared in As.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-init> signature:As/A.init.<get-init>|<get-init>(){}[0] visibility:public modality:FINAL <> ($this:As.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:init signature:As/A.init|{}init[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-init> (): <unbound IrClassSymbolImpl> declared in As.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:init signature:[ As/A.init|{}init[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: As.A declared in As.A.<get-init>' type=As.A origin=null
+      PROPERTY name:property signature:As/A.property|{}property[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:property signature:[ As/A.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-init> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: As.A declared in As.A' type=As.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> signature:As/A.property.<get-property>|<get-property>(){}[0] visibility:public modality:OPEN <> ($this:As.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:As/A.property|{}property[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property signature:[ As/A.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: As.A declared in As.A.<get-property>' type=As.A origin=null
+      PROPERTY name:privateProperty signature:As/A.privateProperty|{}privateProperty[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:privateProperty signature:[ As/A.privateProperty|{}privateProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-init> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: As.A declared in As.A' type=As.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privateProperty> signature:As/A.privateProperty.<get-privateProperty>|<get-privateProperty>(){}[0] visibility:private modality:FINAL <> ($this:As.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:privateProperty signature:As/A.privateProperty|{}privateProperty[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-privateProperty> (): <unbound IrClassSymbolImpl> declared in As.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privateProperty signature:[ As/A.privateProperty|{}privateProperty[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: As.A declared in As.A.<get-privateProperty>' type=As.A origin=null
+      PROPERTY name:ext signature:As/A.ext|@kotlin.String{}ext[0] visibility:public modality:FINAL [val]
+        FUN name:<get-ext> signature:As/A.ext.<get-ext>|<get-ext>@kotlin.String(){}[0] visibility:public modality:FINAL <> ($this:As.A, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:ext signature:As/A.ext|@kotlin.String{}ext[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ext> (): <unbound IrClassSymbolImpl> declared in As.A'
+              CONST String type=<unbound IrClassSymbolImpl> value="1"
+      PROPERTY name:myInc signature:As/A.myInc|@kotlin.Int{}myInc[0] visibility:public modality:FINAL [val]
+        FUN name:<get-myInc> signature:As/A.myInc.<get-myInc>|<get-myInc>@kotlin.Int(){}[0] visibility:public modality:FINAL <> ($this:As.A, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:myInc signature:As/A.myInc|@kotlin.Int{}myInc[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-myInc> (): <unbound IrClassSymbolImpl> declared in As.A'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in As.A.<get-myInc>' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:getPrivate signature:As/A.getPrivate|getPrivate(){}[0] visibility:public modality:OPEN <> ($this:As.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:As.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getPrivate (): <unbound IrClassSymbolImpl> declared in As.A'
+            CALL 'private final fun <get-privateProperty> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: As.A declared in As.A.getPrivate' type=As.A origin=null
+      FUN name:getExt signature:As/A.getExt|getExt(){}[0] visibility:public modality:OPEN <> ($this:As.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:As.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun getExt (): <unbound IrClassSymbolImpl> declared in As.A'
+            CALL 'public final fun <get-ext> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: As.A declared in As.A.getExt' type=As.A origin=null
+              $receiver: CONST String type=<unbound IrClassSymbolImpl> value="0"
+      PROPERTY name:backingField signature:As/A.backingField|{}backingField[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:backingField signature:[ As/A.backingField|{}backingField[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN name:<get-backingField> signature:As/A.backingField.<get-backingField>|<get-backingField>(){}[0] visibility:public modality:FINAL <> ($this:As.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:backingField signature:As/A.backingField|{}backingField[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-backingField> (): <unbound IrClassSymbolImpl> declared in As.A'
+              CALL 'public final fun <get-myInc> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: As.A declared in As.A.<get-backingField>' type=As.A origin=null
+                $receiver: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingField signature:[ As/A.backingField|{}backingField[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: As.A declared in As.A.<get-backingField>' type=As.A origin=null
+        FUN name:<set-backingField> signature:As/A.backingField.<set-backingField>|<set-backingField>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:As.A, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:backingField signature:As/A.backingField|{}backingField[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:As.A
+          VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingField signature:[ As/A.backingField|{}backingField[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=EQ
+              receiver: GET_VAR '<this>: As.A declared in As.A.<set-backingField>' type=As.A origin=null
+              value: GET_VAR 's: <unbound IrClassSymbolImpl> declared in As.A.<set-backingField>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:B signature:As/B|null[0] modality:OPEN visibility:public superTypes:[As.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:As.B
+      CONSTRUCTOR signature:As/B.<init>|<init>(kotlin.String){}[0] visibility:public <> (init:<unbound IrClassSymbolImpl>) returnType:As.B [primary]
+        VALUE_PARAMETER name:init index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: <unbound IrClassSymbolImpl>) [primary] declared in As.A'
+            init: CONST String type=<unbound IrClassSymbolImpl> value="1"
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:As/B|null[0] modality:OPEN visibility:public superTypes:[As.A]'
+      PROPERTY name:property signature:As/B.property|{}property[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:property signature:[ As/B.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'init: <unbound IrClassSymbolImpl> declared in As.B.<init>' type=<unbound IrClassSymbolImpl> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> signature:As/B.property.<get-property>|<get-property>(){}[0] visibility:public modality:OPEN <> ($this:As.B) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:property signature:As/B.property|{}property[0] visibility:public modality:OPEN [val]
+          overridden:
+            public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.A
+          $this: VALUE_PARAMETER name:<this> type:As.B
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property signature:[ As/B.property|{}property[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:staticProperty type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: As.B declared in As.B.<get-property>' type=As.B origin=null
+      FUN name:getOpenProperty signature:As/B.getOpenProperty|getOpenProperty(){}[0] visibility:public modality:FINAL <> ($this:As.B) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:As.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getOpenProperty (): <unbound IrClassSymbolImpl> declared in As.B'
+            CALL 'public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.A' superQualifier='CLASS CLASS name:A signature:As/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: As.B declared in As.B.getOpenProperty' type=As.B origin=null
+      FUN name:getWithBackingFieldProperty signature:As/B.getWithBackingFieldProperty|getWithBackingFieldProperty(){}[0] visibility:public modality:FINAL <> ($this:As.B) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:As.B
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getWithBackingFieldProperty (): <unbound IrClassSymbolImpl> declared in As.B'
+            CALL 'public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.B' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: As.B declared in As.B.getWithBackingFieldProperty' type=As.B origin=null
+    FUN name:box signature:As/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:a type:As.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (init: <unbound IrClassSymbolImpl>) [primary] declared in As.A' type=As.A origin=null
+            init: CONST String type=<unbound IrClassSymbolImpl> value="1"
+        VAR name:b type:As.B [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (init: <unbound IrClassSymbolImpl>) [primary] declared in As.B' type=As.B origin=null
+            init: CONST String type=<unbound IrClassSymbolImpl> value="0"
+        CALL 'public final fun <set-backingField> (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val a: As.A [val] declared in As.box' type=As.A origin=null
+          s: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR name:result type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                            $this: CALL 'public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                              $this: GET_VAR 'val a: As.A [val] declared in As.box' type=As.A origin=null
+                            1: CALL 'public open fun getPrivate (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR 'val a: As.A [val] declared in As.box' type=As.A origin=null
+                          1: CALL 'public final fun <get-staticProperty> (): <unbound IrClassSymbolImpl> declared in As' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        1: CALL 'public final fun <get-staticExt> (): <unbound IrClassSymbolImpl> declared in As' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $receiver: CONST String type=<unbound IrClassSymbolImpl> value="0"
+                      1: CALL 'public open fun getExt (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'val a: As.A [val] declared in As.box' type=As.A origin=null
+                    1: CALL 'public final fun <get-backingField> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val a: As.A [val] declared in As.box' type=As.A origin=null
+                  1: CALL 'public final fun <get-backingField> (): <unbound IrClassSymbolImpl> declared in As.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'val a: As.A [val] declared in As.box' type=As.A origin=null
+                1: CALL 'public final fun getOpenProperty (): <unbound IrClassSymbolImpl> declared in As.B' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val b: As.B [val] declared in As.box' type=As.B origin=null
+              1: CALL 'public open fun <get-property> (): <unbound IrClassSymbolImpl> declared in As.B' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'val b: As.B [val] declared in As.box' type=As.B origin=null
+            1: CALL 'public final fun getWithBackingFieldProperty (): <unbound IrClassSymbolImpl> declared in As.B' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val b: As.B [val] declared in As.box' type=As.B origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in As'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val result: <unbound IrClassSymbolImpl> [val] declared in As.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="1111111100"
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

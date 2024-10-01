@@ -1,0 +1,97 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/returnsDifferentTypes.kt
+    PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sb> signature:/sb.<get-sb>|<get-sb>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:ReceiveChannel signature:/ReceiveChannel|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReceiveChannel<E of <root>.ReceiveChannel>
+      TYPE_PARAMETER name:E index:0 variance:out signature:[ /ReceiveChannel|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/ReceiveChannel.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ReceiveChannel<E of <root>.ReceiveChannel> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ReceiveChannel signature:/ReceiveChannel|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:consume signature:/consume|consume@ReceiveChannel<0:0>(kotlin.Function1<ReceiveChannel<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <E, R> ($receiver:<root>.ReceiveChannel<E of <root>.consume>, block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.consume>, R of <root>.consume>) returnType:R of <root>.consume [inline]
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /consume|consume@ReceiveChannel<0:0>(kotlin.Function1<ReceiveChannel<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:R index:1 variance: signature:[ /consume|consume@ReceiveChannel<0:0>(kotlin.Function1<ReceiveChannel<0:0>,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<E of <root>.consume>
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.consume>, R of <root>.consume>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun consume <E, R> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.consume>, R of <root>.consume>): R of <root>.consume [inline] declared in <root>'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.consume origin=INVOKE
+                $this: GET_VAR 'block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.consume>, R of <root>.consume> declared in <root>.consume' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.consume>, R of <root>.consume> origin=VARIABLE_AS_FUNCTION
+                1: GET_VAR '<this>: <root>.ReceiveChannel<E of <root>.consume> declared in <root>.consume' type=<root>.ReceiveChannel<E of <root>.consume> origin=null
+          finally: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                1: CONST String type=<unbound IrClassSymbolImpl> value="zzz"
+    FUN name:elementAtOrElse signature:/elementAtOrElse|elementAtOrElse@ReceiveChannel<0:0>(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> ($receiver:<root>.ReceiveChannel<E of <root>.elementAtOrElse>, index:<unbound IrClassSymbolImpl>, defaultValue:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse>) returnType:E of <root>.elementAtOrElse [inline]
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /elementAtOrElse|elementAtOrElse@ReceiveChannel<0:0>(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<E of <root>.elementAtOrElse>
+      VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:defaultValue index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun elementAtOrElse <E> (index: <unbound IrClassSymbolImpl>, defaultValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse>): E of <root>.elementAtOrElse [inline] declared in <root>'
+          CALL 'public final fun consume <E, R> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.consume>, R of <root>.consume>): R of <root>.consume [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <E>: E of <root>.elementAtOrElse
+            <R>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR '<this>: <root>.ReceiveChannel<E of <root>.elementAtOrElse> declared in <root>.elementAtOrElse' type=<root>.ReceiveChannel<E of <root>.elementAtOrElse> origin=null
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.ReceiveChannel<E of <root>.elementAtOrElse>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ReceiveChannel<E of <root>.elementAtOrElse>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$consume type:<root>.ReceiveChannel<E of <root>.elementAtOrElse>
+                BLOCK_BODY
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                        arg0: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.elementAtOrElse' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun elementAtOrElse <E> (index: <unbound IrClassSymbolImpl>, defaultValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse>): E of <root>.elementAtOrElse [inline] declared in <root>'
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=E of <root>.elementAtOrElse origin=INVOKE
+                          $this: GET_VAR 'defaultValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse> declared in <root>.elementAtOrElse' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse> origin=VARIABLE_AS_FUNCTION
+                          1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.elementAtOrElse' type=<unbound IrClassSymbolImpl> origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun elementAtOrElse <E> (index: <unbound IrClassSymbolImpl>, defaultValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse>): E of <root>.elementAtOrElse [inline] declared in <root>'
+                    TYPE_OP type=E of <root>.elementAtOrElse origin=CAST typeOperand=E of <root>.elementAtOrElse
+                      CONST Int type=<unbound IrClassSymbolImpl> value=42
+    FUN name:elementAt signature:/elementAt|elementAt@ReceiveChannel<0:0>(kotlin.Int){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> ($receiver:<root>.ReceiveChannel<E of <root>.elementAt>, index:<unbound IrClassSymbolImpl>) returnType:E of <root>.elementAt
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /elementAt|elementAt@ReceiveChannel<0:0>(kotlin.Int){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:out superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.ReceiveChannel<E of <root>.elementAt>
+      VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun elementAt <E> (index: <unbound IrClassSymbolImpl>): E of <root>.elementAt declared in <root>'
+          CALL 'public final fun elementAtOrElse <E> (index: <unbound IrClassSymbolImpl>, defaultValue: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAtOrElse>): E of <root>.elementAtOrElse [inline] declared in <root>' type=E of <root>.elementAt origin=null
+            <E>: E of <root>.elementAt
+            $receiver: GET_VAR '<this>: <root>.ReceiveChannel<E of <root>.elementAt> declared in <root>.elementAt' type=<root>.ReceiveChannel<E of <root>.elementAt> origin=null
+            index: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.elementAt' type=<unbound IrClassSymbolImpl> origin=null
+            defaultValue: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, E of <root>.elementAt> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:E of <root>.elementAt
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  THROW type=<unbound IrClassSymbolImpl>
+                    CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="qxx"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CALL 'public final fun elementAt <E> (index: <unbound IrClassSymbolImpl>): E of <root>.elementAt declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <E>: <unbound IrClassSymbolImpl>
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ReceiveChannel' type=<root>.ReceiveChannel<<unbound IrClassSymbolImpl>> origin=null
+                <class: E>: <unbound IrClassSymbolImpl>
+              index: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="\n        zzz\n        42\n\n    "
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,78 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: B.E
+    // class name: C
+    // class name: C.D
+    // class name: T
+
+    public open class A : kotlin/Any {
+
+      public constructor()
+
+      public open val bar: kotlin/String
+        public open /* non-default */ get
+
+      public open val boo: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public open class B : A, T {
+
+      public constructor()
+
+      public open val bar: kotlin/String
+        public open /* non-default */ get
+
+      public open val baz: kotlin/String
+        public open /* non-default */ get
+
+      // nested class: E
+    }
+
+    public final inner class B.E : kotlin/Any {
+
+      public constructor()
+
+      public final val bar: kotlin/String
+        public final /* non-default */ get
+    }
+
+    public final class C : B {
+
+      public constructor()
+
+      public open val bar: kotlin/String
+        public open /* non-default */ get
+
+      public open val boo: kotlin/String
+        public open /* non-default */ get
+
+      // nested class: D
+    }
+
+    public final inner class C.D : kotlin/Any {
+
+      public constructor()
+
+      public final val bar: kotlin/String
+        public final /* non-default */ get
+    }
+
+    public abstract interface T : kotlin/Any {
+
+      public open val baz: kotlin/String
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

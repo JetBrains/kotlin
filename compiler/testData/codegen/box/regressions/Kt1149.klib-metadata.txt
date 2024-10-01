@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test.regressions.kt1149
+
+    // class name: test/regressions/kt1149/SomeTrait
+
+    public abstract interface test/regressions/kt1149/SomeTrait : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

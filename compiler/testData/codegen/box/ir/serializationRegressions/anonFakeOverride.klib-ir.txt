@@ -1,0 +1,210 @@
+// MODULE: libxxxxx
+MODULE_FRAGMENT name:<libxxxxx>
+  FILE fqName:com.soywiz.korag.shader fileName:/l1.kt
+    CLASS CLASS name:Operand signature:com.soywiz.korag.shader/Operand|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Operand
+      CONSTRUCTOR signature:com.soywiz.korag.shader/Operand.<init>|<init>(){}[0] visibility:public <> () returnType:com.soywiz.korag.shader.Operand [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Operand signature:com.soywiz.korag.shader/Operand|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Variable signature:com.soywiz.korag.shader/Variable|null[0] modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Operand]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Variable
+      CONSTRUCTOR signature:com.soywiz.korag.shader/Variable.<init>|<init>(){}[0] visibility:public <> () returnType:com.soywiz.korag.shader.Variable [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.soywiz.korag.shader.Operand'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Variable signature:com.soywiz.korag.shader/Variable|null[0] modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Operand]'
+    CLASS CLASS name:Program signature:com.soywiz.korag.shader/Program|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Program
+      CONSTRUCTOR signature:com.soywiz.korag.shader/Program.<init>|<init>(){}[0] visibility:public <> () returnType:com.soywiz.korag.shader.Program [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Program signature:com.soywiz.korag.shader/Program|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Stm signature:com.soywiz.korag.shader/Program.Stm|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Program.Stm
+        CONSTRUCTOR signature:com.soywiz.korag.shader/Program.Stm.<init>|<init>(com.soywiz.korag.shader.Operand){}[0] visibility:public <> (o:com.soywiz.korag.shader.Operand) returnType:com.soywiz.korag.shader.Program.Stm [primary]
+          VALUE_PARAMETER name:o index:0 type:com.soywiz.korag.shader.Operand
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Stm signature:com.soywiz.korag.shader/Program.Stm|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:o signature:com.soywiz.korag.shader/Program.Stm.o|{}o[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:o signature:[ com.soywiz.korag.shader/Program.Stm.o|{}o[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:com.soywiz.korag.shader.Operand visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'o: com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm.<init>' type=com.soywiz.korag.shader.Operand origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-o> signature:com.soywiz.korag.shader/Program.Stm.o.<get-o>|<get-o>(){}[0] visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Program.Stm) returnType:com.soywiz.korag.shader.Operand
+            correspondingProperty: PROPERTY name:o signature:com.soywiz.korag.shader/Program.Stm.o|{}o[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Stm
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-o> (): com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:o signature:[ com.soywiz.korag.shader/Program.Stm.o|{}o[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:com.soywiz.korag.shader.Operand visibility:private [final]' type=com.soywiz.korag.shader.Operand origin=null
+                  receiver: GET_VAR '<this>: com.soywiz.korag.shader.Program.Stm declared in com.soywiz.korag.shader.Program.Stm.<get-o>' type=com.soywiz.korag.shader.Program.Stm origin=null
+      CLASS CLASS name:Visitor signature:com.soywiz.korag.shader/Program.Visitor|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+        TYPE_PARAMETER name:E index:0 variance: signature:[ com.soywiz.korag.shader/Program.Visitor|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        CONSTRUCTOR signature:com.soywiz.korag.shader/Program.Visitor.<init>|<init>(1:0){}[0] visibility:public <> (default:E of com.soywiz.korag.shader.Program.Visitor) returnType:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> [primary]
+          VALUE_PARAMETER name:default index:0 type:E of com.soywiz.korag.shader.Program.Visitor
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Visitor signature:com.soywiz.korag.shader/Program.Visitor|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:default signature:com.soywiz.korag.shader/Program.Visitor.default|{}default[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:default signature:[ com.soywiz.korag.shader/Program.Visitor.default|{}default[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:E of com.soywiz.korag.shader.Program.Visitor visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'default: E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor.<init>' type=E of com.soywiz.korag.shader.Program.Visitor origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-default> signature:com.soywiz.korag.shader/Program.Visitor.default.<get-default>|<get-default>(){}[0] visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>) returnType:E of com.soywiz.korag.shader.Program.Visitor
+            correspondingProperty: PROPERTY name:default signature:com.soywiz.korag.shader/Program.Visitor.default|{}default[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:default signature:[ com.soywiz.korag.shader/Program.Visitor.default|{}default[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:E of com.soywiz.korag.shader.Program.Visitor visibility:private [final]' type=E of com.soywiz.korag.shader.Program.Visitor origin=null
+                  receiver: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.<get-default>' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+        FUN name:visit signature:com.soywiz.korag.shader/Program.Visitor.visit|visit(com.soywiz.korag.shader.Program.Stm?){}[0] visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>, stm:com.soywiz.korag.shader.Program.Stm?) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+          VALUE_PARAMETER name:stm index:0 type:com.soywiz.korag.shader.Program.Stm?
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=com.soywiz.korag.shader.Operand
+                  BLOCK type=com.soywiz.korag.shader.Operand? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:com.soywiz.korag.shader.Program.Stm? [val]
+                      GET_VAR 'stm: com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+                    WHEN type=com.soywiz.korag.shader.Operand? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_safe_receiver: com.soywiz.korag.shader.Program.Stm? [val] declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+                          arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                        then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'public final fun <get-o> (): com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm' type=com.soywiz.korag.shader.Operand origin=GET_PROPERTY
+                          $this: GET_VAR 'val tmp0_safe_receiver: com.soywiz.korag.shader.Program.Stm? [val] declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+                then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public open fun visit (o: com.soywiz.korag.shader.Operand): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=null
+                    $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+                    o: CALL 'public final fun <get-o> (): com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm' type=com.soywiz.korag.shader.Operand origin=GET_PROPERTY
+                      $this: GET_VAR 'stm: com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+        FUN name:visit signature:com.soywiz.korag.shader/Program.Visitor.visit|visit(com.soywiz.korag.shader.Operand){}[0] visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>, o:com.soywiz.korag.shader.Operand) returnType:E of com.soywiz.korag.shader.Program.Visitor
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+          VALUE_PARAMETER name:o index:0 type:com.soywiz.korag.shader.Operand
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=com.soywiz.korag.shader.Uniform
+                  GET_VAR 'o: com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Operand origin=null
+                then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public open fun visit (operand: com.soywiz.korag.shader.Uniform): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=null
+                    $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+                    operand: TYPE_OP type=com.soywiz.korag.shader.Uniform origin=IMPLICIT_CAST typeOperand=com.soywiz.korag.shader.Uniform
+                      GET_VAR 'o: com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Operand origin=null
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun visit (o: com.soywiz.korag.shader.Operand): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor'
+              CALL 'public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=GET_PROPERTY
+                $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+        FUN name:visit signature:com.soywiz.korag.shader/Program.Visitor.visit|visit(com.soywiz.korag.shader.Uniform){}[0] visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>, operand:com.soywiz.korag.shader.Uniform) returnType:E of com.soywiz.korag.shader.Program.Visitor
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+          VALUE_PARAMETER name:operand index:0 type:com.soywiz.korag.shader.Uniform
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun visit (operand: com.soywiz.korag.shader.Uniform): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor'
+              CALL 'public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=GET_PROPERTY
+                $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+    CLASS CLASS name:Uniform signature:com.soywiz.korag.shader/Uniform|null[0] modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Variable]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Uniform
+      CONSTRUCTOR signature:com.soywiz.korag.shader/Uniform.<init>|<init>(kotlin.String){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:com.soywiz.korag.shader.Uniform [primary]
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.soywiz.korag.shader.Variable'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Uniform signature:com.soywiz.korag.shader/Uniform|null[0] modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Variable]'
+      PROPERTY name:result signature:com.soywiz.korag.shader/Uniform.result|{}result[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:result signature:[ com.soywiz.korag.shader/Uniform.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'result: <unbound IrClassSymbolImpl> declared in com.soywiz.korag.shader.Uniform.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:com.soywiz.korag.shader/Uniform.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Uniform) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:result signature:com.soywiz.korag.shader/Uniform.result|{}result[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Uniform
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in com.soywiz.korag.shader.Uniform'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ com.soywiz.korag.shader/Uniform.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: com.soywiz.korag.shader.Uniform declared in com.soywiz.korag.shader.Uniform.<get-result>' type=com.soywiz.korag.shader.Uniform origin=null
+    CLASS CLASS name:Shader signature:com.soywiz.korag.shader/Shader|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Shader
+      CONSTRUCTOR signature:com.soywiz.korag.shader/Shader.<init>|<init>(com.soywiz.korag.shader.Program.Stm?){}[0] visibility:public <> (stm:com.soywiz.korag.shader.Program.Stm?) returnType:com.soywiz.korag.shader.Shader [primary]
+        VALUE_PARAMETER name:stm index:0 type:com.soywiz.korag.shader.Program.Stm?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Shader signature:com.soywiz.korag.shader/Shader|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:stm signature:com.soywiz.korag.shader/Shader.stm|{}stm[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:stm signature:[ com.soywiz.korag.shader/Shader.stm|{}stm[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:com.soywiz.korag.shader.Program.Stm? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'stm: com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader.<init>' type=com.soywiz.korag.shader.Program.Stm? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stm> signature:com.soywiz.korag.shader/Shader.stm.<get-stm>|<get-stm>(){}[0] visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Shader) returnType:com.soywiz.korag.shader.Program.Stm?
+          correspondingProperty: PROPERTY name:stm signature:com.soywiz.korag.shader/Shader.stm|{}stm[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-stm> (): com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stm signature:[ com.soywiz.korag.shader/Shader.stm|{}stm[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:com.soywiz.korag.shader.Program.Stm? visibility:private [final]' type=com.soywiz.korag.shader.Program.Stm? origin=null
+                receiver: GET_VAR '<this>: com.soywiz.korag.shader.Shader declared in com.soywiz.korag.shader.Shader.<get-stm>' type=com.soywiz.korag.shader.Shader origin=null
+      PROPERTY name:uniforms signature:com.soywiz.korag.shader/Shader.uniforms|{}uniforms[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:uniforms signature:[ com.soywiz.korag.shader/Shader.uniforms|{}uniforms[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> origin=null
+              <1>: com.soywiz.korag.shader.Uniform
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> origin=null
+                <1>: <unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform>
+                $receiver: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> origin=null
+                  <class: 1>: com.soywiz.korag.shader.Uniform
+                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (out:<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform>) returnType:<unbound IrClassSymbolImpl>
+                    VALUE_PARAMETER name:out index:0 type:<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform>
+                    BLOCK_BODY
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: BLOCK type=com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[com.soywiz.korag.shader.Program.Visitor<<unbound IrClassSymbolImpl>>]
+                            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>
+                            CONSTRUCTOR visibility:public <> () returnType:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided> [primary]
+                              BLOCK_BODY
+                                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (default: E of com.soywiz.korag.shader.Program.Visitor) [primary] declared in com.soywiz.korag.shader.Program.Visitor'
+                                  <E>: <unbound IrClassSymbolImpl>
+                                  default: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[com.soywiz.korag.shader.Program.Visitor<<unbound IrClassSymbolImpl>>]'
+                            FUN name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>, uniform:com.soywiz.korag.shader.Uniform) returnType:<unbound IrClassSymbolImpl>
+                              overridden:
+                                public open fun visit (operand: com.soywiz.korag.shader.Uniform): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor
+                              $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>
+                              VALUE_PARAMETER name:uniform index:0 type:com.soywiz.korag.shader.Uniform
+                              BLOCK_BODY
+                                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                    $this: GET_VAR 'out: <unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>' type=<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> origin=null
+                                    1: GET_VAR 'uniform: com.soywiz.korag.shader.Uniform declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>.visit' type=com.soywiz.korag.shader.Uniform origin=null
+                          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>' type=com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        1: CALL 'public final fun <get-stm> (): com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader' type=com.soywiz.korag.shader.Program.Stm? origin=GET_PROPERTY
+                          $this: GET_VAR '<this>: com.soywiz.korag.shader.Shader declared in com.soywiz.korag.shader.Shader' type=com.soywiz.korag.shader.Shader origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-uniforms> signature:com.soywiz.korag.shader/Shader.uniforms.<get-uniforms>|<get-uniforms>(){}[0] visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Shader) returnType:<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform>
+          correspondingProperty: PROPERTY name:uniforms signature:com.soywiz.korag.shader/Shader.uniforms|{}uniforms[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-uniforms> (): <unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> declared in com.soywiz.korag.shader.Shader'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:uniforms signature:[ com.soywiz.korag.shader/Shader.uniforms|{}uniforms[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]] ] type:<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> visibility:private [final]' type=<unbound IrClassSymbolImpl><com.soywiz.korag.shader.Uniform> origin=null
+                receiver: GET_VAR '<this>: com.soywiz.korag.shader.Shader declared in com.soywiz.korag.shader.Shader.<get-uniforms>' type=com.soywiz.korag.shader.Shader origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/l2.kt
+    CLASS CLASS name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+      CONSTRUCTOR signature:/D.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.D [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D signature:/D|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:foo signature:/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.D' type=<root>.D origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null

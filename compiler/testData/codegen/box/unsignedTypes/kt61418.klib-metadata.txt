@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/collections/List<kotlin/Int>): kotlin/Unit
+    }
+  }
+
+  library fragment {
+    // package name: kotlin.internal
+
+    // class name: kotlin/internal/ImplicitIntegerCoercion
+
+    public final annotation class kotlin/internal/ImplicitIntegerCoercion : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}

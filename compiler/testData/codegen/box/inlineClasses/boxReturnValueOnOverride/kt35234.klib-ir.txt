@@ -1,0 +1,113 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt35234.kt
+    CLASS CLASS name:NumberInlineClass signature:/NumberInlineClass|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NumberInlineClass
+      CONSTRUCTOR signature:/NumberInlineClass.<init>|<init>(kotlin.Double){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.NumberInlineClass [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NumberInlineClass signature:/NumberInlineClass|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/NumberInlineClass.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /NumberInlineClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Double visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.NumberInlineClass.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/NumberInlineClass.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.NumberInlineClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/NumberInlineClass.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.NumberInlineClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.NumberInlineClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /NumberInlineClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Double visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.NumberInlineClass declared in <root>.NumberInlineClass.<get-value>' type=<root>.NumberInlineClass origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/NumberInlineClass.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.NumberInlineClass) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NumberInlineClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.NumberInlineClass'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="NumberInlineClass("
+              CONST String type=<unbound IrClassSymbolImpl> value="value="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /NumberInlineClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Double visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.NumberInlineClass declared in <root>.NumberInlineClass.toString' type=<root>.NumberInlineClass origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/NumberInlineClass.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.NumberInlineClass) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NumberInlineClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.NumberInlineClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /NumberInlineClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Double visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.NumberInlineClass declared in <root>.NumberInlineClass.hashCode' type=<root>.NumberInlineClass origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/NumberInlineClass.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.NumberInlineClass, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.NumberInlineClass
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.NumberInlineClass
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.NumberInlineClass.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.NumberInlineClass'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.NumberInlineClass [val]
+            TYPE_OP type=<root>.NumberInlineClass origin=CAST typeOperand=<root>.NumberInlineClass
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.NumberInlineClass.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /NumberInlineClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Double visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.NumberInlineClass declared in <root>.NumberInlineClass.equals' type=<root>.NumberInlineClass origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /NumberInlineClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Double visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.NumberInlineClass [val] declared in <root>.NumberInlineClass.equals' type=<root>.NumberInlineClass origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.NumberInlineClass'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.NumberInlineClass'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS INTERFACE name:TypeAdapter signature:/TypeAdapter|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeAdapter<FROM of <root>.TypeAdapter, TO of <root>.TypeAdapter>
+      TYPE_PARAMETER name:FROM index:0 variance: signature:[ /TypeAdapter|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:FROM index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:TO index:1 variance: signature:[ /TypeAdapter|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TO index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:decode signature:/TypeAdapter.decode|decode(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.TypeAdapter<FROM of <root>.TypeAdapter, TO of <root>.TypeAdapter>, string:FROM of <root>.TypeAdapter) returnType:TO of <root>.TypeAdapter
+        $this: VALUE_PARAMETER name:<this> type:<root>.TypeAdapter<FROM of <root>.TypeAdapter, TO of <root>.TypeAdapter>
+        VALUE_PARAMETER name:string index:0 type:FROM of <root>.TypeAdapter
+    CLASS CLASS name:StringToDoubleTypeAdapter signature:/StringToDoubleTypeAdapter|null[0] modality:FINAL visibility:public superTypes:[<root>.TypeAdapter<<unbound IrClassSymbolImpl>, <root>.NumberInlineClass>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringToDoubleTypeAdapter
+      CONSTRUCTOR signature:/StringToDoubleTypeAdapter.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.StringToDoubleTypeAdapter [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringToDoubleTypeAdapter signature:/StringToDoubleTypeAdapter|null[0] modality:FINAL visibility:public superTypes:[<root>.TypeAdapter<<unbound IrClassSymbolImpl>, <root>.NumberInlineClass>]'
+      FUN name:decode signature:/StringToDoubleTypeAdapter.decode|decode(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.StringToDoubleTypeAdapter, string:<unbound IrClassSymbolImpl>) returnType:<root>.NumberInlineClass
+        overridden:
+          public abstract fun decode (string: FROM of <root>.TypeAdapter): TO of <root>.TypeAdapter declared in <root>.TypeAdapter
+        $this: VALUE_PARAMETER name:<this> type:<root>.StringToDoubleTypeAdapter
+        VALUE_PARAMETER name:string index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun decode (string: <unbound IrClassSymbolImpl>): <root>.NumberInlineClass declared in <root>.StringToDoubleTypeAdapter'
+            CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.NumberInlineClass' type=<root>.NumberInlineClass origin=null
+              value: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: GET_VAR 'string: <unbound IrClassSymbolImpl> declared in <root>.StringToDoubleTypeAdapter.decode' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:typeAdapter type:<root>.StringToDoubleTypeAdapter [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.StringToDoubleTypeAdapter' type=<root>.StringToDoubleTypeAdapter origin=null
+        VAR name:test type:<root>.NumberInlineClass [val]
+          CALL 'public open fun decode (string: <unbound IrClassSymbolImpl>): <root>.NumberInlineClass declared in <root>.StringToDoubleTypeAdapter' type=<root>.NumberInlineClass origin=null
+            $this: GET_VAR 'val typeAdapter: <root>.StringToDoubleTypeAdapter [val] declared in <root>.box' type=<root>.StringToDoubleTypeAdapter origin=null
+            string: CONST String type=<unbound IrClassSymbolImpl> value="2019"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.NumberInlineClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val test: <root>.NumberInlineClass [val] declared in <root>.box' type=<root>.NumberInlineClass origin=null
+                arg1: CONST Double type=<unbound IrClassSymbolImpl> value=2019.0
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="test: "
+                  GET_VAR 'val test: <root>.NumberInlineClass [val] declared in <root>.box' type=<root>.NumberInlineClass origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Checker
+    // class name: Sample
+    // class name: Sample.Companion
+
+    public abstract class Checker : kotlin/Any {
+
+      public constructor()
+
+      public final fun check(): kotlin/String
+
+      public abstract fun <T#0 /* T1 */> run(method: kotlin/reflect/KProperty0<T#0>, fn: kotlin/Function1<T#0, kotlin/Boolean>): kotlin/String
+    }
+
+    public final class Sample : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Sample.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val maxValue: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

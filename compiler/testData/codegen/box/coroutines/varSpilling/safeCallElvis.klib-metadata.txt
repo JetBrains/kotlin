@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+    // class name: Log
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      public final fun method(): kotlin/Unit
+    }
+
+    public final class Log : kotlin/Any {
+
+      public constructor()
+
+      public final fun error(message: kotlin/Any?): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Any> df(t: T#0, r: suspend kotlin/Function2<T#0, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final fun foo(s: kotlin/String, c: C?): kotlin/Unit
+
+      private final val log: Log
+        private final get
+
+      public final var res: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,165 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: VBoolean
+    // class name: VByte
+    // class name: VChar
+    // class name: VDouble
+    // class name: VFloat
+    // class name: VInt
+    // class name: VLong
+    // class name: VShort
+
+    public final value class VBoolean : kotlin/Any {
+
+      public constructor(value: kotlin/Boolean)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Boolean
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Boolean
+    }
+
+    public final value class VByte : kotlin/Any {
+
+      public constructor(value: kotlin/Byte)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Byte
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Byte
+    }
+
+    public final value class VChar : kotlin/Any {
+
+      public constructor(value: kotlin/Char)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Char
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Char
+    }
+
+    public final value class VDouble : kotlin/Any {
+
+      public constructor(value: kotlin/Double)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Double
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Double
+    }
+
+    public final value class VFloat : kotlin/Any {
+
+      public constructor(value: kotlin/Float)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Float
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Float
+    }
+
+    public final value class VInt : kotlin/Any {
+
+      public constructor(value: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Int
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class VLong : kotlin/Any {
+
+      public constructor(value: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Long
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Long
+    }
+
+    public final value class VShort : kotlin/Any {
+
+      public constructor(value: kotlin/Short)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val value: kotlin/Short
+        public final get
+
+      // underlying property: value
+
+      // underlying type: kotlin/Short
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

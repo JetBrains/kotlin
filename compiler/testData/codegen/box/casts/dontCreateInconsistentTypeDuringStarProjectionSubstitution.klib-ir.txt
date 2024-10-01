@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/dontCreateInconsistentTypeDuringStarProjectionSubstitution.kt
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+    CLASS INTERFACE name:Foo signature:/Foo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<L of <root>.Foo, M of <root>.Foo>
+      TYPE_PARAMETER name:L index:0 variance:in signature:[ /Foo|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:L index:0 variance:in superTypes:[<root>.I] reified:false] ] superTypes:[<root>.I] reified:false
+      TYPE_PARAMETER name:M index:1 variance:in signature:[ /Foo|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:M index:1 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:Bar signature:/Bar|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar<T of <root>.Bar>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Bar|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:L index:0 variance:in superTypes:[<root>.I] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:test signature:/Bar.test|test(Foo<*,1:0>){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Bar<T of <root>.Bar>, x:<root>.Foo<*, T of <root>.Bar>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar>
+        VALUE_PARAMETER name:x index:0 type:<root>.Foo<*, T of <root>.Bar>
+    FUN name:foo signature:/foo|foo(kotlin.Any){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Bar<*>
+              GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+            then: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<unbound IrClassSymbolImpl><<root>.Foo<*, <unbound IrClassSymbolImpl>?>, <unbound IrClassSymbolImpl>> origin=null
+                FUNCTION_REFERENCE 'public abstract fun test (x: <root>.Foo<*, T of <root>.Bar>): <unbound IrClassSymbolImpl> declared in <root>.Bar' type=<unbound IrClassSymbolImpl><<root>.Foo<*, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                  $this: TYPE_OP type=<root>.Bar<*> origin=IMPLICIT_CAST typeOperand=<root>.Bar<*>
+                    GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,82 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/classObjectsWithParentClasses.kt
+    CLASS CLASS name:Test signature:/Test|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+      CONSTRUCTOR signature:/Test.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Test [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test signature:/Test|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.Companion
+        CONSTRUCTOR signature:/Test.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Test.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:testStatic signature:/Test.Companion.testStatic|testStatic(Test.InnerClass){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.Companion, ic:<root>.Test.InnerClass) returnType:<root>.Test.NotInnerClass
+          $this: VALUE_PARAMETER name:<this> type:<root>.Test.Companion
+          VALUE_PARAMETER name:ic index:0 type:<root>.Test.InnerClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun testStatic (ic: <root>.Test.InnerClass): <root>.Test.NotInnerClass declared in <root>.Test.Companion'
+              CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Test.NotInnerClass' type=<root>.Test.NotInnerClass origin=null
+                value: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Test.InnerClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'ic: <root>.Test.InnerClass declared in <root>.Test.Companion.testStatic' type=<root>.Test.InnerClass origin=null
+      FUN name:test signature:/Test.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test) returnType:<root>.Test.InnerClass
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <root>.Test.InnerClass declared in <root>.Test'
+            CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Test.InnerClass' type=<root>.Test.InnerClass origin=null
+              $outer: GET_VAR '<this>: <root>.Test declared in <root>.Test.test' type=<root>.Test origin=null
+              value: CONST Int type=<unbound IrClassSymbolImpl> value=150
+      CLASS CLASS name:InnerClass signature:/Test.InnerClass|null[0] modality:OPEN visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.InnerClass
+        CONSTRUCTOR signature:/Test.InnerClass.<init>|<init>(kotlin.Int){}[0] visibility:public <> ($this:<root>.Test, value:<unbound IrClassSymbolImpl>) returnType:<root>.Test.InnerClass [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Test
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerClass signature:/Test.InnerClass|null[0] modality:OPEN visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:value signature:/Test.InnerClass.value|{}value[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Test.InnerClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.Test.InnerClass.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Test.InnerClass.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.InnerClass) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:value signature:/Test.InnerClass.value|{}value[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.InnerClass
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Test.InnerClass'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Test.InnerClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.InnerClass declared in <root>.Test.InnerClass.<get-value>' type=<root>.Test.InnerClass origin=null
+      CLASS CLASS name:NotInnerClass signature:/Test.NotInnerClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.NotInnerClass
+        CONSTRUCTOR signature:/Test.NotInnerClass.<init>|<init>(kotlin.Int){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.Test.NotInnerClass [primary]
+          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NotInnerClass signature:/Test.NotInnerClass|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:value signature:/Test.NotInnerClass.value|{}value[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Test.NotInnerClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.Test.NotInnerClass.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/Test.NotInnerClass.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Test.NotInnerClass) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:value signature:/Test.NotInnerClass.value|{}value[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Test.NotInnerClass
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Test.NotInnerClass'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /Test.NotInnerClass.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Test.NotInnerClass declared in <root>.Test.NotInnerClass.<get-value>' type=<root>.Test.NotInnerClass origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.Test.NotInnerClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun testStatic (ic: <root>.Test.InnerClass): <root>.Test.NotInnerClass declared in <root>.Test.Companion' type=<root>.Test.NotInnerClass origin=null
+                    $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Test.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Test.Companion
+                    ic: CALL 'public final fun test (): <root>.Test.InnerClass declared in <root>.Test' type=<root>.Test.InnerClass origin=null
+                      $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Test' type=<root>.Test origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=150
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="FAIL"

@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Boolean.foo(): kotlin/Int
+
+      public final fun kotlin/Byte.foo(): kotlin/Int
+
+      public final fun kotlin/Char.foo(): kotlin/Int
+
+      public final fun kotlin/Double.foo(): kotlin/Int
+
+      public final fun kotlin/Float.foo(): kotlin/Int
+
+      public final fun kotlin/Int.foo(): kotlin/Int
+
+      public final fun kotlin/Long.foo(): kotlin/Int
+
+      public final fun kotlin/Short.foo(): kotlin/Int
+
+      public final fun testRef(name: kotlin/String, f: kotlin/Function0<kotlin/Int>, expected: kotlin/Int): kotlin/Unit
+    }
+  }
+}

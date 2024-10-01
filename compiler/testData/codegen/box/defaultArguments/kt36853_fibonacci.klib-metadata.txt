@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Nat
+    // class name: Nat.Companion
+
+    public abstract interface Nat<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun T#0.next(): T#0
+
+      public open operator fun T#0.plus(t: T#0): T#0
+
+      public abstract val nil: T#0
+        public abstract get
+
+      public open val one: T#0
+        public open /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Nat.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun <T#1 /* T */> invoke(nil: T#1, next: @kotlin/ExtensionFunctionType kotlin/Function1<T#1, T#1>): Nat<T#1>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> Nat<T#0>.fibonacci(n: T#0, seed: kotlin/Pair<T#0, T#0> /* = ... */, fib: kotlin/Function1<kotlin/Pair<T#0, T#0>, kotlin/Pair<T#0, T#0>> /* = ... */, i: T#0 /* = ... */): T#0
+
+      public final tailrec fun <T#0 /* T */> Nat<T#0>.plus(l: T#0, r: T#0, acc: T#0 /* = ... */, i: T#0 /* = ... */): T#0
+    }
+  }
+}

@@ -1,0 +1,65 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Runnable
+    // class name: SuspendRunnable
+    // class name: Test1
+    // class name: Test1.Scope
+    // class name: Test2
+    // class name: Test2.Scope
+
+    public abstract fun interface Runnable : kotlin/Any {
+
+      public abstract fun run(): kotlin/Unit
+    }
+
+    public abstract fun interface SuspendRunnable : kotlin/Any {
+
+      public abstract suspend fun run(): kotlin/Unit
+    }
+
+    public final object Test1 : kotlin/Any {
+
+      private constructor()
+
+      public final fun call(r: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      // nested class: Scope
+    }
+
+    public final object Test1.Scope : kotlin/Any {
+
+      private constructor()
+
+      public final fun bar(f: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun call(r: SuspendRunnable): kotlin/Unit
+    }
+
+    public final object Test2 : kotlin/Any {
+
+      private constructor()
+
+      public final fun call(r: Runnable): kotlin/Unit
+
+      // nested class: Scope
+    }
+
+    public final object Test2.Scope : kotlin/Any {
+
+      private constructor()
+
+      public final fun bar(f: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun call(r: SuspendRunnable): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

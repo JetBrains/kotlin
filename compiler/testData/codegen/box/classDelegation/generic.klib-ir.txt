@@ -1,0 +1,63 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/generic.kt
+    CLASS CLASS name:Content signature:/Content|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Content
+      CONSTRUCTOR signature:/Content.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Content [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Content signature:/Content|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:toString signature:/Content.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Content) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Content
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Content'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS INTERFACE name:Box signature:/Box|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box<E of <root>.Box>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /Box|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:get signature:/Box.get|get(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Box<E of <root>.Box>) returnType:E of <root>.Box
+        $this: VALUE_PARAMETER name:<this> type:<root>.Box<E of <root>.Box>
+    CLASS INTERFACE name:ContentBox signature:/ContentBox|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Box<T of <root>.ContentBox>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ContentBox<T of <root>.ContentBox>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ContentBox|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Content] reified:false
+    CLASS OBJECT name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.ContentBox<<root>.Content>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl
+      CONSTRUCTOR signature:/Impl.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Impl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.ContentBox<<root>.Content>]'
+      FUN name:get signature:/Impl.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:<root>.Content
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): <root>.Content declared in <root>.Impl'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Content' type=<root>.Content origin=null
+    CLASS CLASS name:ContentBoxDelegate signature:/ContentBoxDelegate|null[0] modality:FINAL visibility:public superTypes:[<root>.ContentBox<T of <root>.ContentBoxDelegate>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ContentBoxDelegate<T of <root>.ContentBoxDelegate>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /ContentBoxDelegate|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.Content] reified:false
+      CONSTRUCTOR signature:/ContentBoxDelegate.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ContentBoxDelegate<T of <root>.ContentBoxDelegate> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ContentBoxDelegate signature:/ContentBoxDelegate|null[0] modality:FINAL visibility:public superTypes:[<root>.ContentBox<T of <root>.ContentBoxDelegate>]'
+      FIELD DELEGATE name:$$delegate_0 signature:/ContentBoxDelegate.$$delegate_0|[0] type:<root>.ContentBox<T of <root>.ContentBoxDelegate> visibility:private [final]
+        EXPRESSION_BODY
+          TYPE_OP type=<root>.ContentBox<T of <root>.ContentBoxDelegate> origin=CAST typeOperand=<root>.ContentBox<T of <root>.ContentBoxDelegate>
+            GET_OBJECT 'CLASS OBJECT name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.ContentBox<<root>.Content>]' type=<root>.Impl
+      FUN DELEGATED_MEMBER name:get signature:/ContentBoxDelegate.get|get(){}[0] visibility:public modality:OPEN <> ($this:<root>.ContentBoxDelegate<T of <root>.ContentBoxDelegate>) returnType:T of <root>.ContentBoxDelegate
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ContentBoxDelegate<T of <root>.ContentBoxDelegate>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (): T of <root>.ContentBoxDelegate declared in <root>.ContentBoxDelegate'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.ContentBoxDelegate origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/ContentBoxDelegate.$$delegate_0|[0] type:<root>.ContentBox<T of <root>.ContentBoxDelegate> visibility:private [final] declared in <root>.ContentBoxDelegate' type=<root>.ContentBox<T of <root>.ContentBoxDelegate> origin=null
+                receiver: GET_VAR '<this>: <root>.ContentBoxDelegate<T of <root>.ContentBoxDelegate> declared in <root>.ContentBoxDelegate.get' type=<root>.ContentBoxDelegate<T of <root>.ContentBoxDelegate> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Content' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public open fun get (): T of <root>.ContentBoxDelegate declared in <root>.ContentBoxDelegate' type=<root>.Content origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ContentBoxDelegate' type=<root>.ContentBoxDelegate<<root>.Content> origin=null
+                <class: T>: <root>.Content

@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inv
+
+    public abstract interface Inv<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun yield(element: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* K */> materialize(): Inv<T#0>
+
+      public final fun <T#0 /* U */> sequence(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<Inv<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final fun test(): kotlin/Unit
+    }
+  }
+}

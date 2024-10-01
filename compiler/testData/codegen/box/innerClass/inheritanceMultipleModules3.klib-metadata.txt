@@ -1,0 +1,57 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Inner1
+    // class name: Outer.Middle
+    // class name: Outer.Middle.Inner2
+
+    public open class Outer : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner1
+
+      // nested class: Middle
+    }
+
+    public open inner class Outer.Inner1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final inner class Outer.Middle : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Inner2
+    }
+
+    public final inner class Outer.Middle.Inner2 : Outer.Inner1 {
+
+      public constructor()
+
+      public final fun getMiddle(): Outer.Middle
+
+      public final fun getOuter(): Outer
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

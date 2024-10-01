@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EmptyStream
+    // class name: Stream
+    // class name: ZippingStream
+
+    public final object EmptyStream : Stream<kotlin/Nothing> {
+
+      private constructor()
+
+      public open fun iterator(): kotlin/collections/Iterator<kotlin/Nothing>
+    }
+
+    public abstract interface Stream<T#0 /* T */> : kotlin/Any {
+
+      public abstract fun iterator(): kotlin/collections/Iterator<T#0>
+    }
+
+    public final class ZippingStream<T#0 /* T1 */, T#1 /* T2 */> : Stream<kotlin/Pair<T#0, T#1>> {
+
+      public constructor(stream1: Stream<T#0>, stream2: Stream<T#1>)
+
+      public open fun iterator(): kotlin/collections/Iterator<kotlin/Pair<T#0, T#1>>
+
+      public final val stream1: Stream<T#0>
+        public final get
+
+      public final val stream2: Stream<T#1>
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

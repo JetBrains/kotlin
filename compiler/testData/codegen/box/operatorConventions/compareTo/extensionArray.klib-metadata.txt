@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkLess(x: kotlin/Array<kotlin/Int>, y: kotlin/Array<kotlin/Int>): kotlin/String
+
+      public final operator fun kotlin/Array<kotlin/Int>.compareTo(other: kotlin/Array<kotlin/Int>): kotlin/Int
+    }
+  }
+}

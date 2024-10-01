@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Subtype
+    // class name: Subtype.Trivial
+
+    public sealed class Subtype<T#0 /* A1 */, T#1 /* B1 */> : kotlin/Any {
+
+      protected constructor()
+
+      public abstract fun cast(value: T#0): T#1
+
+      // nested class: Trivial
+
+      // sealed subclass: Subtype.Trivial
+    }
+
+    public final class Subtype.Trivial<T#2 /* A2 */ : T#3, T#3 /* B2 */> : Subtype<T#2, T#3> {
+
+      public constructor()
+
+      public open fun cast(value: T#2): T#3
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* A */, T#1 /* B */> unsafeCast(value: T#0): T#1
+    }
+  }
+}

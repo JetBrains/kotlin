@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(function: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = MySuspendFunction^ */): kotlin/Unit
+
+      public typealias MySuspendFunction = suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> */
+    }
+  }
+}

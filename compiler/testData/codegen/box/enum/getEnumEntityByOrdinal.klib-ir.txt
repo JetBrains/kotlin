@@ -1,0 +1,73 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:foo fileName:/getEnumEntityByOrdinal.kt
+    CLASS ENUM_CLASS name:X signature:foo/X|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><foo.X>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.X
+      CONSTRUCTOR signature:foo/X.<init>|<init>(){}[0] visibility:private <> () returnType:foo.X [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: foo.X
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:X signature:foo/X|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><foo.X>]'
+      ENUM_ENTRY name:B signature:foo/X.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.X.B'
+        class: CLASS ENUM_ENTRY name:B signature:foo/X.B.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.X]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.X.B
+          CONSTRUCTOR signature:foo/X.B.<EEC>.<init>|<init>(){}[0] visibility:private <> () returnType:foo.X.B [primary]
+            BLOCK_BODY
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in foo.X'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B signature:foo/X.B.<EEC>|null[0] modality:FINAL visibility:private superTypes:[foo.X]'
+          PROPERTY name:value2 signature:foo/X.B.<EEC>.value2|{}value2[0] visibility:public modality:OPEN [val]
+            FIELD PROPERTY_BACKING_FIELD name:value2 signature:[ foo/X.B.<EEC>.value2|{}value2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CONST String type=<unbound IrClassSymbolImpl> value="K"
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> signature:foo/X.B.<EEC>.value2.<get-value2>|<get-value2>(){}[0] visibility:public modality:OPEN <> ($this:foo.X.B) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:value2 signature:foo/X.B.<EEC>.value2|{}value2[0] visibility:public modality:OPEN [val]
+              overridden:
+                public abstract fun <get-value2> (): <unbound IrClassSymbolImpl> declared in foo.X
+              $this: VALUE_PARAMETER name:<this> type:foo.X.B
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-value2> (): <unbound IrClassSymbolImpl> declared in foo.X.B'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 signature:[ foo/X.B.<EEC>.value2|{}value2[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: foo.X.B declared in foo.X.B.<get-value2>' type=foo.X.B origin=null
+          PROPERTY name:value signature:foo/X.B.<EEC>.value|{}value[0] visibility:public modality:OPEN [val]
+            FIELD PROPERTY_BACKING_FIELD name:value signature:[ foo/X.B.<EEC>.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public open fun <get-value2> (): <unbound IrClassSymbolImpl> declared in foo.X.B' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: foo.X.B declared in foo.X.B' type=foo.X.B origin=null
+                      1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: foo.X.B declared in foo.X.B' type=foo.X.B origin=null
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:foo/X.B.<EEC>.value.<get-value>|<get-value>(){}[0] visibility:public modality:OPEN <> ($this:foo.X.B) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:value signature:foo/X.B.<EEC>.value|{}value[0] visibility:public modality:OPEN [val]
+              overridden:
+                public abstract fun <get-value> (): <unbound IrClassSymbolImpl> declared in foo.X
+              $this: VALUE_PARAMETER name:<this> type:foo.X.B
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-value> (): <unbound IrClassSymbolImpl> declared in foo.X.B'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ foo/X.B.<EEC>.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: foo.X.B declared in foo.X.B.<get-value>' type=foo.X.B origin=null
+      PROPERTY name:value2 signature:foo/X.value2|{}value2[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> signature:foo/X.value2.<get-value2>|<get-value2>(){}[0] visibility:public modality:ABSTRACT <> ($this:foo.X) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value2 signature:foo/X.value2|{}value2[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.X
+      PROPERTY name:value signature:foo/X.value|{}value[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:foo/X.value.<get-value>|<get-value>(){}[0] visibility:public modality:ABSTRACT <> ($this:foo.X) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:foo/X.value|{}value[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:foo.X
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:foo/X.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><foo.X>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:foo/X.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:foo.X
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:foo/X.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:foo/X.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><foo.X>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:foo/X.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:foo/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in foo'
+          CALL 'public abstract fun <get-value> (): <unbound IrClassSymbolImpl> declared in foo.X' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_ENUM 'ENUM_ENTRY name:B signature:foo/X.B|null[0]' type=foo.X

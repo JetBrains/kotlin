@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Inv
+
+    public final class Inv<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : T#2, T#1 /* U */ : T#2, T#2 /* V */> foo(x: T#0, y: Inv<in T#1>): kotlin/Unit
+
+      public final fun <T#0 /* E */> materializeInvInv(): Inv<in Inv<T#0>?>
+
+      public final fun test(inv: Inv<kotlin/Int>): kotlin/Unit
+    }
+  }
+}

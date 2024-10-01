@@ -1,0 +1,57 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt64069.kt
+    PROPERTY name:enable signature:[ File '/kt64069.kt' <- /enable|{}enable[0] ] visibility:private modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:enable signature:[ [ File '/kt64069.kt' <- /enable|{}enable[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:enable type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-enable> signature:[ File '/kt64069.kt' <- /enable.<get-enable>|<get-enable>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:enable signature:[ File '/kt64069.kt' <- /enable|{}enable[0] ] visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-enable> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:enable signature:[ [ File '/kt64069.kt' <- /enable|{}enable[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:enable type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-enable> signature:[ File '/kt64069.kt' <- /enable.<set-enable>|<set-enable>(kotlin.Boolean){}[0] ] visibility:private modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:enable signature:[ File '/kt64069.kt' <- /enable|{}enable[0] ] visibility:private modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:enable signature:[ [ File '/kt64069.kt' <- /enable|{}enable[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:enable type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-enable>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:string signature:[ File '/kt64069.kt' <- /string|{}string[0] ] visibility:private modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:string$delegate signature:[ [ File '/kt64069.kt' <- /string|{}string[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:enable type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl>? declared in <root>.string$delegate'
+                    WHEN type=<unbound IrClassSymbolImpl>? origin=IF
+                      BRANCH
+                        if: CALL 'private final fun <get-enable> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        then: BLOCK type=<unbound IrClassSymbolImpl>? origin=null
+                          CALL 'public final fun getT <T> (): T of <root>.getT declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                            <T>: <unbound IrClassSymbolImpl>?
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: BLOCK type=<unbound IrClassSymbolImpl>? origin=null
+                          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-string> signature:[ File '/kt64069.kt' <- /string.<get-string>|<get-string>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+        correspondingProperty: PROPERTY name:string signature:[ File '/kt64069.kt' <- /string|{}string[0] ] visibility:private modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-string> (): <unbound IrClassSymbolImpl>? declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:string$delegate signature:[ [ File '/kt64069.kt' <- /string|{}string[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:enable type:kotlin.Boolean visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final,static] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: PROPERTY_REFERENCE 'private final string: <unbound IrClassSymbolImpl>? [delegated,val] declared in <root>' field=null getter='private final fun <get-string> (): <unbound IrClassSymbolImpl>? declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:getT signature:/getT|getT(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:T of <root>.getT
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /getT|getT(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getT <T> (): T of <root>.getT declared in <root>'
+          TYPE_OP type=T of <root>.getT origin=CAST typeOperand=T of <root>.getT
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: CALL 'private final fun <get-string> (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY

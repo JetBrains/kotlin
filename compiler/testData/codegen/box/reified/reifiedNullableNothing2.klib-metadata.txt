@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Intf
+
+    public final class A<T#0 /* T0 */ : Intf?> : kotlin/Any {
+
+      public constructor()
+
+      public final fun func(t: T#0): kotlin/String
+    }
+
+    public abstract interface Intf : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T1 */ : Intf?> foo(it: A<T#0>, t: T#0): kotlin/String
+    }
+  }
+}

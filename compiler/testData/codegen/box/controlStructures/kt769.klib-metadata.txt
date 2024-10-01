@@ -1,0 +1,12 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: w_range
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

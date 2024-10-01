@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Piece
+
+    public final enum class Piece : kotlin/Enum<Piece> {
+
+      private constructor(vararg states: kotlin/Int /* kotlin/IntArray */)
+
+      public final val states: kotlin/IntArray
+        public final get
+
+      I,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

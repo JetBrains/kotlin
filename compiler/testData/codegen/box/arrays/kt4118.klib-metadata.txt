@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Array<kotlin/DoubleArray>.test1(): kotlin/Array<kotlin/DoubleArray>
+
+      public final fun kotlin/Array<kotlin/String>.test1(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test1Nested(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test2(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test2Nested(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test3(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test3Nested(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test4(): kotlin/Array<kotlin/String>
+
+      public final fun kotlin/Array<kotlin/String>.test4Nested(): kotlin/Array<kotlin/String>
+    }
+  }
+}

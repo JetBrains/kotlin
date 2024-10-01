@@ -1,0 +1,54 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CaptureContext
+    // class name: Right
+
+    public final class CaptureContext<T#0 /* A */> : kotlin/properties/ReadOnlyProperty<T#0, kotlin/Function0<kotlin/Unit>> {
+
+      public constructor(capture: kotlin/Function1<T#0, kotlin/Unit>)
+
+      public open operator fun getValue(thisRef: T#0, property: kotlin/reflect/KProperty<*>): kotlin/Function0<kotlin/Unit>
+
+      public final val capture: kotlin/Function1<T#0, kotlin/Unit>
+        public final get
+    }
+
+    public final class Right : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ val prop: kotlin/Function0<kotlin/Unit>
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final operator fun <T#0 /* A */> kotlin/Function1<T#0, kotlin/Unit>.provideDelegate(thisRef: T#0, property: kotlin/reflect/KProperty<*>): CaptureContext<T#0>
+
+      public final fun right(arg: Right): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

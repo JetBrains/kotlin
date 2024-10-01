@@ -1,0 +1,50 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CountingSequence
+    // class name: CountingSequence.CountingSequenceIterator
+
+    public final class CountingSequence<out T#0 /* T */> : kotlin/sequences/Sequence<T#0> {
+
+      public constructor(s: kotlin/sequences/Sequence<T#0>)
+
+      public open operator fun iterator(): CountingSequence<T#0>.CountingSequenceIterator
+
+      public final var hasNextCtr: kotlin/Int
+        public final get
+        public final set
+
+      public final var nextCtr: kotlin/Int
+        public final get
+        public final set
+
+      private final val s: kotlin/sequences/Sequence<T#0>
+        private final get
+
+      // nested class: CountingSequenceIterator
+    }
+
+    public final inner class CountingSequence.CountingSequenceIterator : kotlin/collections/Iterator<T#0> {
+
+      public constructor(it: kotlin/collections/Iterator<T#0>)
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): T#0
+
+      private final val it: kotlin/collections/Iterator<T#0>
+        private final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val xs: CountingSequence<kotlin/String>
+        public final get
+    }
+  }
+}

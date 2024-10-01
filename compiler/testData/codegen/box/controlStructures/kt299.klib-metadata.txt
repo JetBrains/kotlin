@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyRange1
+    // class name: MyRange2
+
+    public final class MyRange1 : kotlin/ranges/ClosedRange<kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun contains(item: kotlin/Int): kotlin/Boolean
+
+      public open val endInclusive: kotlin/Int
+        public open /* non-default */ get
+
+      public open val start: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    public final class MyRange2 : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun contains(item: kotlin/Int): kotlin/Boolean
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun diffOfSquares(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+
+      public final fun mod(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+
+      public final fun remainder(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+
+      public final fun square(a: kotlin/Int): kotlin/Int
+
+      public final fun sumOfSquares(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+    }
+  }
+}

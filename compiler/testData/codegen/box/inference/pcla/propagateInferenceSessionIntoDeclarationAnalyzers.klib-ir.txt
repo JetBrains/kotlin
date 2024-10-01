@@ -1,0 +1,73 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/propagateInferenceSessionIntoDeclarationAnalyzers.kt
+    CLASS INTERFACE name:Callback signature:/Callback|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Callback
+      FUN name:onSuccess signature:/Callback.onSuccess|onSuccess(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Callback) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Callback
+    CLASS INTERFACE name:SendChannelX signature:/SendChannelX|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SendChannelX<E of <root>.SendChannelX>
+      TYPE_PARAMETER name:E index:0 variance:in signature:[ /SendChannelX|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:close signature:/SendChannelX.close|close(kotlin.Throwable?){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SendChannelX<E of <root>.SendChannelX>, cause:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.SendChannelX<E of <root>.SendChannelX>
+        VALUE_PARAMETER name:cause index:0 type:<unbound IrClassSymbolImpl>?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS INTERFACE name:ProducerScopeX signature:/ProducerScopeX|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProducerScopeX<E of <root>.ProducerScopeX>
+      TYPE_PARAMETER name:E index:0 variance:in signature:[ /ProducerScopeX|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      PROPERTY name:channel signature:/ProducerScopeX.channel|{}channel[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-channel> signature:/ProducerScopeX.channel.<get-channel>|<get-channel>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ProducerScopeX<E of <root>.ProducerScopeX>) returnType:<root>.SendChannelX<E of <root>.ProducerScopeX>
+          correspondingProperty: PROPERTY name:channel signature:/ProducerScopeX.channel|{}channel[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ProducerScopeX<E of <root>.ProducerScopeX>
+      FUN name:foo signature:/ProducerScopeX.foo|foo(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.ProducerScopeX<E of <root>.ProducerScopeX>, x:E of <root>.ProducerScopeX) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProducerScopeX<E of <root>.ProducerScopeX>
+        VALUE_PARAMETER name:x index:0 type:E of <root>.ProducerScopeX
+    CLASS CLASS name:FlowX signature:/FlowX|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlowX<T of <root>.FlowX>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /FlowX|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/FlowX.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.FlowX<T of <root>.FlowX> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FlowX signature:/FlowX|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:callbackFlowX signature:/callbackFlowX|callbackFlowX(kotlin.Function1<ProducerScopeX<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ProducerScopeX<T of <root>.callbackFlowX>, <unbound IrClassSymbolImpl>>) returnType:<root>.FlowX<T of <root>.callbackFlowX>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /callbackFlowX|callbackFlowX(kotlin.Function1<ProducerScopeX<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.ProducerScopeX<T of <root>.callbackFlowX>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun callbackFlowX <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ProducerScopeX<T of <root>.callbackFlowX>, <unbound IrClassSymbolImpl>>): <root>.FlowX<T of <root>.callbackFlowX> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FlowX' type=<root>.FlowX<T of <root>.callbackFlowX> origin=null
+            <class: T>: T of <root>.callbackFlowX
+    FUN name:foo signature:/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:<root>.FlowX<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <root>.FlowX<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun callbackFlowX <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.ProducerScopeX<T of <root>.callbackFlowX>, <unbound IrClassSymbolImpl>>): <root>.FlowX<T of <root>.callbackFlowX> declared in <root>' type=<root>.FlowX<<unbound IrClassSymbolImpl>> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.ProducerScopeX<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScopeX<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$callbackFlowX type:<root>.ProducerScopeX<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    BLOCK type=<root>.foo.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Callback]
+                        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.foo.<anonymous>.<no name provided>
+                        CONSTRUCTOR visibility:public <> () returnType:<root>.foo.<anonymous>.<no name provided> [primary]
+                          BLOCK_BODY
+                            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Callback]'
+                        FUN name:onSuccess visibility:public modality:OPEN <> ($this:<root>.foo.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                          overridden:
+                            public abstract fun onSuccess (): <unbound IrClassSymbolImpl> declared in <root>.Callback
+                          $this: VALUE_PARAMETER name:<this> type:<root>.foo.<anonymous>.<no name provided>
+                          BLOCK_BODY
+                            TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                              CALL 'public abstract fun close (cause: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in <root>.SendChannelX' type=<unbound IrClassSymbolImpl> origin=null
+                                $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannelX<E of <root>.ProducerScopeX> declared in <root>.ProducerScopeX' type=<root>.SendChannelX<<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$callbackFlowX: <root>.ProducerScopeX<<unbound IrClassSymbolImpl>> declared in <root>.foo.<anonymous>' type=<root>.ProducerScopeX<<unbound IrClassSymbolImpl>> origin=null
+                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.foo.<anonymous>.<no name provided>' type=<root>.foo.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun foo (): <root>.FlowX<<unbound IrClassSymbolImpl>> declared in <root>' type=<root>.FlowX<<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

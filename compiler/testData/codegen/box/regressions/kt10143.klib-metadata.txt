@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: another
+
+    // class name: another/Outer
+    // class name: another/Outer.My
+    // class name: another/Outer.Stage
+
+    public open class another/Outer : kotlin/Any {
+
+      public constructor()
+
+      protected final fun my(init: @kotlin/ExtensionFunctionType kotlin/Function1<another/Outer.My, kotlin/Unit>): another/Outer.My
+
+      // nested class: Stage
+
+      // nested class: My
+    }
+
+    protected final class another/Outer.My : kotlin/Any {
+
+      public constructor(stage: another/Outer.Stage? /* = ... */)
+
+      public final fun initStage(f: kotlin/Function0<kotlin/Unit>): another/Outer.Stage
+
+      public final var stage: another/Outer.Stage?
+        public final get
+        public final set
+    }
+
+    protected final class another/Outer.Stage : kotlin/Any {
+
+      public constructor(run: kotlin/Function0<kotlin/Unit>)
+
+      public final val run: kotlin/Function0<kotlin/Unit>
+        public final get
+    }
+  }
+
+  library fragment {
+    // package name: other
+
+    // class name: other/Derived
+
+    public final class other/Derived : another/Outer {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

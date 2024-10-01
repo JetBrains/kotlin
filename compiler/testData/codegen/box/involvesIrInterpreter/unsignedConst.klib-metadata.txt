@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.id(): T#0
+
+      public final const val byteVal: kotlin/UByte /* = 1.toUByte() */
+        public final get
+
+      public final const val intVal: kotlin/UInt /* = 3u */
+        public final get
+
+      public final const val longVal: kotlin/ULong /* = 4uL */
+        public final get
+
+      public final const val shortVal: kotlin/UShort /* = 2.toUShort() */
+        public final get
+    }
+  }
+}

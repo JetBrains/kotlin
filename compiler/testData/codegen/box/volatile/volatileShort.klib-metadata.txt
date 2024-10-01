@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ShortWrapper
+
+    public final class ShortWrapper : kotlin/Any {
+
+      public constructor(x: kotlin/Short)
+
+      public final var x: kotlin/Short
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val global: ShortWrapper
+        public final get
+    }
+  }
+}

@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:bar signature:test/bar|bar(kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <R, T> (tasksFactory:<unbound IrClassSymbolImpl><T of test.bar>) returnType:<unbound IrClassSymbolImpl><T of test.bar> [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ test/bar|bar(kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      TYPE_PARAMETER name:T index:1 variance: signature:[ test/bar|bar(kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:tasksFactory index:0 type:<unbound IrClassSymbolImpl><T of test.bar> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar <R, T> (tasksFactory: <unbound IrClassSymbolImpl><T of test.bar>): <unbound IrClassSymbolImpl><T of test.bar> [inline] declared in test'
+          FUN_EXPR type=<unbound IrClassSymbolImpl><T of test.bar> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T of test.bar
+              BLOCK_BODY
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=R of test.bar
+                    CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): T of test.bar declared in test.bar'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.bar origin=null
+                    <1>: T of test.bar
+                    1: GET_VAR 'tasksFactory: <unbound IrClassSymbolImpl><T of test.bar> [crossinline] declared in test.bar' type=<unbound IrClassSymbolImpl><T of test.bar> origin=null
+    FUN name:call signature:test/call|call(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f:<unbound IrClassSymbolImpl><T of test.call>) returnType:T of test.call [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/call|call(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><T of test.call>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun call <T> (f: <unbound IrClassSymbolImpl><T of test.call>): T of test.call [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.call origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.call> declared in test.call' type=<unbound IrClassSymbolImpl><T of test.call> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:foo signature:/foo|foo(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /foo|foo(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <R> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          CALL 'public final fun bar <R, T> (tasksFactory: <unbound IrClassSymbolImpl><T of test.bar>): <unbound IrClassSymbolImpl><T of test.bar> [inline] declared in test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <R>: R of <root>.foo
+            <T>: <unbound IrClassSymbolImpl>
+            tasksFactory: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.foo'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'public final fun foo <R> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <R>: <unbound IrClassSymbolImpl>

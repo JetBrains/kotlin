@@ -1,0 +1,39 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Ann
+    // class name: Test
+
+    public abstract interface A : kotlin/Any {
+    }
+
+    public final annotation class Ann : kotlin/Annotation {
+
+      public constructor(vararg kClass: kotlin/reflect/KClass<*> /* kotlin/Array<out kotlin/reflect/KClass<*>> */)
+
+      public final val kClass: kotlin/Array<out kotlin/reflect/KClass<*>>
+        public final get
+    }
+
+    @Ann(kClass = [A::class, A::class, A::class])
+    public final class Test : kotlin/Any {
+
+      public constructor()
+
+      public final fun get(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public typealias OtherA = A /* = A */
+
+      public typealias OtherOtherA = A /* = OtherA^ */ /* = A /* = OtherA^ */ */
+    }
+  }
+}

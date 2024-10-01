@@ -1,0 +1,46 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public abstract interface Test : kotlin/Any {
+
+      public open fun test(): kotlin/String
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test2
+    // class name: Test3
+    // class name: TestClass
+
+    public abstract interface Test2 : Test {
+
+      public open fun test(): kotlin/String
+    }
+
+    public abstract interface Test3 : Test2 {
+    }
+
+    public final class TestClass : Test3 {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

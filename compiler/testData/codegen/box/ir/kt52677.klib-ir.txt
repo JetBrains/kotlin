@@ -1,0 +1,152 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    CLASS ANNOTATION_CLASS name:MySerializable signature:/MySerializable|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MySerializable
+      CONSTRUCTOR signature:/MySerializable.<init>|<init>(kotlin.reflect.KClass<*>){}[0] visibility:public <> (c:<unbound IrClassSymbolImpl><*>) returnType:<root>.MySerializable [primary]
+        VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MySerializable signature:/MySerializable|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:c signature:/MySerializable.c|{}c[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:c signature:[ /MySerializable.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'c: <unbound IrClassSymbolImpl><*> declared in <root>.MySerializable.<init>' type=<unbound IrClassSymbolImpl><*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> signature:/MySerializable.c.<get-c>|<get-c>(){}[0] visibility:public modality:FINAL <> ($this:<root>.MySerializable) returnType:<unbound IrClassSymbolImpl><*>
+          correspondingProperty: PROPERTY name:c signature:/MySerializable.c|{}c[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MySerializable
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-c> (): <unbound IrClassSymbolImpl><*> declared in <root>.MySerializable'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c signature:[ /MySerializable.c|{}c[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]' type=<unbound IrClassSymbolImpl><*> origin=null
+                receiver: GET_VAR '<this>: <root>.MySerializable declared in <root>.MySerializable.<get-c>' type=<root>.MySerializable origin=null
+    CLASS CLASS name:LoginSuccessPacket signature:/LoginSuccessPacket|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LoginSuccessPacket
+      CONSTRUCTOR signature:/LoginSuccessPacket.<init>|<init>(Uuid1){}[0] visibility:public <> (id:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1) returnType:<root>.LoginSuccessPacket [primary]
+        VALUE_PARAMETER name:id index:0 type:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LoginSuccessPacket signature:/LoginSuccessPacket|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:id signature:/LoginSuccessPacket.id|{}id[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'id: @[MySerializable(c = ...)] <root>.Uuid1 declared in <root>.LoginSuccessPacket.<init>' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> signature:/LoginSuccessPacket.id.<get-id>|<get-id>(){}[0] visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket) returnType:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1
+          correspondingProperty: PROPERTY name:id signature:/LoginSuccessPacket.id|{}id[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-id> (): @[MySerializable(c = ...)] <root>.Uuid1 declared in <root>.LoginSuccessPacket'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+                receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.<get-id>' type=<root>.LoginSuccessPacket origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/LoginSuccessPacket.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket) returnType:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): @[MySerializable(c = ...)] <root>.Uuid1 [operator] declared in <root>.LoginSuccessPacket'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+              receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.component1' type=<root>.LoginSuccessPacket origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/LoginSuccessPacket.copy|copy(Uuid1){}[0] visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket, id:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1) returnType:<root>.LoginSuccessPacket
+        $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+        VALUE_PARAMETER name:id index:0 type:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+              receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.copy' type=<root>.LoginSuccessPacket origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (id: @[MySerializable(c = ...)] <root>.Uuid1): <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket'
+            CONSTRUCTOR_CALL 'public constructor <init> (id: @[MySerializable(c = ...)] <root>.Uuid1) [primary] declared in <root>.LoginSuccessPacket' type=<root>.LoginSuccessPacket origin=null
+              id: GET_VAR 'id: @[MySerializable(c = ...)] <root>.Uuid1 declared in <root>.LoginSuccessPacket.copy' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/LoginSuccessPacket.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.LoginSuccessPacket'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="LoginSuccessPacket("
+              CONST String type=<unbound IrClassSymbolImpl> value="id="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+                receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.toString' type=<root>.LoginSuccessPacket origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/LoginSuccessPacket.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.LoginSuccessPacket'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+                receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.hashCode' type=<root>.LoginSuccessPacket origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/LoginSuccessPacket.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.equals' type=<root>.LoginSuccessPacket origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.LoginSuccessPacket.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.LoginSuccessPacket'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.LoginSuccessPacket
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.LoginSuccessPacket.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.LoginSuccessPacket'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.LoginSuccessPacket [val]
+            TYPE_OP type=<root>.LoginSuccessPacket origin=CAST typeOperand=<root>.LoginSuccessPacket
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.LoginSuccessPacket.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+                    receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.equals' type=<root>.LoginSuccessPacket origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id signature:[ /LoginSuccessPacket.id|{}id[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1 origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.LoginSuccessPacket [val] declared in <root>.LoginSuccessPacket.equals' type=<root>.LoginSuccessPacket origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.LoginSuccessPacket'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.LoginSuccessPacket'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    TYPEALIAS name:Uuid signature:/Uuid|null[0] visibility:public expandedType:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1
+    CLASS INTERFACE name:MySerializer signature:/MySerializer|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MySerializer<T of <root>.MySerializer>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /MySerializer|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=<unbound IrClassSymbolImpl><<root>.UuidSerializer>)] <root>.Uuid1>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.UuidSerializer
+      CONSTRUCTOR signature:/UuidSerializer.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.UuidSerializer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:UuidSerializer signature:/UuidSerializer|null[0] modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]'
+    CLASS CLASS name:Uuid1 signature:/Uuid1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Uuid1
+      CONSTRUCTOR signature:/Uuid1.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Uuid1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Uuid1 signature:/Uuid1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:ok signature:/Uuid1.ok|ok(){}[0] visibility:public modality:FINAL <> ($this:<root>.Uuid1) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Uuid1
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun ok (): <unbound IrClassSymbolImpl> declared in <root>.Uuid1'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:foo signature:/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:@[<unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>)] <unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        THROW type=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:bar signature:/bar|bar(){}[0] visibility:public modality:FINAL <> () returnType:@[<unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>)] <unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): @[<unbound>(1 = ...)] <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo (): @[<unbound>(1 = ...)] <unbound IrClassSymbolImpl> declared in <root>' type=@[<unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>)] <unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=@[<unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>)] <unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null

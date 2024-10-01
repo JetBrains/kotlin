@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TailInline
+
+    public final class TailInline : kotlin/Any {
+
+      public constructor()
+
+      private final inline fun act(action: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final tailrec fun test(): kotlin/Int
+
+      private final var countDown: kotlin/Int
+        private final get
+        private final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

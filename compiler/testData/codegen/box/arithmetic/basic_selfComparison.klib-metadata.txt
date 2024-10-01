@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun selfCmp1(x: kotlin/Int): kotlin/Boolean
+
+      public final fun selfCmp2(x: kotlin/Int): kotlin/Boolean
+    }
+  }
+}

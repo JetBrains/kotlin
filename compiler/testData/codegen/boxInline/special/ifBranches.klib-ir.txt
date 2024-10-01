@@ -1,0 +1,391 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    FUN name:runIf signature:test/runIf|runIf(kotlin.Function1<0:0,0:0>;0:0;0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f:<unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start:T of test.runIf, stop:T of test.runIf, secondStart:T of test.runIf) returnType:T of test.runIf [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/runIf|runIf(kotlin.Function1<0:0,0:0>;0:0;0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>
+      VALUE_PARAMETER name:start index:1 type:T of test.runIf
+      VALUE_PARAMETER name:stop index:2 type:T of test.runIf
+      VALUE_PARAMETER name:secondStart index:3 type:T of test.runIf
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIf origin=INVOKE
+                $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf> declared in test.runIf' type=<unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf> origin=VARIABLE_AS_FUNCTION
+                1: GET_VAR 'start: T of test.runIf declared in test.runIf' type=T of test.runIf origin=null
+              arg1: GET_VAR 'stop: T of test.runIf declared in test.runIf' type=T of test.runIf origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun runIf <T> (f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start: T of test.runIf, stop: T of test.runIf, secondStart: T of test.runIf): T of test.runIf [inline] declared in test'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIf origin=INVOKE
+                  $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf> declared in test.runIf' type=<unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'start: T of test.runIf declared in test.runIf' type=T of test.runIf origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runIf <T> (f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start: T of test.runIf, stop: T of test.runIf, secondStart: T of test.runIf): T of test.runIf [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIf origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf> declared in test.runIf' type=<unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'secondStart: T of test.runIf declared in test.runIf' type=T of test.runIf origin=null
+    FUN name:runIf2 signature:test/runIf2|runIf2(kotlin.Function1<0:0,0:0>;0:0;0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f:<unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start:T of test.runIf2, stop:T of test.runIf2, secondStart:T of test.runIf2) returnType:T of test.runIf2 [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/runIf2|runIf2(kotlin.Function1<0:0,0:0>;0:0;0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>
+      VALUE_PARAMETER name:start index:1 type:T of test.runIf2
+      VALUE_PARAMETER name:stop index:2 type:T of test.runIf2
+      VALUE_PARAMETER name:secondStart index:3 type:T of test.runIf2
+      BLOCK_BODY
+        VAR name:result type:T of test.runIf2 [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIf2 origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2> declared in test.runIf2' type=<unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'start: T of test.runIf2 declared in test.runIf2' type=T of test.runIf2 origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: GET_VAR 'val result: T of test.runIf2 [val] declared in test.runIf2' type=T of test.runIf2 origin=null
+              arg1: GET_VAR 'stop: T of test.runIf2 declared in test.runIf2' type=T of test.runIf2 origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun runIf2 <T> (f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start: T of test.runIf2, stop: T of test.runIf2, secondStart: T of test.runIf2): T of test.runIf2 [inline] declared in test'
+                GET_VAR 'val result: T of test.runIf2 [val] declared in test.runIf2' type=T of test.runIf2 origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun runIf2 <T> (f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start: T of test.runIf2, stop: T of test.runIf2, secondStart: T of test.runIf2): T of test.runIf2 [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIf2 origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2> declared in test.runIf2' type=<unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2> origin=VARIABLE_AS_FUNCTION
+            1: GET_VAR 'secondStart: T of test.runIf2 declared in test.runIf2' type=T of test.runIf2 origin=null
+    FUN name:runIfElse signature:test/runIfElse|runIfElse(kotlin.Function1<0:0,0:0>;0:0;0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (f:<unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start:T of test.runIfElse, stop:T of test.runIfElse, secondStart:T of test.runIfElse) returnType:T of test.runIfElse [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/runIfElse|runIfElse(kotlin.Function1<0:0,0:0>;0:0;0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>
+      VALUE_PARAMETER name:start index:1 type:T of test.runIfElse
+      VALUE_PARAMETER name:stop index:2 type:T of test.runIfElse
+      VALUE_PARAMETER name:secondStart index:3 type:T of test.runIfElse
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIfElse origin=INVOKE
+                $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse> declared in test.runIfElse' type=<unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse> origin=VARIABLE_AS_FUNCTION
+                1: GET_VAR 'start: T of test.runIfElse declared in test.runIfElse' type=T of test.runIfElse origin=null
+              arg1: GET_VAR 'stop: T of test.runIfElse declared in test.runIfElse' type=T of test.runIfElse origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun runIfElse <T> (f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start: T of test.runIfElse, stop: T of test.runIfElse, secondStart: T of test.runIfElse): T of test.runIfElse [inline] declared in test'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIfElse origin=INVOKE
+                  $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse> declared in test.runIfElse' type=<unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'start: T of test.runIfElse declared in test.runIfElse' type=T of test.runIfElse origin=null
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun runIfElse <T> (f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start: T of test.runIfElse, stop: T of test.runIfElse, secondStart: T of test.runIfElse): T of test.runIfElse [inline] declared in test'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test.runIfElse origin=INVOKE
+                  $this: GET_VAR 'f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse> declared in test.runIfElse' type=<unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'secondStart: T of test.runIfElse declared in test.runIfElse' type=T of test.runIfElse origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:testIf signature:/testIf|testIf(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf <T> (f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start: T of test.runIf, stop: T of test.runIf, secondStart: T of test.runIf): T of test.runIf [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf'
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf 1 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf <T> (f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start: T of test.runIf, stop: T of test.runIf, secondStart: T of test.runIf): T of test.runIf [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf'
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf 2 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf <T> (f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start: T of test.runIf, stop: T of test.runIf, secondStart: T of test.runIf): T of test.runIf [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf'
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                              then: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf 3 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf <T> (f: <unbound IrClassSymbolImpl><T of test.runIf, T of test.runIf>, start: T of test.runIf, stop: T of test.runIf, secondStart: T of test.runIf): T of test.runIf [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf'
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                              then: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf 4 test fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:testIf2 signature:/testIf2|testIf2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf2 <T> (f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start: T of test.runIf2, stop: T of test.runIf2, secondStart: T of test.runIf2): T of test.runIf2 [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf2'
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf2 (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf2 1 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf2 <T> (f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start: T of test.runIf2, stop: T of test.runIf2, secondStart: T of test.runIf2): T of test.runIf2 [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf2'
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf2 (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf2 2 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf2 <T> (f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start: T of test.runIf2, stop: T of test.runIf2, secondStart: T of test.runIf2): T of test.runIf2 [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf2'
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                              then: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf2 (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf2 3 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIf2 <T> (f: <unbound IrClassSymbolImpl><T of test.runIf2, T of test.runIf2>, start: T of test.runIf2, stop: T of test.runIf2, secondStart: T of test.runIf2): T of test.runIf2 [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIf2'
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                              then: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIf2.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf2 (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIf2 4 test fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIf2 (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:testIfElse signature:/testIfElse|testIfElse(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIfElse <T> (f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start: T of test.runIfElse, stop: T of test.runIfElse, secondStart: T of test.runIfElse): T of test.runIfElse [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIfElse'
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIfElse.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIfElse (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIfElse 1 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIfElse <T> (f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start: T of test.runIfElse, stop: T of test.runIfElse, secondStart: T of test.runIfElse): T of test.runIfElse [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIfElse'
+                          GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIfElse.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIfElse (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIfElse 2 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIfElse <T> (f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start: T of test.runIfElse, stop: T of test.runIfElse, secondStart: T of test.runIfElse): T of test.runIfElse [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIfElse'
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIfElse.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                              then: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIfElse.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIfElse (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIfElse 3 test fail"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun runIfElse <T> (f: <unbound IrClassSymbolImpl><T of test.runIfElse, T of test.runIfElse>, start: T of test.runIfElse, stop: T of test.runIfElse, secondStart: T of test.runIfElse): T of test.runIfElse [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                  <T>: <unbound IrClassSymbolImpl>
+                  f: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                      VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.testIfElse'
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIfElse.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                              then: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.testIfElse.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: CONST Int type=<unbound IrClassSymbolImpl> value=12
+                  start: CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  stop: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  secondStart: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=12
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIfElse (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="testIfElse 4 test fail"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun testIfElse (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CALL 'public final fun testIf (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail1: "
+                GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun testIf2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2: "
+                GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+          CALL 'public final fun testIfElse (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2: "
+                GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

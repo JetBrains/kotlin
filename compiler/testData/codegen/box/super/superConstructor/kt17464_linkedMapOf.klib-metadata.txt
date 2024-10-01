@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: B
+    // class name: C
+
+    public open class B : kotlin/Any {
+
+      public constructor(map: kotlin/collections/HashMap<kotlin/String, kotlin/String> /* = kotlin/collections/LinkedHashMap^<kotlin/String, kotlin/String> */)
+
+      public final val map: kotlin/collections/HashMap<kotlin/String, kotlin/String> /* = kotlin/collections/LinkedHashMap^<kotlin/String, kotlin/String> */
+        public final get
+    }
+
+    public final class C : B {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

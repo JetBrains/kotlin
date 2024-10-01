@@ -1,0 +1,48 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: lib
+
+    // class name: lib/Internal
+    // class name: lib/Internal.Companion
+    // class name: lib/Key
+
+    internal final class lib/Internal : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object lib/Internal.Companion : lib/Key {
+
+      private constructor()
+    }
+
+    public abstract interface lib/Key : kotlin/Any {
+
+      public open val s: kotlin/String
+        public open /* non-default */ get
+    }
+  }
+}
+
+// MODULE: box
+library {
+  // module name: <box>
+
+  library fragment {
+    // package name: app
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(key: lib/Key): kotlin/String
+    }
+  }
+}

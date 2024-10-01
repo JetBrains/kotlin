@@ -1,0 +1,1280 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/atomicArrayIntrinsics.kt
+    annotations:
+      <unbound>(1 = ["INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+    PROPERTY name:intArrStatic signature:[ File '/atomicArrayIntrinsics.kt' <- /intArrStatic|{}intArrStatic[0] ] visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:intArrStatic signature:[ [ File '/atomicArrayIntrinsics.kt' <- /intArrStatic|{}intArrStatic[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.intArrStatic'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                      $this: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.intArrStatic.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intArrStatic> signature:[ File '/atomicArrayIntrinsics.kt' <- /intArrStatic.<get-intArrStatic>|<get-intArrStatic>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:intArrStatic signature:[ File '/atomicArrayIntrinsics.kt' <- /intArrStatic|{}intArrStatic[0] ] visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArrStatic signature:[ [ File '/atomicArrayIntrinsics.kt' <- /intArrStatic|{}intArrStatic[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:longArrStatic signature:[ File '/atomicArrayIntrinsics.kt' <- /longArrStatic|{}longArrStatic[0] ] visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:longArrStatic signature:[ [ File '/atomicArrayIntrinsics.kt' <- /longArrStatic|{}longArrStatic[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.longArrStatic'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                      $this: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.longArrStatic.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST Long type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-longArrStatic> signature:[ File '/atomicArrayIntrinsics.kt' <- /longArrStatic.<get-longArrStatic>|<get-longArrStatic>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:longArrStatic signature:[ File '/atomicArrayIntrinsics.kt' <- /longArrStatic|{}longArrStatic[0] ] visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArrStatic signature:[ [ File '/atomicArrayIntrinsics.kt' <- /longArrStatic|{}longArrStatic[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:refArrStatic signature:[ File '/atomicArrayIntrinsics.kt' <- /refArrStatic|{}refArrStatic[0] ] visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:refArrStatic signature:[ [ File '/atomicArrayIntrinsics.kt' <- /refArrStatic|{}refArrStatic[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-refArrStatic> signature:[ File '/atomicArrayIntrinsics.kt' <- /refArrStatic.<get-refArrStatic>|<get-refArrStatic>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        correspondingProperty: PROPERTY name:refArrStatic signature:[ File '/atomicArrayIntrinsics.kt' <- /refArrStatic|{}refArrStatic[0] ] visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:refArrStatic signature:[ [ File '/atomicArrayIntrinsics.kt' <- /refArrStatic|{}refArrStatic[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+    CLASS CLASS name:ArrayIntrinsicsSmokeTest signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+      CONSTRUCTOR signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.<init>|<init>(){}[0] ] visibility:public <> () returnType:<root>.ArrayIntrinsicsSmokeTest [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArrayIntrinsicsSmokeTest signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:intArr signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.intArr|{}intArr[0] ] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:intArr signature:[ [ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.intArr|{}intArr[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.intArr'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                        $this: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.intArr.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intArr> signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.intArr.<get-intArr>|<get-intArr>(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:intArr signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.intArr|{}intArr[0] ] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArr signature:[ [ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.intArr|{}intArr[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.<get-intArr>' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+      PROPERTY name:longArr signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.longArr|{}longArr[0] ] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:longArr signature:[ [ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.longArr|{}longArr[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.longArr'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                        $this: GET_VAR 'i: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.longArr.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        1: CONST Long type=<unbound IrClassSymbolImpl> value=10
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-longArr> signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.longArr.<get-longArr>|<get-longArr>(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:longArr signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.longArr|{}longArr[0] ] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArr signature:[ [ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.longArr|{}longArr[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.<get-longArr>' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+      PROPERTY name:refArr signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.refArr|{}refArr[0] ] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:refArr signature:[ [ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.refArr|{}refArr[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-refArr> signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.refArr.<get-refArr>|<get-refArr>(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+          correspondingProperty: PROPERTY name:refArr signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.refArr|{}refArr[0] ] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:refArr signature:[ [ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.refArr|{}refArr[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:intArrStatic type:kotlin.IntArray visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+                receiver: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.<get-refArr>' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+      FUN name:testIntArrayIntrinsics signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics|testIntArrayIntrinsics(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+        BLOCK_BODY
+          VAR name:res type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+            2: GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 1"
+          VAR name:res1 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=20
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=222
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=222
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 2"
+          VAR name:res2 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=222
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=222
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 3"
+          VAR name:res3 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=223
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=22222
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 4"
+          VAR name:res4 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=10
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=999
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res4: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=90
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=90
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 5"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=20
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 6"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=200
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 7"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=200
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 8"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=111
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=111
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 9"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=111
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=100
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 10"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=211
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 11"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=211
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=-100
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 12"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=111
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 13"
+          VAR name:aaa type:<unbound IrClassSymbolImpl> [val]
+            CONST Int type=<unbound IrClassSymbolImpl> value=1111
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=1111
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 14"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=1111
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=3333
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 15"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testIntArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+            2: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 16"
+      FUN name:testLongArrayIntrinsics signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics|testLongArrayIntrinsics(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+        BLOCK_BODY
+          VAR name:res type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+            2: GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 1"
+          VAR name:res1 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=20
+              3: CONST Long type=<unbound IrClassSymbolImpl> value=222
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=222
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 2"
+          VAR name:res2 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=222
+              3: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=222
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 3"
+          VAR name:res3 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=223
+              3: CONST Long type=<unbound IrClassSymbolImpl> value=22222
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 4"
+          VAR name:res4 type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=10
+              3: CONST Long type=<unbound IrClassSymbolImpl> value=999
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res4: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=90
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+                  arg1: CONST Long type=<unbound IrClassSymbolImpl> value=90
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 5"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=20
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 6"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=200
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 7"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=200
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 8"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=111
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=111
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 9"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=111
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=100
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 10"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=211
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 11"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=211
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CONST Long type=<unbound IrClassSymbolImpl> value=100
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 12"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=111
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 13"
+          VAR name:aaa type:<unbound IrClassSymbolImpl> [val]
+            CONST Long type=<unbound IrClassSymbolImpl> value=1111
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=1111
+              3: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 14"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Long type=<unbound IrClassSymbolImpl> value=1111
+              3: CONST Long type=<unbound IrClassSymbolImpl> value=3333
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 15"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testLongArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+            2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 16"
+      FUN name:testReferenceArrayIntrinsics signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics|testReferenceArrayIntrinsics(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                <1>: <unbound IrClassSymbolImpl>?
+                $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                $this: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 1"
+          VAR name:newValue type:<unbound IrClassSymbolImpl> [val]
+            CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+          VAR name:res1 type:<unbound IrClassSymbolImpl>? [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              3: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  arg1: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 2"
+          VAR name:res2 type:<unbound IrClassSymbolImpl>? [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              2: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+              3: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 3"
+          VAR name:res3 type:<unbound IrClassSymbolImpl>? [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+              2: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+              3: CONST String type=<unbound IrClassSymbolImpl> value="ccc"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+                then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                    $this: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 4"
+          VAR name:res4 type:<unbound IrClassSymbolImpl>? [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+              2: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            2: GET_VAR 'val res4: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 5"
+          VAR name:res5 type:<unbound IrClassSymbolImpl>? [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+              2: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+            2: GET_VAR 'val res5: <unbound IrClassSymbolImpl>? [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 6"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 7"
+          VAR name:aaa type:<unbound IrClassSymbolImpl> [val]
+            CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+              3: CONST String type=<unbound IrClassSymbolImpl> value="aaa1"
+            2: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 8"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+              3: CONST String type=<unbound IrClassSymbolImpl> value="aaa1"
+            2: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 9"
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST String type=<unbound IrClassSymbolImpl> value="aaa1"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testReferenceArrayIntrinsics' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST String type=<unbound IrClassSymbolImpl> value="Array: FAIL 10"
+      FUN name:testComileTimeUnknownArrayReceiver signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.testComileTimeUnknownArrayReceiver|testComileTimeUnknownArrayReceiver(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+        BLOCK_BODY
+          CALL 'private final fun extensionArrayUpdater (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testComileTimeUnknownArrayReceiver' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testComileTimeUnknownArrayReceiver' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+          CALL 'private final fun arrayArgumentUpdater (arr: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testComileTimeUnknownArrayReceiver' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+            arr: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArrayIntrinsicsSmokeTest declared in <root>.ArrayIntrinsicsSmokeTest.testComileTimeUnknownArrayReceiver' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+      FUN name:extensionArrayUpdater signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.extensionArrayUpdater|extensionArrayUpdater@kotlin.IntArray(){}[0] ] visibility:private modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.extensionArrayUpdater' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=45
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.extensionArrayUpdater' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=45
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=50
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=50
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.extensionArrayUpdater' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:arrayArgumentUpdater signature:[ File '/atomicArrayIntrinsics.kt' <- /ArrayIntrinsicsSmokeTest.arrayArgumentUpdater|arrayArgumentUpdater(kotlin.IntArray){}[0] ] visibility:private modality:FINAL <> ($this:<root>.ArrayIntrinsicsSmokeTest, arr:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArrayIntrinsicsSmokeTest
+        VALUE_PARAMETER name:arr index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'arr: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.arrayArgumentUpdater' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=45
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'arr: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.arrayArgumentUpdater' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=45
+              3: CONST Int type=<unbound IrClassSymbolImpl> value=50
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=50
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'arr: <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest.arrayArgumentUpdater' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:testStaticIntArrayIntrinsics signature:/testStaticIntArrayIntrinsics|testStaticIntArrayIntrinsics(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+          2: GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 1"
+        VAR name:res1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=20
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=222
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=222
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 2"
+        VAR name:res2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=222
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=222
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 3"
+        VAR name:res3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=223
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=22222
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 4"
+        VAR name:res4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=10
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=999
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res4: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=90
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=90
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 5"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=20
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 6"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=20
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=200
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 7"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=200
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 8"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=111
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=111
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 9"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=111
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=100
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 10"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=211
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 11"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=211
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=-100
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 12"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=111
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 13"
+        VAR name:aaa type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=1111
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticIntArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1111
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 14"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1111
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=3333
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 15"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'private final fun <get-intArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=2222
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static IntArray: FAIL 16"
+    FUN name:testStaticLongArrayIntrinsics signature:/testStaticLongArrayIntrinsics|testStaticLongArrayIntrinsics(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+          2: GET_VAR 'val res: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+          3: CONST String type=<unbound IrClassSymbolImpl> value="IntArray: FAIL 1"
+        VAR name:res1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=20
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=222
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=222
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 2"
+        VAR name:res2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=222
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=222
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 3"
+        VAR name:res3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=223
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=22222
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 4"
+        VAR name:res4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=10
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=999
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res4: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=90
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+                arg1: CONST Long type=<unbound IrClassSymbolImpl> value=90
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 5"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=20
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 6"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=20
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=200
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 7"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=200
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 8"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CONST Long type=<unbound IrClassSymbolImpl> value=111
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=111
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 9"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=111
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=100
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 10"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=211
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 11"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=211
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Long type=<unbound IrClassSymbolImpl> value=100
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 12"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=111
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 13"
+        VAR name:aaa type:<unbound IrClassSymbolImpl> [val]
+          CONST Long type=<unbound IrClassSymbolImpl> value=1111
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticLongArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1111
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 14"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1111
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=3333
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 15"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'private final fun <get-longArrStatic> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            arg1: CONST Long type=<unbound IrClassSymbolImpl> value=2222
+          2: CONST String type=<unbound IrClassSymbolImpl> value="LongArray: FAIL 16"
+    FUN name:testStaticReferenceArrayIntrinsics signature:/testStaticReferenceArrayIntrinsics|testStaticReferenceArrayIntrinsics(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+              $this: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 1"
+        VAR name:newValue type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+        VAR name:res1 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            3: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl>? [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                arg1: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 2"
+        VAR name:res2 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            2: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl>? [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 3"
+        VAR name:res3 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            2: GET_VAR 'val newValue: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="ccc"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl>? [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+              then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 4"
+        VAR name:res4 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+            2: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          2: GET_VAR 'val res4: <unbound IrClassSymbolImpl>? [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 5"
+        VAR name:res5 type:<unbound IrClassSymbolImpl>? [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+            2: CONST String type=<unbound IrClassSymbolImpl> value="bbb"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+          2: GET_VAR 'val res5: <unbound IrClassSymbolImpl>? [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl>? origin=null
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 6"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 7"
+        VAR name:aaa type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value="aaa"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="aaa1"
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 8"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: GET_VAR 'val aaa: <unbound IrClassSymbolImpl> [val] declared in <root>.testStaticReferenceArrayIntrinsics' type=<unbound IrClassSymbolImpl> origin=null
+            3: CONST String type=<unbound IrClassSymbolImpl> value="aaa1"
+          2: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 9"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="aaa1"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'private final fun <get-refArrStatic> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="static Array: FAIL 10"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:testClass type:<root>.ArrayIntrinsicsSmokeTest [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ArrayIntrinsicsSmokeTest' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+        CALL 'public final fun testIntArrayIntrinsics (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val testClass: <root>.ArrayIntrinsicsSmokeTest [val] declared in <root>.box' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+        CALL 'public final fun testLongArrayIntrinsics (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val testClass: <root>.ArrayIntrinsicsSmokeTest [val] declared in <root>.box' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+        CALL 'public final fun testReferenceArrayIntrinsics (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val testClass: <root>.ArrayIntrinsicsSmokeTest [val] declared in <root>.box' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+        CALL 'public final fun testComileTimeUnknownArrayReceiver (): <unbound IrClassSymbolImpl> declared in <root>.ArrayIntrinsicsSmokeTest' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val testClass: <root>.ArrayIntrinsicsSmokeTest [val] declared in <root>.box' type=<root>.ArrayIntrinsicsSmokeTest origin=null
+        CALL 'public final fun testStaticIntArrayIntrinsics (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testStaticLongArrayIntrinsics (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testStaticReferenceArrayIntrinsics (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

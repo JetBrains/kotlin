@@ -1,0 +1,65 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Content
+    // class name: ContentBox
+    // class name: ContentBoxDelegate
+    // class name: Impl
+
+    public open class Content : kotlin/Any {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public abstract interface ContentBox<T#0 /* T */ : Content> : kotlin/collections/List<T#0> {
+    }
+
+    public final class ContentBoxDelegate<T#0 /* T */ : Content> : ContentBox<T#0> {
+
+      public constructor()
+
+      public open /* delegation */ operator fun contains(element: T#0): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(index: kotlin/Int): T#0
+
+      public open /* delegation */ fun indexOf(element: T#0): kotlin/Int
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/Iterator<T#0>
+
+      public open /* delegation */ fun lastIndexOf(element: T#0): kotlin/Int
+
+      public open /* delegation */ fun listIterator(): kotlin/collections/ListIterator<T#0>
+
+      public open /* delegation */ fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<T#0>
+
+      public open /* delegation */ fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<T#0>
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+    }
+
+    public final object Impl : ContentBox<Content>, kotlin/collections/AbstractList<Content> {
+
+      private constructor()
+
+      public open operator fun get(index: kotlin/Int): Content
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

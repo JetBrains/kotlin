@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nothisnoclosure.kt
+    FUN name:foo signature:/foo|foo(kotlin.Int){}[0] visibility:public modality:FINAL <> (x:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:loop signature:/loop|loop(kotlin.Int){}[0] visibility:public modality:FINAL <> (times:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:times index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:left type:<unbound IrClassSymbolImpl> [var]
+          GET_VAR 'times: <unbound IrClassSymbolImpl> declared in <root>.loop' type=<unbound IrClassSymbolImpl> origin=null
+        WHILE label=null origin=WHILE_LOOP
+          condition: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+            arg0: GET_VAR 'var left: <unbound IrClassSymbolImpl> [var] declared in <root>.loop' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            VAR name:u type:<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    CALL 'public final fun foo (x: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      x: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.loop.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val u: <unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.loop' type=<unbound IrClassSymbolImpl><@[<unbound>(1 = "value")] <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+              1: BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                  GET_VAR 'var left: <unbound IrClassSymbolImpl> [var] declared in <root>.loop' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                SET_VAR 'var left: <unbound IrClassSymbolImpl> [var] declared in <root>.loop' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_DECR
+                    $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.loop' type=<unbound IrClassSymbolImpl> origin=null
+                GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.loop' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun loop (times: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          times: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

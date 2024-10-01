@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/callableReferencetoInnerAndLocal.kt
+    FUN name:genericFun signature:/genericFun|genericFun(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (value:T of <root>.genericFun) returnType:T of <root>.genericFun
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /genericFun|genericFun(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:value index:0 type:T of <root>.genericFun
+      BLOCK_BODY
+        CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.genericFun.Local<T of <root>.genericFun>
+          CONSTRUCTOR visibility:public <> (item:T of <root>.genericFun) returnType:<root>.genericFun.Local<T of <root>.genericFun> [primary]
+            VALUE_PARAMETER name:item index:0 type:T of <root>.genericFun
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+          PROPERTY name:item visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:item type:T of <root>.genericFun visibility:private [final]
+              EXPRESSION_BODY
+                GET_VAR 'item: T of <root>.genericFun declared in <root>.genericFun.Local.<init>' type=T of <root>.genericFun origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-item> visibility:public modality:FINAL <> ($this:<root>.genericFun.Local<T of <root>.genericFun>) returnType:T of <root>.genericFun
+              correspondingProperty: PROPERTY name:item visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.genericFun.Local<T of <root>.genericFun>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-item> (): T of <root>.genericFun declared in <root>.genericFun.Local'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:item type:T of <root>.genericFun visibility:private [final]' type=T of <root>.genericFun origin=null
+                    receiver: GET_VAR '<this>: <root>.genericFun.Local<T of <root>.genericFun> declared in <root>.genericFun.Local.<get-item>' type=<root>.genericFun.Local<T of <root>.genericFun> origin=null
+        VAR name:unwrapItem type:<unbound IrClassSymbolImpl><<root>.genericFun.Local<T of <root>.genericFun>, T of <root>.genericFun> [val]
+          PROPERTY_REFERENCE 'public final item: T of <root>.genericFun [val] declared in <root>.genericFun.Local' field=null getter='public final fun <get-item> (): T of <root>.genericFun declared in <root>.genericFun.Local' setter=null type=<unbound IrClassSymbolImpl><<root>.genericFun.Local<T of <root>.genericFun>, T of <root>.genericFun> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun genericFun <T> (value: T of <root>.genericFun): T of <root>.genericFun declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.genericFun origin=null
+            $this: GET_VAR 'val unwrapItem: <unbound IrClassSymbolImpl><<root>.genericFun.Local<T of <root>.genericFun>, T of <root>.genericFun> [val] declared in <root>.genericFun' type=<unbound IrClassSymbolImpl><<root>.genericFun.Local<T of <root>.genericFun>, T of <root>.genericFun> origin=VARIABLE_AS_FUNCTION
+            1: CONSTRUCTOR_CALL 'public constructor <init> (item: T of <root>.genericFun) [primary] declared in <root>.genericFun.Local' type=<root>.genericFun.Local<T of <root>.genericFun> origin=null
+              item: GET_VAR 'value: T of <root>.genericFun declared in <root>.genericFun' type=T of <root>.genericFun origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun genericFun <T> (value: T of <root>.genericFun): T of <root>.genericFun declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            value: CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,36 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Unit
+
+      public final fun mightThrow(): kotlin/Unit
+
+      public final fun mightThrow2(): kotlin/Unit
+
+      public final fun mightThrow3(): kotlin/Int
+
+      public final var log: kotlin/String
+        public final get
+        public final set
+
+      public final var throw1: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var throw2: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var throw3: kotlin/Boolean
+        public final get
+        public final set
+    }
+  }
+}

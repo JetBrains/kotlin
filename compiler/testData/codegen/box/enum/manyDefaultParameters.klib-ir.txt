@@ -1,0 +1,772 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/manyDefaultParameters.kt
+    CLASS ENUM_CLASS name:ClassTemplate signature:/ClassTemplate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.ClassTemplate>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ClassTemplate
+      CONSTRUCTOR signature:/ClassTemplate.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0] visibility:private <> (code:<unbound IrClassSymbolImpl>, nameTemplate:<unbound IrClassSymbolImpl>, parent:<unbound IrClassSymbolImpl>, previous:<unbound IrClassSymbolImpl>, progressionEquivalent:<unbound IrClassSymbolImpl>, idDiscipline:<unbound IrClassSymbolImpl>, strictRunningOrder:<unbound IrClassSymbolImpl>, pointsMethod:<unbound IrClassSymbolImpl>, noTimeFaults:<unbound IrClassSymbolImpl>, combineHeights:<unbound IrClassSymbolImpl>, column:<unbound IrClassSymbolImpl>, runningOrderSort:<unbound IrClassSymbolImpl>, programme:<unbound IrClassSymbolImpl>, eliminationTime:<unbound IrClassSymbolImpl>, courseTimeCode:<unbound IrClassSymbolImpl>, teamSize:<unbound IrClassSymbolImpl>, sponsor:<unbound IrClassSymbolImpl>, lateEntryCredits:<unbound IrClassSymbolImpl>, lateEntryFee:<unbound IrClassSymbolImpl>, courseLengthNeeded:<unbound IrClassSymbolImpl>, discretionaryCourseTime:<unbound IrClassSymbolImpl>, isRelay:<unbound IrClassSymbolImpl>, isQualifier:<unbound IrClassSymbolImpl>, generateChildren:<unbound IrClassSymbolImpl>, feedFromParent:<unbound IrClassSymbolImpl>, isNfcAllowed:<unbound IrClassSymbolImpl>, isAddOnAllowed:<unbound IrClassSymbolImpl>, isSpecialEntry:<unbound IrClassSymbolImpl>, isUkaProgression:<unbound IrClassSymbolImpl>, canEnterDirectly:<unbound IrClassSymbolImpl>, isPointRanked:<unbound IrClassSymbolImpl>, isPointRankedDesc:<unbound IrClassSymbolImpl>) returnType:<root>.ClassTemplate [primary]
+        VALUE_PARAMETER name:code index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:nameTemplate index:1 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:parent index:2 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:previous index:3 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:progressionEquivalent index:4 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:idDiscipline index:5 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:strictRunningOrder index:6 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:pointsMethod index:7 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:noTimeFaults index:8 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:combineHeights index:9 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:column index:10 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:runningOrderSort index:11 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:programme index:12 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:eliminationTime index:13 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:courseTimeCode index:14 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:teamSize index:15 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:sponsor index:16 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:lateEntryCredits index:17 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:lateEntryFee index:18 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:courseLengthNeeded index:19 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:discretionaryCourseTime index:20 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isRelay index:21 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isQualifier index:22 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:generateChildren index:23 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:feedFromParent index:24 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isNfcAllowed index:25 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isAddOnAllowed index:26 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isSpecialEntry index:27 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isUkaProgression index:28 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:canEnterDirectly index:29 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isPointRanked index:30 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VALUE_PARAMETER name:isPointRankedDesc index:31 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.ClassTemplate
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:ClassTemplate signature:/ClassTemplate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.ClassTemplate>]'
+      PROPERTY name:code signature:/ClassTemplate.code|{}code[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:code signature:[ /ClassTemplate.code|{}code[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'code: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-code> signature:/ClassTemplate.code.<get-code>|<get-code>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:code signature:/ClassTemplate.code|{}code[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-code> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:code signature:[ /ClassTemplate.code|{}code[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-code>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-code> signature:/ClassTemplate.code.<set-code>|<set-code>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:code signature:/ClassTemplate.code|{}code[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:code signature:[ /ClassTemplate.code|{}code[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-code>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-code>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:nameTemplate signature:/ClassTemplate.nameTemplate|{}nameTemplate[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:nameTemplate signature:[ /ClassTemplate.nameTemplate|{}nameTemplate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'nameTemplate: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nameTemplate> signature:/ClassTemplate.nameTemplate.<get-nameTemplate>|<get-nameTemplate>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:nameTemplate signature:/ClassTemplate.nameTemplate|{}nameTemplate[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-nameTemplate> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nameTemplate signature:[ /ClassTemplate.nameTemplate|{}nameTemplate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-nameTemplate>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nameTemplate> signature:/ClassTemplate.nameTemplate.<set-nameTemplate>|<set-nameTemplate>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:nameTemplate signature:/ClassTemplate.nameTemplate|{}nameTemplate[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nameTemplate signature:[ /ClassTemplate.nameTemplate|{}nameTemplate[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-nameTemplate>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-nameTemplate>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:parent signature:/ClassTemplate.parent|{}parent[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:parent signature:[ /ClassTemplate.parent|{}parent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'parent: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parent> signature:/ClassTemplate.parent.<get-parent>|<get-parent>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:parent signature:/ClassTemplate.parent|{}parent[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-parent> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parent signature:[ /ClassTemplate.parent|{}parent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-parent>' type=<root>.ClassTemplate origin=null
+      PROPERTY name:previous signature:/ClassTemplate.previous|{}previous[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:previous signature:[ /ClassTemplate.previous|{}previous[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'previous: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-previous> signature:/ClassTemplate.previous.<get-previous>|<get-previous>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:previous signature:/ClassTemplate.previous|{}previous[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-previous> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:previous signature:[ /ClassTemplate.previous|{}previous[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-previous>' type=<root>.ClassTemplate origin=null
+      PROPERTY name:progressionEquivalent signature:/ClassTemplate.progressionEquivalent|{}progressionEquivalent[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:progressionEquivalent signature:[ /ClassTemplate.progressionEquivalent|{}progressionEquivalent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'progressionEquivalent: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-progressionEquivalent> signature:/ClassTemplate.progressionEquivalent.<get-progressionEquivalent>|<get-progressionEquivalent>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:progressionEquivalent signature:/ClassTemplate.progressionEquivalent|{}progressionEquivalent[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-progressionEquivalent> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:progressionEquivalent signature:[ /ClassTemplate.progressionEquivalent|{}progressionEquivalent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-progressionEquivalent>' type=<root>.ClassTemplate origin=null
+      PROPERTY name:idDiscipline signature:/ClassTemplate.idDiscipline|{}idDiscipline[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:idDiscipline signature:[ /ClassTemplate.idDiscipline|{}idDiscipline[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'idDiscipline: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-idDiscipline> signature:/ClassTemplate.idDiscipline.<get-idDiscipline>|<get-idDiscipline>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:idDiscipline signature:/ClassTemplate.idDiscipline|{}idDiscipline[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-idDiscipline> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:idDiscipline signature:[ /ClassTemplate.idDiscipline|{}idDiscipline[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-idDiscipline>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-idDiscipline> signature:/ClassTemplate.idDiscipline.<set-idDiscipline>|<set-idDiscipline>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:idDiscipline signature:/ClassTemplate.idDiscipline|{}idDiscipline[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:idDiscipline signature:[ /ClassTemplate.idDiscipline|{}idDiscipline[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-idDiscipline>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-idDiscipline>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:strictRunningOrder signature:/ClassTemplate.strictRunningOrder|{}strictRunningOrder[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:strictRunningOrder signature:[ /ClassTemplate.strictRunningOrder|{}strictRunningOrder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'strictRunningOrder: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-strictRunningOrder> signature:/ClassTemplate.strictRunningOrder.<get-strictRunningOrder>|<get-strictRunningOrder>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:strictRunningOrder signature:/ClassTemplate.strictRunningOrder|{}strictRunningOrder[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-strictRunningOrder> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strictRunningOrder signature:[ /ClassTemplate.strictRunningOrder|{}strictRunningOrder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-strictRunningOrder>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-strictRunningOrder> signature:/ClassTemplate.strictRunningOrder.<set-strictRunningOrder>|<set-strictRunningOrder>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:strictRunningOrder signature:/ClassTemplate.strictRunningOrder|{}strictRunningOrder[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:strictRunningOrder signature:[ /ClassTemplate.strictRunningOrder|{}strictRunningOrder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-strictRunningOrder>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-strictRunningOrder>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:pointsMethod signature:/ClassTemplate.pointsMethod|{}pointsMethod[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:pointsMethod signature:[ /ClassTemplate.pointsMethod|{}pointsMethod[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'pointsMethod: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pointsMethod> signature:/ClassTemplate.pointsMethod.<get-pointsMethod>|<get-pointsMethod>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:pointsMethod signature:/ClassTemplate.pointsMethod|{}pointsMethod[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-pointsMethod> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pointsMethod signature:[ /ClassTemplate.pointsMethod|{}pointsMethod[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-pointsMethod>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-pointsMethod> signature:/ClassTemplate.pointsMethod.<set-pointsMethod>|<set-pointsMethod>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:pointsMethod signature:/ClassTemplate.pointsMethod|{}pointsMethod[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pointsMethod signature:[ /ClassTemplate.pointsMethod|{}pointsMethod[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-pointsMethod>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-pointsMethod>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:noTimeFaults signature:/ClassTemplate.noTimeFaults|{}noTimeFaults[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:noTimeFaults signature:[ /ClassTemplate.noTimeFaults|{}noTimeFaults[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'noTimeFaults: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-noTimeFaults> signature:/ClassTemplate.noTimeFaults.<get-noTimeFaults>|<get-noTimeFaults>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:noTimeFaults signature:/ClassTemplate.noTimeFaults|{}noTimeFaults[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-noTimeFaults> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:noTimeFaults signature:[ /ClassTemplate.noTimeFaults|{}noTimeFaults[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-noTimeFaults>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-noTimeFaults> signature:/ClassTemplate.noTimeFaults.<set-noTimeFaults>|<set-noTimeFaults>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:noTimeFaults signature:/ClassTemplate.noTimeFaults|{}noTimeFaults[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:noTimeFaults signature:[ /ClassTemplate.noTimeFaults|{}noTimeFaults[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-noTimeFaults>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-noTimeFaults>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:combineHeights signature:/ClassTemplate.combineHeights|{}combineHeights[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:combineHeights signature:[ /ClassTemplate.combineHeights|{}combineHeights[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'combineHeights: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-combineHeights> signature:/ClassTemplate.combineHeights.<get-combineHeights>|<get-combineHeights>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:combineHeights signature:/ClassTemplate.combineHeights|{}combineHeights[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-combineHeights> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:combineHeights signature:[ /ClassTemplate.combineHeights|{}combineHeights[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-combineHeights>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-combineHeights> signature:/ClassTemplate.combineHeights.<set-combineHeights>|<set-combineHeights>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:combineHeights signature:/ClassTemplate.combineHeights|{}combineHeights[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:combineHeights signature:[ /ClassTemplate.combineHeights|{}combineHeights[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-combineHeights>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-combineHeights>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:column signature:/ClassTemplate.column|{}column[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:column signature:[ /ClassTemplate.column|{}column[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'column: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-column> signature:/ClassTemplate.column.<get-column>|<get-column>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:column signature:/ClassTemplate.column|{}column[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-column> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:column signature:[ /ClassTemplate.column|{}column[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-column>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-column> signature:/ClassTemplate.column.<set-column>|<set-column>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:column signature:/ClassTemplate.column|{}column[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:column signature:[ /ClassTemplate.column|{}column[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-column>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-column>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:runningOrderSort signature:/ClassTemplate.runningOrderSort|{}runningOrderSort[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:runningOrderSort signature:[ /ClassTemplate.runningOrderSort|{}runningOrderSort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'runningOrderSort: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runningOrderSort> signature:/ClassTemplate.runningOrderSort.<get-runningOrderSort>|<get-runningOrderSort>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:runningOrderSort signature:/ClassTemplate.runningOrderSort|{}runningOrderSort[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-runningOrderSort> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runningOrderSort signature:[ /ClassTemplate.runningOrderSort|{}runningOrderSort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-runningOrderSort>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-runningOrderSort> signature:/ClassTemplate.runningOrderSort.<set-runningOrderSort>|<set-runningOrderSort>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:runningOrderSort signature:/ClassTemplate.runningOrderSort|{}runningOrderSort[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runningOrderSort signature:[ /ClassTemplate.runningOrderSort|{}runningOrderSort[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-runningOrderSort>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-runningOrderSort>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:programme signature:/ClassTemplate.programme|{}programme[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:programme signature:[ /ClassTemplate.programme|{}programme[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'programme: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-programme> signature:/ClassTemplate.programme.<get-programme>|<get-programme>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:programme signature:/ClassTemplate.programme|{}programme[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-programme> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:programme signature:[ /ClassTemplate.programme|{}programme[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-programme>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-programme> signature:/ClassTemplate.programme.<set-programme>|<set-programme>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:programme signature:/ClassTemplate.programme|{}programme[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:programme signature:[ /ClassTemplate.programme|{}programme[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-programme>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-programme>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:eliminationTime signature:/ClassTemplate.eliminationTime|{}eliminationTime[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:eliminationTime signature:[ /ClassTemplate.eliminationTime|{}eliminationTime[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'eliminationTime: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-eliminationTime> signature:/ClassTemplate.eliminationTime.<get-eliminationTime>|<get-eliminationTime>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:eliminationTime signature:/ClassTemplate.eliminationTime|{}eliminationTime[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-eliminationTime> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eliminationTime signature:[ /ClassTemplate.eliminationTime|{}eliminationTime[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-eliminationTime>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-eliminationTime> signature:/ClassTemplate.eliminationTime.<set-eliminationTime>|<set-eliminationTime>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:eliminationTime signature:/ClassTemplate.eliminationTime|{}eliminationTime[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eliminationTime signature:[ /ClassTemplate.eliminationTime|{}eliminationTime[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-eliminationTime>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-eliminationTime>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:courseTimeCode signature:/ClassTemplate.courseTimeCode|{}courseTimeCode[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:courseTimeCode signature:[ /ClassTemplate.courseTimeCode|{}courseTimeCode[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'courseTimeCode: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-courseTimeCode> signature:/ClassTemplate.courseTimeCode.<get-courseTimeCode>|<get-courseTimeCode>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:courseTimeCode signature:/ClassTemplate.courseTimeCode|{}courseTimeCode[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-courseTimeCode> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:courseTimeCode signature:[ /ClassTemplate.courseTimeCode|{}courseTimeCode[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-courseTimeCode>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-courseTimeCode> signature:/ClassTemplate.courseTimeCode.<set-courseTimeCode>|<set-courseTimeCode>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:courseTimeCode signature:/ClassTemplate.courseTimeCode|{}courseTimeCode[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:courseTimeCode signature:[ /ClassTemplate.courseTimeCode|{}courseTimeCode[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-courseTimeCode>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-courseTimeCode>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:teamSize signature:/ClassTemplate.teamSize|{}teamSize[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:teamSize signature:[ /ClassTemplate.teamSize|{}teamSize[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'teamSize: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-teamSize> signature:/ClassTemplate.teamSize.<get-teamSize>|<get-teamSize>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:teamSize signature:/ClassTemplate.teamSize|{}teamSize[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-teamSize> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:teamSize signature:[ /ClassTemplate.teamSize|{}teamSize[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-teamSize>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-teamSize> signature:/ClassTemplate.teamSize.<set-teamSize>|<set-teamSize>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:teamSize signature:/ClassTemplate.teamSize|{}teamSize[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:teamSize signature:[ /ClassTemplate.teamSize|{}teamSize[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-teamSize>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-teamSize>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:sponsor signature:/ClassTemplate.sponsor|{}sponsor[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:sponsor signature:[ /ClassTemplate.sponsor|{}sponsor[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'sponsor: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sponsor> signature:/ClassTemplate.sponsor.<get-sponsor>|<get-sponsor>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:sponsor signature:/ClassTemplate.sponsor|{}sponsor[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sponsor> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sponsor signature:[ /ClassTemplate.sponsor|{}sponsor[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-sponsor>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-sponsor> signature:/ClassTemplate.sponsor.<set-sponsor>|<set-sponsor>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:sponsor signature:/ClassTemplate.sponsor|{}sponsor[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sponsor signature:[ /ClassTemplate.sponsor|{}sponsor[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-sponsor>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-sponsor>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:lateEntryCredits signature:/ClassTemplate.lateEntryCredits|{}lateEntryCredits[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:lateEntryCredits signature:[ /ClassTemplate.lateEntryCredits|{}lateEntryCredits[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'lateEntryCredits: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lateEntryCredits> signature:/ClassTemplate.lateEntryCredits.<get-lateEntryCredits>|<get-lateEntryCredits>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:lateEntryCredits signature:/ClassTemplate.lateEntryCredits|{}lateEntryCredits[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-lateEntryCredits> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lateEntryCredits signature:[ /ClassTemplate.lateEntryCredits|{}lateEntryCredits[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-lateEntryCredits>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-lateEntryCredits> signature:/ClassTemplate.lateEntryCredits.<set-lateEntryCredits>|<set-lateEntryCredits>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:lateEntryCredits signature:/ClassTemplate.lateEntryCredits|{}lateEntryCredits[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lateEntryCredits signature:[ /ClassTemplate.lateEntryCredits|{}lateEntryCredits[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-lateEntryCredits>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-lateEntryCredits>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:lateEntryFee signature:/ClassTemplate.lateEntryFee|{}lateEntryFee[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:lateEntryFee signature:[ /ClassTemplate.lateEntryFee|{}lateEntryFee[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'lateEntryFee: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lateEntryFee> signature:/ClassTemplate.lateEntryFee.<get-lateEntryFee>|<get-lateEntryFee>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:lateEntryFee signature:/ClassTemplate.lateEntryFee|{}lateEntryFee[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-lateEntryFee> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lateEntryFee signature:[ /ClassTemplate.lateEntryFee|{}lateEntryFee[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-lateEntryFee>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-lateEntryFee> signature:/ClassTemplate.lateEntryFee.<set-lateEntryFee>|<set-lateEntryFee>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:lateEntryFee signature:/ClassTemplate.lateEntryFee|{}lateEntryFee[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lateEntryFee signature:[ /ClassTemplate.lateEntryFee|{}lateEntryFee[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-lateEntryFee>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-lateEntryFee>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:courseLengthNeeded signature:/ClassTemplate.courseLengthNeeded|{}courseLengthNeeded[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:courseLengthNeeded signature:[ /ClassTemplate.courseLengthNeeded|{}courseLengthNeeded[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'courseLengthNeeded: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-courseLengthNeeded> signature:/ClassTemplate.courseLengthNeeded.<get-courseLengthNeeded>|<get-courseLengthNeeded>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:courseLengthNeeded signature:/ClassTemplate.courseLengthNeeded|{}courseLengthNeeded[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-courseLengthNeeded> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:courseLengthNeeded signature:[ /ClassTemplate.courseLengthNeeded|{}courseLengthNeeded[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-courseLengthNeeded>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-courseLengthNeeded> signature:/ClassTemplate.courseLengthNeeded.<set-courseLengthNeeded>|<set-courseLengthNeeded>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:courseLengthNeeded signature:/ClassTemplate.courseLengthNeeded|{}courseLengthNeeded[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:courseLengthNeeded signature:[ /ClassTemplate.courseLengthNeeded|{}courseLengthNeeded[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-courseLengthNeeded>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-courseLengthNeeded>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:discretionaryCourseTime signature:/ClassTemplate.discretionaryCourseTime|{}discretionaryCourseTime[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:discretionaryCourseTime signature:[ /ClassTemplate.discretionaryCourseTime|{}discretionaryCourseTime[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'discretionaryCourseTime: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-discretionaryCourseTime> signature:/ClassTemplate.discretionaryCourseTime.<get-discretionaryCourseTime>|<get-discretionaryCourseTime>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:discretionaryCourseTime signature:/ClassTemplate.discretionaryCourseTime|{}discretionaryCourseTime[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-discretionaryCourseTime> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:discretionaryCourseTime signature:[ /ClassTemplate.discretionaryCourseTime|{}discretionaryCourseTime[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-discretionaryCourseTime>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-discretionaryCourseTime> signature:/ClassTemplate.discretionaryCourseTime.<set-discretionaryCourseTime>|<set-discretionaryCourseTime>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:discretionaryCourseTime signature:/ClassTemplate.discretionaryCourseTime|{}discretionaryCourseTime[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:discretionaryCourseTime signature:[ /ClassTemplate.discretionaryCourseTime|{}discretionaryCourseTime[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-discretionaryCourseTime>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-discretionaryCourseTime>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isRelay signature:/ClassTemplate.isRelay|{}isRelay[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isRelay signature:[ /ClassTemplate.isRelay|{}isRelay[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isRelay: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isRelay> signature:/ClassTemplate.isRelay.<get-isRelay>|<get-isRelay>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isRelay signature:/ClassTemplate.isRelay|{}isRelay[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isRelay> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isRelay signature:[ /ClassTemplate.isRelay|{}isRelay[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isRelay>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isRelay> signature:/ClassTemplate.isRelay.<set-isRelay>|<set-isRelay>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isRelay signature:/ClassTemplate.isRelay|{}isRelay[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isRelay signature:[ /ClassTemplate.isRelay|{}isRelay[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isRelay>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isRelay>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isQualifier signature:/ClassTemplate.isQualifier|{}isQualifier[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isQualifier signature:[ /ClassTemplate.isQualifier|{}isQualifier[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isQualifier: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isQualifier> signature:/ClassTemplate.isQualifier.<get-isQualifier>|<get-isQualifier>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isQualifier signature:/ClassTemplate.isQualifier|{}isQualifier[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isQualifier> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isQualifier signature:[ /ClassTemplate.isQualifier|{}isQualifier[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isQualifier>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isQualifier> signature:/ClassTemplate.isQualifier.<set-isQualifier>|<set-isQualifier>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isQualifier signature:/ClassTemplate.isQualifier|{}isQualifier[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isQualifier signature:[ /ClassTemplate.isQualifier|{}isQualifier[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isQualifier>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isQualifier>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:generateChildren signature:/ClassTemplate.generateChildren|{}generateChildren[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:generateChildren signature:[ /ClassTemplate.generateChildren|{}generateChildren[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'generateChildren: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-generateChildren> signature:/ClassTemplate.generateChildren.<get-generateChildren>|<get-generateChildren>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:generateChildren signature:/ClassTemplate.generateChildren|{}generateChildren[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-generateChildren> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:generateChildren signature:[ /ClassTemplate.generateChildren|{}generateChildren[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-generateChildren>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-generateChildren> signature:/ClassTemplate.generateChildren.<set-generateChildren>|<set-generateChildren>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:generateChildren signature:/ClassTemplate.generateChildren|{}generateChildren[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:generateChildren signature:[ /ClassTemplate.generateChildren|{}generateChildren[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-generateChildren>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-generateChildren>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:feedFromParent signature:/ClassTemplate.feedFromParent|{}feedFromParent[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:feedFromParent signature:[ /ClassTemplate.feedFromParent|{}feedFromParent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'feedFromParent: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-feedFromParent> signature:/ClassTemplate.feedFromParent.<get-feedFromParent>|<get-feedFromParent>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:feedFromParent signature:/ClassTemplate.feedFromParent|{}feedFromParent[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-feedFromParent> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:feedFromParent signature:[ /ClassTemplate.feedFromParent|{}feedFromParent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-feedFromParent>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-feedFromParent> signature:/ClassTemplate.feedFromParent.<set-feedFromParent>|<set-feedFromParent>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:feedFromParent signature:/ClassTemplate.feedFromParent|{}feedFromParent[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:feedFromParent signature:[ /ClassTemplate.feedFromParent|{}feedFromParent[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-feedFromParent>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-feedFromParent>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isNfcAllowed signature:/ClassTemplate.isNfcAllowed|{}isNfcAllowed[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isNfcAllowed signature:[ /ClassTemplate.isNfcAllowed|{}isNfcAllowed[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isNfcAllowed: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isNfcAllowed> signature:/ClassTemplate.isNfcAllowed.<get-isNfcAllowed>|<get-isNfcAllowed>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isNfcAllowed signature:/ClassTemplate.isNfcAllowed|{}isNfcAllowed[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isNfcAllowed> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isNfcAllowed signature:[ /ClassTemplate.isNfcAllowed|{}isNfcAllowed[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isNfcAllowed>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isNfcAllowed> signature:/ClassTemplate.isNfcAllowed.<set-isNfcAllowed>|<set-isNfcAllowed>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isNfcAllowed signature:/ClassTemplate.isNfcAllowed|{}isNfcAllowed[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isNfcAllowed signature:[ /ClassTemplate.isNfcAllowed|{}isNfcAllowed[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isNfcAllowed>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isNfcAllowed>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isAddOnAllowed signature:/ClassTemplate.isAddOnAllowed|{}isAddOnAllowed[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isAddOnAllowed signature:[ /ClassTemplate.isAddOnAllowed|{}isAddOnAllowed[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isAddOnAllowed: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isAddOnAllowed> signature:/ClassTemplate.isAddOnAllowed.<get-isAddOnAllowed>|<get-isAddOnAllowed>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isAddOnAllowed signature:/ClassTemplate.isAddOnAllowed|{}isAddOnAllowed[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isAddOnAllowed> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isAddOnAllowed signature:[ /ClassTemplate.isAddOnAllowed|{}isAddOnAllowed[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isAddOnAllowed>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isAddOnAllowed> signature:/ClassTemplate.isAddOnAllowed.<set-isAddOnAllowed>|<set-isAddOnAllowed>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isAddOnAllowed signature:/ClassTemplate.isAddOnAllowed|{}isAddOnAllowed[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isAddOnAllowed signature:[ /ClassTemplate.isAddOnAllowed|{}isAddOnAllowed[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isAddOnAllowed>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isAddOnAllowed>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isSpecialEntry signature:/ClassTemplate.isSpecialEntry|{}isSpecialEntry[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isSpecialEntry signature:[ /ClassTemplate.isSpecialEntry|{}isSpecialEntry[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isSpecialEntry: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isSpecialEntry> signature:/ClassTemplate.isSpecialEntry.<get-isSpecialEntry>|<get-isSpecialEntry>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isSpecialEntry signature:/ClassTemplate.isSpecialEntry|{}isSpecialEntry[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isSpecialEntry> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isSpecialEntry signature:[ /ClassTemplate.isSpecialEntry|{}isSpecialEntry[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isSpecialEntry>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isSpecialEntry> signature:/ClassTemplate.isSpecialEntry.<set-isSpecialEntry>|<set-isSpecialEntry>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isSpecialEntry signature:/ClassTemplate.isSpecialEntry|{}isSpecialEntry[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isSpecialEntry signature:[ /ClassTemplate.isSpecialEntry|{}isSpecialEntry[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isSpecialEntry>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isSpecialEntry>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isUkaProgression signature:/ClassTemplate.isUkaProgression|{}isUkaProgression[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isUkaProgression signature:[ /ClassTemplate.isUkaProgression|{}isUkaProgression[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isUkaProgression: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isUkaProgression> signature:/ClassTemplate.isUkaProgression.<get-isUkaProgression>|<get-isUkaProgression>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isUkaProgression signature:/ClassTemplate.isUkaProgression|{}isUkaProgression[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isUkaProgression> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isUkaProgression signature:[ /ClassTemplate.isUkaProgression|{}isUkaProgression[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isUkaProgression>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isUkaProgression> signature:/ClassTemplate.isUkaProgression.<set-isUkaProgression>|<set-isUkaProgression>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isUkaProgression signature:/ClassTemplate.isUkaProgression|{}isUkaProgression[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isUkaProgression signature:[ /ClassTemplate.isUkaProgression|{}isUkaProgression[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isUkaProgression>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isUkaProgression>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:canEnterDirectly signature:/ClassTemplate.canEnterDirectly|{}canEnterDirectly[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:canEnterDirectly signature:[ /ClassTemplate.canEnterDirectly|{}canEnterDirectly[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'canEnterDirectly: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-canEnterDirectly> signature:/ClassTemplate.canEnterDirectly.<get-canEnterDirectly>|<get-canEnterDirectly>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:canEnterDirectly signature:/ClassTemplate.canEnterDirectly|{}canEnterDirectly[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-canEnterDirectly> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:canEnterDirectly signature:[ /ClassTemplate.canEnterDirectly|{}canEnterDirectly[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-canEnterDirectly>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-canEnterDirectly> signature:/ClassTemplate.canEnterDirectly.<set-canEnterDirectly>|<set-canEnterDirectly>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:canEnterDirectly signature:/ClassTemplate.canEnterDirectly|{}canEnterDirectly[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:canEnterDirectly signature:[ /ClassTemplate.canEnterDirectly|{}canEnterDirectly[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-canEnterDirectly>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-canEnterDirectly>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isPointRanked signature:/ClassTemplate.isPointRanked|{}isPointRanked[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isPointRanked signature:[ /ClassTemplate.isPointRanked|{}isPointRanked[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isPointRanked: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isPointRanked> signature:/ClassTemplate.isPointRanked.<get-isPointRanked>|<get-isPointRanked>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isPointRanked signature:/ClassTemplate.isPointRanked|{}isPointRanked[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isPointRanked> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isPointRanked signature:[ /ClassTemplate.isPointRanked|{}isPointRanked[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isPointRanked>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isPointRanked> signature:/ClassTemplate.isPointRanked.<set-isPointRanked>|<set-isPointRanked>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isPointRanked signature:/ClassTemplate.isPointRanked|{}isPointRanked[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isPointRanked signature:[ /ClassTemplate.isPointRanked|{}isPointRanked[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isPointRanked>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isPointRanked>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:isPointRankedDesc signature:/ClassTemplate.isPointRankedDesc|{}isPointRankedDesc[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:isPointRankedDesc signature:[ /ClassTemplate.isPointRankedDesc|{}isPointRankedDesc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'isPointRankedDesc: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isPointRankedDesc> signature:/ClassTemplate.isPointRankedDesc.<get-isPointRankedDesc>|<get-isPointRankedDesc>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isPointRankedDesc signature:/ClassTemplate.isPointRankedDesc|{}isPointRankedDesc[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-isPointRankedDesc> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isPointRankedDesc signature:[ /ClassTemplate.isPointRankedDesc|{}isPointRankedDesc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<get-isPointRankedDesc>' type=<root>.ClassTemplate origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-isPointRankedDesc> signature:/ClassTemplate.isPointRankedDesc.<set-isPointRankedDesc>|<set-isPointRankedDesc>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassTemplate, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isPointRankedDesc signature:/ClassTemplate.isPointRankedDesc|{}isPointRankedDesc[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassTemplate
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isPointRankedDesc signature:[ /ClassTemplate.isPointRankedDesc|{}isPointRankedDesc[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ClassTemplate declared in <root>.ClassTemplate.<set-isPointRankedDesc>' type=<root>.ClassTemplate origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate.<set-isPointRankedDesc>' type=<unbound IrClassSymbolImpl> origin=null
+      ENUM_ENTRY name:UNDEFINED signature:/ClassTemplate.UNDEFINED|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (code: <unbound IrClassSymbolImpl>, nameTemplate: <unbound IrClassSymbolImpl>, parent: <unbound IrClassSymbolImpl>, previous: <unbound IrClassSymbolImpl>, progressionEquivalent: <unbound IrClassSymbolImpl>, idDiscipline: <unbound IrClassSymbolImpl>, strictRunningOrder: <unbound IrClassSymbolImpl>, pointsMethod: <unbound IrClassSymbolImpl>, noTimeFaults: <unbound IrClassSymbolImpl>, combineHeights: <unbound IrClassSymbolImpl>, column: <unbound IrClassSymbolImpl>, runningOrderSort: <unbound IrClassSymbolImpl>, programme: <unbound IrClassSymbolImpl>, eliminationTime: <unbound IrClassSymbolImpl>, courseTimeCode: <unbound IrClassSymbolImpl>, teamSize: <unbound IrClassSymbolImpl>, sponsor: <unbound IrClassSymbolImpl>, lateEntryCredits: <unbound IrClassSymbolImpl>, lateEntryFee: <unbound IrClassSymbolImpl>, courseLengthNeeded: <unbound IrClassSymbolImpl>, discretionaryCourseTime: <unbound IrClassSymbolImpl>, isRelay: <unbound IrClassSymbolImpl>, isQualifier: <unbound IrClassSymbolImpl>, generateChildren: <unbound IrClassSymbolImpl>, feedFromParent: <unbound IrClassSymbolImpl>, isNfcAllowed: <unbound IrClassSymbolImpl>, isAddOnAllowed: <unbound IrClassSymbolImpl>, isSpecialEntry: <unbound IrClassSymbolImpl>, isUkaProgression: <unbound IrClassSymbolImpl>, canEnterDirectly: <unbound IrClassSymbolImpl>, isPointRanked: <unbound IrClassSymbolImpl>, isPointRankedDesc: <unbound IrClassSymbolImpl>) [primary] declared in <root>.ClassTemplate'
+            code: CONST Int type=<unbound IrClassSymbolImpl> value=56
+            nameTemplate: CONST Int type=<unbound IrClassSymbolImpl> value=3
+      ENUM_ENTRY name:BLAH signature:/ClassTemplate.BLAH|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (code: <unbound IrClassSymbolImpl>, nameTemplate: <unbound IrClassSymbolImpl>, parent: <unbound IrClassSymbolImpl>, previous: <unbound IrClassSymbolImpl>, progressionEquivalent: <unbound IrClassSymbolImpl>, idDiscipline: <unbound IrClassSymbolImpl>, strictRunningOrder: <unbound IrClassSymbolImpl>, pointsMethod: <unbound IrClassSymbolImpl>, noTimeFaults: <unbound IrClassSymbolImpl>, combineHeights: <unbound IrClassSymbolImpl>, column: <unbound IrClassSymbolImpl>, runningOrderSort: <unbound IrClassSymbolImpl>, programme: <unbound IrClassSymbolImpl>, eliminationTime: <unbound IrClassSymbolImpl>, courseTimeCode: <unbound IrClassSymbolImpl>, teamSize: <unbound IrClassSymbolImpl>, sponsor: <unbound IrClassSymbolImpl>, lateEntryCredits: <unbound IrClassSymbolImpl>, lateEntryFee: <unbound IrClassSymbolImpl>, courseLengthNeeded: <unbound IrClassSymbolImpl>, discretionaryCourseTime: <unbound IrClassSymbolImpl>, isRelay: <unbound IrClassSymbolImpl>, isQualifier: <unbound IrClassSymbolImpl>, generateChildren: <unbound IrClassSymbolImpl>, feedFromParent: <unbound IrClassSymbolImpl>, isNfcAllowed: <unbound IrClassSymbolImpl>, isAddOnAllowed: <unbound IrClassSymbolImpl>, isSpecialEntry: <unbound IrClassSymbolImpl>, isUkaProgression: <unbound IrClassSymbolImpl>, canEnterDirectly: <unbound IrClassSymbolImpl>, isPointRanked: <unbound IrClassSymbolImpl>, isPointRankedDesc: <unbound IrClassSymbolImpl>) [primary] declared in <root>.ClassTemplate'
+            code: CONST Int type=<unbound IrClassSymbolImpl> value=57
+            nameTemplate: CONST Int type=<unbound IrClassSymbolImpl> value=4
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/ClassTemplate.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.ClassTemplate>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/ClassTemplate.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.ClassTemplate
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/ClassTemplate.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/ClassTemplate.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.ClassTemplate>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/ClassTemplate.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<root>.ClassTemplate [val]
+          GET_ENUM 'ENUM_ENTRY name:UNDEFINED signature:/ClassTemplate.UNDEFINED|null[0]' type=<root>.ClassTemplate
+        VAR name:y type:<root>.ClassTemplate [val]
+          GET_ENUM 'ENUM_ENTRY name:BLAH signature:/ClassTemplate.BLAH|null[0]' type=<root>.ClassTemplate
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun <get-code> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val x: <root>.ClassTemplate [val] declared in <root>.box' type=<root>.ClassTemplate origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=56
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun <get-nameTemplate> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val x: <root>.ClassTemplate [val] declared in <root>.box' type=<root>.ClassTemplate origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: CALL 'public final fun <get-isAddOnAllowed> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val x: <root>.ClassTemplate [val] declared in <root>.box' type=<root>.ClassTemplate origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+              BRANCH
+                if: WHEN type=<unbound IrClassSymbolImpl> origin=OROR
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun <get-code> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val y: <root>.ClassTemplate [val] declared in <root>.box' type=<root>.ClassTemplate origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=57
+                    then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        arg0: CALL 'public final fun <get-nameTemplate> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                          $this: GET_VAR 'val y: <root>.ClassTemplate [val] declared in <root>.box' type=<root>.ClassTemplate origin=null
+                        arg1: CONST Int type=<unbound IrClassSymbolImpl> value=4
+                then: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: CALL 'public final fun <get-isAddOnAllowed> (): <unbound IrClassSymbolImpl> declared in <root>.ClassTemplate' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val y: <root>.ClassTemplate [val] declared in <root>.box' type=<root>.ClassTemplate origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,54 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Actor
+    // class name: test/O2dScriptAction
+
+    public open class test/Actor : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract class test/O2dScriptAction<T#0 /* T */ : test/Actor> : kotlin/Any {
+
+      public constructor()
+
+      protected final fun calc(): T#0?
+
+      protected final var owner: T#0?
+        protected final get
+        private final /* non-default */ set(value: T#0?)
+    }
+  }
+
+  library fragment {
+    // package name: test2
+
+    // class name: test2/CompositeActor
+    // class name: test2/O2dDialog
+
+    public final class test2/CompositeActor : test/Actor {
+
+      public constructor()
+    }
+
+    public open class test2/O2dDialog : test/O2dScriptAction<test2/CompositeActor> {
+
+      public constructor()
+
+      public final fun test(): test2/CompositeActor?
+
+      public final fun test2(): test2/CompositeActor?
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> eval(fn: kotlin/Function0<T#0>): T#0
+    }
+  }
+}

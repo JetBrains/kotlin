@@ -1,0 +1,112 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/delegatedPropertyWithIdProvideDelegate.kt
+    PROPERTY name:test1 signature:/test1|{}test1[0] visibility:public modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:test1$delegate signature:[ /test1|{}test1[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.collections.Map<kotlin.String, kotlin.String>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun provideDelegate <T> (receiver: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.provideDelegate [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <T>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+              <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+              1: GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>
+              2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.test1$delegate'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                        <1>: <unbound IrClassSymbolImpl>
+                        <2>: <unbound IrClassSymbolImpl>
+                        <3>: <unbound IrClassSymbolImpl>
+                        $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                          <1>: <unbound IrClassSymbolImpl>
+                          <2>: <unbound IrClassSymbolImpl>
+                          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            <2>: <unbound IrClassSymbolImpl>
+                            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="string"
+                            1: CONST String type=<unbound IrClassSymbolImpl> value="string"
+                        1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                            VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.test1$delegate.<anonymous>'
+                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                  $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                                    GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>.test1$delegate.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            receiver: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            property: PROPERTY_REFERENCE 'public final test1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [delegated,val] declared in <root>' field=null getter='public final fun <get-test1> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> signature:/test1.<get-test1>|<get-test1>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:test1 signature:/test1|{}test1[0] visibility:public modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test1> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test1$delegate signature:[ /test1|{}test1[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.collections.Map<kotlin.String, kotlin.String>> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> visibility:private [final,static] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+              1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              2: PROPERTY_REFERENCE 'public final test1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [delegated,val] declared in <root>' field=null getter='public final fun <get-test1> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    PROPERTY name:test2 signature:/test2|{}test2[0] visibility:public modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:test2$delegate signature:[ /test2|{}test2[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.collections.Map<kotlin.String, kotlin.String>> visibility:private [final,static]] ] type:<root>.Delegate<<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun provideDelegate <T> (receiver: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.provideDelegate [operator] declared in <root>' type=<root>.Delegate<<unbound IrClassSymbolImpl>> origin=null
+            <T>: <root>.Delegate<<unbound IrClassSymbolImpl>>
+            $receiver: CALL 'public final fun myDelegate <T> (initializer: T of <root>.myDelegate): <root>.Delegate<T of <root>.myDelegate> declared in <root>' type=<root>.Delegate<<unbound IrClassSymbolImpl>> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              initializer: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            receiver: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            property: PROPERTY_REFERENCE 'public final test2: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>' field=null getter='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test2> signature:/test2.<get-test2>|<get-test2>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:test2 signature:/test2|{}test2[0] visibility:public modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>'
+            CALL 'public final fun getValue (thisRef: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.Delegate [operator] declared in <root>.Delegate' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate signature:[ /test2|{}test2[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.collections.Map<kotlin.String, kotlin.String>> visibility:private [final,static]] ] type:<root>.Delegate<<unbound IrClassSymbolImpl>> visibility:private [final,static] declared in <root>' type=<root>.Delegate<<unbound IrClassSymbolImpl>> origin=null
+              thisRef: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              property: PROPERTY_REFERENCE 'public final test2: <unbound IrClassSymbolImpl> [delegated,val] declared in <root>' field=null getter='public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN name:myDelegate signature:/myDelegate|myDelegate(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (initializer:T of <root>.myDelegate) returnType:<root>.Delegate<T of <root>.myDelegate>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /myDelegate|myDelegate(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:initializer index:0 type:T of <root>.myDelegate
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun myDelegate <T> (initializer: T of <root>.myDelegate): <root>.Delegate<T of <root>.myDelegate> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (initializer: T of <root>.Delegate) [primary] declared in <root>.Delegate' type=<root>.Delegate<T of <root>.myDelegate> origin=null
+            <class: T>: T of <root>.myDelegate
+            initializer: GET_VAR 'initializer: T of <root>.myDelegate declared in <root>.myDelegate' type=T of <root>.myDelegate origin=null
+    CLASS CLASS name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Delegate<T of <root>.Delegate>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Delegate|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Delegate.<init>|<init>(1:0){}[0] visibility:public <> (initializer:T of <root>.Delegate) returnType:<root>.Delegate<T of <root>.Delegate> [primary]
+        VALUE_PARAMETER name:initializer index:0 type:T of <root>.Delegate
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate signature:/Delegate|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:initializer signature:/Delegate.initializer|{}initializer[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:initializer signature:[ /Delegate.initializer|{}initializer[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.collections.Map<kotlin.String, kotlin.String>> visibility:private [final,static]] ] type:T of <root>.Delegate visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'initializer: T of <root>.Delegate declared in <root>.Delegate.<init>' type=T of <root>.Delegate origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-initializer> signature:/Delegate.initializer.<get-initializer>|<get-initializer>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Delegate<T of <root>.Delegate>) returnType:T of <root>.Delegate
+          correspondingProperty: PROPERTY name:initializer signature:/Delegate.initializer|{}initializer[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Delegate<T of <root>.Delegate>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-initializer> (): T of <root>.Delegate declared in <root>.Delegate'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:initializer signature:[ /Delegate.initializer|{}initializer[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.collections.Map<kotlin.String, kotlin.String>> visibility:private [final,static]] ] type:T of <root>.Delegate visibility:private [final]' type=T of <root>.Delegate origin=null
+                receiver: GET_VAR '<this>: <root>.Delegate<T of <root>.Delegate> declared in <root>.Delegate.<get-initializer>' type=<root>.Delegate<T of <root>.Delegate> origin=null
+      FUN name:getValue signature:/Delegate.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0] visibility:public modality:FINAL <> ($this:<root>.Delegate<T of <root>.Delegate>, thisRef:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl><*>) returnType:T of <root>.Delegate [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Delegate<T of <root>.Delegate>
+        VALUE_PARAMETER name:thisRef index:0 type:<unbound IrClassSymbolImpl>?
+        VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun getValue (thisRef: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.Delegate [operator] declared in <root>.Delegate'
+            CALL 'public final fun <get-initializer> (): T of <root>.Delegate declared in <root>.Delegate' type=T of <root>.Delegate origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Delegate<T of <root>.Delegate> declared in <root>.Delegate.getValue' type=<root>.Delegate<T of <root>.Delegate> origin=null
+    FUN name:provideDelegate signature:/provideDelegate|provideDelegate@0:0(kotlin.Any?;kotlin.reflect.KProperty<*>){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.provideDelegate, receiver:<unbound IrClassSymbolImpl>?, property:<unbound IrClassSymbolImpl><*>) returnType:T of <root>.provideDelegate [operator]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /provideDelegate|provideDelegate@0:0(kotlin.Any?;kotlin.reflect.KProperty<*>){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.provideDelegate
+      VALUE_PARAMETER name:receiver index:0 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:property index:1 type:<unbound IrClassSymbolImpl><*>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun provideDelegate <T> (receiver: <unbound IrClassSymbolImpl>?, property: <unbound IrClassSymbolImpl><*>): T of <root>.provideDelegate [operator] declared in <root>'
+          GET_VAR '<this>: T of <root>.provideDelegate declared in <root>.provideDelegate' type=T of <root>.provideDelegate origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun <get-test1> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-test2> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

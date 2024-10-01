@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Fn
+    // class name: J
+
+    public abstract fun interface Fn<T#0 /* T */, T#1 /* R */> : kotlin/Any {
+
+      public abstract fun run(s: kotlin/String, i: kotlin/Int, t: T#0): T#1
+    }
+
+    public final class J : kotlin/Any {
+
+      public constructor()
+
+      public final fun runConversion(f1: Fn<kotlin/String, kotlin/Int>, f2: Fn<kotlin/Int, kotlin/String>): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

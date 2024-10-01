@@ -1,0 +1,45 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+  FILE fqName:<root> fileName:/platform.kt
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = ["NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+      FUN name:test signature:/I.test|test(kotlin.String){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.I, source:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        annotations:
+          <unbound>(1 = ["ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        $this: VALUE_PARAMETER name:<this> type:<root>.I
+        VALUE_PARAMETER name:source index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="actual"
+    CLASS INTERFACE name:J signature:/J|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.I]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
+    CLASS INTERFACE name:K signature:/K|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.J]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
+      FUN name:test signature:/K.test|test(kotlin.String){}[0] visibility:public modality:OPEN <> ($this:<root>.K, source:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.K
+        VALUE_PARAMETER name:source index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_VAR 'source: <unbound IrClassSymbolImpl> declared in <root>.K.test' type=<unbound IrClassSymbolImpl> origin=null
+                  arg1: CONST String type=<unbound IrClassSymbolImpl> value="actual"
+              then: THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: GET_VAR 'source: <unbound IrClassSymbolImpl> declared in <root>.K.test' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<root>.K]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L
+      CONSTRUCTOR signature:/L.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.L [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L signature:/L|null[0] modality:FINAL visibility:public superTypes:[<root>.K]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.L' type=<root>.L origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

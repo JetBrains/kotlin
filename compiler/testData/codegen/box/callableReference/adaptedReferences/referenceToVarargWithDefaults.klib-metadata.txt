@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(vararg xs: kotlin/Int /* kotlin/IntArray */, s: kotlin/String /* = ... */): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(vararg xs: kotlin/Int /* kotlin/IntArray */, s1: kotlin/String /* = ... */, s2: kotlin/String /* = ... */): kotlin/Unit
+
+      public final fun test(): kotlin/Unit
+
+      public final fun use(fn: kotlin/Function2<kotlin/IntArray, kotlin/String, kotlin/Unit>): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

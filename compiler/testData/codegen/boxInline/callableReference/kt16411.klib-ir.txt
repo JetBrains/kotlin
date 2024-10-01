@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:startFlow signature:/startFlow|startFlow(kotlin.Function1<kotlin.String,0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (flowConstructor:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.startFlow>) returnType:R of <root>.startFlow [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /startFlow|startFlow(kotlin.Function1<kotlin.String,0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:flowConstructor index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.startFlow>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun startFlow <R> (flowConstructor: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.startFlow>): R of <root>.startFlow [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=R of <root>.startFlow origin=INVOKE
+            $this: GET_VAR 'flowConstructor: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.startFlow> declared in <root>.startFlow' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.startFlow> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS OBJECT name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Requester signature:/Foo.Requester|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo.Requester
+        CONSTRUCTOR signature:/Foo.Requester.<init>|<init>(kotlin.String){}[0] visibility:public <> (dealToBeOffered:<unbound IrClassSymbolImpl>) returnType:<root>.Foo.Requester [primary]
+          VALUE_PARAMETER name:dealToBeOffered index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Requester signature:/Foo.Requester|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:dealToBeOffered signature:/Foo.Requester.dealToBeOffered|{}dealToBeOffered[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:dealToBeOffered signature:[ /Foo.Requester.dealToBeOffered|{}dealToBeOffered[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:dealToBeOffered type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'dealToBeOffered: <unbound IrClassSymbolImpl> declared in <root>.Foo.Requester.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dealToBeOffered> signature:/Foo.Requester.dealToBeOffered.<get-dealToBeOffered>|<get-dealToBeOffered>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Foo.Requester) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:dealToBeOffered signature:/Foo.Requester.dealToBeOffered|{}dealToBeOffered[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Foo.Requester
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-dealToBeOffered> (): <unbound IrClassSymbolImpl> declared in <root>.Foo.Requester'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dealToBeOffered signature:[ /Foo.Requester.dealToBeOffered|{}dealToBeOffered[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:dealToBeOffered type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Foo.Requester declared in <root>.Foo.Requester.<get-dealToBeOffered>' type=<root>.Foo.Requester origin=null
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-dealToBeOffered> (): <unbound IrClassSymbolImpl> declared in <root>.Foo.Requester' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'public final fun startFlow <R> (flowConstructor: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, R of <root>.startFlow>): R of <root>.startFlow [inline] declared in <root>' type=<root>.Foo.Requester origin=null
+              <R>: <root>.Foo.Requester
+              flowConstructor: FUNCTION_REFERENCE 'public constructor <init> (dealToBeOffered: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Foo.Requester' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Foo.Requester> origin=null reflectionTarget=<same>

@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnotherKlass
+    // class name: test/AnotherKlass.Default
+    // class name: test/AnotherKlass.Nested
+    // class name: test/Klass
+    // class name: test/Klass.Companion
+    // class name: test/Klass.Nested
+
+    public final class test/AnotherKlass : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Default
+
+      // nested class: Nested
+
+      // nested class: Default
+    }
+
+    public final companion object test/AnotherKlass.Default : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final object test/AnotherKlass.Nested : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final class test/Klass : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Nested
+
+      // nested class: Companion
+    }
+
+    public final companion object test/Klass.Companion : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final class test/Klass.Nested : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

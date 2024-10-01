@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/traitWithPrivateMember.kt
+    CLASS INTERFACE name:Z signature:/Z|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
+      FUN name:testFun signature:/Z.testFun|testFun(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testFun (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            CALL 'private final fun privateFun (): <unbound IrClassSymbolImpl> declared in <root>.Z' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.Z declared in <root>.Z.testFun' type=<root>.Z origin=null
+      FUN name:testProperty signature:/Z.testProperty|testProperty(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun testProperty (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            CALL 'private final fun <get-privateProp> (): <unbound IrClassSymbolImpl> declared in <root>.Z' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Z declared in <root>.Z.testProperty' type=<root>.Z origin=null
+      FUN name:privateFun signature:/Z.privateFun|privateFun(){}[0] visibility:private modality:FINAL <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun privateFun (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+      PROPERTY name:privateProp signature:/Z.privateProp|{}privateProp[0] visibility:private modality:FINAL [val]
+        FUN name:<get-privateProp> signature:/Z.privateProp.<get-privateProp>|<get-privateProp>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Z) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:privateProp signature:/Z.privateProp|{}privateProp[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Z
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-privateProp> (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+              CONST String type=<unbound IrClassSymbolImpl> value="K"
+    CLASS OBJECT name:Z2 signature:/Z2|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z2
+      CONSTRUCTOR signature:/Z2.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Z2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Z2 signature:/Z2|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:Z2 signature:/Z2|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]' type=<root>.Z2
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:Z2 signature:/Z2|null[0] modality:FINAL visibility:public superTypes:[<root>.Z]' type=<root>.Z2

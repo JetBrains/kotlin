@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun println(s: kotlin/Any?): kotlin/Unit
+
+      public final var stdout: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

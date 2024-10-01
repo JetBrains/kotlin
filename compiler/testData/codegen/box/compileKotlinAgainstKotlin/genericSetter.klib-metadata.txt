@@ -1,0 +1,31 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final var <T#0 /* T */> T#0.prop: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(value: kotlin/Int)
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> setProp(t: T#0, v: kotlin/Int): kotlin/Unit
+    }
+  }
+}

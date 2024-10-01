@@ -1,0 +1,67 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Parser
+    // class name: Result
+    // class name: Result.ParseError
+    // class name: Result.Value
+
+    public final class Parser<T#0 /* TInput */, T#1 /* TValue */> : kotlin/Any {
+
+      public constructor(f: kotlin/Function1<T#0, Result<T#0, T#1>>)
+
+      public final operator fun invoke(input: T#0): Result<T#0, T#1>
+
+      public final fun <T#2 /* TIntermediate */, T#3 /* TValue2 */> mapJoin(selector: kotlin/Function1<T#1, Parser<T#0, T#2>>, projector: kotlin/Function2<T#1, T#2, T#3>): Parser<T#0, T#3>
+
+      public final val f: kotlin/Function1<T#0, Result<T#0, T#1>>
+        public final get
+    }
+
+    public sealed class Result<T#0 /* TInput */, T#1 /* TValue */> : kotlin/Any {
+
+      protected constructor()
+
+      // nested class: Value
+
+      // nested class: ParseError
+
+      // sealed subclass: Result.ParseError
+
+      // sealed subclass: Result.Value
+    }
+
+    public final class Result.ParseError<T#2 /* TInput */, T#3 /* TValue */> : Result<T#2, T#3> {
+
+      public constructor(productionLabel: kotlin/String, child: Result.ParseError<T#2, *>?, rest: T#2)
+
+      public final val child: Result.ParseError<T#2, *>?
+        public final get
+
+      public final val productionLabel: kotlin/String
+        public final get
+
+      public final val rest: T#2
+        public final get
+    }
+
+    public final class Result.Value<T#2 /* TInput */, T#3 /* TValue */> : Result<T#2, T#3> {
+
+      public constructor(value: T#3, rest: T#2)
+
+      public final val rest: T#2
+        public final get
+
+      public final val value: T#3
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

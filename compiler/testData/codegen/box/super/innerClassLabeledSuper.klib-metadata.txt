@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: BK
+    // class name: K
+
+    public final class A : K {
+
+      public constructor()
+
+      public open fun bar(): kotlin/String
+
+      public open fun foo(): kotlin/String
+
+      // nested class: B
+    }
+
+    public final inner class A.B : K {
+
+      public constructor()
+
+      public open fun bar(): kotlin/String
+
+      public open fun foo(): kotlin/String
+
+      public final fun test1(): kotlin/String
+
+      public final fun test2(): kotlin/String
+
+      public final fun test3(): kotlin/String
+
+      public final fun test4(): kotlin/String
+
+      public final fun test5(): kotlin/String
+
+      public final fun test6(): kotlin/String
+    }
+
+    public abstract interface BK : kotlin/Any {
+
+      public abstract fun bar(): kotlin/String
+
+      public abstract fun foo(): kotlin/String
+    }
+
+    public abstract interface K : BK {
+
+      public open fun foo(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo(): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Any.extFun(): kotlin/Unit
+
+      public final fun fn0(): kotlin/Unit
+
+      public final fun fn1(x: kotlin/Any): kotlin/Unit
+
+      public final var kotlin/Any.extProp: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(x: kotlin/String)
+
+      public final val lambda0: kotlin/Function0<kotlin/Unit>
+        public final get
+
+      public final val lambda1: kotlin/Function1<kotlin/Any, kotlin/Unit>
+        public final get
+    }
+  }
+}

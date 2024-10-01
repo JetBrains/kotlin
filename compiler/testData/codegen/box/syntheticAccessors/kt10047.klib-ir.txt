@@ -1,0 +1,106 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test2 fileName:/a.kt
+    FUN name:eval signature:test2/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (fn:<unbound IrClassSymbolImpl><T of test2.eval>) returnType:T of test2.eval
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test2/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><T of test2.eval>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of test2.eval>): T of test2.eval declared in test2'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of test2.eval origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of test2.eval> declared in test2.eval' type=<unbound IrClassSymbolImpl><T of test2.eval> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:CompositeActor signature:test2/CompositeActor|null[0] modality:FINAL visibility:public superTypes:[test.Actor]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test2.CompositeActor
+      CONSTRUCTOR signature:test2/CompositeActor.<init>|<init>(){}[0] visibility:public <> () returnType:test2.CompositeActor [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Actor'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CompositeActor signature:test2/CompositeActor|null[0] modality:FINAL visibility:public superTypes:[test.Actor]'
+    CLASS CLASS name:O2dDialog signature:test2/O2dDialog|null[0] modality:OPEN visibility:public superTypes:[test.O2dScriptAction<test2.CompositeActor>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test2.O2dDialog
+      CONSTRUCTOR signature:test2/O2dDialog.<init>|<init>(){}[0] visibility:public <> () returnType:test2.O2dDialog [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.O2dScriptAction'
+            <T>: test2.CompositeActor
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O2dDialog signature:test2/O2dDialog|null[0] modality:OPEN visibility:public superTypes:[test.O2dScriptAction<test2.CompositeActor>]'
+      FUN name:test signature:test2/O2dDialog.test|test(){}[0] visibility:public modality:FINAL <> ($this:test2.O2dDialog) returnType:test2.CompositeActor?
+        $this: VALUE_PARAMETER name:<this> type:test2.O2dDialog
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): test2.CompositeActor? declared in test2.O2dDialog'
+            CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of test2.eval>): T of test2.eval declared in test2' type=test2.CompositeActor? origin=null
+              <T>: test2.CompositeActor?
+              fn: FUN_EXPR type=<unbound IrClassSymbolImpl><test2.CompositeActor?> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:test2.CompositeActor?
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): test2.CompositeActor? declared in test2.O2dDialog.test'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test2.CompositeActor? origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: test2.O2dDialog declared in test2.O2dDialog.test' type=test2.O2dDialog origin=null
+      FUN name:test2 signature:test2/O2dDialog.test2|test2(){}[0] visibility:public modality:FINAL <> ($this:test2.O2dDialog) returnType:test2.CompositeActor?
+        $this: VALUE_PARAMETER name:<this> type:test2.O2dDialog
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test2 (): test2.CompositeActor? declared in test2.O2dDialog'
+            CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of test2.eval>): T of test2.eval declared in test2' type=test2.CompositeActor? origin=null
+              <T>: test2.CompositeActor?
+              fn: FUN_EXPR type=<unbound IrClassSymbolImpl><test2.CompositeActor?> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:test2.CompositeActor?
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): test2.CompositeActor? declared in test2.O2dDialog.test2'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=test2.CompositeActor? origin=null
+                        $this: GET_VAR '<this>: test2.O2dDialog declared in test2.O2dDialog.test2' type=test2.O2dDialog origin=null
+    FUN name:box signature:test2/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun test (): test2.CompositeActor? declared in test2.O2dDialog' type=test2.CompositeActor? origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test2.O2dDialog' type=test2.O2dDialog origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test2'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 1"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun test2 (): test2.CompositeActor? declared in test2.O2dDialog' type=test2.CompositeActor? origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test2.O2dDialog' type=test2.O2dDialog origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test2'
+              CONST String type=<unbound IrClassSymbolImpl> value="fail 2"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test2'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+  FILE fqName:test fileName:/b.kt
+    CLASS CLASS name:Actor signature:test/Actor|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Actor
+      CONSTRUCTOR signature:test/Actor.<init>|<init>(){}[0] visibility:public <> () returnType:test.Actor [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Actor signature:test/Actor|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:O2dScriptAction signature:test/O2dScriptAction|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.O2dScriptAction<T of test.O2dScriptAction>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ test/O2dScriptAction|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[test.Actor] reified:false] ] superTypes:[test.Actor] reified:false
+      CONSTRUCTOR signature:test/O2dScriptAction.<init>|<init>(){}[0] visibility:public <> () returnType:test.O2dScriptAction<T of test.O2dScriptAction> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O2dScriptAction signature:test/O2dScriptAction|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:owner signature:test/O2dScriptAction.owner|{}owner[0] visibility:protected modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:owner signature:[ test/O2dScriptAction.owner|{}owner[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:owner type:T of test.O2dScriptAction? visibility:private] ] type:T of test.O2dScriptAction? visibility:private
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-owner> signature:test/O2dScriptAction.owner.<get-owner>|<get-owner>(){}[0] visibility:protected modality:FINAL <> ($this:test.O2dScriptAction<T of test.O2dScriptAction>) returnType:T of test.O2dScriptAction?
+          correspondingProperty: PROPERTY name:owner signature:test/O2dScriptAction.owner|{}owner[0] visibility:protected modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.O2dScriptAction<T of test.O2dScriptAction>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected final fun <get-owner> (): T of test.O2dScriptAction? declared in test.O2dScriptAction'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:owner signature:[ test/O2dScriptAction.owner|{}owner[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:owner type:T of test.O2dScriptAction? visibility:private] ] type:T of test.O2dScriptAction? visibility:private' type=T of test.O2dScriptAction? origin=null
+                receiver: GET_VAR '<this>: test.O2dScriptAction<T of test.O2dScriptAction> declared in test.O2dScriptAction.<get-owner>' type=test.O2dScriptAction<T of test.O2dScriptAction> origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-owner> signature:test/O2dScriptAction.owner.<set-owner>|<set-owner>(1:0?){}[0] visibility:private modality:FINAL <> ($this:test.O2dScriptAction<T of test.O2dScriptAction>, <set-?>:T of test.O2dScriptAction?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:owner signature:test/O2dScriptAction.owner|{}owner[0] visibility:protected modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.O2dScriptAction<T of test.O2dScriptAction>
+          VALUE_PARAMETER name:<set-?> index:0 type:T of test.O2dScriptAction?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:owner signature:[ test/O2dScriptAction.owner|{}owner[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:owner type:T of test.O2dScriptAction? visibility:private] ] type:T of test.O2dScriptAction? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: test.O2dScriptAction<T of test.O2dScriptAction> declared in test.O2dScriptAction.<set-owner>' type=test.O2dScriptAction<T of test.O2dScriptAction> origin=null
+              value: GET_VAR '<set-?>: T of test.O2dScriptAction? declared in test.O2dScriptAction.<set-owner>' type=T of test.O2dScriptAction? origin=null
+      FUN name:calc signature:test/O2dScriptAction.calc|calc(){}[0] visibility:protected modality:FINAL <> ($this:test.O2dScriptAction<T of test.O2dScriptAction>) returnType:T of test.O2dScriptAction?
+        $this: VALUE_PARAMETER name:<this> type:test.O2dScriptAction<T of test.O2dScriptAction>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected final fun calc (): T of test.O2dScriptAction? declared in test.O2dScriptAction'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null

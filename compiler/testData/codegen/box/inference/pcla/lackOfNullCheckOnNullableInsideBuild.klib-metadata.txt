@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Builder
+    // class name: Foo
+
+    public final class Builder<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun build(): kotlin/Function1<Foo, T#0>
+
+      public final fun resolve(resolver: kotlin/Function1<Foo, T#0>): kotlin/Unit
+
+      private final var resolver: kotlin/Function1<Foo, T#0>?
+        private final get
+        private final set
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor(string: kotlin/String? /* = ... */)
+
+      public final val string: kotlin/String?
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> build(configure: @kotlin/ExtensionFunctionType kotlin/Function1<Builder<T#0>, kotlin/Unit>): kotlin/Function1<Foo, T#0>
+    }
+  }
+}

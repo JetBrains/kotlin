@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun intRange(): kotlin/ranges/IntRange
+
+      public final inline fun intRangeAsReturnableBlock(): kotlin/ranges/IntRange
+
+      public final inline fun iterableInt(): kotlin/collections/Iterable<kotlin/Int>
+
+      public final inline fun iterableIntWithTempVal(): kotlin/collections/Iterable<kotlin/Int>
+
+      public final inline fun iterableIntWithTempValIterableInt(): kotlin/collections/Iterable<kotlin/Int>
+
+      public final inline fun multipleReturnsRequireDeeperAnalysis(useShorterRange: kotlin/Boolean): kotlin/collections/Iterable<kotlin/Int>
+
+      public final fun testIntSumOfIntRange(): kotlin/Int
+
+      public final fun testIntSumOfIntRangeAsReturnableBlock(): kotlin/Int
+
+      public final fun testIntSumOfIterableInt(): kotlin/Int
+
+      public final fun testIntSumOfIterableIntInParam(param: kotlin/collections/Iterable<kotlin/Int>): kotlin/Int
+
+      public final fun testIntSumOfIterableIntWithTempVal(): kotlin/Int
+
+      public final fun testIntSumOfIterableIntWithTempValIterableInt(): kotlin/Int
+
+      public final fun testIntSumOfTempVal(): kotlin/Int
+
+      public final fun testMultipleReturnsRequireDeeperAnalysisLongRange(): kotlin/Int
+
+      public final fun testMultipleReturnsRequireDeeperAnalysisShortRange(): kotlin/Int
+    }
+  }
+}

@@ -1,0 +1,162 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:ann fileName:/l1.kt
+    CLASS ANNOTATION_CLASS name:Test1 signature:ann/Test1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.Test1<T of ann.Test1>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ ann/Test1|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:ann/Test1.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:ann.Test1<T of ann.Test1> [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test1 signature:ann/Test1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:ann/Test1.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test1.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in ann.Test1.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:ann/Test1.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:ann.Test1<T of ann.Test1>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:ann/Test1.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:ann.Test1<T of ann.Test1>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in ann.Test1'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test1.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: ann.Test1<T of ann.Test1> declared in ann.Test1.<get-x>' type=ann.Test1<T of ann.Test1> origin=null
+    CLASS ANNOTATION_CLASS name:Test2 signature:ann/Test2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.Test2<T1 of ann.Test2, T2 of ann.Test2>
+      TYPE_PARAMETER name:T1 index:0 variance: signature:[ ann/Test2|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:T2 index:1 variance: signature:[ ann/Test2|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:ann/Test2.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:ann.Test2<T1 of ann.Test2, T2 of ann.Test2> [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test2 signature:ann/Test2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:ann/Test2.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test2.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in ann.Test2.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:ann/Test2.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:ann.Test2<T1 of ann.Test2, T2 of ann.Test2>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:ann/Test2.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:ann.Test2<T1 of ann.Test2, T2 of ann.Test2>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in ann.Test2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test2.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: ann.Test2<T1 of ann.Test2, T2 of ann.Test2> declared in ann.Test2.<get-x>' type=ann.Test2<T1 of ann.Test2, T2 of ann.Test2> origin=null
+    CLASS INTERFACE name:I signature:ann/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.I<T of ann.I>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ ann/I|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS ANNOTATION_CLASS name:Test3 signature:ann/Test3|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.Test3<T1 of ann.Test3, T2 of ann.Test3>
+      TYPE_PARAMETER name:T1 index:0 variance: signature:[ ann/Test3|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T2 index:1 variance: signature:[ ann/Test3|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[ann.I<T1 of ann.Test3>] reified:false
+      CONSTRUCTOR signature:ann/Test3.<init>|<init>(ann.Test1<ann.I<1:1>>){}[0] visibility:public <> (x:ann.Test1<ann.I<T2 of ann.Test3>>) returnType:ann.Test3<T1 of ann.Test3, T2 of ann.Test3> [primary]
+        VALUE_PARAMETER name:x index:0 type:ann.Test1<ann.I<T2 of ann.Test3>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test3 signature:ann/Test3|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:ann/Test3.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test3.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:ann.Test1<ann.I<T2 of ann.Test3>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: ann.Test1<ann.I<T2 of ann.Test3>> declared in ann.Test3.<init>' type=ann.Test1<ann.I<T2 of ann.Test3>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:ann/Test3.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:ann.Test3<T1 of ann.Test3, T2 of ann.Test3>) returnType:ann.Test1<ann.I<T2 of ann.Test3>>
+          correspondingProperty: PROPERTY name:x signature:ann/Test3.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:ann.Test3<T1 of ann.Test3, T2 of ann.Test3>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): ann.Test1<ann.I<T2 of ann.Test3>> declared in ann.Test3'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test3.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:ann.Test1<ann.I<T2 of ann.Test3>> visibility:private [final]' type=ann.Test1<ann.I<T2 of ann.Test3>> origin=null
+                receiver: GET_VAR '<this>: ann.Test3<T1 of ann.Test3, T2 of ann.Test3> declared in ann.Test3.<get-x>' type=ann.Test3<T1 of ann.Test3, T2 of ann.Test3> origin=null
+    CLASS CLASS name:C signature:ann/C|null[0] modality:FINAL visibility:public superTypes:[ann.I<T of ann.C>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.C<T of ann.C>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ ann/C|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:ann/C.<init>|<init>(){}[0] visibility:public <> () returnType:ann.C<T of ann.C> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:ann/C|null[0] modality:FINAL visibility:public superTypes:[ann.I<T of ann.C>]'
+    CLASS ANNOTATION_CLASS name:Test4 signature:ann/Test4|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.Test4
+      CONSTRUCTOR signature:ann/Test4.<init>|<init>(kotlin.Array<ann.Test3<kotlin.Int,ann.C<kotlin.Int>>>){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>>) returnType:ann.Test4 [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test4 signature:ann/Test4|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:ann/Test4.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test4.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> declared in ann.Test4.<init>' type=<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:ann/Test4.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:ann.Test4) returnType:<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>>
+          correspondingProperty: PROPERTY name:x signature:ann/Test4.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:ann.Test4
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> declared in ann.Test4'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ ann/Test4.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> visibility:private [final]' type=<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> origin=null
+                receiver: GET_VAR '<this>: ann.Test4 declared in ann.Test4.<get-x>' type=ann.Test4 origin=null
+    CLASS CLASS name:ARG signature:ann/ARG|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.ARG
+      CONSTRUCTOR signature:ann/ARG.<init>|<init>(){}[0] visibility:public <> () returnType:ann.ARG [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ARG signature:ann/ARG|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS ANNOTATION_CLASS name:Test5 signature:ann/Test5|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.Test5<T of ann.Test5>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ ann/Test5|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:ann/Test5.<init>|<init>(kotlin.Array<out|ann.Test3<1:0,ann.C<1:0>>>...){}[0] visibility:public <> (xs:<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>>) returnType:ann.Test5<T of ann.Test5> [primary]
+        VALUE_PARAMETER name:xs index:0 type:<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> varargElementType:ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>> [vararg]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test5 signature:ann/Test5|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:xs signature:ann/Test5.xs|{}xs[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:xs signature:[ ann/Test5.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'xs: <unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> [vararg] declared in ann.Test5.<init>' type=<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> signature:ann/Test5.xs.<get-xs>|<get-xs>(){}[0] visibility:public modality:FINAL <> ($this:ann.Test5<T of ann.Test5>) returnType:<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>>
+          correspondingProperty: PROPERTY name:xs signature:ann/Test5.xs|{}xs[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:ann.Test5<T of ann.Test5>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-xs> (): <unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> declared in ann.Test5'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs signature:[ ann/Test5.xs|{}xs[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> visibility:private [final]' type=<unbound IrClassSymbolImpl><out ann.Test3<T of ann.Test5, ann.C<T of ann.Test5>>> origin=null
+                receiver: GET_VAR '<this>: ann.Test5<T of ann.Test5> declared in ann.Test5.<get-xs>' type=ann.Test5<T of ann.Test5> origin=null
+  FILE fqName:<root> fileName:/l2.kt
+    CLASS CLASS name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        Test1<ann.ARG>(x = 42)
+        Test2<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>(x = 38)
+        Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>(x = Test1<ann.I<ann.C<<unbound IrClassSymbolImpl>>>>(x = 39))
+        Test4(x = [Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>(x = Test1<ann.I<ann.C<<unbound IrClassSymbolImpl>>>>(x = 40)), Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>(x = Test1<ann.I<ann.C<<unbound IrClassSymbolImpl>>>>(x = 50)), Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>(x = Test1<ann.I<ann.C<<unbound IrClassSymbolImpl>>>>(x = 60))] type=<unbound IrClassSymbolImpl><ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>> varargElementType=ann.Test3<<unbound IrClassSymbolImpl>, ann.C<<unbound IrClassSymbolImpl>>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
+      CONSTRUCTOR signature:/O.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.O [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O signature:/O|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:/O.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.O) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.O
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.O'
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:K signature:/K|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound><<unbound IrClassSymbolImpl>>(1 = 24)
+        <unbound><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>(1 = 83)
+        <unbound><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>(1 = <unbound><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>(1 = 93))
+        <unbound>(1 = [<unbound><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>(1 = <unbound><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>(1 = 44)), <unbound><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>(1 = <unbound><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>(1 = 55)), <unbound><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>(1 = <unbound><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>(1 = 66))] type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
+      CONSTRUCTOR signature:/K.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.K [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K signature:/K|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:test signature:/K.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.K) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.K
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.K'
+            CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.K' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K' type=<root>.K origin=null

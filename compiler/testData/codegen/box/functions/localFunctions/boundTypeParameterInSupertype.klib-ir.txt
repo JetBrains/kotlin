@@ -1,0 +1,55 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/boundTypeParameterInSupertype.kt
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<TT of <root>.I>
+      TYPE_PARAMETER name:TT index:0 variance: signature:[ /I|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:id signature:/I.id|id(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.I<TT of <root>.I>, x:TT of <root>.I) returnType:TT of <root>.I
+        $this: VALUE_PARAMETER name:<this> type:<root>.I<TT of <root>.I>
+        VALUE_PARAMETER name:x index:0 type:TT of <root>.I
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun id (x: TT of <root>.I): TT of <root>.I declared in <root>.I'
+            GET_VAR 'x: TT of <root>.I declared in <root>.I.id' type=TT of <root>.I origin=null
+    FUN name:forClass signature:/forClass|forClass(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.forClass) returnType:T of <root>.forClass
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /forClass|forClass(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.forClass
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:g visibility:local modality:FINAL <> (z:T of <root>.forClass) returnType:T of <root>.forClass
+          VALUE_PARAMETER name:z index:0 type:T of <root>.forClass
+          BLOCK_BODY
+            CLASS CLASS name:C modality:FINAL visibility:local superTypes:[<root>.I<T of <root>.forClass>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.forClass.g.C<T of <root>.forClass>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.forClass.g.C<T of <root>.forClass> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:local superTypes:[<root>.I<T of <root>.forClass>]'
+            RETURN type=<unbound IrClassSymbolImpl> from='local final fun g (z: T of <root>.forClass): T of <root>.forClass declared in <root>.forClass'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.forClass origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.forClass.g.C' type=<root>.forClass.g.C<T of <root>.forClass> origin=null
+                1: GET_VAR 'z: T of <root>.forClass declared in <root>.forClass.g' type=T of <root>.forClass origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun forClass <T> (x: T of <root>.forClass): T of <root>.forClass declared in <root>'
+          CALL 'local final fun g (z: T of <root>.forClass): T of <root>.forClass declared in <root>.forClass' type=T of <root>.forClass origin=null
+            z: GET_VAR 'x: T of <root>.forClass declared in <root>.forClass' type=T of <root>.forClass origin=null
+    FUN name:forTypeParameter signature:/forTypeParameter|forTypeParameter(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.forTypeParameter) returnType:T of <root>.forTypeParameter
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /forTypeParameter|forTypeParameter(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.forTypeParameter
+      BLOCK_BODY
+        FUN LOCAL_FUNCTION name:h visibility:local modality:FINAL <S> (z:S of <root>.forTypeParameter.h) returnType:S of <root>.forTypeParameter.h
+          TYPE_PARAMETER name:S index:0 variance: superTypes:[T of <root>.forTypeParameter] reified:false
+          VALUE_PARAMETER name:z index:0 type:S of <root>.forTypeParameter.h
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='local final fun h <S> (z: S of <root>.forTypeParameter.h): S of <root>.forTypeParameter.h declared in <root>.forTypeParameter'
+              GET_VAR 'z: S of <root>.forTypeParameter.h declared in <root>.forTypeParameter.h' type=S of <root>.forTypeParameter.h origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun forTypeParameter <T> (x: T of <root>.forTypeParameter): T of <root>.forTypeParameter declared in <root>'
+          CALL 'local final fun h <S> (z: S of <root>.forTypeParameter.h): S of <root>.forTypeParameter.h declared in <root>.forTypeParameter' type=T of <root>.forTypeParameter origin=null
+            <S>: T of <root>.forTypeParameter
+            z: GET_VAR 'x: T of <root>.forTypeParameter declared in <root>.forTypeParameter' type=T of <root>.forTypeParameter origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public final fun forClass <T> (x: T of <root>.forClass): T of <root>.forClass declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              x: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CALL 'public final fun forTypeParameter <T> (x: T of <root>.forTypeParameter): T of <root>.forTypeParameter declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              x: CONST String type=<unbound IrClassSymbolImpl> value="K"

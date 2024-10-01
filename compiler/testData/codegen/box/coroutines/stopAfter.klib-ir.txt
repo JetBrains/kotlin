@@ -1,0 +1,57 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/stopAfter.kt
+    FUN name:stopAfter signature:/stopAfter|stopAfter@kotlin.collections.Iterator<0:0>(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:<unbound IrClassSymbolImpl><T of <root>.stopAfter>, predicate:<unbound IrClassSymbolImpl><T of <root>.stopAfter, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl><T of <root>.stopAfter> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /stopAfter|stopAfter@kotlin.collections.Iterator<0:0>(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl><T of <root>.stopAfter>
+      VALUE_PARAMETER name:predicate index:0 type:<unbound IrClassSymbolImpl><T of <root>.stopAfter, <unbound IrClassSymbolImpl>> [crossinline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun stopAfter <T> (predicate: <unbound IrClassSymbolImpl><T of <root>.stopAfter, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><T of <root>.stopAfter> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter> origin=null
+            <1>: T of <root>.stopAfter
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.stopAfter>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl><T of <root>.stopAfter>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                $receiver: VALUE_PARAMETER name:$this$iterator type:<unbound IrClassSymbolImpl><T of <root>.stopAfter>
+                BLOCK_BODY
+                  BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+                    VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><T of <root>.stopAfter> [val]
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter> origin=FOR_LOOP_ITERATOR
+                        <1>: T of <root>.stopAfter
+                        $receiver: GET_VAR '<this>: <unbound IrClassSymbolImpl><T of <root>.stopAfter> declared in <root>.stopAfter' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter> origin=null
+                    WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                      condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+                        $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.stopAfter> [val] declared in <root>.stopAfter.<anonymous>' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter> origin=null
+                      body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+                        VAR FOR_LOOP_VARIABLE name:element type:T of <root>.stopAfter [val]
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.stopAfter origin=FOR_LOOP_NEXT
+                            $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><T of <root>.stopAfter> [val] declared in <root>.stopAfter.<anonymous>' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter> origin=null
+                        BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: GET_VAR '$this$iterator: <unbound IrClassSymbolImpl><T of <root>.stopAfter> declared in <root>.stopAfter.<anonymous>' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter> origin=null
+                            1: GET_VAR 'val element: T of <root>.stopAfter [val] declared in <root>.stopAfter.<anonymous>' type=T of <root>.stopAfter origin=null
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                                $this: GET_VAR 'predicate: <unbound IrClassSymbolImpl><T of <root>.stopAfter, <unbound IrClassSymbolImpl>> [crossinline] declared in <root>.stopAfter' type=<unbound IrClassSymbolImpl><T of <root>.stopAfter, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                                1: GET_VAR 'val element: T of <root>.stopAfter [val] declared in <root>.stopAfter.<anonymous>' type=T of <root>.stopAfter origin=null
+                              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                                BREAK label=null loop.label=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun stopAfter <T> (predicate: <unbound IrClassSymbolImpl><T of <root>.stopAfter, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl><T of <root>.stopAfter> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                    CONST String type=<unbound IrClassSymbolImpl> value="fail"
+              predicate: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"

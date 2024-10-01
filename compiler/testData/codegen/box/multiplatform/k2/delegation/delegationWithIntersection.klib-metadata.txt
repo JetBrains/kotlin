@@ -1,0 +1,57 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base1
+    // class name: Base1Impl
+    // class name: Base2
+    // class name: Base2Impl
+    // class name: DelegatedImpl
+
+    public abstract interface Base1 : kotlin/Any {
+
+      public abstract fun foo(a: kotlin/String): kotlin/String
+    }
+
+    public final class Base1Impl : Base1 {
+
+      public constructor()
+
+      public open fun foo(a: kotlin/String): kotlin/String
+    }
+
+    public abstract interface Base2 : kotlin/Any {
+
+      public abstract fun foo(a: kotlin/Any): kotlin/Any
+    }
+
+    public final class Base2Impl : Base2 {
+
+      public constructor()
+
+      public open fun foo(a: kotlin/Any): kotlin/Any
+    }
+
+    public final class DelegatedImpl : Base1, Base2 {
+
+      public constructor(a: Base1, b: Base2)
+
+      public open /* delegation */ fun foo(a: kotlin/Any): kotlin/Any
+
+      public open /* delegation */ fun foo(a: kotlin/String): kotlin/String
+
+      public final val a: Base1
+        public final get
+
+      public final val b: Base2
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

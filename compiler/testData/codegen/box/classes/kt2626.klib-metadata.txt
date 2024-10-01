@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: example2
+
+    // class name: example2/Context
+    // class name: example2/Context.OsType
+
+    public final object example2/Context : kotlin/Any {
+
+      private constructor()
+
+      // nested class: OsType
+    }
+
+    public final enum class example2/Context.OsType : kotlin/Enum<example2/Context.OsType> {
+
+      private constructor()
+
+      WIN2000,
+
+      WINDOWS,
+
+      MACOSX,
+
+      LINUX,
+
+      OTHER,
+
+      OK,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

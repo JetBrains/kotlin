@@ -1,0 +1,82 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/B
+    // class name: test/C
+    // class name: test/E
+    // class name: test/Partial
+
+    public final annotation class test/A : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final annotation class test/B : kotlin/Annotation {
+
+      public constructor(a: test/A /* = ... */)
+
+      public final val a: test/A
+        public final get
+    }
+
+    public final annotation class test/C : kotlin/Annotation {
+
+      public constructor(i: kotlin/Int /* = ... */, b: test/B /* = ... */, kClass: kotlin/reflect/KClass<*> /* = ... */, kClassArray: kotlin/Array<kotlin/reflect/KClass<*>> /* = ... */, e: test/E /* = ... */, aS: kotlin/Array<kotlin/String> /* = ... */, aI: kotlin/IntArray /* = ... */)
+
+      public final val aI: kotlin/IntArray
+        public final get
+
+      public final val aS: kotlin/Array<kotlin/String>
+        public final get
+
+      public final val b: test/B
+        public final get
+
+      public final val e: test/E
+        public final get
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final val kClass: kotlin/reflect/KClass<*>
+        public final get
+
+      public final val kClassArray: kotlin/Array<kotlin/reflect/KClass<*>>
+        public final get
+    }
+
+    public final enum class test/E : kotlin/Enum<test/E> {
+
+      private constructor()
+
+      A,
+
+      B,
+
+      // has Enum.entries
+    }
+
+    public final annotation class test/Partial : kotlin/Annotation {
+
+      public constructor(i: kotlin/Int /* = ... */, s: kotlin/String /* = ... */, e: test/E /* = ... */)
+
+      public final val e: test/E
+        public final get
+
+      public final val i: kotlin/Int
+        public final get
+
+      public final val s: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,82 @@
+MODULE_FRAGMENT name:<platform>
+  FILE fqName:<root> fileName:/common.kt
+    CLASS INTERFACE name:Base signature:/Base|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+      FUN name:cancel signature:/Base.cancel|cancel(ActualTarget?){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Base, s:<root>.ActualTarget?) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        VALUE_PARAMETER name:s index:0 type:<root>.ActualTarget?
+          EXPRESSION_BODY
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS CLASS name:Derived signature:/Derived|null[0] modality:OPEN visibility:public superTypes:[<root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+      CONSTRUCTOR signature:/Derived.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Derived [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived signature:/Derived|null[0] modality:OPEN visibility:public superTypes:[<root>.Base]'
+      FUN name:cancel signature:/Derived.cancel|cancel(ActualTarget?){}[0] visibility:public modality:OPEN <> ($this:<root>.Derived, s:<root>.ActualTarget?) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun cancel (s: <root>.ActualTarget?): <unbound IrClassSymbolImpl> declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+        VALUE_PARAMETER name:s index:0 type:<root>.ActualTarget?
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun cancel (s: <root>.ActualTarget?): <unbound IrClassSymbolImpl> declared in <root>.Derived'
+            BLOCK type=<unbound IrClassSymbolImpl> origin=ELVIS
+              VAR IR_TEMPORARY_VARIABLE name:tmp1_elvis_lhs type:<unbound IrClassSymbolImpl>? [val]
+                BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.ActualTarget? [val]
+                    GET_VAR 's: <root>.ActualTarget? declared in <root>.Derived.cancel' type=<root>.ActualTarget? origin=null
+                  WHEN type=<unbound IrClassSymbolImpl>? origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                        arg0: GET_VAR 'val tmp0_safe_receiver: <root>.ActualTarget? [val] declared in <root>.Derived.cancel' type=<root>.ActualTarget? origin=null
+                        arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                      then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    BRANCH
+                      if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                      then: CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.ActualTarget' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR 'val tmp0_safe_receiver: <root>.ActualTarget? [val] declared in <root>.Derived.cancel' type=<root>.ActualTarget? origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.Derived.cancel' type=<unbound IrClassSymbolImpl>? origin=null
+                    arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: GET_VAR 'val tmp1_elvis_lhs: <unbound IrClassSymbolImpl>? [val] declared in <root>.Derived.cancel' type=<unbound IrClassSymbolImpl>? origin=null
+    CLASS CLASS name:AbstractImpl signature:/AbstractImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Derived; <root>.Base]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractImpl
+      CONSTRUCTOR signature:/AbstractImpl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.AbstractImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractImpl signature:/AbstractImpl|null[0] modality:OPEN visibility:public superTypes:[<root>.Derived; <root>.Base]'
+  FILE fqName:<root> fileName:/platform.kt
+    CLASS CLASS name:ActualTarget signature:/ActualTarget|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ActualTarget
+      CONSTRUCTOR signature:/ActualTarget.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ActualTarget [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ActualTarget signature:/ActualTarget|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:/ActualTarget.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.ActualTarget) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ActualTarget
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.ActualTarget'
+            CONST String type=<unbound IrClassSymbolImpl> value="Fail"
+    TYPEALIAS name:Expect signature:/Expect|null[0] visibility:public expandedType:<root>.ActualTarget[actual]
+    CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractImpl]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl
+      CONSTRUCTOR signature:/Impl.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Impl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AbstractImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl signature:/Impl|null[0] modality:FINAL visibility:public superTypes:[<root>.AbstractImpl]'
+      FUN name:test signature:/Impl.test|test(){}[0] visibility:public modality:FINAL <> ($this:<root>.Impl) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.Impl'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.test' type=<root>.Impl origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in <root>.Impl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Impl' type=<root>.Impl origin=null

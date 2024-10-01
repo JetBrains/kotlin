@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: JsonArray
+    // class name: JsonObject
+    // class name: JsonParser
+    // class name: MultiParser
+    // class name: Parser
+    // class name: ProjectApiContext
+    // class name: ProjectInfo
+    // class name: ProjectInfoJsonParser
+
+    public final class JsonArray : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class JsonObject : kotlin/Any {
+
+      public constructor()
+    }
+
+    public abstract interface JsonParser<T#0 /* T */ : kotlin/Any> : Parser<JsonObject, T#0>, MultiParser<JsonArray, T#0> {
+
+      public open fun parse(source: JsonArray): kotlin/collections/Collection<T#0>
+    }
+
+    public abstract interface MultiParser<in T#0 /* IN */ : kotlin/Any, out T#1 /* OUT */ : kotlin/Any> : kotlin/Any {
+
+      public abstract fun parse(source: T#0): kotlin/collections/Collection<T#1>
+    }
+
+    public abstract interface Parser<in T#0 /* IN */ : kotlin/Any, out T#1 /* OUT */ : kotlin/Any> : kotlin/Any {
+
+      public abstract fun parse(source: T#0): T#1
+    }
+
+    public final class ProjectApiContext : kotlin/Any {
+
+      public constructor()
+
+      public final val projectInfoJsonParser: ProjectInfoJsonParser
+        public final get
+    }
+
+    public final class ProjectInfo : kotlin/Any {
+
+      public constructor()
+
+      public open fun toString(): kotlin/String
+    }
+
+    public abstract class ProjectInfoJsonParser : JsonParser<ProjectInfo> {
+
+      public constructor()
+
+      public open fun parse(source: JsonObject): ProjectInfo
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

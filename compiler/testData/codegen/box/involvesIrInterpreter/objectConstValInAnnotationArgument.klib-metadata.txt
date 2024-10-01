@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Key
+    // class name: Messanger
+
+    public final annotation class Key : kotlin/Annotation {
+
+      public constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
+    }
+
+    public final object Messanger : kotlin/Any {
+
+      private constructor()
+
+      public final fun message(@Key(value = "OK") text: kotlin/String /* = ... */): kotlin/String
+
+      public final const val DEFAULT_TEXT: kotlin/String /* = "OK" */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

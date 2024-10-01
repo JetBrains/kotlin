@@ -1,0 +1,49 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/privateInInlineNested.kt
+    PROPERTY name:prop signature:[ File '/privateInInlineNested.kt' <- test/prop|{}prop[0] ] visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:prop signature:[ [ File '/privateInInlineNested.kt' <- test/prop|{}prop[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value="O"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:[ File '/privateInInlineNested.kt' <- test/prop.<get-prop>|<get-prop>(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:prop signature:[ File '/privateInInlineNested.kt' <- test/prop|{}prop[0] ] visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ [ File '/privateInInlineNested.kt' <- test/prop|{}prop[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:test signature:[ File '/privateInInlineNested.kt' <- test/test|test(){}[0] ] visibility:private modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun test (): <unbound IrClassSymbolImpl> declared in test'
+          CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:call signature:test/call|call(kotlin.Function0<kotlin.String>){}[0] visibility:internal modality:FINAL <> (p:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:p index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='internal final fun call (p: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'p: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.call' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    FUN name:inlineFun signature:test/inlineFun|inlineFun(){}[0] visibility:internal modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [inline]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='internal final fun inlineFun (): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'internal final fun call (p: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+            p: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in test.inlineFun'
+                    CALL 'public final fun run (): <unbound IrClassSymbolImpl> declared in test.inlineFun.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: BLOCK type=test.inlineFun.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.inlineFun.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:test.inlineFun.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                          FUN name:run visibility:public modality:FINAL <> ($this:test.inlineFun.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                            $this: VALUE_PARAMETER name:<this> type:test.inlineFun.<anonymous>.<no name provided>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='public final fun run (): <unbound IrClassSymbolImpl> declared in test.inlineFun.<anonymous>.<no name provided>'
+                                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                                  $this: CALL 'private final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                  1: CALL 'private final fun test (): <unbound IrClassSymbolImpl> declared in test' type=<unbound IrClassSymbolImpl> origin=null
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.inlineFun.<anonymous>.<no name provided>' type=test.inlineFun.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+    FUN name:box signature:test/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in test'
+          CALL 'internal final fun inlineFun (): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null

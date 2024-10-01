@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/String
+
+      public final fun runOnce(action: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+        contract {
+          callsInPlace(p#1, InvocationKind.EXACTLY_ONCE)
+        }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyCollection1
+    // class name: MyCollection1.MyIterator
+    // class name: MyCollection2
+    // class name: MyCollection2.MyIterator
+    // class name: MyCollection3
+    // class name: MyCollection3.MyIterator
+    // class name: MyCollection4
+    // class name: MyCollection4.MyIterator
+
+    public final class MyCollection1 : kotlin/collections/Iterable<kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun iterator(): kotlin/collections/Iterator<kotlin/Int>
+
+      // nested class: MyIterator
+    }
+
+    public final class MyCollection1.MyIterator : kotlin/collections/Iterator<kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): kotlin/Int
+
+      public final var k: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public final class MyCollection2 : kotlin/collections/Iterable<kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun iterator(): kotlin/collections/Iterator<kotlin/Int>
+
+      // nested class: MyIterator
+    }
+
+    public final class MyCollection2.MyIterator : kotlin/collections/Iterator<kotlin/Int> {
+
+      public constructor()
+
+      public open operator fun hasNext(): kotlin/Boolean
+
+      public open operator fun next(): kotlin/Int
+
+      public final var k: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public final class MyCollection3 : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun iterator(): MyCollection3.MyIterator
+
+      // nested class: MyIterator
+    }
+
+    public final class MyCollection3.MyIterator : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun hasNext(): kotlin/Boolean
+
+      public final operator fun next(): kotlin/Int?
+
+      public final var k: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public final class MyCollection4 : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun iterator(): MyCollection4.MyIterator
+
+      // nested class: MyIterator
+    }
+
+    public final class MyCollection4.MyIterator : kotlin/Any {
+
+      public constructor()
+
+      public final operator fun hasNext(): kotlin/Boolean
+
+      public final operator fun next(): kotlin/Int
+
+      public final var k: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

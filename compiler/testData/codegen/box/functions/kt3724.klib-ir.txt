@@ -1,0 +1,94 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3724.kt
+    CLASS CLASS name:Comment signature:/Comment|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Comment
+      CONSTRUCTOR signature:/Comment.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Comment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Comment signature:/Comment|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:article signature:/Comment.article|{}article[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:article signature:[ /Comment.article|{}article[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-article> signature:/Comment.article.<get-article>|<get-article>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Comment) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:article signature:/Comment.article|{}article[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Comment
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-article> (): <unbound IrClassSymbolImpl> declared in <root>.Comment'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:article signature:[ /Comment.article|{}article[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Comment declared in <root>.Comment.<get-article>' type=<root>.Comment origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-article> signature:/Comment.article.<set-article>|<set-article>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Comment, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:article signature:/Comment.article|{}article[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Comment
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:article signature:[ /Comment.article|{}article[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Comment declared in <root>.Comment.<set-article>' type=<root>.Comment origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Comment.<set-article>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:new signature:/new|new(kotlin.Function1<Comment,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (body:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>>) returnType:<root>.Comment
+      VALUE_PARAMETER name:body index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:c type:<root>.Comment [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Comment' type=<root>.Comment origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'body: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>> declared in <root>.new' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR 'val c: <root>.Comment [val] declared in <root>.new' type=<root>.Comment origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun new (body: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>>): <root>.Comment declared in <root>'
+          GET_VAR 'val c: <root>.Comment [val] declared in <root>.new' type=<root>.Comment origin=null
+    CLASS CLASS name:Request signature:/Request|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Request
+      CONSTRUCTOR signature:/Request.<init>|<init>(kotlin.Function1<kotlin.Any,Comment>){}[0] visibility:public <> (handler:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment>) returnType:<root>.Request [primary]
+        VALUE_PARAMETER name:handler index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Request signature:/Request|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:handler signature:/Request.handler|{}handler[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:handler signature:[ /Request.handler|{}handler[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'handler: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> declared in <root>.Request.<init>' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-handler> signature:/Request.handler.<get-handler>|<get-handler>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Request) returnType:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment>
+          correspondingProperty: PROPERTY name:handler signature:/Request.handler|{}handler[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Request
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-handler> (): @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> declared in <root>.Request'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:handler signature:[ /Request.handler|{}handler[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> visibility:private [final]' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> origin=null
+                receiver: GET_VAR '<this>: <root>.Request declared in <root>.Request.<get-handler>' type=<root>.Request origin=null
+      PROPERTY name:s signature:/Request.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Request.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-article> (): <unbound IrClassSymbolImpl> declared in <root>.Comment' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Comment origin=INVOKE
+                $this: CALL 'public final fun <get-handler> (): @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> declared in <root>.Request' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Request declared in <root>.Request' type=<root>.Request origin=null
+                1: GET_VAR '<this>: <root>.Request declared in <root>.Request' type=<root>.Request origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/Request.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Request) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/Request.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Request
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.Request'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /Request.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:article type:kotlin.String visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Request declared in <root>.Request.<get-s>' type=<root>.Request origin=null
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.Request]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (handler: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment>) [primary] declared in <root>.Request'
+            handler: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <root>.Comment> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<root>.Comment
+                $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.Comment declared in <root>.A.<init>'
+                    CALL 'public final fun new (body: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>>): <root>.Comment declared in <root>' type=<root>.Comment origin=null
+                      body: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Comment, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Comment) returnType:<unbound IrClassSymbolImpl>
+                          $receiver: VALUE_PARAMETER name:$this$new type:<root>.Comment
+                          BLOCK_BODY
+                            CALL 'public final fun <set-article> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Comment' type=<unbound IrClassSymbolImpl> origin=EQ
+                              $this: GET_VAR '$this$new: <root>.Comment declared in <root>.A.<init>.<anonymous>.<anonymous>' type=<root>.Comment origin=null
+                              <set-?>: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.Request]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null

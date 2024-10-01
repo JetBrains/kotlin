@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Doggy
+    // class name: NoiseMaker
+    // class name: Pet
+
+    public final class Doggy : Pet {
+
+      public constructor()
+
+      public open fun play(): kotlin/Unit
+    }
+
+    public final class NoiseMaker : kotlin/Any {
+
+      public constructor()
+
+      public final fun say(str: kotlin/String): kotlin/Unit
+    }
+
+    public abstract class Pet : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun play(): kotlin/Unit
+
+      public final fun <T#0 /* T */> NoiseMaker.playWith(friend: T#0): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun noiseMaker(f: @kotlin/ExtensionFunctionType kotlin/Function1<NoiseMaker, kotlin/Unit>): kotlin/Unit
+
+      public final var sayResult: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun test(z: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun annotatedWith(crossinline predicate: kotlin/Function0<kotlin/Boolean>): kotlin/Unit
+
+      public final inline fun annotatedWith2(crossinline predicate: kotlin/Function0<kotlin/Boolean>): kotlin/Unit
+
+      public final inline fun any(s: kotlin/Function0<kotlin/Boolean>): kotlin/Unit
+    }
+  }
+}

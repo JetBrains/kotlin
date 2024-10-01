@@ -1,0 +1,14 @@
+library {
+  // module name: <platform>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> kotlin/Array<out T#0>.copyInto(destination: kotlin/Array<T#0>, destinationOffset: kotlin/Int /* = ... */, startIndex: kotlin/Int /* = ... */, endIndex: kotlin/Int /* = ... */): kotlin/Array<T#0>
+    }
+  }
+}

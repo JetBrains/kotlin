@@ -1,0 +1,40 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt5363.kt
+    CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+      CONSTRUCTOR signature:/Outer.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Nested signature:/Outer.Nested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Nested
+        CONSTRUCTOR signature:/Outer.Nested.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Outer.Nested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Nested signature:/Outer.Nested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:foo signature:/Outer.Nested.foo|foo(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.Nested, s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Nested
+          VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested'
+              CALL 'private final fun extension (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Outer.Companion
+                $receiver: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested.foo' type=<unbound IrClassSymbolImpl> origin=null
+      CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Companion
+        CONSTRUCTOR signature:/Outer.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Outer.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/Outer.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:extension signature:/Outer.Companion.extension|extension@kotlin.String(){}[0] visibility:private modality:FINAL <> ($this:<root>.Outer.Companion, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Companion
+          $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun extension (): <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion'
+              GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.Outer.Companion.extension' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun foo (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer.Nested' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Nested' type=<root>.Outer.Nested origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="OK"

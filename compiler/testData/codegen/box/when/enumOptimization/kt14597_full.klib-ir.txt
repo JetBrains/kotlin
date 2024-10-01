@@ -1,0 +1,222 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt14597_full.kt
+    CLASS ENUM_CLASS name:En signature:/En|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.En>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.En
+      CONSTRUCTOR signature:/En.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.En [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.En
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:En signature:/En|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.En>]'
+      ENUM_ENTRY name:A signature:/En.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.En'
+      ENUM_ENTRY name:B signature:/En.B|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.En'
+      ENUM_ENTRY name:C signature:/En.C|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.En'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/En.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.En>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/En.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.En
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/En.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/En.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.En>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/En.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:res1 type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="fail"
+        VAR name:res2 type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="fail2"
+        VAR name:en type:<root>.En [val]
+          GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.En [val]
+            GET_VAR 'val en: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CONST String type=<unbound IrClassSymbolImpl> value=""
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/En.B|null[0]' type=<root>.En
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/En.C|null[0]' type=<root>.En
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+        BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:<root>.En [val]
+            TYPE_OP type=<root>.En origin=CAST typeOperand=<root>.En
+              GET_VAR 'val en: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp1_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp1_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/En.B|null[0]' type=<root>.En
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val tmp1_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/En.C|null[0]' type=<root>.En
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:en2 type:<unbound IrClassSymbolImpl>? [val]
+          GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.En
+              GET_VAR 'val en2: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp2_subject type:<root>.En [val]
+                  TYPE_OP type=<root>.En origin=IMPLICIT_CAST typeOperand=<root>.En
+                    GET_VAR 'val en2: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp2_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      SET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          $this: GET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp2_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/En.B|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp2_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/En.C|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp3_subject type:<root>.En [val]
+                  TYPE_OP type=<root>.En origin=CAST typeOperand=<root>.En
+                    TYPE_OP type=<root>.En origin=IMPLICIT_CAST typeOperand=<root>.En
+                      GET_VAR 'val en2: <unbound IrClassSymbolImpl>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl>? origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp3_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      SET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+                        CONST String type=<unbound IrClassSymbolImpl> value=""
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp3_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/En.B|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp3_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/En.C|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:en1 type:<unbound IrClassSymbolImpl> [val]
+          GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.En
+              GET_VAR 'val en1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp4_subject type:<root>.En [val]
+                  TYPE_OP type=<root>.En origin=IMPLICIT_CAST typeOperand=<root>.En
+                    GET_VAR 'val en1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp4_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      SET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          $this: GET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          1: CONST String type=<unbound IrClassSymbolImpl> value="O"
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp4_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/En.B|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp4_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/En.C|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp5_subject type:<root>.En [val]
+                  TYPE_OP type=<root>.En origin=CAST typeOperand=<root>.En
+                    TYPE_OP type=<root>.En origin=IMPLICIT_CAST typeOperand=<root>.En
+                      GET_VAR 'val en1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp5_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:A signature:/En.A|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                      SET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          $this: GET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                          1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp5_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:B signature:/En.B|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                      arg0: GET_VAR 'val tmp5_subject: <root>.En [val] declared in <root>.box' type=<root>.En origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:C signature:/En.C|null[0]' type=<root>.En
+                    then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                  BRANCH
+                    if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: GET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="different results: "
+                GET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=" != "
+                GET_VAR 'var res2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

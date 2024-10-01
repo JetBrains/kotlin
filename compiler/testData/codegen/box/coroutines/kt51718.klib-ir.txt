@@ -1,0 +1,150 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt51718.kt
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:Service signature:/Service|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Service
+      CONSTRUCTOR signature:/Service.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Service [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Service signature:/Service|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:getCanalConfig signature:/Service.getCanalConfig|getCanalConfig(){}[0] visibility:public modality:FINAL <> ($this:<root>.Service) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Service
+        BLOCK_BODY
+          VAR name:start type:<root>.Start? [var]
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          VAR name:configuration type:<unbound IrClassSymbolImpl>? [var]
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          VAR name:starts type:<unbound IrClassSymbolImpl><<root>.Start>? [val]
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_VAR 'val starts: <unbound IrClassSymbolImpl><<root>.Start>? [val] declared in <root>.Service.getCanalConfig' type=<unbound IrClassSymbolImpl><<root>.Start>? origin=null
+                      arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <root>.Start
+                    $receiver: GET_VAR 'val starts: <unbound IrClassSymbolImpl><<root>.Start>? [val] declared in <root>.Service.getCanalConfig' type=<unbound IrClassSymbolImpl><<root>.Start>? origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var start: <root>.Start? [var] declared in <root>.Service.getCanalConfig' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Start origin=GET_ARRAY_ELEMENT
+                    $this: GET_VAR 'val starts: <unbound IrClassSymbolImpl><<root>.Start>? [val] declared in <root>.Service.getCanalConfig' type=<unbound IrClassSymbolImpl><<root>.Start>? origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                SET_VAR 'var configuration: <unbound IrClassSymbolImpl>? [var] declared in <root>.Service.getCanalConfig' type=<unbound IrClassSymbolImpl> origin=EQ
+                  CALL 'public final fun call2 (): <unbound IrClassSymbolImpl>? [suspend] declared in <root>.Service' type=<unbound IrClassSymbolImpl>? origin=null
+                    $this: GET_VAR '<this>: <root>.Service declared in <root>.Service.getCanalConfig' type=<root>.Service origin=null
+          CALL 'public final fun call (start: <root>.Start): <unbound IrClassSymbolImpl> declared in <root>.Service' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.Service declared in <root>.Service.getCanalConfig' type=<root>.Service origin=null
+            start: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Start origin=EXCLEXCL
+              <T0>: <root>.Start
+              arg0: GET_VAR 'var start: <root>.Start? [var] declared in <root>.Service.getCanalConfig' type=<root>.Start? origin=null
+      PROPERTY name:canalConfig signature:/Service.canalConfig|{}canalConfig[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:canalConfig signature:[ /Service.canalConfig|{}canalConfig[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:canalConfig type:kotlin.coroutines.SuspendFunction0<kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+                  BLOCK_BODY
+                    VAR name:start type:<root>.Start? [var]
+                      CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    VAR name:configuration type:<unbound IrClassSymbolImpl>? [var]
+                      CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    VAR name:starts type:<unbound IrClassSymbolImpl><<root>.Start>? [val]
+                      CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                          BRANCH
+                            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                                arg0: GET_VAR 'val starts: <unbound IrClassSymbolImpl><<root>.Start>? [val] declared in <root>.Service.canalConfig.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.Start>? origin=null
+                                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                            then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              <1>: <root>.Start
+                              $receiver: GET_VAR 'val starts: <unbound IrClassSymbolImpl><<root>.Start>? [val] declared in <root>.Service.canalConfig.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.Start>? origin=null
+                          BRANCH
+                            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                            then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                        then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          SET_VAR 'var start: <root>.Start? [var] declared in <root>.Service.canalConfig.<anonymous>' type=<unbound IrClassSymbolImpl> origin=EQ
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Start origin=GET_ARRAY_ELEMENT
+                              $this: GET_VAR 'val starts: <unbound IrClassSymbolImpl><<root>.Start>? [val] declared in <root>.Service.canalConfig.<anonymous>' type=<unbound IrClassSymbolImpl><<root>.Start>? origin=null
+                              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                          SET_VAR 'var configuration: <unbound IrClassSymbolImpl>? [var] declared in <root>.Service.canalConfig.<anonymous>' type=<unbound IrClassSymbolImpl> origin=EQ
+                            CALL 'public final fun call2 (): <unbound IrClassSymbolImpl>? [suspend] declared in <root>.Service' type=<unbound IrClassSymbolImpl>? origin=null
+                              $this: GET_VAR '<this>: <root>.Service declared in <root>.Service' type=<root>.Service origin=null
+                    CALL 'public final fun call (start: <root>.Start): <unbound IrClassSymbolImpl> declared in <root>.Service' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '<this>: <root>.Service declared in <root>.Service' type=<root>.Service origin=null
+                      start: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Start origin=EXCLEXCL
+                        <T0>: <root>.Start
+                        arg0: GET_VAR 'var start: <root>.Start? [var] declared in <root>.Service.canalConfig.<anonymous>' type=<root>.Start? origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-canalConfig> signature:/Service.canalConfig.<get-canalConfig>|<get-canalConfig>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Service) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          correspondingProperty: PROPERTY name:canalConfig signature:/Service.canalConfig|{}canalConfig[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Service
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-canalConfig> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Service'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:canalConfig signature:[ /Service.canalConfig|{}canalConfig[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:canalConfig type:kotlin.coroutines.SuspendFunction0<kotlin.Unit> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                receiver: GET_VAR '<this>: <root>.Service declared in <root>.Service.<get-canalConfig>' type=<root>.Service origin=null
+      FUN name:call signature:/Service.call|call(Start){}[0] visibility:public modality:FINAL <> ($this:<root>.Service, start:<root>.Start) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Service
+        VALUE_PARAMETER name:start index:0 type:<root>.Start
+        BLOCK_BODY
+      FUN name:call2 signature:/Service.call2|call2(){}[0] visibility:public modality:FINAL <> ($this:<root>.Service) returnType:<unbound IrClassSymbolImpl>? [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Service
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun call2 (): <unbound IrClassSymbolImpl>? [suspend] declared in <root>.Service'
+            CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS CLASS name:Start signature:/Start|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Start
+      CONSTRUCTOR signature:/Start.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Start [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Start signature:/Start|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                TRY type=<unbound IrClassSymbolImpl>
+                  try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    CALL 'public final fun getCanalConfig (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.Service' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Service' type=<root>.Service origin=null
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1"
+                  CATCH parameter=val ignored: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>
+                    VAR CATCH_PARAMETER name:ignored type:<unbound IrClassSymbolImpl> [val]
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                TRY type=<unbound IrClassSymbolImpl>
+                  try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: CALL 'public final fun <get-canalConfig> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.Service' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                        $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Service' type=<root>.Service origin=null
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="FAIL 2"
+                  CATCH parameter=val ignored: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>
+                    VAR CATCH_PARAMETER name:ignored type:<unbound IrClassSymbolImpl> [val]
+                    BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

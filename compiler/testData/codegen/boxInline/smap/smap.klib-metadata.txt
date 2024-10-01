@@ -1,0 +1,29 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun test(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: builders
+
+    package {
+
+      public final inline fun head(init: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final inline fun html(init: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final inline fun init(init: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final inline fun initTag2(init: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

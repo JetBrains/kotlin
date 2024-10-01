@@ -1,0 +1,48 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testExplicitReturn (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:testExplicitReturn signature:/testExplicitReturn|testExplicitReturn(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>' type=<root>.Buildee<<unbound IrClassSymbolImpl>> origin=null
+            <FT>: <unbound IrClassSymbolImpl>
+            instructions: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$build type:<root>.Buildee<<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.testExplicitReturn'
+                    CALL 'public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$build: <root>.Buildee<<unbound IrClassSymbolImpl>> declared in <root>.testExplicitReturn.<anonymous>' type=<root>.Buildee<<unbound IrClassSymbolImpl>> origin=null
+    CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+      TYPE_PARAMETER name:CT index:0 variance: signature:[ /Buildee|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Buildee.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Buildee<CT of <root>.Buildee> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Buildee signature:/Buildee|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:materialize signature:/Buildee.materialize|materialize(){}[0] visibility:public modality:FINAL <> ($this:<root>.Buildee<CT of <root>.Buildee>) returnType:CT of <root>.Buildee
+        $this: VALUE_PARAMETER name:<this> type:<root>.Buildee<CT of <root>.Buildee>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun materialize (): CT of <root>.Buildee declared in <root>.Buildee'
+            TYPE_OP type=CT of <root>.Buildee origin=CAST typeOperand=CT of <root>.Buildee
+              GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:build signature:/build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FT> (instructions:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>) returnType:<root>.Buildee<FT of <root>.build>
+      TYPE_PARAMETER name:FT index:0 variance: signature:[ /build|build(kotlin.Function1<Buildee<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:CT index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:instructions index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun build <FT> (instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>>): <root>.Buildee<FT of <root>.build> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Buildee<FT of <root>.build> origin=null
+            <1>: <root>.Buildee<FT of <root>.build>
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Buildee' type=<root>.Buildee<FT of <root>.build> origin=null
+              <class: CT>: FT of <root>.build
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Buildee<FT of <root>.build>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$apply type:<root>.Buildee<FT of <root>.build>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'instructions: @[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> declared in <root>.build' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.Buildee<FT of <root>.build>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                    1: GET_VAR '$this$apply: <root>.Buildee<FT of <root>.build> declared in <root>.build.<anonymous>' type=<root>.Buildee<FT of <root>.build> origin=null

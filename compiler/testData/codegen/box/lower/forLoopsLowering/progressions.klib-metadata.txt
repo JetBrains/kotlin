@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testByteSumOf(): kotlin/Int
+
+      public final fun testCharProgression(): kotlin/Int
+
+      public final fun testIntFirst(): kotlin/Int
+
+      public final fun testIntForEachIndexed(): kotlin/Int
+
+      public final fun testIntIndexOfFirst(): kotlin/Int
+
+      public final fun testIntRange(): kotlin/Int
+
+      public final fun testIntRangeForEach(): kotlin/Int
+
+      public final fun testIntSumOf(): kotlin/Int
+
+      public final fun testIntSumOfDownTo(): kotlin/Int
+
+      public final fun testIntSumOfIterableInt(): kotlin/Int
+
+      public final fun testIntSumOfIterableIntTemporary(): kotlin/Int
+
+      public final fun testLongRange(): kotlin/Int
+
+      public final fun testLongSumOf(): kotlin/Long
+
+      public final fun testShortSumOf(): kotlin/Int
+
+      public final fun testSumOfCharProgression(): kotlin/Int
+
+      public final fun testUIntFirst(): kotlin/Int
+
+      public final fun testUIntForEachIndexed(): kotlin/Int
+
+      public final fun testUIntIndexOfFirst(): kotlin/Int
+
+      public final fun testUIntRange(): kotlin/Int
+
+      public final fun testUIntRangeForEach(): kotlin/Int
+
+      public final fun testUIntSumOf(): kotlin/Int
+
+      public final fun testULongRange(): kotlin/Int
+
+      public final const val MaxB: kotlin/Byte /* = 127.toByte() */
+        public final get
+
+      public final const val MaxC: kotlin/Char /* = '￿' */
+        public final get
+
+      public final const val MaxL: kotlin/Long /* = 9223372036854775807L */
+        public final get
+
+      public final const val MaxS: kotlin/Short /* = 32767.toShort() */
+        public final get
+    }
+  }
+}

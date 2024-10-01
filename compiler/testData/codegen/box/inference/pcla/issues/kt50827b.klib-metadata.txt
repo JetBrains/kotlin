@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buildee
+    // class name: ClassWithBoundedTypeParameter
+    // class name: TargetType
+
+    public final class Buildee<T#0 /* TV */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun setTypeVariable(value: T#0): kotlin/Unit
+
+      private final var storage: T#0
+        private final get
+        private final set
+    }
+
+    public final class ClassWithBoundedTypeParameter<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public constructor(buildee: Buildee<T#0>)
+
+      public final val buildee: Buildee<T#0>
+        public final get
+    }
+
+    public final class TargetType : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* PTV */> build(instructions: @kotlin/ExtensionFunctionType kotlin/Function1<Buildee<T#0>, kotlin/Unit>): Buildee<T#0>
+
+      public final fun consumeAnyBuildee(value: Buildee<kotlin/Any>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,113 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/concatGenericWithPrimitiveUpperBound.kt
+    FUN name:concatBoolean signature:/concatBoolean|concatBoolean(0:0){0§<kotlin.Boolean>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatBoolean) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatBoolean|concatBoolean(0:0){0§<kotlin.Boolean>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatBoolean
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatBoolean <T> (x: T of <root>.concatBoolean): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatBoolean declared in <root>.concatBoolean' type=T of <root>.concatBoolean origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:concatByte signature:/concatByte|concatByte(0:0){0§<kotlin.Byte>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatByte) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatByte|concatByte(0:0){0§<kotlin.Byte>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatByte
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatByte <T> (x: T of <root>.concatByte): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatByte declared in <root>.concatByte' type=T of <root>.concatByte origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:concatShort signature:/concatShort|concatShort(0:0){0§<kotlin.Short>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatShort) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatShort|concatShort(0:0){0§<kotlin.Short>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatShort
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatShort <T> (x: T of <root>.concatShort): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatShort declared in <root>.concatShort' type=T of <root>.concatShort origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:concatInt signature:/concatInt|concatInt(0:0){0§<kotlin.Int>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatInt) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatInt|concatInt(0:0){0§<kotlin.Int>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatInt
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatInt <T> (x: T of <root>.concatInt): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatInt declared in <root>.concatInt' type=T of <root>.concatInt origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:concatLong signature:/concatLong|concatLong(0:0){0§<kotlin.Long>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatLong) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatLong|concatLong(0:0){0§<kotlin.Long>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatLong
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatLong <T> (x: T of <root>.concatLong): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatLong declared in <root>.concatLong' type=T of <root>.concatLong origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:concatFloat signature:/concatFloat|concatFloat(0:0){0§<kotlin.Float>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatFloat) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatFloat|concatFloat(0:0){0§<kotlin.Float>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatFloat
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatFloat <T> (x: T of <root>.concatFloat): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatFloat declared in <root>.concatFloat' type=T of <root>.concatFloat origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:concatDouble signature:/concatDouble|concatDouble(0:0){0§<kotlin.Double>}[0] visibility:public modality:FINAL <T> (x:T of <root>.concatDouble) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /concatDouble|concatDouble(0:0){0§<kotlin.Double>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Boolean] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.concatDouble
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun concatDouble <T> (x: T of <root>.concatDouble): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="[["
+            GET_VAR 'x: T of <root>.concatDouble declared in <root>.concatDouble' type=T of <root>.concatDouble origin=null
+            CONST String type=<unbound IrClassSymbolImpl> value="]]"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[true]]"
+          2: CALL 'public final fun concatBoolean <T> (x: T of <root>.concatBoolean): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[0]]"
+          2: CALL 'public final fun concatByte <T> (x: T of <root>.concatByte): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[1]]"
+          2: CALL 'public final fun concatShort <T> (x: T of <root>.concatShort): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[2]]"
+          2: CALL 'public final fun concatInt <T> (x: T of <root>.concatInt): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[3]]"
+          2: CALL 'public final fun concatLong <T> (x: T of <root>.concatLong): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST Long type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[4.4]]"
+          2: CALL 'public final fun concatFloat <T> (x: T of <root>.concatFloat): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST Float type=<unbound IrClassSymbolImpl> value=4.4
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[[5.5]]"
+          2: CALL 'public final fun concatFloat <T> (x: T of <root>.concatFloat): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            x: CONST Float type=<unbound IrClassSymbolImpl> value=5.5
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

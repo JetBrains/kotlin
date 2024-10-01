@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Test
+
+    public final class Test : kotlin/Any {
+
+      public constructor(b: kotlin/Boolean)
+
+      public final /* delegated */ val test_1: kotlin/reflect/KFunction0<kotlin/Int>
+        public final /* non-default */ get
+
+      public final /* delegated */ val test_2: kotlin/reflect/KFunction0<kotlin/Int>
+        public final /* non-default */ get
+
+      public final /* delegated */ val test_3: kotlin/reflect/KFunction0<kotlin/Int>
+        public final /* non-default */ get
+
+      public final /* delegated */ val test_4: kotlin/reflect/KFunction0<kotlin/Int>
+        public final /* non-default */ get
+    }
+
+    package {
+
+      public final fun bar(): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Int
+    }
+  }
+}

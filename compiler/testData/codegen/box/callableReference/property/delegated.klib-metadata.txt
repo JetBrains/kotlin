@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: NumberDecrypter
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final /* delegated */ val two: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    public final object NumberDecrypter : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun getValue(instance: kotlin/Any?, data: kotlin/reflect/KProperty<*>): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ val four: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+}

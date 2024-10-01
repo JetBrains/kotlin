@@ -1,0 +1,125 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: C1
+    // class name: C2
+    // class name: CK1
+    // class name: CK2
+    // class name: CKL1
+    // class name: CKL2
+    // class name: CL1
+    // class name: CL2
+    // class name: CT1
+    // class name: CT2
+    // class name: CTK1
+    // class name: CTK2
+    // class name: CTKL1
+    // class name: CTKL2
+    // class name: CTL1
+    // class name: CTL2
+
+    public abstract interface A<T#0 /* T1 */, T#1 /* T2 */> : kotlin/Any {
+    }
+
+    public abstract interface B<T#0 /* T */> : kotlin/Any {
+    }
+
+    public abstract interface C<T#0 /* T */> : kotlin/Any {
+    }
+
+    public final class C1 : A<B<kotlin/Any>, C<kotlin/Any>>, B<kotlin/Any>, C<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class C2 : A<C2, C2>, B<C2>, C<C2> {
+
+      public constructor()
+    }
+
+    public final class CK1 : B<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class CK2 : B<CK2> {
+
+      public constructor()
+    }
+
+    public final class CKL1 : B<kotlin/Any>, C<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class CKL2 : B<CKL2>, C<CKL2> {
+
+      public constructor()
+    }
+
+    public final class CL1 : C<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class CL2 : C<CL2> {
+
+      public constructor()
+    }
+
+    public final class CT1 : A<B<kotlin/Any>, C<kotlin/Any>> {
+
+      public constructor()
+    }
+
+    public final class CT2 : A<B<CT2>, C<CT2>> {
+
+      public constructor()
+    }
+
+    public final class CTK1 : A<B<kotlin/Any>, C<kotlin/Any>>, B<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class CTK2 : A<B<CTK2>, C<CTK2>>, B<CTK2> {
+
+      public constructor()
+    }
+
+    public final class CTKL1 : A<B<kotlin/Any>, C<kotlin/Any>>, B<kotlin/Any>, C<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class CTKL2 : A<B<CTKL2>, C<CTKL2>>, B<CTKL2>, C<CTKL2> {
+
+      public constructor()
+    }
+
+    public final class CTL1 : A<B<kotlin/Any>, C<kotlin/Any>>, C<kotlin/Any> {
+
+      public constructor()
+    }
+
+    public final class CTL2 : A<B<CTL2>, C<CTL2>>, C<CTL2> {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* Q */ : kotlin/Any, T#1 /* T */ : A<T#2, T#3>, T#2 /* K */ : B<T#0>, T#3 /* L */ : C<T#0>> test1(a: kotlin/Any): kotlin/String
+
+      public final inline fun <T#0 /* T */ : A<T#1, T#2>, T#1 /* K */ : B<T#0>, T#2 /* L */ : C<T#0>> test2(a: kotlin/Any): kotlin/String
+    }
+  }
+}

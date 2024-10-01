@@ -1,0 +1,159 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/mapSuspendAbstractClear.kt
+    CLASS CLASS name:SuspendingMutableMap signature:/SuspendingMutableMap|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /SuspendingMutableMap|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      TYPE_PARAMETER name:V index:1 variance: signature:[ /SuspendingMutableMap|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/SuspendingMutableMap.<init>|<init>(kotlin.collections.MutableMap<1:0,1:1>){}[0] visibility:public <> (map:<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> [primary]
+        VALUE_PARAMETER name:map index:0 type:<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SuspendingMutableMap signature:/SuspendingMutableMap|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>]'
+      PROPERTY name:map signature:/SuspendingMutableMap.map|{}map[0] visibility:protected modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:map signature:[ /SuspendingMutableMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'map: <unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> declared in <root>.SuspendingMutableMap.<init>' type=<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> signature:/SuspendingMutableMap.map.<get-map>|<get-map>(){}[0] visibility:protected modality:FINAL <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+          correspondingProperty: PROPERTY name:map signature:/SuspendingMutableMap.map|{}map[0] visibility:protected modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='protected final fun <get-map> (): <unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> declared in <root>.SuspendingMutableMap'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map signature:[ /SuspendingMutableMap.map|{}map[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> visibility:private [final]' type=<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> origin=null
+                receiver: GET_VAR '<this>: <root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> declared in <root>.SuspendingMutableMap.<get-map>' type=<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap> origin=null
+      FUN name:clear signature:/SuspendingMutableMap.clear|clear(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl> [suspend]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+      PROPERTY name:entries signature:/SuspendingMutableMap.entries|{}entries[0] visibility:public modality:OPEN [val]
+        FUN name:<get-entries> signature:/SuspendingMutableMap.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>>
+          correspondingProperty: PROPERTY name:entries signature:/SuspendingMutableMap.entries|{}entries[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>> declared in <root>.SuspendingMutableMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      PROPERTY name:keys signature:/SuspendingMutableMap.keys|{}keys[0] visibility:public modality:OPEN [val]
+        FUN name:<get-keys> signature:/SuspendingMutableMap.keys.<get-keys>|<get-keys>(){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap>
+          correspondingProperty: PROPERTY name:keys signature:/SuspendingMutableMap.keys|{}keys[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-keys> (): <unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap> declared in <root>.SuspendingMutableMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      PROPERTY name:size signature:/SuspendingMutableMap.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/SuspendingMutableMap.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/SuspendingMutableMap.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.SuspendingMutableMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      PROPERTY name:values signature:/SuspendingMutableMap.values|{}values[0] visibility:public modality:OPEN [val]
+        FUN name:<get-values> signature:/SuspendingMutableMap.values.<get-values>|<get-values>(){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl><V of <root>.SuspendingMutableMap>
+          correspondingProperty: PROPERTY name:values signature:/SuspendingMutableMap.values|{}values[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-values> (): <unbound IrClassSymbolImpl><V of <root>.SuspendingMutableMap> declared in <root>.SuspendingMutableMap'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      FUN name:isEmpty signature:/SuspendingMutableMap.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      FUN name:get signature:/SuspendingMutableMap.get|get(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>, key:K of <root>.SuspendingMutableMap) returnType:V of <root>.SuspendingMutableMap? [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+        VALUE_PARAMETER name:key index:0 type:K of <root>.SuspendingMutableMap
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      FUN name:containsValue signature:/SuspendingMutableMap.containsValue|containsValue(1:1){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>, value:V of <root>.SuspendingMutableMap) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+        VALUE_PARAMETER name:value index:0 type:V of <root>.SuspendingMutableMap
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+      FUN name:containsKey signature:/SuspendingMutableMap.containsKey|containsKey(1:0){}[0] visibility:public modality:OPEN <> ($this:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>, key:K of <root>.SuspendingMutableMap) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.SuspendingMutableMap<K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>
+        VALUE_PARAMETER name:key index:0 type:K of <root>.SuspendingMutableMap
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="Not yet implemented"
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                VAR name:m type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    <2>: <unbound IrClassSymbolImpl>
+                    1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                        <1>: <unbound IrClassSymbolImpl>
+                        <2>: <unbound IrClassSymbolImpl>
+                        $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                VAR name:map type:<root>.box.<anonymous>.<no name provided> [val]
+                  BLOCK type=<root>.box.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.SuspendingMutableMap<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.<no name provided>
+                      CONSTRUCTOR visibility:public <> () returnType:<root>.box.<anonymous>.<no name provided> [primary]
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (map: <unbound IrClassSymbolImpl><K of <root>.SuspendingMutableMap, V of <root>.SuspendingMutableMap>) [primary] declared in <root>.SuspendingMutableMap'
+                            <K>: <unbound IrClassSymbolImpl>
+                            <V>: <unbound IrClassSymbolImpl>
+                            map: GET_VAR 'val m: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.SuspendingMutableMap<<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>]'
+                      FUN name:clear visibility:public modality:OPEN <> ($this:<root>.box.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl> [suspend]
+                        overridden:
+                          public abstract fun clear (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.SuspendingMutableMap
+                        $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.<no name provided>
+                        BLOCK_BODY
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.box.<anonymous>.<no name provided> declared in <root>.box.<anonymous>.<no name provided>.clear' type=<root>.box.<anonymous>.<no name provided> origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<anonymous>.<no name provided>' type=<root>.box.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                CALL 'public open fun clear (): <unbound IrClassSymbolImpl> [suspend] declared in <root>.box.<anonymous>.<no name provided>' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'val map: <root>.box.<anonymous>.<no name provided> [val] declared in <root>.box.<anonymous>' type=<root>.box.<anonymous>.<no name provided> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      <2>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR 'val m: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                    then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Builder
+
+    public abstract interface test/Builder<T#0 /* T */ : kotlin/Any> : kotlin/Any {
+
+      public abstract fun filter(filter: kotlin/Function1<T#0, kotlin/Boolean>): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Any> build(block: @kotlin/ExtensionFunctionType kotlin/Function1<test/Builder<T#0>, kotlin/Unit>): T#0
+    }
+  }
+}

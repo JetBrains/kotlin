@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Greeter
+    // class name: MyString
+
+    public final object Greeter : kotlin/Any {
+
+      private constructor()
+
+      public final fun sayHello(name: kotlin/String): kotlin/String
+    }
+
+    public final class MyString : kotlin/Any {
+
+      public constructor(content: kotlin/String)
+
+      public final var content: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final operator fun MyString.plus(suffix: kotlin/String): MyString
+    }
+  }
+}

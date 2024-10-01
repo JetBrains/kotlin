@@ -1,0 +1,67 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/1.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in b.B' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in b.B' type=b.B origin=null
+                arg1: CALL 'public final fun test (): <unbound IrClassSymbolImpl> declared in a.BSamePackage' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.BSamePackage' type=a.BSamePackage origin=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"
+  FILE fqName:a fileName:/2.kt
+    CLASS CLASS name:A signature:a/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.A
+      CONSTRUCTOR signature:a/A.<init>|<init>(){}[0] visibility:public <> () returnType:a.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:a/A|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:protectedFun signature:a/A.protectedFun|protectedFun(){}[0] visibility:protected modality:FINAL <> ($this:a.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:a.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='protected final fun protectedFun (): <unbound IrClassSymbolImpl> declared in a.A'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:BSamePackage signature:a/BSamePackage|null[0] modality:FINAL visibility:public superTypes:[a.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.BSamePackage
+      CONSTRUCTOR signature:a/BSamePackage.<init>|<init>(){}[0] visibility:public <> () returnType:a.BSamePackage [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BSamePackage signature:a/BSamePackage|null[0] modality:FINAL visibility:public superTypes:[a.A]'
+      FUN name:test signature:a/BSamePackage.test|test(){}[0] visibility:public modality:FINAL <> ($this:a.BSamePackage) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:a.BSamePackage
+        BLOCK_BODY
+          VAR name:a type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in a.BSamePackage.test'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '<this>: a.BSamePackage declared in a.BSamePackage.test' type=a.BSamePackage origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in a.BSamePackage'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in a.BSamePackage.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:b fileName:/3.kt
+    CLASS CLASS name:B signature:b/B|null[0] modality:FINAL visibility:public superTypes:[a.A]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.B
+      CONSTRUCTOR signature:b/B.<init>|<init>(){}[0] visibility:public <> () returnType:b.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.A'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B signature:b/B|null[0] modality:FINAL visibility:public superTypes:[a.A]'
+      FUN name:test signature:b/B.test|test(){}[0] visibility:public modality:FINAL <> ($this:b.B) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:b.B
+        BLOCK_BODY
+          VAR name:a type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in b.B.test'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '<this>: b.B declared in b.B.test' type=b.B origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <unbound IrClassSymbolImpl> declared in b.B'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+              $this: GET_VAR 'val a: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in b.B.test' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION

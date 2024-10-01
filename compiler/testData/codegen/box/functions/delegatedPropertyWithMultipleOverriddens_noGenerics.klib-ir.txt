@@ -1,0 +1,109 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics.kt
+    CLASS INTERFACE name:MyCollection signature:/MyCollection|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyCollection
+      FUN name:foo signature:/MyCollection.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection
+      PROPERTY name:bar signature:/MyCollection.bar|{}bar[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> signature:/MyCollection.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/MyCollection.bar|{}bar[0] visibility:public modality:ABSTRACT [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection
+    CLASS INTERFACE name:MyList signature:/MyList|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyList
+      FUN name:foo signature:/MyList.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyList) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MyCollection
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyList
+      PROPERTY name:bar signature:/MyList.bar|{}bar[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> signature:/MyList.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyList) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/MyList.bar|{}bar[0] visibility:public modality:ABSTRACT [val]
+          overridden:
+            public abstract fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MyCollection
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyList
+    CLASS INTERFACE name:MyMutableCollection signature:/MyMutableCollection|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMutableCollection
+    CLASS INTERFACE name:MyMutableList signature:/MyMutableList|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyList; <root>.MyMutableCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMutableList
+    CLASS CLASS name:MyAbstractCollection signature:/MyAbstractCollection|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyAbstractCollection
+      CONSTRUCTOR signature:/MyAbstractCollection.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.MyAbstractCollection [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyAbstractCollection signature:/MyAbstractCollection|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]'
+      FUN name:foo signature:/MyAbstractCollection.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyAbstractCollection) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MyCollection
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyAbstractCollection
+      PROPERTY name:bar signature:/MyAbstractCollection.bar|{}bar[0] visibility:public modality:ABSTRACT [val]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> signature:/MyAbstractCollection.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.MyAbstractCollection) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/MyAbstractCollection.bar|{}bar[0] visibility:public modality:ABSTRACT [val]
+          overridden:
+            public abstract fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MyCollection
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyAbstractCollection
+    CLASS CLASS name:MyArrayList signature:/MyArrayList|null[0] modality:FINAL visibility:public superTypes:[<root>.MyMutableList; <root>.MyAbstractCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyArrayList
+      CONSTRUCTOR signature:/MyArrayList.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MyArrayList [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.MyAbstractCollection'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyArrayList signature:/MyArrayList|null[0] modality:FINAL visibility:public superTypes:[<root>.MyMutableList; <root>.MyAbstractCollection]'
+      FUN name:foo signature:/MyArrayList.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyArrayList) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MyAbstractCollection
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyArrayList
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MyArrayList'
+            CONST String type=<unbound IrClassSymbolImpl> value="O"
+      PROPERTY name:bar signature:/MyArrayList.bar|{}bar[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:bar signature:[ /MyArrayList.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="K"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> signature:/MyArrayList.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MyArrayList) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:/MyArrayList.bar|{}bar[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+            public abstract fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MyAbstractCollection
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyArrayList
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MyArrayList'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ /MyArrayList.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.MyArrayList declared in <root>.MyArrayList.<get-bar>' type=<root>.MyArrayList origin=null
+    CLASS CLASS name:MC signature:/MC|null[0] modality:FINAL visibility:public superTypes:[<root>.MyMutableCollection]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MC
+      CONSTRUCTOR signature:/MC.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.MC [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MC signature:/MC|null[0] modality:FINAL visibility:public superTypes:[<root>.MyMutableCollection]'
+      FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<root>.MyArrayList visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyArrayList' type=<root>.MyArrayList origin=null
+      FUN DELEGATED_MEMBER name:foo signature:/MC.foo|foo(){}[0] visibility:public modality:OPEN <> ($this:<root>.MC) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MC
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MC'
+            CALL 'public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MyArrayList' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<root>.MyArrayList visibility:private [final] declared in <root>.MC' type=<root>.MyArrayList origin=null
+                receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.foo' type=<root>.MC origin=null
+      PROPERTY DELEGATED_MEMBER name:bar signature:/MC.bar|{}bar[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-bar> signature:/MC.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:OPEN <> ($this:<root>.MC) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:bar signature:/MC.bar|{}bar[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.MC
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MC'
+              CALL 'public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MyArrayList' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 signature:/MC.$$delegate_0|[0] type:<root>.MyArrayList visibility:private [final] declared in <root>.MC' type=<root>.MyArrayList origin=null
+                  receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.<get-bar>' type=<root>.MC origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<root>.MC [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MC' type=<root>.MC origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.MC' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_VAR 'val x: <root>.MC [val] declared in <root>.box' type=<root>.MC origin=null
+            1: CALL 'public open fun <get-bar> (): <unbound IrClassSymbolImpl> declared in <root>.MC' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val x: <root>.MC [val] declared in <root>.box' type=<root>.MC origin=null

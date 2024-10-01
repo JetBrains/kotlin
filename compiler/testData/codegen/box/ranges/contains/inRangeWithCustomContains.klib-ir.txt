@@ -1,0 +1,105 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inRangeWithCustomContains.kt
+    CLASS CLASS name:Value signature:/Value|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Value>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Value
+      CONSTRUCTOR signature:/Value.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.Value [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Value signature:/Value|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Value>]'
+      PROPERTY name:x signature:/Value.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Value.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Value.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Value.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Value) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/Value.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Value
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Value'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Value.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Value declared in <root>.Value.<get-x>' type=<root>.Value origin=null
+      FUN name:compareTo signature:/Value.compareTo|compareTo(Value){}[0] visibility:public modality:OPEN <> ($this:<root>.Value, other:<root>.Value) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Value
+        VALUE_PARAMETER name:other index:0 type:<root>.Value
+        BLOCK_BODY
+          THROW type=<unbound IrClassSymbolImpl>
+            CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="Should not be called"
+    CLASS CLASS name:ValueRange signature:/ValueRange|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Value>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ValueRange
+      CONSTRUCTOR signature:/ValueRange.<init>|<init>(Value;Value){}[0] visibility:public <> (start:<root>.Value, endInclusive:<root>.Value) returnType:<root>.ValueRange [primary]
+        VALUE_PARAMETER name:start index:0 type:<root>.Value
+        VALUE_PARAMETER name:endInclusive index:1 type:<root>.Value
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ValueRange signature:/ValueRange|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.Value>]'
+      PROPERTY name:start signature:/ValueRange.start|{}start[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:start signature:[ /ValueRange.start|{}start[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<root>.Value visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'start: <root>.Value declared in <root>.ValueRange.<init>' type=<root>.Value origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-start> signature:/ValueRange.start.<get-start>|<get-start>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ValueRange) returnType:<root>.Value
+          correspondingProperty: PROPERTY name:start signature:/ValueRange.start|{}start[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValueRange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-start> (): <root>.Value declared in <root>.ValueRange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:start signature:[ /ValueRange.start|{}start[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<root>.Value visibility:private [final]' type=<root>.Value origin=null
+                receiver: GET_VAR '<this>: <root>.ValueRange declared in <root>.ValueRange.<get-start>' type=<root>.ValueRange origin=null
+      PROPERTY name:endInclusive signature:/ValueRange.endInclusive|{}endInclusive[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:endInclusive signature:[ /ValueRange.endInclusive|{}endInclusive[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<root>.Value visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'endInclusive: <root>.Value declared in <root>.ValueRange.<init>' type=<root>.Value origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-endInclusive> signature:/ValueRange.endInclusive.<get-endInclusive>|<get-endInclusive>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ValueRange) returnType:<root>.Value
+          correspondingProperty: PROPERTY name:endInclusive signature:/ValueRange.endInclusive|{}endInclusive[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ValueRange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-endInclusive> (): <root>.Value declared in <root>.ValueRange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:endInclusive signature:[ /ValueRange.endInclusive|{}endInclusive[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<root>.Value visibility:private [final]' type=<root>.Value origin=null
+                receiver: GET_VAR '<this>: <root>.ValueRange declared in <root>.ValueRange.<get-endInclusive>' type=<root>.ValueRange origin=null
+      FUN name:contains signature:/ValueRange.contains|contains(Value){}[0] visibility:public modality:OPEN <> ($this:<root>.ValueRange, value:<root>.Value) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ValueRange
+        VALUE_PARAMETER name:value index:0 type:<root>.Value
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (value: <root>.Value): <unbound IrClassSymbolImpl> [operator] declared in <root>.ValueRange'
+            CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+              arg0: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.Value' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'value: <root>.Value declared in <root>.ValueRange.contains' type=<root>.Value origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+    FUN name:rangeTo signature:/rangeTo|rangeTo@Value(Value){}[0] visibility:public modality:FINAL <> ($receiver:<root>.Value, other:<root>.Value) returnType:<unbound IrClassSymbolImpl><<root>.Value> [operator]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Value
+      VALUE_PARAMETER name:other index:0 type:<root>.Value
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun rangeTo (other: <root>.Value): <unbound IrClassSymbolImpl><<root>.Value> [operator] declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> (start: <root>.Value, endInclusive: <root>.Value) [primary] declared in <root>.ValueRange' type=<root>.ValueRange origin=null
+            start: GET_VAR '<this>: <root>.Value declared in <root>.rangeTo' type=<root>.Value origin=null
+            endInclusive: GET_VAR 'other: <root>.Value declared in <root>.rangeTo' type=<root>.Value origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=IN
+            $this: CALL 'public final fun rangeTo (other: <root>.Value): <unbound IrClassSymbolImpl><<root>.Value> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<root>.Value> origin=RANGE
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Value' type=<root>.Value origin=null
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              other: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Value' type=<root>.Value origin=null
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            1: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Value' type=<root>.Value origin=null
+              x: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=NOT_IN
+              $this: CALL 'public final fun rangeTo (other: <root>.Value): <unbound IrClassSymbolImpl><<root>.Value> [operator] declared in <root>' type=<unbound IrClassSymbolImpl><<root>.Value> origin=RANGE
+                $receiver: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Value' type=<root>.Value origin=null
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=40
+                other: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Value' type=<root>.Value origin=null
+                  x: CONST Int type=<unbound IrClassSymbolImpl> value=42
+              1: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.Value' type=<root>.Value origin=null
+                x: CONST Int type=<unbound IrClassSymbolImpl> value=41
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun kotlin/Long.bar(): kotlin/Long
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/Int.foo(): kotlin/Int
+    }
+  }
+}

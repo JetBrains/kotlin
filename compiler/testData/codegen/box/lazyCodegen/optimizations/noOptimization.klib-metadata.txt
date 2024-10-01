@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator fun A.not(): A
+
+      public final operator fun B.not(): kotlin/Boolean
+
+      public final var holder: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bah(index: kotlin/Int, vararg elements: kotlin/Int /* kotlin/IntArray */): kotlin/collections/List<kotlin/Int>
+
+      public final suspend fun bar(): kotlin/Int
+
+      public final suspend fun bar2(): kotlin/Int
+
+      public final suspend fun bar3(): kotlin/Int
+
+      public final suspend fun <T#0 /* T */> bar4(vararg elements: T#0 /* kotlin/Array<out T#0> */): kotlin/Array<out T#0>
+
+      public final fun <T#0 /* T */> baz(vararg elements: T#0 /* kotlin/Array<out T#0> */): kotlin/Array<out T#0>
+
+      public final fun box(): kotlin/String
+
+      public final suspend fun foo(): kotlin/Unit
+
+      public final var failure: kotlin/Boolean
+        public final get
+        public final set
+    }
+  }
+}

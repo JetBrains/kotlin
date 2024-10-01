@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: TypeDefinition
+
+    public final class TypeDefinition<T#0 /* K */ : kotlin/Any> : kotlin/Any {
+
+      public constructor()
+
+      public final fun parse(parser: kotlin/Function1<@kotlin/ParameterName(name = "serializedValue") kotlin/String, T#0?>): kotlin/Unit
+
+      public final fun serialize(parser: kotlin/Function1<@kotlin/ParameterName(name = "value") T#0, kotlin/Any?>): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Any> defineType(definition: @kotlin/ExtensionFunctionType kotlin/Function1<TypeDefinition<T#0>, kotlin/Unit>): kotlin/Unit
+
+      public final fun test(): kotlin/Unit
+    }
+  }
+}

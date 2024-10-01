@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: StrList
+
+    public final class StrList : kotlin/collections/List<kotlin/String?> {
+
+      public constructor()
+
+      public open operator fun contains(o: kotlin/String?): kotlin/Boolean
+
+      public open fun containsAll(c: kotlin/collections/Collection<kotlin/String?>): kotlin/Boolean
+
+      public open operator fun get(index: kotlin/Int): kotlin/String
+
+      public open fun indexOf(o: kotlin/String?): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Boolean
+
+      public open operator fun iterator(): kotlin/collections/Iterator<kotlin/String>
+
+      public open fun lastIndexOf(o: kotlin/String?): kotlin/Int
+
+      public open fun listIterator(): kotlin/collections/ListIterator<kotlin/String?>
+
+      public open fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<kotlin/String?>
+
+      public open fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<kotlin/String?>
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* E */> kotlin/collections/Collection<T#0>.forceContains(x: kotlin/Any?): kotlin/Boolean
+    }
+  }
+}

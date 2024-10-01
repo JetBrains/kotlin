@@ -1,0 +1,57 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+
+      public final operator inline fun kotlin/Long.getValue(thisRef: kotlin/IntArray, kProp: kotlin/Any?): kotlin/Int
+
+      public final operator inline fun kotlin/Long.getValue(thisRef: kotlin/Long, kProp: kotlin/Any?): kotlin/Int
+
+      public final operator inline fun kotlin/Long.setValue(thisRef: kotlin/IntArray, kProp: kotlin/Any?, newValue: kotlin/Int): kotlin/Unit
+
+      public final fun test(intArray: kotlin/IntArray): kotlin/Unit
+
+      public final /* delegated */ val kotlin/Long.appendDigit1: kotlin/Int
+        public final /* non-default */ get
+
+      public final /* delegated */ var kotlin/IntArray.secondElementX10: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final operator inline fun kotlin/Long.getValue(thisRef: kotlin/Any?, kProp: kotlin/Any?): kotlin/Int
+
+      public final operator inline fun kotlin/Long.getValue(thisRef: kotlin/IntArray, kProp: kotlin/Any?): kotlin/Int
+
+      public final operator inline fun kotlin/Long.getValue(thisRef: kotlin/Long, kProp: kotlin/Any?): kotlin/Int
+
+      public final operator inline fun kotlin/Double.provideDelegate(thisRef: kotlin/Any?, kProp: kotlin/Any?): kotlin/Long
+
+      public final operator inline fun kotlin/Long.setValue(thisRef: kotlin/IntArray, kProp: kotlin/Any?, newValue: kotlin/Int): kotlin/Unit
+
+      public final /* delegated */ var kotlin/IntArray.firstElement: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+
+      public final /* delegated */ val magic1: kotlin/Int
+        public final /* non-default */ get
+
+      public final /* delegated */ val magic2: kotlin/Int
+        public final /* non-default */ get
+
+      public final /* delegated */ val kotlin/Long.plus3: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+}

@@ -1,0 +1,78 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/intersectionType.kt
+    CLASS CLASS name:Inv signature:/Inv|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inv<T of <root>.Inv>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Inv|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Inv.<init>|<init>(1:0){}[0] visibility:public <> (v:T of <root>.Inv) returnType:<root>.Inv<T of <root>.Inv> [primary]
+        VALUE_PARAMETER name:v index:0 type:T of <root>.Inv
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inv signature:/Inv|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:v signature:/Inv.v|{}v[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:v signature:[ /Inv.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:T of <root>.Inv visibility:private [final]] ] type:T of <root>.Inv visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'v: T of <root>.Inv declared in <root>.Inv.<init>' type=T of <root>.Inv origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:/Inv.v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Inv<T of <root>.Inv>) returnType:T of <root>.Inv
+          correspondingProperty: PROPERTY name:v signature:/Inv.v|{}v[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Inv<T of <root>.Inv>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v> (): T of <root>.Inv declared in <root>.Inv'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ /Inv.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:T of <root>.Inv visibility:private [final]] ] type:T of <root>.Inv visibility:private [final]' type=T of <root>.Inv origin=null
+                receiver: GET_VAR '<this>: <root>.Inv<T of <root>.Inv> declared in <root>.Inv.<get-v>' type=<root>.Inv<T of <root>.Inv> origin=null
+    CLASS INTERFACE name:X signature:/X|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+    CLASS INTERFACE name:Y signature:/Y|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Y
+    CLASS OBJECT name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.X; <root>.Y]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.X; <root>.Y]'
+    CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.X; <root>.Y]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+      CONSTRUCTOR signature:/B.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.B [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.X; <root>.Y]'
+    FUN name:sel signature:/sel|sel(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (a:T of <root>.sel, b:T of <root>.sel) returnType:T of <root>.sel
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /sel|sel(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:a index:0 type:T of <root>.sel
+      VALUE_PARAMETER name:b index:1 type:T of <root>.sel
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun sel <T> (a: T of <root>.sel, b: T of <root>.sel): T of <root>.sel declared in <root>'
+          GET_VAR 'a: T of <root>.sel declared in <root>.sel' type=T of <root>.sel origin=null
+    FUN name:valueTypeOf signature:/valueTypeOf|valueTypeOf@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.valueTypeOf) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /valueTypeOf|valueTypeOf@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.valueTypeOf
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun valueTypeOf <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: T of <root>.valueTypeOf
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:t type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun valueTypeOf <T> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'public final fun <get-v> (): T of <root>.Inv declared in <root>.Inv' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'public final fun sel <T> (a: T of <root>.sel, b: T of <root>.sel): T of <root>.sel declared in <root>' type=<root>.Inv<out <unbound IrClassSymbolImpl>> origin=null
+                <T>: <root>.Inv<out <unbound IrClassSymbolImpl>>
+                a: CONSTRUCTOR_CALL 'public constructor <init> (v: T of <root>.Inv) [primary] declared in <root>.Inv' type=<root>.Inv<<root>.A> origin=null
+                  <class: T>: <root>.A
+                  v: GET_OBJECT 'CLASS OBJECT name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<root>.X; <root>.Y]' type=<root>.A
+                b: CONSTRUCTOR_CALL 'public constructor <init> (v: T of <root>.Inv) [primary] declared in <root>.Inv' type=<root>.Inv<<root>.B> origin=null
+                  <class: T>: <root>.B
+                  v: GET_OBJECT 'CLASS OBJECT name:B signature:/B|null[0] modality:FINAL visibility:public superTypes:[<root>.X; <root>.Y]' type=<root>.B
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Fail: "
+                GET_VAR 'val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

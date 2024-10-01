@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt41164.kt
+    CLASS INTERFACE name:MyProducerScope signature:/MyProducerScope|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyProducerScope<E of <root>.MyProducerScope>
+      TYPE_PARAMETER name:E index:0 variance:in signature:[ /MyProducerScope|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:MyFlow signature:/MyFlow|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyFlow<T of <root>.MyFlow>
+      TYPE_PARAMETER name:T index:0 variance:out signature:[ /MyFlow|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    FUN name:select signature:/select|select(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <K> (x:K of <root>.select, y:K of <root>.select) returnType:K of <root>.select
+      TYPE_PARAMETER name:K index:0 variance: signature:[ /select|select(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:K of <root>.select
+      VALUE_PARAMETER name:y index:1 type:K of <root>.select
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun select <K> (x: K of <root>.select, y: K of <root>.select): K of <root>.select declared in <root>'
+          GET_VAR 'x: K of <root>.select declared in <root>.select' type=K of <root>.select origin=null
+    FUN name:myCallbackFlow signature:/myCallbackFlow|myCallbackFlow(kotlin.Function1<MyProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (block:@[<unbound>] <unbound IrClassSymbolImpl><<root>.MyProducerScope<T of <root>.myCallbackFlow>, <unbound IrClassSymbolImpl>>) returnType:<root>.MyFlow<T of <root>.myCallbackFlow>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /myCallbackFlow|myCallbackFlow(kotlin.Function1<MyProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:block index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.MyProducerScope<T of <root>.myCallbackFlow>, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun myCallbackFlow <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.MyProducerScope<T of <root>.myCallbackFlow>, <unbound IrClassSymbolImpl>>): <root>.MyFlow<T of <root>.myCallbackFlow> declared in <root>'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.MyFlow<T of <root>.myCallbackFlow> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:myAwaitClose signature:/myAwaitClose|myAwaitClose@MyProducerScope<*>(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($receiver:<root>.MyProducerScope<*>, block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.MyProducerScope<*>
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        EXPRESSION_BODY
+          FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.myAwaitClose'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+    FUN name:myEmptyFlow signature:/myEmptyFlow|myEmptyFlow(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <E> () returnType:<root>.MyFlow<E of <root>.myEmptyFlow>
+      TYPE_PARAMETER name:E index:0 variance: signature:[ /myEmptyFlow|myEmptyFlow(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun myEmptyFlow <E> (): <root>.MyFlow<E of <root>.myEmptyFlow> declared in <root>'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.MyFlow<E of <root>.myEmptyFlow> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:test signature:/test|test(){}[0] visibility:public modality:FINAL <> () returnType:<root>.MyFlow<<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun test (): <root>.MyFlow<<unbound IrClassSymbolImpl>> declared in <root>'
+          CALL 'public final fun select <K> (x: K of <root>.select, y: K of <root>.select): K of <root>.select declared in <root>' type=<root>.MyFlow<<unbound IrClassSymbolImpl>> origin=null
+            <K>: <root>.MyFlow<<unbound IrClassSymbolImpl>>
+            x: CALL 'public final fun myCallbackFlow <T> (block: @[<unbound>] <unbound IrClassSymbolImpl><<root>.MyProducerScope<T of <root>.myCallbackFlow>, <unbound IrClassSymbolImpl>>): <root>.MyFlow<T of <root>.myCallbackFlow> declared in <root>' type=<root>.MyFlow<<unbound IrClassSymbolImpl>> origin=null
+              <T>: <unbound IrClassSymbolImpl>
+              block: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.MyProducerScope<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.MyProducerScope<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$myCallbackFlow type:<root>.MyProducerScope<<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    CALL 'public final fun myAwaitClose (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: GET_VAR '$this$myCallbackFlow: <root>.MyProducerScope<<unbound IrClassSymbolImpl>> declared in <root>.test.<anonymous>' type=<root>.MyProducerScope<<unbound IrClassSymbolImpl>> origin=null
+                      block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.test.<anonymous>'
+                              GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            y: CALL 'public final fun myEmptyFlow <E> (): <root>.MyFlow<E of <root>.myEmptyFlow> declared in <root>' type=<root>.MyFlow<<unbound IrClassSymbolImpl>> origin=null
+              <E>: <unbound IrClassSymbolImpl>
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

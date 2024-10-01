@@ -1,0 +1,64 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: BaseClass
+    // class name: Class
+    // class name: Class.C
+    // class name: I
+
+    public open class BaseClass : kotlin/Any {
+
+      public constructor()
+
+      public final val <T#0 /* T */> T#0.fromClass: T#0
+        public final /* non-default */ get
+    }
+
+    public final class Class : kotlin/Any {
+
+      public constructor()
+
+      // companion object: C
+
+      // nested class: C
+    }
+
+    public final companion object Class.C : BaseClass, I<kotlin/String> {
+
+      private constructor()
+
+      public final fun f(s: kotlin/Int): kotlin/Int
+
+      public final fun f(s: kotlin/String): kotlin/Int
+
+      public final fun kotlin/Boolean.f(): kotlin/Int
+
+      public final fun <T#0 /* T */> g1(t: T#0): T#0
+
+      public final val kotlin/Int.ext: kotlin/Int
+        public final /* non-default */ get
+
+      public final val <T#0 /* T */> T#0.g2: T#0
+        public final /* non-default */ get
+
+      public final var p: kotlin/Int
+        public final get
+        public final set
+    }
+
+    public abstract interface I<T#0 /* G */> : kotlin/Any {
+
+      public open fun <T#1 /* T */> T#1.fromInterface(): T#1
+
+      public open fun genericFromSuper(g: T#0): T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

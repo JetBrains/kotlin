@@ -1,0 +1,74 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/funInterfaceWithReceiver.kt
+    PROPERTY name:prop signature:/prop|{}prop[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:<root>.FunWithReceiver visibility:private [final,static]] ] type:<root>.FunWithReceiver visibility:private [final,static]
+        EXPRESSION_BODY
+          TYPE_OP type=<root>.FunWithReceiver origin=SAM_CONVERSION typeOperand=<root>.FunWithReceiver
+            FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$FunWithReceiver type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.prop'
+                    GET_VAR '$this$FunWithReceiver: <unbound IrClassSymbolImpl> declared in <root>.prop.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:/prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.FunWithReceiver
+        correspondingProperty: PROPERTY name:prop signature:/prop|{}prop[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <root>.FunWithReceiver declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:prop type:<root>.FunWithReceiver visibility:private [final,static]] ] type:<root>.FunWithReceiver visibility:private [final,static]' type=<root>.FunWithReceiver origin=null
+    CLASS INTERFACE name:FunWithReceiver signature:/FunWithReceiver|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FunWithReceiver
+      FUN name:foo signature:/FunWithReceiver.foo|foo@kotlin.String(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.FunWithReceiver, $receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.FunWithReceiver
+        $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+    FUN name:bar signature:/bar|bar(kotlin.String;FunWithReceiver){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>, f:<root>.FunWithReceiver) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:1 type:<root>.FunWithReceiver
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (s: <unbound IrClassSymbolImpl>, f: <root>.FunWithReceiver): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <root>.FunWithReceiver
+            <2>: <unbound IrClassSymbolImpl>
+            1: GET_VAR 'f: <root>.FunWithReceiver declared in <root>.bar' type=<root>.FunWithReceiver origin=null
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FunWithReceiver, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FunWithReceiver) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$with type:<root>.FunWithReceiver
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.bar'
+                    CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.FunWithReceiver' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$with: <root>.FunWithReceiver declared in <root>.bar.<anonymous>' type=<root>.FunWithReceiver origin=null
+                      $receiver: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.bar' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:r1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <root>.FunWithReceiver
+            <2>: <unbound IrClassSymbolImpl>
+            1: CALL 'public final fun <get-prop> (): <root>.FunWithReceiver declared in <root>' type=<root>.FunWithReceiver origin=GET_PROPERTY
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.FunWithReceiver, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FunWithReceiver) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$with type:<root>.FunWithReceiver
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.FunWithReceiver' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$with: <root>.FunWithReceiver declared in <root>.box.<anonymous>' type=<root>.FunWithReceiver origin=null
+                      $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val r1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="failed 1"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun bar (s: <unbound IrClassSymbolImpl>, f: <root>.FunWithReceiver): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            f: TYPE_OP type=<root>.FunWithReceiver origin=SAM_CONVERSION typeOperand=<root>.FunWithReceiver
+              FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$bar type:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                        $this: GET_VAR '$this$bar: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                        1: CONST String type=<unbound IrClassSymbolImpl> value="K"

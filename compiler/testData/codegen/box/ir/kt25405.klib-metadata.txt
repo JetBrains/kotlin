@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Table
+    // class name: Table.TableColumn
+
+    public final class Table<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun column(name: kotlin/String, init: @kotlin/ExtensionFunctionType kotlin/Function1<Table<T#0>.TableColumn, kotlin/Unit>): kotlin/Unit
+
+      // nested class: TableColumn
+    }
+
+    public final inner class Table.TableColumn : kotlin/Any {
+
+      public constructor(name: kotlin/String)
+
+      public final val name: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(): kotlin/Unit
+
+      public final fun <T#0 /* T */> tableView(init: @kotlin/ExtensionFunctionType kotlin/Function1<Table<T#0>, kotlin/Unit>): kotlin/Unit
+
+      public final var result: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

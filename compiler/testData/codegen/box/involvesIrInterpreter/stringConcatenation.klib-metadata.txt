@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> T#0.id(): T#0
+
+      public final const val simple: kotlin/String /* = "OK 3.5" */
+        public final get
+
+      public final const val withInnerConcatenation: kotlin/String /* = "1 2 3 4 5 6" */
+        public final get
+
+      public final const val withNull: kotlin/String /* = "1 null" */
+        public final get
+    }
+  }
+}

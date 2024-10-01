@@ -1,0 +1,76 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt56188.kt
+    CLASS INTERFACE name:Supplier signature:/Supplier|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Supplier<SupplierTP of <root>.Supplier>
+      TYPE_PARAMETER name:SupplierTP index:0 variance: signature:[ /Supplier|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:SupplierTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      FUN name:get signature:/Supplier.get|get(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Supplier<SupplierTP of <root>.Supplier>) returnType:SupplierTP of <root>.Supplier
+        $this: VALUE_PARAMETER name:<this> type:<root>.Supplier<SupplierTP of <root>.Supplier>
+    FUN name:foo signature:/foo|foo(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <FooTP> (t:FooTP of <root>.foo) returnType:<root>.Supplier<FooTP of <root>.foo>
+      TYPE_PARAMETER name:FooTP index:0 variance: signature:[ /foo|foo(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:SupplierTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:t index:0 type:FooTP of <root>.foo
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <FooTP> (t: FooTP of <root>.foo): <root>.Supplier<FooTP of <root>.foo> declared in <root>'
+          TYPE_OP type=<root>.Supplier<FooTP of <root>.foo> origin=CAST typeOperand=<root>.Supplier<FooTP of <root>.foo>
+            TYPE_OP type=<root>.Supplier<FooTP of <root>.foo> origin=SAM_CONVERSION typeOperand=<root>.Supplier<FooTP of <root>.foo>
+              FUN_EXPR type=<unbound IrClassSymbolImpl><FooTP of <root>.foo> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:FooTP of <root>.foo
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): FooTP of <root>.foo declared in <root>.foo'
+                      GET_VAR 't: FooTP of <root>.foo declared in <root>.foo' type=FooTP of <root>.foo origin=null
+    CLASS INTERFACE name:SupplierInvoker signature:/SupplierInvoker|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SupplierInvoker<SupplierInvokerTP1 of <root>.SupplierInvoker, SupplierInvokerTP2 of <root>.SupplierInvoker>
+      TYPE_PARAMETER name:SupplierInvokerTP1 index:0 variance: signature:[ /SupplierInvoker|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:SupplierTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:SupplierInvokerTP2 index:1 variance: signature:[ /SupplierInvoker|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:SupplierInvokerTP2 index:1 variance: superTypes:[<root>.Supplier<SupplierInvokerTP1 of <root>.SupplierInvoker>] reified:false] ] superTypes:[<root>.Supplier<SupplierInvokerTP1 of <root>.SupplierInvoker>] reified:false
+      FUN name:invokeSupplier signature:/SupplierInvoker.invokeSupplier|invokeSupplier(1:1){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.SupplierInvoker<SupplierInvokerTP1 of <root>.SupplierInvoker, SupplierInvokerTP2 of <root>.SupplierInvoker>, supplier:SupplierInvokerTP2 of <root>.SupplierInvoker) returnType:SupplierInvokerTP1 of <root>.SupplierInvoker
+        $this: VALUE_PARAMETER name:<this> type:<root>.SupplierInvoker<SupplierInvokerTP1 of <root>.SupplierInvoker, SupplierInvokerTP2 of <root>.SupplierInvoker>
+        VALUE_PARAMETER name:supplier index:0 type:SupplierInvokerTP2 of <root>.SupplierInvoker
+    FUN name:bar signature:/bar|bar(){0§<kotlin.Any?>;1§<Supplier<0:0>>}[0] visibility:public modality:FINAL <BarTP1, BarTP2> () returnType:<root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar>
+      TYPE_PARAMETER name:BarTP1 index:0 variance: signature:[ /bar|bar(){0§<kotlin.Any?>;1§<Supplier<0:0>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:SupplierTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:BarTP2 index:1 variance: signature:[ /bar|bar(){0§<kotlin.Any?>;1§<Supplier<0:0>>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:SupplierInvokerTP2 index:1 variance: superTypes:[<root>.Supplier<SupplierInvokerTP1 of <root>.SupplierInvoker>] reified:false] ] superTypes:[<root>.Supplier<BarTP1 of <root>.bar>] reified:false
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar <BarTP1, BarTP2> (): <root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar> declared in <root>'
+          TYPE_OP type=<root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar> origin=CAST typeOperand=<root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar>
+            TYPE_OP type=<root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar> origin=SAM_CONVERSION typeOperand=<root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar>
+              FUN_EXPR type=<unbound IrClassSymbolImpl><BarTP2 of <root>.bar, BarTP1 of <root>.bar> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (supplier:BarTP2 of <root>.bar) returnType:BarTP1 of <root>.bar
+                  VALUE_PARAMETER name:supplier index:0 type:BarTP2 of <root>.bar
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (supplier: BarTP2 of <root>.bar): BarTP1 of <root>.bar declared in <root>.bar'
+                      CALL 'public abstract fun get (): SupplierTP of <root>.Supplier declared in <root>.Supplier' type=BarTP1 of <root>.bar origin=null
+                        $this: GET_VAR 'supplier: BarTP2 of <root>.bar declared in <root>.bar.<anonymous>' type=BarTP2 of <root>.bar origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public abstract fun get (): SupplierTP of <root>.Supplier declared in <root>.Supplier' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun foo <FooTP> (t: FooTP of <root>.foo): <root>.Supplier<FooTP of <root>.foo> declared in <root>' type=<root>.Supplier<<unbound IrClassSymbolImpl>> origin=null
+              <FooTP>: <unbound IrClassSymbolImpl>
+              t: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:result2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public abstract fun invokeSupplier (supplier: SupplierInvokerTP2 of <root>.SupplierInvoker): SupplierInvokerTP1 of <root>.SupplierInvoker declared in <root>.SupplierInvoker' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun bar <BarTP1, BarTP2> (): <root>.SupplierInvoker<BarTP1 of <root>.bar, BarTP2 of <root>.bar> declared in <root>' type=<root>.SupplierInvoker<<unbound IrClassSymbolImpl>, <root>.Supplier<<unbound IrClassSymbolImpl>>> origin=null
+              <BarTP1>: <unbound IrClassSymbolImpl>
+              <BarTP2>: <root>.Supplier<<unbound IrClassSymbolImpl>>
+            supplier: TYPE_OP type=<root>.Supplier<<unbound IrClassSymbolImpl>> origin=SAM_CONVERSION typeOperand=<root>.Supplier<<unbound IrClassSymbolImpl>>
+              FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                      CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: DMap
+    // class name: Wrapper
+
+    public final class DMap : kotlin/collections/Map<Wrapper, kotlin/String> {
+
+      public constructor(map: kotlin/collections/Map<Wrapper, kotlin/String>)
+
+      public open /* delegation */ fun containsKey(key: Wrapper): kotlin/Boolean
+
+      public open /* delegation */ fun containsValue(value: kotlin/String): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(key: Wrapper): kotlin/String?
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ val entries: kotlin/collections/Set<kotlin/collections/Map.Entry<Wrapper, kotlin/String>>
+        public open get
+
+      public open /* delegation */ val keys: kotlin/collections/Set<Wrapper>
+        public open get
+
+      private final val map: kotlin/collections/Map<Wrapper, kotlin/String>
+        private final get
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+
+      public open /* delegation */ val values: kotlin/collections/Collection<kotlin/String>
+        public open get
+    }
+
+    public final value class Wrapper : kotlin/Any {
+
+      public constructor(id: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val id: kotlin/Int
+        public final get
+
+      // underlying property: id
+
+      // underlying type: kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

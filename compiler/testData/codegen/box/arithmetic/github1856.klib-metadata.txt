@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: RGBA
+
+    public final object RGBA : kotlin/Any {
+
+      private constructor()
+
+      public final fun getFastA(v: kotlin/Int): kotlin/Int
+
+      public final fun getFastB(v: kotlin/Int): kotlin/Int
+
+      public final fun getFastG(v: kotlin/Int): kotlin/Int
+
+      public final fun getFastR(v: kotlin/Int): kotlin/Int
+
+      public final fun packFast(r: kotlin/Int, g: kotlin/Int, b: kotlin/Int, a: kotlin/Int): kotlin/Int
+
+      public final fun premultiplyFastInt(v: kotlin/Int): kotlin/Int
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,307 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/untilOperator.kt
+    CLASS CLASS name:ARange signature:/ARange|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>; <unbound IrClassSymbolImpl><<root>.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ARange
+      CONSTRUCTOR signature:/ARange.<init>|<init>(A;A){}[0] visibility:public <> (_start:<root>.A, _end:<root>.A) returnType:<root>.ARange [primary]
+        VALUE_PARAMETER name:_start index:0 type:<root>.A
+        VALUE_PARAMETER name:_end index:1 type:<root>.A
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ARange signature:/ARange|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>; <unbound IrClassSymbolImpl><<root>.A>]'
+      PROPERTY name:endInclusive signature:/ARange.endInclusive|{}endInclusive[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:endInclusive signature:[ /ARange.endInclusive|{}endInclusive[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<root>.A visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR '_end: <root>.A declared in <root>.ARange.<init>' type=<root>.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-endInclusive> signature:/ARange.endInclusive.<get-endInclusive>|<get-endInclusive>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ARange) returnType:<root>.A
+          correspondingProperty: PROPERTY name:endInclusive signature:/ARange.endInclusive|{}endInclusive[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-endInclusive> (): <root>.A declared in <root>.ARange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:endInclusive signature:[ /ARange.endInclusive|{}endInclusive[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<root>.A visibility:private [final]' type=<root>.A origin=null
+                receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<get-endInclusive>' type=<root>.ARange origin=null
+      PROPERTY name:start signature:/ARange.start|{}start[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:start signature:[ /ARange.start|{}start[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<root>.A visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR '_start: <root>.A declared in <root>.ARange.<init>' type=<root>.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-start> signature:/ARange.start.<get-start>|<get-start>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ARange) returnType:<root>.A
+          correspondingProperty: PROPERTY name:start signature:/ARange.start|{}start[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-start> (): <root>.A declared in <root>.ARange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:start signature:[ /ARange.start|{}start[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<root>.A visibility:private [final]' type=<root>.A origin=null
+                receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<get-start>' type=<root>.ARange origin=null
+      FUN name:iterator signature:/ARange.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.ARange) returnType:<unbound IrClassSymbolImpl><<root>.A> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<root>.A> [operator] declared in <root>.ARange'
+            BLOCK type=<root>.ARange.iterator.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<root>.A>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ARange.iterator.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.ARange.iterator.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl><<root>.A>]'
+                FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.ARange.iterator.<no name provided>) returnType:<unbound IrClassSymbolImpl> [operator]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.ARange.iterator.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.ARange.iterator.<no name provided>'
+                      CALL 'private final fun <get-hasNext> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                FUN name:next visibility:public modality:OPEN <> ($this:<root>.ARange.iterator.<no name provided>) returnType:<root>.A [operator]
+                  overridden:
+                    UNBOUND IrSimpleFunctionSymbolImpl
+                  $this: VALUE_PARAMETER name:<this> type:<root>.ARange.iterator.<no name provided>
+                  BLOCK_BODY
+                    VAR name:value type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'private final fun <get-next> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val value: <unbound IrClassSymbolImpl> [val] declared in <root>.ARange.iterator.<no name provided>.next' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CALL 'private final fun <get-finalElement> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                            $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                        then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                            BRANCH
+                              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                                $this: CALL 'private final fun <get-hasNext> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                  $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                              then: THROW type=<unbound IrClassSymbolImpl>
+                                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          CALL 'private final fun <set-hasNext> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=EQ
+                            $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                            <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                          CALL 'private final fun <set-next> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                            $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                              $this: CALL 'private final fun <get-next> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                                $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                              1: CALL 'private final fun <get-step> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.iterator' type=<root>.ARange origin=null
+                    RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <root>.A [operator] declared in <root>.ARange.iterator.<no name provided>'
+                      CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+                        x: GET_VAR 'val value: <unbound IrClassSymbolImpl> [val] declared in <root>.ARange.iterator.<no name provided>.next' type=<unbound IrClassSymbolImpl> origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ARange.iterator.<no name provided>' type=<root>.ARange.iterator.<no name provided> origin=OBJECT_LITERAL
+      PROPERTY name:step signature:/ARange.step|{}step[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:step signature:[ /ARange.step|{}step[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-step> signature:/ARange.step.<get-step>|<get-step>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ARange) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:step signature:/ARange.step|{}step[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-step> (): <unbound IrClassSymbolImpl> declared in <root>.ARange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:step signature:[ /ARange.step|{}step[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<get-step>' type=<root>.ARange origin=null
+      PROPERTY name:finalElement signature:/ARange.finalElement|{}finalElement[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:finalElement signature:[ /ARange.finalElement|{}finalElement[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'public open fun <get-endInclusive> (): <root>.A declared in <root>.ARange' type=<root>.A origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-finalElement> signature:/ARange.finalElement.<get-finalElement>|<get-finalElement>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ARange) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:finalElement signature:/ARange.finalElement|{}finalElement[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-finalElement> (): <unbound IrClassSymbolImpl> declared in <root>.ARange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:finalElement signature:[ /ARange.finalElement|{}finalElement[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<get-finalElement>' type=<root>.ARange origin=null
+      PROPERTY name:hasNext signature:/ARange.hasNext|{}hasNext[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:hasNext signature:[ /ARange.hasNext|{}hasNext[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                  arg0: CALL 'private final fun <get-step> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                then: CALL 'public final fun lessOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LTEQ
+                  arg0: CALL 'public open fun compareTo (other: <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=LTEQ
+                    $this: CALL 'public open fun <get-start> (): <root>.A declared in <root>.ARange' type=<root>.A origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+                    other: CALL 'public open fun <get-endInclusive> (): <root>.A declared in <root>.ARange' type=<root>.A origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+                  arg0: CALL 'public open fun compareTo (other: <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GTEQ
+                    $this: CALL 'public open fun <get-start> (): <root>.A declared in <root>.ARange' type=<root>.A origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+                    other: CALL 'public open fun <get-endInclusive> (): <root>.A declared in <root>.ARange' type=<root>.A origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hasNext> signature:/ARange.hasNext.<get-hasNext>|<get-hasNext>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ARange) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:hasNext signature:/ARange.hasNext|{}hasNext[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-hasNext> (): <unbound IrClassSymbolImpl> declared in <root>.ARange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:hasNext signature:[ /ARange.hasNext|{}hasNext[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<get-hasNext>' type=<root>.ARange origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-hasNext> signature:/ARange.hasNext.<set-hasNext>|<set-hasNext>(kotlin.Boolean){}[0] visibility:private modality:FINAL <> ($this:<root>.ARange, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:hasNext signature:/ARange.hasNext|{}hasNext[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:hasNext signature:[ /ARange.hasNext|{}hasNext[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<set-hasNext>' type=<root>.ARange origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ARange.<set-hasNext>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:next signature:/ARange.next|{}next[0] visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:next signature:[ /ARange.next|{}next[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=IF
+              BRANCH
+                if: CALL 'private final fun <get-hasNext> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+                then: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public open fun <get-start> (): <root>.A declared in <root>.ARange' type=<root>.A origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'private final fun <get-finalElement> (): <unbound IrClassSymbolImpl> declared in <root>.ARange' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ARange declared in <root>.ARange' type=<root>.ARange origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-next> signature:/ARange.next.<get-next>|<get-next>(){}[0] visibility:private modality:FINAL <> ($this:<root>.ARange) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:next signature:/ARange.next|{}next[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-next> (): <unbound IrClassSymbolImpl> declared in <root>.ARange'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:next signature:[ /ARange.next|{}next[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<get-next>' type=<root>.ARange origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-next> signature:/ARange.next.<set-next>|<set-next>(kotlin.Int){}[0] visibility:private modality:FINAL <> ($this:<root>.ARange, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:next signature:/ARange.next|{}next[0] visibility:private modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ARange
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:next signature:[ /ARange.next|{}next[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.ARange declared in <root>.ARange.<set-next>' type=<root>.ARange origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ARange.<set-next>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.A [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.A>]'
+      PROPERTY name:x signature:/A.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.A.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/A.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:endInclusive type:<root>.A visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-x>' type=<root>.A origin=null
+      FUN name:rangeUntil signature:/A.rangeUntil|rangeUntil(A){}[0] visibility:public modality:FINAL <> ($this:<root>.A, other:<root>.A) returnType:<unbound IrClassSymbolImpl><<root>.A> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:other index:0 type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun rangeUntil (other: <root>.A): <unbound IrClassSymbolImpl><<root>.A> [operator] declared in <root>.A'
+            CONSTRUCTOR_CALL 'public constructor <init> (_start: <root>.A, _end: <root>.A) [primary] declared in <root>.ARange' type=<root>.ARange origin=null
+              _start: GET_VAR '<this>: <root>.A declared in <root>.A.rangeUntil' type=<root>.A origin=null
+              _end: CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+                x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                  $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'other: <root>.A declared in <root>.A.rangeUntil' type=<root>.A origin=null
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN name:rangeTo signature:/A.rangeTo|rangeTo(A){}[0] visibility:public modality:FINAL <> ($this:<root>.A, other:<root>.A) returnType:<unbound IrClassSymbolImpl><<root>.A> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:other index:0 type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun rangeTo (other: <root>.A): <unbound IrClassSymbolImpl><<root>.A> [operator] declared in <root>.A'
+            CONSTRUCTOR_CALL 'public constructor <init> (_start: <root>.A, _end: <root>.A) [primary] declared in <root>.ARange' type=<root>.ARange origin=null
+              _start: GET_VAR '<this>: <root>.A declared in <root>.A.rangeTo' type=<root>.A origin=null
+              _end: GET_VAR 'other: <root>.A declared in <root>.A.rangeTo' type=<root>.A origin=null
+      FUN name:compareTo signature:/A.compareTo|compareTo(A){}[0] visibility:public modality:OPEN <> ($this:<root>.A, other:<root>.A) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:other index:0 type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun compareTo (other: <root>.A): <unbound IrClassSymbolImpl> [operator] declared in <root>.A'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.A declared in <root>.A.compareTo' type=<root>.A origin=null
+              1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'other: <root>.A declared in <root>.A.compareTo' type=<root>.A origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<root>.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:y type:<root>.A [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.A' type=<root>.A origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=4
+        VAR name:summ1 type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<root>.A> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.A> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'public final fun rangeUntil (other: <root>.A): <unbound IrClassSymbolImpl><<root>.A> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A> origin=RANGE_UNTIL
+                $this: GET_VAR 'val x: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+                other: GET_VAR 'val y: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<root>.A> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<root>.A [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.A origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<root>.A> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var summ1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var summ1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val i: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+        VAR name:summ2 type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<root>.A> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.A> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'public final fun rangeTo (other: <root>.A): <unbound IrClassSymbolImpl><<root>.A> [operator] declared in <root>.A' type=<unbound IrClassSymbolImpl><<root>.A> origin=RANGE
+                $this: GET_VAR 'val x: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+                other: GET_VAR 'val y: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<root>.A> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<root>.A [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.A origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<root>.A> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.A> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var summ2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var summ2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val i: <root>.A [val] declared in <root>.box' type=<root>.A origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'var summ1: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+                  then: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'var summ2: <unbound IrClassSymbolImpl> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=10
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="NOK"

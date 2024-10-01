@@ -1,0 +1,302 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/abbreviationWithCapturedType.kt
+    CLASS INTERFACE name:DynamoColumnType signature:/DynamoColumnType|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DynamoColumnType<V of <root>.DynamoColumnType>
+      TYPE_PARAMETER name:V index:0 variance: signature:[ /DynamoColumnType|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS INTERFACE name:DynamoKeyColumnType signature:/DynamoKeyColumnType|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.DynamoColumnType<V of <root>.DynamoKeyColumnType>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DynamoKeyColumnType<V of <root>.DynamoKeyColumnType>
+      TYPE_PARAMETER name:V index:0 variance: signature:[ /DynamoKeyColumnType|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:DynamoColumn signature:/DynamoColumn|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DynamoColumn<V of <root>.DynamoColumn, T of <root>.DynamoColumn>
+      TYPE_PARAMETER name:V index:0 variance: signature:[ /DynamoColumn|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T index:1 variance: signature:[ /DynamoColumn|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.DynamoColumnType<V of <root>.DynamoColumn>] reified:false] ] superTypes:[<root>.DynamoColumnType<V of <root>.DynamoColumn>] reified:false
+      CONSTRUCTOR signature:/DynamoColumn.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.DynamoColumn<V of <root>.DynamoColumn, T of <root>.DynamoColumn> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DynamoColumn signature:/DynamoColumn|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    TYPEALIAS name:DKeyColumn signature:/DKeyColumn|null[0] visibility:public expandedType:<root>.DynamoColumn<V of <root>.DKeyColumn, out <root>.DynamoKeyColumnType<V of <root>.DKeyColumn>>
+      TYPE_PARAMETER name:V index:0 variance: signature:[ /DKeyColumn|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+    CLASS CLASS name:DynamoKey signature:/DynamoKey|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DynamoKey
+      CONSTRUCTOR signature:/DynamoKey.<init>|<init>(){}[0] visibility:protected <> () returnType:<root>.DynamoKey [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DynamoKey signature:/DynamoKey|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:DynamoPartitionKey signature:/DynamoPartitionKey|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.DynamoKey]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /DynamoPartitionKey|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/DynamoPartitionKey.<init>|<init>(DynamoColumn<1:0,out|DynamoKeyColumnType<1:0>>){}[0] visibility:public <> (partitionKey:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>) returnType:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> [primary]
+        VALUE_PARAMETER name:partitionKey index:0 type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.DynamoKey'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DynamoPartitionKey signature:/DynamoPartitionKey|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.DynamoKey]'
+      PROPERTY name:partitionKey signature:/DynamoPartitionKey.partitionKey|{}partitionKey[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'partitionKey: <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> declared in <root>.DynamoPartitionKey.<init>' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-partitionKey> signature:/DynamoPartitionKey.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>) returnType:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>
+          correspondingProperty: PROPERTY name:partitionKey signature:/DynamoPartitionKey.partitionKey|{}partitionKey[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-partitionKey> (): <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> declared in <root>.DynamoPartitionKey'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.<get-partitionKey>' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/DynamoPartitionKey.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>) returnType:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> [operator] declared in <root>.DynamoPartitionKey'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+              receiver: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.component1' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/DynamoPartitionKey.copy|copy(DynamoColumn<1:0,out|DynamoKeyColumnType<1:0>>){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>, partitionKey:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>) returnType:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+        VALUE_PARAMETER name:partitionKey index:0 type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+              receiver: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.copy' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (partitionKey: <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>): <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey'
+            CONSTRUCTOR_CALL 'public constructor <init> (partitionKey: <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>>) [primary] declared in <root>.DynamoPartitionKey' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+              <class: P>: P of <root>.DynamoPartitionKey
+              partitionKey: GET_VAR 'partitionKey: <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> declared in <root>.DynamoPartitionKey.copy' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/DynamoPartitionKey.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.DynamoPartitionKey'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="DynamoPartitionKey("
+              CONST String type=<unbound IrClassSymbolImpl> value="partitionKey="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.toString' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/DynamoPartitionKey.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.DynamoPartitionKey'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.hashCode' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/DynamoPartitionKey.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.equals' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DynamoPartitionKey.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoPartitionKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DynamoPartitionKey.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoPartitionKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> [val]
+            TYPE_OP type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=CAST typeOperand=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DynamoPartitionKey.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+                    receiver: GET_VAR '<this>: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> declared in <root>.DynamoPartitionKey.equals' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoPartitionKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> [val] declared in <root>.DynamoPartitionKey.equals' type=<root>.DynamoPartitionKey<P of <root>.DynamoPartitionKey> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoPartitionKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoPartitionKey'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:DynamoCompositeKey signature:/DynamoCompositeKey|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.DynamoKey]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+      TYPE_PARAMETER name:P index:0 variance: signature:[ /DynamoCompositeKey|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:S index:1 variance: signature:[ /DynamoCompositeKey|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.DynamoColumnType<V of <root>.DynamoColumn>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/DynamoCompositeKey.<init>|<init>(DynamoColumn<1:0,out|DynamoKeyColumnType<1:0>>;DynamoColumn<1:1,out|DynamoKeyColumnType<1:1>>){}[0] visibility:public <> (partitionKey:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>, sortKey:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>) returnType:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> [primary]
+        VALUE_PARAMETER name:partitionKey index:0 type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>
+        VALUE_PARAMETER name:sortKey index:1 type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.DynamoKey'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DynamoCompositeKey signature:/DynamoCompositeKey|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.DynamoKey]'
+      PROPERTY name:partitionKey signature:/DynamoCompositeKey.partitionKey|{}partitionKey[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'partitionKey: <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey.<init>' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-partitionKey> signature:/DynamoCompositeKey.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>) returnType:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>
+          correspondingProperty: PROPERTY name:partitionKey signature:/DynamoCompositeKey.partitionKey|{}partitionKey[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-partitionKey> (): <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.<get-partitionKey>' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+      PROPERTY name:sortKey signature:/DynamoCompositeKey.sortKey|{}sortKey[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'sortKey: <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey.<init>' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sortKey> signature:/DynamoCompositeKey.sortKey.<get-sortKey>|<get-sortKey>(){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>) returnType:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>
+          correspondingProperty: PROPERTY name:sortKey signature:/DynamoCompositeKey.sortKey|{}sortKey[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sortKey> (): <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.<get-sortKey>' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/DynamoCompositeKey.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>) returnType:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> [operator] declared in <root>.DynamoCompositeKey'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+              receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.component1' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component2 signature:/DynamoCompositeKey.component2|component2(){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>) returnType:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component2 (): <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> [operator] declared in <root>.DynamoCompositeKey'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+              receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.component2' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/DynamoCompositeKey.copy|copy(DynamoColumn<1:0,out|DynamoKeyColumnType<1:0>>;DynamoColumn<1:1,out|DynamoKeyColumnType<1:1>>){}[0] visibility:public modality:FINAL <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>, partitionKey:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>, sortKey:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>) returnType:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        VALUE_PARAMETER name:partitionKey index:0 type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+              receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.copy' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+        VALUE_PARAMETER name:sortKey index:1 type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+              receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.copy' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (partitionKey: <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>, sortKey: <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>): <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey'
+            CONSTRUCTOR_CALL 'public constructor <init> (partitionKey: <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>>, sortKey: <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>>) [primary] declared in <root>.DynamoCompositeKey' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+              <class: P>: P of <root>.DynamoCompositeKey
+              <class: S>: S of <root>.DynamoCompositeKey
+              partitionKey: GET_VAR 'partitionKey: <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey.copy' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+              sortKey: GET_VAR 'sortKey: <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey.copy' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/DynamoCompositeKey.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.DynamoCompositeKey'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="DynamoCompositeKey("
+              CONST String type=<unbound IrClassSymbolImpl> value="partitionKey="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.toString' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=", "
+              CONST String type=<unbound IrClassSymbolImpl> value="sortKey="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.toString' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/DynamoCompositeKey.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        BLOCK_BODY
+          VAR name:result type:<unbound IrClassSymbolImpl> [var]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+                receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.hashCode' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+          SET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.DynamoCompositeKey.hashCode' type=<unbound IrClassSymbolImpl> origin=EQ
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.DynamoCompositeKey.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=31
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+                  receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.hashCode' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.DynamoCompositeKey'
+            GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.DynamoCompositeKey.hashCode' type=<unbound IrClassSymbolImpl> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/DynamoCompositeKey.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.equals' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DynamoCompositeKey.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoCompositeKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DynamoCompositeKey.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoCompositeKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> [val]
+            TYPE_OP type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=CAST typeOperand=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.DynamoCompositeKey.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+                    receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.equals' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:partitionKey signature:[ /DynamoCompositeKey.partitionKey|{}partitionKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> [val] declared in <root>.DynamoCompositeKey.equals' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoCompositeKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+                    receiver: GET_VAR '<this>: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> declared in <root>.DynamoCompositeKey.equals' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sortKey signature:[ /DynamoCompositeKey.sortKey|{}sortKey[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:partitionKey type:<root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> visibility:private [final]] ] type:<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> visibility:private [final]' type=<root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> [val] declared in <root>.DynamoCompositeKey.equals' type=<root>.DynamoCompositeKey<P of <root>.DynamoCompositeKey, S of <root>.DynamoCompositeKey> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoCompositeKey'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.DynamoCompositeKey'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    PROPERTY name:columns signature:/columns|@DynamoKey{}columns[0] visibility:public modality:FINAL [val]
+      FUN name:<get-columns> signature:/columns.<get-columns>|<get-columns>@DynamoKey(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.DynamoKey) returnType:<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>>
+        correspondingProperty: PROPERTY name:columns signature:/columns|@DynamoKey{}columns[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.DynamoKey
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-columns> (): <unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> declared in <root>'
+            BLOCK type=<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> origin=WHEN
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.DynamoKey [val]
+                GET_VAR '<this>: <root>.DynamoKey declared in <root>.<get-columns>' type=<root>.DynamoKey origin=null
+              WHEN type=<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> origin=WHEN
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.DynamoPartitionKey<*>
+                    GET_VAR 'val tmp0_subject: <root>.DynamoKey [val] declared in <root>.<get-columns>' type=<root>.DynamoKey origin=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> origin=null
+                    <1>: <root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>
+                    1: CALL 'public final fun <get-partitionKey> (): <root>.DynamoColumn<P of <root>.DynamoPartitionKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoPartitionKey>> declared in <root>.DynamoPartitionKey' type=<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+                      $this: TYPE_OP type=<root>.DynamoPartitionKey<*> origin=IMPLICIT_CAST typeOperand=<root>.DynamoPartitionKey<*>
+                        GET_VAR '<this>: <root>.DynamoKey declared in <root>.<get-columns>' type=<root>.DynamoKey origin=null
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.DynamoCompositeKey<*, *>
+                    GET_VAR 'val tmp0_subject: <root>.DynamoKey [val] declared in <root>.<get-columns>' type=<root>.DynamoKey origin=null
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> origin=null
+                    <1>: <root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>
+                    1: VARARG type=<unbound IrClassSymbolImpl><out <root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> varargElementType=<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>
+                      CALL 'public final fun <get-partitionKey> (): <root>.DynamoColumn<P of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<P of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey' type=<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+                        $this: TYPE_OP type=<root>.DynamoCompositeKey<*, *> origin=IMPLICIT_CAST typeOperand=<root>.DynamoCompositeKey<*, *>
+                          GET_VAR '<this>: <root>.DynamoKey declared in <root>.<get-columns>' type=<root>.DynamoKey origin=null
+                      CALL 'public final fun <get-sortKey> (): <root>.DynamoColumn<S of <root>.DynamoCompositeKey, out <root>.DynamoKeyColumnType<S of <root>.DynamoCompositeKey>> declared in <root>.DynamoCompositeKey' type=<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>> origin=GET_PROPERTY
+                        $this: TYPE_OP type=<root>.DynamoCompositeKey<*, *> origin=IMPLICIT_CAST typeOperand=<root>.DynamoCompositeKey<*, *>
+                          GET_VAR '<this>: <root>.DynamoKey declared in <root>.<get-columns>' type=<root>.DynamoKey origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:columnsSet signature:/columnsSet|@DynamoKey{}columnsSet[0] visibility:public modality:FINAL [val]
+      FUN name:<get-columnsSet> signature:/columnsSet.<get-columnsSet>|<get-columnsSet>@DynamoKey(){}[0] visibility:public modality:FINAL <> ($receiver:<root>.DynamoKey) returnType:<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>>
+        correspondingProperty: PROPERTY name:columnsSet signature:/columnsSet|@DynamoKey{}columnsSet[0] visibility:public modality:FINAL [val]
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.DynamoKey
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-columnsSet> (): <unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> declared in <root>'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> origin=null
+              <1>: <root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>
+              $receiver: CALL 'public final fun <get-columns> (): <unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> declared in <root>' type=<unbound IrClassSymbolImpl><<root>.DynamoColumn<out <unbound IrClassSymbolImpl>?, out <root>.DynamoKeyColumnType<out <unbound IrClassSymbolImpl>?>>> origin=GET_PROPERTY
+                $receiver: GET_VAR '<this>: <root>.DynamoKey declared in <root>.<get-columnsSet>' type=<root>.DynamoKey origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

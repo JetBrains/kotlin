@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: demo2
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun print(o: kotlin/Any?): kotlin/Unit
+
+      public final fun test(i: kotlin/Int): kotlin/Unit
+    }
+  }
+}

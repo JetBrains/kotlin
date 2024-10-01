@@ -1,0 +1,76 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Id
+    // class name: Name
+    // class name: Password
+
+    public final value class Id<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(id: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val id: T#0
+        public final get
+
+      // underlying property: id
+
+      // underlying type: T#0
+    }
+
+    public final value class Name<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(name: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val name: T#0
+        public final get
+
+      // underlying property: name
+
+      // underlying type: T#0
+    }
+
+    public final value class Password<T#0 /* T */ : kotlin/String> : kotlin/Any {
+
+      public constructor(password: T#0)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val password: T#0
+        public final get
+
+      // underlying property: password
+
+      // underlying type: T#0
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(id: Id<kotlin/String>): kotlin/Unit
+
+      public final fun test(name: Name<kotlin/String>): kotlin/Unit
+
+      public final fun test(password: Password<kotlin/String>): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,317 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt49752.kt
+    CLASS CLASS name:Interpreter signature:/Interpreter|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Interpreter<IS of <root>.Interpreter, TS of <root>.Interpreter, SELF of <root>.Interpreter>
+      TYPE_PARAMETER name:IS index:0 variance: signature:[ /Interpreter|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IS index:0 variance: superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false
+      TYPE_PARAMETER name:TS index:1 variance: signature:[ /Interpreter|null[0] <- Local[<TP>,1|TYPE_PARAMETER name:TS index:1 variance: superTypes:[<root>.Interpreter.Terminal<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter.Terminal<SELF of <root>.Interpreter>] reified:false
+      TYPE_PARAMETER name:SELF index:2 variance: signature:[ /Interpreter|null[0] <- Local[<TP>,2|TYPE_PARAMETER name:SELF index:2 variance: superTypes:[<root>.Interpreter<IS of <root>.Interpreter, TS of <root>.Interpreter, SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter<IS of <root>.Interpreter, TS of <root>.Interpreter, SELF of <root>.Interpreter>] reified:false
+      CONSTRUCTOR signature:/Interpreter.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Interpreter<IS of <root>.Interpreter, TS of <root>.Interpreter, SELF of <root>.Interpreter> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Interpreter signature:/Interpreter|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS INTERFACE name:Step signature:/Interpreter.Step|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Interpreter.Step<INTERPRETER of <root>.Interpreter.Step>
+        TYPE_PARAMETER name:INTERPRETER index:0 variance: signature:[ /Interpreter.Step|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IS index:0 variance: superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter<out <root>.Interpreter.Intermediary<INTERPRETER of <root>.Interpreter.Step>, out <root>.Interpreter.Terminal<INTERPRETER of <root>.Interpreter.Step>, INTERPRETER of <root>.Interpreter.Step>] reified:false
+      CLASS INTERFACE name:Intermediary signature:/Interpreter.Intermediary|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Interpreter.Step<INTERPRETER of <root>.Interpreter.Intermediary>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Interpreter.Intermediary<INTERPRETER of <root>.Interpreter.Intermediary>
+        TYPE_PARAMETER name:INTERPRETER index:0 variance: signature:[ /Interpreter.Intermediary|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IS index:0 variance: superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter<out <root>.Interpreter.Intermediary<INTERPRETER of <root>.Interpreter.Intermediary>, out <root>.Interpreter.Terminal<INTERPRETER of <root>.Interpreter.Intermediary>, INTERPRETER of <root>.Interpreter.Intermediary>] reified:false
+      CLASS INTERFACE name:Terminal signature:/Interpreter.Terminal|null[0] modality:ABSTRACT visibility:public superTypes:[<root>.Interpreter.Step<INTERPRETER of <root>.Interpreter.Terminal>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Interpreter.Terminal<INTERPRETER of <root>.Interpreter.Terminal>
+        TYPE_PARAMETER name:INTERPRETER index:0 variance: signature:[ /Interpreter.Terminal|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IS index:0 variance: superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter<out <root>.Interpreter.Intermediary<INTERPRETER of <root>.Interpreter.Terminal>, out <root>.Interpreter.Terminal<INTERPRETER of <root>.Interpreter.Terminal>, INTERPRETER of <root>.Interpreter.Terminal>] reified:false
+      FUN name:next signature:/Interpreter.next|next(1:0){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Interpreter<IS of <root>.Interpreter, TS of <root>.Interpreter, SELF of <root>.Interpreter>, currentStep:IS of <root>.Interpreter) returnType:<unbound IrClassSymbolImpl><<root>.Interpreter.Step<SELF of <root>.Interpreter>>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Interpreter<IS of <root>.Interpreter, TS of <root>.Interpreter, SELF of <root>.Interpreter>
+        VALUE_PARAMETER name:currentStep index:0 type:IS of <root>.Interpreter
+    CLASS INTERFACE name:BaseTerminal signature:/BaseTerminal|null[0] modality:SEALED visibility:public superTypes:[<root>.Interpreter.Terminal<I of <root>.BaseTerminal>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseTerminal<I of <root>.BaseTerminal>
+      TYPE_PARAMETER name:I index:0 variance: signature:[ /BaseTerminal|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IS index:0 variance: superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter<*, out <root>.BaseTerminal<I of <root>.BaseTerminal>, I of <root>.BaseTerminal>] reified:false
+      CLASS CLASS name:Success signature:/BaseTerminal.Success|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.BaseTerminal<I of <root>.BaseTerminal.Success>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+        TYPE_PARAMETER name:I index:0 variance: signature:[ /BaseTerminal.Success|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:IS index:0 variance: superTypes:[<root>.Interpreter.Intermediary<SELF of <root>.Interpreter>] reified:false] ] superTypes:[<root>.Interpreter<*, out <root>.BaseTerminal<I of <root>.BaseTerminal.Success>, I of <root>.BaseTerminal.Success>] reified:false
+        CONSTRUCTOR signature:/BaseTerminal.Success.<init>|<init>(kotlin.Int){}[0] visibility:public <> (result:<unbound IrClassSymbolImpl>) returnType:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> [primary]
+          VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Success signature:/BaseTerminal.Success|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.BaseTerminal<I of <root>.BaseTerminal.Success>]'
+        PROPERTY name:result signature:/BaseTerminal.Success.result|{}result[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'result: <unbound IrClassSymbolImpl> declared in <root>.BaseTerminal.Success.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> signature:/BaseTerminal.Success.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:result signature:/BaseTerminal.Success.result|{}result[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.BaseTerminal.Success'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.<get-result>' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/BaseTerminal.Success.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>) returnType:<unbound IrClassSymbolImpl> [operator]
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.BaseTerminal.Success'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.component1' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/BaseTerminal.Success.copy|copy(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>, result:<unbound IrClassSymbolImpl>) returnType:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+          VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl>
+            EXPRESSION_BODY
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.copy' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (result: <unbound IrClassSymbolImpl>): <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success'
+              CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in <root>.BaseTerminal.Success' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+                <class: I>: I of <root>.BaseTerminal.Success
+                result: GET_VAR 'result: <unbound IrClassSymbolImpl> declared in <root>.BaseTerminal.Success.copy' type=<unbound IrClassSymbolImpl> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/BaseTerminal.Success.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.BaseTerminal.Success'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Success("
+                CONST String type=<unbound IrClassSymbolImpl> value="result="
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.toString' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=")"
+        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/BaseTerminal.Success.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>) returnType:<unbound IrClassSymbolImpl>
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.BaseTerminal.Success'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.hashCode' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/BaseTerminal.Success.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+          VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+          BLOCK_BODY
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                  arg0: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.equals' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+                  arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.BaseTerminal.Success.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.BaseTerminal.Success'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+                  GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.BaseTerminal.Success.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.BaseTerminal.Success'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> [val]
+              TYPE_OP type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=CAST typeOperand=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.BaseTerminal.Success.equals' type=<unbound IrClassSymbolImpl>? origin=null
+            WHEN type=<unbound IrClassSymbolImpl> origin=null
+              BRANCH
+                if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR '<this>: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> declared in <root>.BaseTerminal.Success.equals' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+                    arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result signature:[ /BaseTerminal.Success.result|{}result[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                      receiver: GET_VAR 'val tmp0_other_with_cast: <root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> [val] declared in <root>.BaseTerminal.Success.equals' type=<root>.BaseTerminal.Success<I of <root>.BaseTerminal.Success> origin=null
+                then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.BaseTerminal.Success'
+                  CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.BaseTerminal.Success'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:CountingInterpreter signature:/CountingInterpreter|null[0] modality:FINAL visibility:public superTypes:[<root>.Interpreter<<root>.CountingInterpreter.Intermediary, <root>.BaseTerminal.Success<<root>.CountingInterpreter>, <root>.CountingInterpreter>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CountingInterpreter
+      CONSTRUCTOR signature:/CountingInterpreter.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.CountingInterpreter [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Interpreter'
+            <IS>: <root>.CountingInterpreter.Intermediary
+            <TS>: <root>.BaseTerminal.Success<<root>.CountingInterpreter>
+            <SELF>: <root>.CountingInterpreter
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CountingInterpreter signature:/CountingInterpreter|null[0] modality:FINAL visibility:public superTypes:[<root>.Interpreter<<root>.CountingInterpreter.Intermediary, <root>.BaseTerminal.Success<<root>.CountingInterpreter>, <root>.CountingInterpreter>]'
+      CLASS INTERFACE name:Intermediary signature:/CountingInterpreter.Intermediary|null[0] modality:SEALED visibility:public superTypes:[<root>.Interpreter.Intermediary<<root>.CountingInterpreter>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CountingInterpreter.Intermediary
+        CLASS CLASS name:KeepCounting signature:/CountingInterpreter.Intermediary.KeepCounting|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.CountingInterpreter.Intermediary]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+          CONSTRUCTOR signature:/CountingInterpreter.Intermediary.KeepCounting.<init>|<init>(kotlin.Int){}[0] visibility:public <> (togo:<unbound IrClassSymbolImpl>) returnType:<root>.CountingInterpreter.Intermediary.KeepCounting [primary]
+            VALUE_PARAMETER name:togo index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KeepCounting signature:/CountingInterpreter.Intermediary.KeepCounting|null[0] modality:FINAL visibility:public [data] superTypes:[<root>.CountingInterpreter.Intermediary]'
+          PROPERTY name:togo signature:/CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+              EXPRESSION_BODY
+                GET_VAR 'togo: <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-togo> signature:/CountingInterpreter.Intermediary.KeepCounting.togo.<get-togo>|<get-togo>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingInterpreter.Intermediary.KeepCounting) returnType:<unbound IrClassSymbolImpl>
+              correspondingProperty: PROPERTY name:togo signature:/CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+              BLOCK_BODY
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-togo> (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.<get-togo>' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+          FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:/CountingInterpreter.Intermediary.KeepCounting.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingInterpreter.Intermediary.KeepCounting) returnType:<unbound IrClassSymbolImpl> [operator]
+            $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.component1' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+          FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:/CountingInterpreter.Intermediary.KeepCounting.copy|copy(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingInterpreter.Intermediary.KeepCounting, togo:<unbound IrClassSymbolImpl>) returnType:<root>.CountingInterpreter.Intermediary.KeepCounting
+            $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+            VALUE_PARAMETER name:togo index:0 type:<unbound IrClassSymbolImpl>
+              EXPRESSION_BODY
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.copy' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (togo: <unbound IrClassSymbolImpl>): <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                CONSTRUCTOR_CALL 'public constructor <init> (togo: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CountingInterpreter.Intermediary.KeepCounting' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                  togo: GET_VAR 'togo: <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting.copy' type=<unbound IrClassSymbolImpl> origin=null
+          FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:/CountingInterpreter.Intermediary.KeepCounting.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingInterpreter.Intermediary.KeepCounting) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="KeepCounting("
+                  CONST String type=<unbound IrClassSymbolImpl> value="togo="
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.toString' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value=")"
+          FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:/CountingInterpreter.Intermediary.KeepCounting.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingInterpreter.Intermediary.KeepCounting) returnType:<unbound IrClassSymbolImpl>
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.hashCode' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+          FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:/CountingInterpreter.Intermediary.KeepCounting.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingInterpreter.Intermediary.KeepCounting, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+            overridden:
+              UNBOUND IrSimpleFunctionSymbolImpl
+            $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter.Intermediary.KeepCounting
+            VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+            BLOCK_BODY
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                    arg0: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.equals' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                    arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.CountingInterpreter.Intermediary.KeepCounting.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.CountingInterpreter.Intermediary.KeepCounting
+                    GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.CountingInterpreter.Intermediary.KeepCounting.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.CountingInterpreter.Intermediary.KeepCounting [val]
+                TYPE_OP type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=CAST typeOperand=<root>.CountingInterpreter.Intermediary.KeepCounting
+                  GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.CountingInterpreter.Intermediary.KeepCounting.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              WHEN type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                      arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                        receiver: GET_VAR '<this>: <root>.CountingInterpreter.Intermediary.KeepCounting declared in <root>.CountingInterpreter.Intermediary.KeepCounting.equals' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                      arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:togo signature:[ /CountingInterpreter.Intermediary.KeepCounting.togo|{}togo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                        receiver: GET_VAR 'val tmp0_other_with_cast: <root>.CountingInterpreter.Intermediary.KeepCounting [val] declared in <root>.CountingInterpreter.Intermediary.KeepCounting.equals' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                  then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                    CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CountingInterpreter.Intermediary.KeepCounting'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      PROPERTY name:count signature:/CountingInterpreter.count|{}count[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:count signature:[ /CountingInterpreter.count|{}count[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-count> signature:/CountingInterpreter.count.<get-count>|<get-count>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingInterpreter) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:count signature:/CountingInterpreter.count|{}count[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-count> (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:count signature:[ /CountingInterpreter.count|{}count[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CountingInterpreter declared in <root>.CountingInterpreter.<get-count>' type=<root>.CountingInterpreter origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-count> signature:/CountingInterpreter.count.<set-count>|<set-count>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.CountingInterpreter, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:count signature:/CountingInterpreter.count|{}count[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:count signature:[ /CountingInterpreter.count|{}count[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.CountingInterpreter declared in <root>.CountingInterpreter.<set-count>' type=<root>.CountingInterpreter origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.<set-count>' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:next signature:/CountingInterpreter.next|next(CountingInterpreter.Intermediary){}[0] visibility:public modality:OPEN <> ($this:<root>.CountingInterpreter, currentStep:<root>.CountingInterpreter.Intermediary) returnType:<unbound IrClassSymbolImpl><<root>.Interpreter.Step<<root>.CountingInterpreter>>
+        overridden:
+          public abstract fun next (currentStep: IS of <root>.Interpreter): <unbound IrClassSymbolImpl><<root>.Interpreter.Step<SELF of <root>.Interpreter>> declared in <root>.Interpreter
+        $this: VALUE_PARAMETER name:<this> type:<root>.CountingInterpreter
+        VALUE_PARAMETER name:currentStep index:0 type:<root>.CountingInterpreter.Intermediary
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (currentStep: <root>.CountingInterpreter.Intermediary): <unbound IrClassSymbolImpl><<root>.Interpreter.Step<<root>.CountingInterpreter>> declared in <root>.CountingInterpreter'
+            FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Interpreter.Step<<root>.CountingInterpreter>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Interpreter.Step<<root>.CountingInterpreter>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.Interpreter.Step<<root>.CountingInterpreter> declared in <root>.CountingInterpreter.next'
+                    BLOCK type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=WHEN
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.CountingInterpreter.Intermediary [val]
+                        GET_VAR 'currentStep: <root>.CountingInterpreter.Intermediary declared in <root>.CountingInterpreter.next' type=<root>.CountingInterpreter.Intermediary origin=null
+                      WHEN type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=WHEN
+                        BRANCH
+                          if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.CountingInterpreter.Intermediary.KeepCounting
+                            GET_VAR 'val tmp0_subject: <root>.CountingInterpreter.Intermediary [val] declared in <root>.CountingInterpreter.next.<anonymous>' type=<root>.CountingInterpreter.Intermediary origin=null
+                          then: WHEN type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=IF
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                                arg0: CALL 'public final fun <get-togo> (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                  $this: TYPE_OP type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=IMPLICIT_CAST typeOperand=<root>.CountingInterpreter.Intermediary.KeepCounting
+                                    GET_VAR 'currentStep: <root>.CountingInterpreter.Intermediary declared in <root>.CountingInterpreter.next' type=<root>.CountingInterpreter.Intermediary origin=null
+                                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                              then: BLOCK type=<root>.BaseTerminal.Success<<root>.CountingInterpreter> origin=null
+                                CONSTRUCTOR_CALL 'public constructor <init> (result: <unbound IrClassSymbolImpl>) [primary] declared in <root>.BaseTerminal.Success' type=<root>.BaseTerminal.Success<<root>.CountingInterpreter> origin=null
+                                  <class: I>: <root>.CountingInterpreter
+                                  result: CALL 'public final fun <get-count> (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                    $this: GET_VAR '<this>: <root>.CountingInterpreter declared in <root>.CountingInterpreter.next' type=<root>.CountingInterpreter origin=null
+                            BRANCH
+                              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                              then: BLOCK type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                                  BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                                      CALL 'public final fun <get-count> (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                        $this: GET_VAR '<this>: <root>.CountingInterpreter declared in <root>.CountingInterpreter.next' type=<root>.CountingInterpreter origin=null
+                                    CALL 'public final fun <set-count> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                      $this: GET_VAR '<this>: <root>.CountingInterpreter declared in <root>.CountingInterpreter.next' type=<root>.CountingInterpreter origin=null
+                                      <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.CountingInterpreter.next.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.CountingInterpreter.next.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                                CONSTRUCTOR_CALL 'public constructor <init> (togo: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CountingInterpreter.Intermediary.KeepCounting' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+                                  togo: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MINUS
+                                    $this: CALL 'public final fun <get-togo> (): <unbound IrClassSymbolImpl> declared in <root>.CountingInterpreter.Intermediary.KeepCounting' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                                      $this: TYPE_OP type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=IMPLICIT_CAST typeOperand=<root>.CountingInterpreter.Intermediary.KeepCounting
+                                        GET_VAR 'currentStep: <root>.CountingInterpreter.Intermediary declared in <root>.CountingInterpreter.next' type=<root>.CountingInterpreter.Intermediary origin=null
+                                    1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+                        BRANCH
+                          if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                          then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:interpreter type:<root>.CountingInterpreter [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CountingInterpreter' type=<root>.CountingInterpreter origin=null
+        VAR name:step type:<root>.Interpreter.Step<<root>.CountingInterpreter> [var]
+          CONSTRUCTOR_CALL 'public constructor <init> (togo: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CountingInterpreter.Intermediary.KeepCounting' type=<root>.CountingInterpreter.Intermediary.KeepCounting origin=null
+            togo: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        WHILE label=null origin=WHILE_LOOP
+          condition: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.CountingInterpreter.Intermediary
+            GET_VAR 'var step: <root>.Interpreter.Step<<root>.CountingInterpreter> [var] declared in <root>.box' type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=null
+          body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            SET_VAR 'var step: <root>.Interpreter.Step<<root>.CountingInterpreter> [var] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=EQ
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=INVOKE
+                $this: CALL 'public open fun next (currentStep: <root>.CountingInterpreter.Intermediary): <unbound IrClassSymbolImpl><<root>.Interpreter.Step<<root>.CountingInterpreter>> declared in <root>.CountingInterpreter' type=<unbound IrClassSymbolImpl><<root>.Interpreter.Step<<root>.CountingInterpreter>> origin=null
+                  $this: GET_VAR 'val interpreter: <root>.CountingInterpreter [val] declared in <root>.box' type=<root>.CountingInterpreter origin=null
+                  currentStep: TYPE_OP type=<root>.CountingInterpreter.Intermediary origin=IMPLICIT_CAST typeOperand=<root>.CountingInterpreter.Intermediary
+                    GET_VAR 'var step: <root>.Interpreter.Step<<root>.CountingInterpreter> [var] declared in <root>.box' type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: CALL 'public final fun <get-result> (): <unbound IrClassSymbolImpl> declared in <root>.BaseTerminal.Success' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: TYPE_OP type=<root>.BaseTerminal.Success<<root>.CountingInterpreter> origin=CAST typeOperand=<root>.BaseTerminal.Success<<root>.CountingInterpreter>
+                    GET_VAR 'var step: <root>.Interpreter.Step<<root>.CountingInterpreter> [var] declared in <root>.box' type=<root>.Interpreter.Step<<root>.CountingInterpreter> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="NOK"

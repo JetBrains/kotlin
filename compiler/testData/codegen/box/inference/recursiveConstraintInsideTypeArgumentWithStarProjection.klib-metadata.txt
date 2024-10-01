@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Foo
+    // class name: KFlowable
+
+    public final class Bar : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class Foo<out T#0 /* T */> : kotlin/Any {
+
+      public constructor(key: T#0)
+
+      public final val key: T#0
+        public final get
+    }
+
+    public final class KFlowable<T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#1 /* R */> scan(initial: T#1, accumulator: kotlin/Function2<T#1, T#0, T#1>): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(k: KFlowable<Foo<kotlin/Enum<*>>>): kotlin/Unit
+    }
+  }
+}

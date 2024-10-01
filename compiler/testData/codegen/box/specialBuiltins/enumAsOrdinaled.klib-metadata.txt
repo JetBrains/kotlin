@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Ordinaled
+
+    public final enum class A : Ordinaled, kotlin/Enum<A> {
+
+      private constructor()
+
+      X,
+
+      // has Enum.entries
+    }
+
+    public abstract interface Ordinaled : kotlin/Any {
+
+      public abstract val ordinal: kotlin/Int
+        public abstract get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

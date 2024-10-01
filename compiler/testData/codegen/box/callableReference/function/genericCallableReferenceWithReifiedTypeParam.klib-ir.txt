@@ -1,0 +1,497 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/genericCallableReferenceWithReifiedTypeParam.kt
+    FUN name:funNoArgs signature:/funNoArgs|funNoArgs(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> () returnType:T of <root>.funNoArgs? [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /funNoArgs|funNoArgs(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funNoArgs <T> (): T of <root>.funNoArgs? [inline] declared in <root>'
+          TYPE_OP type=T of <root>.funNoArgs? origin=SAFE_CAST typeOperand=T of <root>.funNoArgs
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:testFunctionNoArgs signature:/testFunctionNoArgs|testFunctionNoArgs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val]
+          FUNCTION_REFERENCE 'public final fun funNoArgs <T> (): T of <root>.funNoArgs? [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>?
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.testFunctionNoArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=VARIABLE_AS_FUNCTION
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:funWithArgs signature:/funWithArgs|funWithArgs(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.funWithArgs, y:T of <root>.funWithArgs) returnType:<unbound IrClassSymbolImpl><T of <root>.funWithArgs, T of <root>.funWithArgs> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /funWithArgs|funWithArgs(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:x index:0 type:T of <root>.funWithArgs
+      VALUE_PARAMETER name:y index:1 type:T of <root>.funWithArgs
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funWithArgs <T> (x: T of <root>.funWithArgs, y: T of <root>.funWithArgs): <unbound IrClassSymbolImpl><T of <root>.funWithArgs, T of <root>.funWithArgs> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.funWithArgs, T of <root>.funWithArgs> origin=null
+            <1>: T of <root>.funWithArgs
+            <2>: T of <root>.funWithArgs
+            $receiver: GET_VAR 'x: T of <root>.funWithArgs declared in <root>.funWithArgs' type=T of <root>.funWithArgs origin=null
+            1: GET_VAR 'y: T of <root>.funWithArgs declared in <root>.funWithArgs' type=T of <root>.funWithArgs origin=null
+    FUN name:testFunctionWithArgs signature:/testFunctionWithArgs|testFunctionWithArgs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithArgs <T> (x: T of <root>.funWithArgs, y: T of <root>.funWithArgs): <unbound IrClassSymbolImpl><T of <root>.funWithArgs, T of <root>.funWithArgs> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            2: CONST String type=<unbound IrClassSymbolImpl> value="K"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="O"
+            1: CONST String type=<unbound IrClassSymbolImpl> value="K"
+    FUN name:funWithVarargs signature:/funWithVarargs|funWithVarargs(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (i:<unbound IrClassSymbolImpl><out T of <root>.funWithVarargs>) returnType:<unbound IrClassSymbolImpl><T of <root>.funWithVarargs> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /funWithVarargs|funWithVarargs(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl><out T of <root>.funWithVarargs> varargElementType:T of <root>.funWithVarargs [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funWithVarargs <T> (vararg i: T of <root>.funWithVarargs): <unbound IrClassSymbolImpl><T of <root>.funWithVarargs> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.funWithVarargs> origin=null
+            <1>: T of <root>.funWithVarargs
+            $receiver: GET_VAR 'i: <unbound IrClassSymbolImpl><out T of <root>.funWithVarargs> [vararg] declared in <root>.funWithVarargs' type=<unbound IrClassSymbolImpl><out T of <root>.funWithVarargs> origin=null
+    FUN name:testFunctionWithVarargs signature:/testFunctionWithVarargs|testFunctionWithVarargs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithVarargs <T> (vararg i: T of <root>.funWithVarargs): <unbound IrClassSymbolImpl><T of <root>.funWithVarargs> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithVarargs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+                CONST Int type=<unbound IrClassSymbolImpl> value=3
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONST Int type=<unbound IrClassSymbolImpl> value=3
+    FUN name:funWithExtensionNoArgs signature:/funWithExtensionNoArgs|funWithExtensionNoArgs@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.funWithExtensionNoArgs) returnType:T of <root>.funWithExtensionNoArgs [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /funWithExtensionNoArgs|funWithExtensionNoArgs@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.funWithExtensionNoArgs
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funWithExtensionNoArgs <T> (): T of <root>.funWithExtensionNoArgs [inline] declared in <root>'
+          GET_VAR '<this>: T of <root>.funWithExtensionNoArgs declared in <root>.funWithExtensionNoArgs' type=T of <root>.funWithExtensionNoArgs origin=null
+    FUN name:testFunctionWithExtensionNoArgs signature:/testFunctionWithExtensionNoArgs|testFunctionWithExtensionNoArgs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable1 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionNoArgs <T> (): T of <root>.funWithExtensionNoArgs [inline] declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val callable1: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionNoArgs' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+        VAR name:callable2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionNoArgs <T> (): T of <root>.funWithExtensionNoArgs [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK2"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val callable2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionNoArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK2"
+        VAR name:callable3 type:<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionNoArgs <T> (): T of <root>.funWithExtensionNoArgs [inline] declared in <root>' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+            $receiver: GET_VAR 'val callable1: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionNoArgs' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+              $this: GET_VAR 'val callable3: <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionNoArgs' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK3"
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK3"
+        VAR name:callable4 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK4"
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                $receiver: VALUE_PARAMETER name:$this$with type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.testFunctionWithExtensionNoArgs'
+                    FUNCTION_REFERENCE 'public final fun funWithExtensionNoArgs <T> (): T of <root>.funWithExtensionNoArgs [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+                      <T>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.testFunctionWithExtensionNoArgs.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'val callable4: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionNoArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK4"
+    FUN name:funWithExtensionAndArgs signature:/funWithExtensionAndArgs|funWithExtensionAndArgs@0:0(kotlin.Int;kotlin.Int){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.funWithExtensionAndArgs, x:<unbound IrClassSymbolImpl>, y:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /funWithExtensionAndArgs|funWithExtensionAndArgs@0:0(kotlin.Int;kotlin.Int){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.funWithExtensionAndArgs
+      VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:y index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funWithExtensionAndArgs <T> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> origin=null
+            <1>: T of <root>.funWithExtensionAndArgs
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR '<this>: T of <root>.funWithExtensionAndArgs declared in <root>.funWithExtensionAndArgs' type=T of <root>.funWithExtensionAndArgs origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.funWithExtensionAndArgs' type=<unbound IrClassSymbolImpl> origin=null
+              1: GET_VAR 'y: <unbound IrClassSymbolImpl> declared in <root>.funWithExtensionAndArgs' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testFunctionWithExtensionAndArgs signature:/testFunctionWithExtensionAndArgs|testFunctionWithExtensionAndArgs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable1 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionAndArgs <T> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable1: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        VAR name:callable2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionAndArgs <T> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK2"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=4
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK2"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=7
+        VAR name:callable3 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionAndArgs <T> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            $receiver: GET_VAR 'val callable1: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable3: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=6
+        VAR name:cb type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=null
+        VAR name:s type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=<unbound IrClassSymbolImpl> origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=11
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val cb: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK3"
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=7
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=8
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK3"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=15
+        VAR name:callable4 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK4"
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                $receiver: VALUE_PARAMETER name:$this$with type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in <root>.testFunctionWithExtensionAndArgs'
+                    FUNCTION_REFERENCE 'public final fun funWithExtensionAndArgs <T> (x: <unbound IrClassSymbolImpl>, y: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+                      <T>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.testFunctionWithExtensionAndArgs.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable4: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=9
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=10
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK4"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=19
+    FUN name:funWithExtensionAndVarargs signature:/funWithExtensionAndVarargs|funWithExtensionAndVarargs@0:0(kotlin.IntArray...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.funWithExtensionAndVarargs, i:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /funWithExtensionAndVarargs|funWithExtensionAndVarargs@0:0(kotlin.IntArray...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.funWithExtensionAndVarargs
+      VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl> varargElementType:<unbound IrClassSymbolImpl> [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun funWithExtensionAndVarargs <T> (vararg i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> origin=null
+            <1>: T of <root>.funWithExtensionAndVarargs
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR '<this>: T of <root>.funWithExtensionAndVarargs declared in <root>.funWithExtensionAndVarargs' type=T of <root>.funWithExtensionAndVarargs origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: GET_VAR 'i: <unbound IrClassSymbolImpl> [vararg] declared in <root>.funWithExtensionAndVarargs' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:testFunctionWithExtensionAndVararg signature:/testFunctionWithExtensionAndVararg|testFunctionWithExtensionAndVararg(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable1 type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionAndVarargs <T> (vararg i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable1: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=1
+                  CONST Int type=<unbound IrClassSymbolImpl> value=2
+                  CONST Int type=<unbound IrClassSymbolImpl> value=3
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=6
+        VAR name:callable2 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionAndVarargs <T> (vararg i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK2"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable2: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=4
+                  CONST Int type=<unbound IrClassSymbolImpl> value=5
+                  CONST Int type=<unbound IrClassSymbolImpl> value=6
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK2"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=15
+        VAR name:callable3 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> [val]
+          FUNCTION_REFERENCE 'public final fun funWithExtensionAndVarargs <T> (vararg i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+            <T>: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            $receiver: GET_VAR 'val callable1: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+        VAR IR_TEMPORARY_VARIABLE name:<destruct> type:<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable3: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=7
+                  CONST Int type=<unbound IrClassSymbolImpl> value=8
+        VAR name:cb type:@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=null
+        VAR name:s type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val <destruct>: <unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=<unbound IrClassSymbolImpl><@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>, <unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'val s: <unbound IrClassSymbolImpl> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=<unbound IrClassSymbolImpl> origin=null
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=15
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val cb: @[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK3"
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=9
+                  CONST Int type=<unbound IrClassSymbolImpl> value=10
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK3"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=19
+        VAR name:callable4 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK4"
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                $receiver: VALUE_PARAMETER name:$this$with type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in <root>.testFunctionWithExtensionAndVararg'
+                    FUNCTION_REFERENCE 'public final fun funWithExtensionAndVarargs <T> (vararg i: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl><T of <root>.funWithExtensionAndVarargs, <unbound IrClassSymbolImpl>> [inline] declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+                      <T>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR '$this$with: <unbound IrClassSymbolImpl> declared in <root>.testFunctionWithExtensionAndVararg.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable4: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testFunctionWithExtensionAndVararg' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                  CONST Int type=<unbound IrClassSymbolImpl> value=11
+                  CONST Int type=<unbound IrClassSymbolImpl> value=12
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="OK4"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=23
+    CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass
+      CONSTRUCTOR signature:/TestClass.<init>|<init>(kotlin.String){}[0] visibility:public <> (s:<unbound IrClassSymbolImpl>) returnType:<root>.TestClass [primary]
+        VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass signature:/TestClass|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:s signature:/TestClass.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ /TestClass.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.TestClass.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:/TestClass.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:s signature:/TestClass.s|{}s[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ /TestClass.s|{}s[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-s>' type=<root>.TestClass origin=null
+      FUN name:classFunNoArgs signature:/TestClass.classFunNoArgs|classFunNoArgs(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.TestClass) returnType:T of <root>.TestClass.classFunNoArgs? [inline]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /TestClass.classFunNoArgs|classFunNoArgs(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun classFunNoArgs <T> (): T of <root>.TestClass.classFunNoArgs? [inline] declared in <root>.TestClass'
+            TYPE_OP type=T of <root>.TestClass.classFunNoArgs? origin=SAFE_CAST typeOperand=T of <root>.TestClass.classFunNoArgs
+              CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.classFunNoArgs' type=<root>.TestClass origin=null
+      FUN name:classFunWithArgs signature:/TestClass.classFunWithArgs|classFunWithArgs(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.TestClass, x:T of <root>.TestClass.classFunWithArgs) returnType:<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithArgs, <unbound IrClassSymbolImpl>> [inline]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /TestClass.classFunWithArgs|classFunWithArgs(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        VALUE_PARAMETER name:x index:0 type:T of <root>.TestClass.classFunWithArgs
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun classFunWithArgs <T> (x: T of <root>.TestClass.classFunWithArgs): <unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>.TestClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithArgs, <unbound IrClassSymbolImpl>> origin=null
+              <1>: T of <root>.TestClass.classFunWithArgs
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: GET_VAR 'x: T of <root>.TestClass.classFunWithArgs declared in <root>.TestClass.classFunWithArgs' type=T of <root>.TestClass.classFunWithArgs origin=null
+              1: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.classFunWithArgs' type=<root>.TestClass origin=null
+      FUN name:classFunWithVarargs signature:/TestClass.classFunWithVarargs|classFunWithVarargs(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.TestClass, i:<unbound IrClassSymbolImpl><out T of <root>.TestClass.classFunWithVarargs>) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithVarargs>, <unbound IrClassSymbolImpl>> [inline]
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /TestClass.classFunWithVarargs|classFunWithVarargs(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl><out T of <root>.TestClass.classFunWithVarargs> varargElementType:T of <root>.TestClass.classFunWithVarargs [vararg]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun classFunWithVarargs <T> (vararg i: T of <root>.TestClass.classFunWithVarargs): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithVarargs>, <unbound IrClassSymbolImpl>> [inline] declared in <root>.TestClass'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithVarargs>, <unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithVarargs>
+              <2>: <unbound IrClassSymbolImpl>
+              $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithVarargs> origin=null
+                <1>: T of <root>.TestClass.classFunWithVarargs
+                $receiver: GET_VAR 'i: <unbound IrClassSymbolImpl><out T of <root>.TestClass.classFunWithVarargs> [vararg] declared in <root>.TestClass.classFunWithVarargs' type=<unbound IrClassSymbolImpl><out T of <root>.TestClass.classFunWithVarargs> origin=null
+              1: CALL 'public final fun <get-s> (): <unbound IrClassSymbolImpl> declared in <root>.TestClass' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.classFunWithVarargs' type=<root>.TestClass origin=null
+    FUN name:testClassFunctionNoArgs signature:/testClassFunctionNoArgs|testClassFunctionNoArgs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+            <1>: <root>.TestClass
+            <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+            1: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestClass, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.TestClass) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+                $receiver: VALUE_PARAMETER name:$this$with type:<root>.TestClass
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.testClassFunctionNoArgs'
+                    FUNCTION_REFERENCE 'public final fun classFunNoArgs <T> (): T of <root>.TestClass.classFunNoArgs? [inline] declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+                      <T>: <unbound IrClassSymbolImpl>?
+                      $this: GET_VAR '$this$with: <root>.TestClass declared in <root>.testClassFunctionNoArgs.<anonymous>' type=<root>.TestClass origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> [val] declared in <root>.testClassFunctionNoArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=VARIABLE_AS_FUNCTION
+          2: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+    FUN name:testClassFunctionWithArgs signature:/testClassFunctionWithArgs|testClassFunctionWithArgs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <root>.TestClass
+            <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            1: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestClass, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.TestClass) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                $receiver: VALUE_PARAMETER name:$this$with type:<root>.TestClass
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in <root>.testClassFunctionWithArgs'
+                    FUNCTION_REFERENCE 'public final fun classFunWithArgs <T> (x: T of <root>.TestClass.classFunWithArgs): <unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithArgs, <unbound IrClassSymbolImpl>> [inline] declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+                      <T>: <unbound IrClassSymbolImpl>
+                      $this: GET_VAR '$this$with: <root>.TestClass declared in <root>.testClassFunctionWithArgs.<anonymous>' type=<root>.TestClass origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testClassFunctionWithArgs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+    FUN name:testClassFunctionWithVarargs signature:/testClassFunctionWithVarargs|testClassFunctionWithVarargs(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:callable type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> origin=null
+            <1>: <root>.TestClass
+            <2>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>>
+            1: CONSTRUCTOR_CALL 'public constructor <init> (s: <unbound IrClassSymbolImpl>) [primary] declared in <root>.TestClass' type=<root>.TestClass origin=null
+              s: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+            2: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.TestClass, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.TestClass) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>>
+                $receiver: VALUE_PARAMETER name:$this$with type:<root>.TestClass
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> declared in <root>.testClassFunctionWithVarargs'
+                    FUNCTION_REFERENCE 'public final fun classFunWithVarargs <T> (vararg i: T of <root>.TestClass.classFunWithVarargs): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><T of <root>.TestClass.classFunWithVarargs>, <unbound IrClassSymbolImpl>> [inline] declared in <root>.TestClass' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> origin=null reflectionTarget=<same>
+                      <T>: <unbound IrClassSymbolImpl>
+                      $this: GET_VAR '$this$with: <root>.TestClass declared in <root>.testClassFunctionWithVarargs.<anonymous>' type=<root>.TestClass origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=INVOKE
+            $this: GET_VAR 'val callable: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> [val] declared in <root>.testClassFunctionWithVarargs' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>>> origin=VARIABLE_AS_FUNCTION
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            <2>: <unbound IrClassSymbolImpl>
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+            1: CONST String type=<unbound IrClassSymbolImpl> value="OK1"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun testFunctionNoArgs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testFunctionWithArgs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testFunctionWithVarargs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testFunctionWithExtensionNoArgs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testFunctionWithExtensionAndArgs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testFunctionWithExtensionAndVararg (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testClassFunctionNoArgs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testClassFunctionWithArgs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun testClassFunctionWithVarargs (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

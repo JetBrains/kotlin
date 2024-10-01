@@ -1,0 +1,35 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt2739.kt
+    FUN name:foo signature:/foo|foo(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (ts:<unbound IrClassSymbolImpl><out T of <root>.foo>) returnType:T of <root>.foo?
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:ts index:0 type:<unbound IrClassSymbolImpl><out T of <root>.foo> varargElementType:T of <root>.foo [vararg]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo <T> (vararg ts: T of <root>.foo): T of <root>.foo? declared in <root>'
+          CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    CLASS CLASS name:Pair signature:/Pair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Pair<A of <root>.Pair>
+      TYPE_PARAMETER name:A index:0 variance: signature:[ /Pair|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      CONSTRUCTOR signature:/Pair.<init>|<init>(1:0){}[0] visibility:public <> (a:A of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair> [primary]
+        VALUE_PARAMETER name:a index:0 type:A of <root>.Pair
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Pair signature:/Pair|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:v type:<root>.Pair<<unbound IrClassSymbolImpl>>? [val]
+          CALL 'public final fun foo <T> (vararg ts: T of <root>.foo): T of <root>.foo? declared in <root>' type=<root>.Pair<<unbound IrClassSymbolImpl>>? origin=null
+            <T>: <root>.Pair<<unbound IrClassSymbolImpl>>
+            ts: VARARG type=<unbound IrClassSymbolImpl><out <root>.Pair<<unbound IrClassSymbolImpl>>> varargElementType=<root>.Pair<<unbound IrClassSymbolImpl>>
+              CONSTRUCTOR_CALL 'public constructor <init> (a: A of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<<unbound IrClassSymbolImpl>> origin=null
+                <class: A>: <unbound IrClassSymbolImpl>
+                a: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val v: <root>.Pair<<unbound IrClassSymbolImpl>>? [val] declared in <root>.box' type=<root>.Pair<<unbound IrClassSymbolImpl>>? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="fail"

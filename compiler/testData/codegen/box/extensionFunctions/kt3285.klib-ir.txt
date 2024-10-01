@@ -1,0 +1,99 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt3285.kt
+    PROPERTY name:sayResult signature:/sayResult|{}sayResult[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:sayResult signature:[ /sayResult|{}sayResult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sayResult type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sayResult> signature:/sayResult.<get-sayResult>|<get-sayResult>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sayResult signature:/sayResult|{}sayResult[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sayResult> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sayResult signature:[ /sayResult|{}sayResult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sayResult type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-sayResult> signature:/sayResult.<set-sayResult>|<set-sayResult>(kotlin.String){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sayResult signature:/sayResult|{}sayResult[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sayResult signature:[ /sayResult|{}sayResult[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sayResult type:kotlin.String visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-sayResult>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:NoiseMaker signature:/NoiseMaker|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NoiseMaker
+      CONSTRUCTOR signature:/NoiseMaker.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.NoiseMaker [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NoiseMaker signature:/NoiseMaker|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:say signature:/NoiseMaker.say|say(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.NoiseMaker, str:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.NoiseMaker
+        VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'public final fun <set-sayResult> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: CALL 'public final fun <get-sayResult> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              1: GET_VAR 'str: <unbound IrClassSymbolImpl> declared in <root>.NoiseMaker.say' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:noiseMaker signature:/noiseMaker|noiseMaker(kotlin.Function1<NoiseMaker,kotlin.Unit>){}[0] visibility:public modality:FINAL <> (f:@[<unbound>] <unbound IrClassSymbolImpl><<root>.NoiseMaker, <unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:f index:0 type:@[<unbound>] <unbound IrClassSymbolImpl><<root>.NoiseMaker, <unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        VAR name:noiseMaker type:<root>.NoiseMaker [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.NoiseMaker' type=<root>.NoiseMaker origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+          $this: GET_VAR 'f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.NoiseMaker, <unbound IrClassSymbolImpl>> declared in <root>.noiseMaker' type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.NoiseMaker, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+          1: GET_VAR 'val noiseMaker: <root>.NoiseMaker [val] declared in <root>.noiseMaker' type=<root>.NoiseMaker origin=null
+    CLASS CLASS name:Pet signature:/Pet|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Pet
+      CONSTRUCTOR signature:/Pet.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Pet [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Pet signature:/Pet|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:playWith signature:/Pet.playWith|playWith@NoiseMaker(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($this:<root>.Pet, $receiver:<root>.NoiseMaker, friend:T of <root>.Pet.playWith) returnType:<unbound IrClassSymbolImpl>
+        TYPE_PARAMETER name:T index:0 variance: signature:[ /Pet.playWith|playWith@NoiseMaker(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+        $this: VALUE_PARAMETER name:<this> type:<root>.Pet
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.NoiseMaker
+        VALUE_PARAMETER name:friend index:0 type:T of <root>.Pet.playWith
+        BLOCK_BODY
+          CALL 'public final fun say (str: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NoiseMaker' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.NoiseMaker declared in <root>.Pet.playWith' type=<root>.NoiseMaker origin=null
+            str: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CONST String type=<unbound IrClassSymbolImpl> value="Playing with "
+              1: GET_VAR 'friend: T of <root>.Pet.playWith declared in <root>.Pet.playWith' type=T of <root>.Pet.playWith origin=null
+      FUN name:play signature:/Pet.play|play(){}[0] visibility:public modality:ABSTRACT <> ($this:<root>.Pet) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Pet
+    CLASS CLASS name:Doggy signature:/Doggy|null[0] modality:FINAL visibility:public superTypes:[<root>.Pet]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Doggy
+      CONSTRUCTOR signature:/Doggy.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Doggy [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Pet'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Doggy signature:/Doggy|null[0] modality:FINAL visibility:public superTypes:[<root>.Pet]'
+      FUN name:play signature:/Doggy.play|play(){}[0] visibility:public modality:OPEN <> ($this:<root>.Doggy) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun play (): <unbound IrClassSymbolImpl> declared in <root>.Pet
+        $this: VALUE_PARAMETER name:<this> type:<root>.Doggy
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun play (): <unbound IrClassSymbolImpl> declared in <root>.Doggy'
+            CALL 'public final fun noiseMaker (f: @[<unbound>] <unbound IrClassSymbolImpl><<root>.NoiseMaker, <unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+              f: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<root>.NoiseMaker, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.NoiseMaker) returnType:<unbound IrClassSymbolImpl>
+                  $receiver: VALUE_PARAMETER name:$this$noiseMaker type:<root>.NoiseMaker
+                  BLOCK_BODY
+                    CALL 'public final fun say (str: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.NoiseMaker' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$noiseMaker: <root>.NoiseMaker declared in <root>.Doggy.play.<anonymous>' type=<root>.NoiseMaker origin=null
+                      str: CONST String type=<unbound IrClassSymbolImpl> value="Time to play! "
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      $this: GET_VAR '<this>: <root>.Doggy declared in <root>.Doggy.play' type=<root>.Doggy origin=null
+                      $receiver: GET_VAR '$this$noiseMaker: <root>.NoiseMaker declared in <root>.Doggy.play.<anonymous>' type=<root>.NoiseMaker origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="my owner!"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public open fun play (): <unbound IrClassSymbolImpl> declared in <root>.Doggy' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Doggy' type=<root>.Doggy origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sayResult> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Time to play! Playing with my owner!"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail: "
+                CALL 'public final fun <get-sayResult> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

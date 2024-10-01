@@ -1,0 +1,130 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Anno
+    // class name: BinaryAnnotation
+    // class name: Delegate
+    // class name: SomeEnum
+    // class name: WithConstructorArgumentAnnotation
+
+    @BinaryAnnotation(str = "String")
+    public final class A : kotlin/Any {
+
+      @BinaryAnnotation(str = "String")
+      public /* secondary */ constructor()
+
+      @BinaryAnnotation(str = "String")
+      public constructor(i: kotlin/Int)
+
+      public final val i: kotlin/Int
+        public final get
+    }
+
+    @BinaryAnnotation(str = "String")
+    public final annotation class Anno : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPEALIAS])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class BinaryAnnotation : kotlin/Annotation {
+
+      public constructor(str: kotlin/String)
+
+      public final val str: kotlin/String
+        public final get
+    }
+
+    public final object Delegate : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun getValue(instance: kotlin/Any?, property: kotlin/Any): kotlin/String
+
+      public final operator fun setValue(instance: kotlin/Any?, property: kotlin/Any, value: kotlin/String): kotlin/Unit
+    }
+
+    public final enum class SomeEnum : kotlin/Enum<SomeEnum> {
+
+      private constructor()
+
+      @BinaryAnnotation(str = "String")
+      A,
+
+      B,
+
+      // has Enum.entries
+    }
+
+    public final class WithConstructorArgumentAnnotation : kotlin/Any {
+
+      public constructor(@BinaryAnnotation(str = "String") a: kotlin/Int)
+
+      public final val a: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      @BinaryAnnotation(str = "String")
+      public final fun bar(): kotlin/Unit
+
+      public final fun foo(@BinaryAnnotation(str = "String") a: kotlin/Int): kotlin/Unit
+
+      public final fun <@BinaryAnnotation(str = "String") T#0 /* T */, T#1 /* U */> fooWithTypeParam(a: T#0, b: T#1): kotlin/Unit
+
+      public final fun kotlin/String.myExtension(): kotlin/Unit
+
+      public final val kotlin/String.a: kotlin/Int
+        public final /* non-default */ get
+
+      public final var b: kotlin/Int
+        @BinaryAnnotation(str = "String")
+        public final /* non-default */ get
+        @BinaryAnnotation(str = "String")
+        public final /* non-default */ set(value: kotlin/Int)
+
+      public final var mutablePropWithAnnotationOnSetterParam: kotlin/Int
+        public final get
+        public final /* non-default */ set(@BinaryAnnotation(str = "String") x: kotlin/Int)
+
+      public final /* delegated */ val p: kotlin/String
+        public final /* non-default */ get
+
+      @BinaryAnnotation(str = "String")
+      public final val prop: kotlin/Int /* = ... */
+        public final get
+
+      public final var setParamProp: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(@BinaryAnnotation(str = "String") x: kotlin/Int)
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+
+      @BinaryAnnotation(str = "String")
+      public typealias C = kotlin/Int /* = kotlin/Int */
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

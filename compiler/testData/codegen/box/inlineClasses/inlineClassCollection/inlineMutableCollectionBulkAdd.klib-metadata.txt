@@ -1,0 +1,164 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: IC1
+    // class name: IC2
+    // class name: IC3
+
+    public final value class IC1<T#0 /* T */> : kotlin/collections/MutableList<T#0> {
+
+      public constructor(list: kotlin/collections/MutableList<T#0>)
+
+      public open /* delegation */ fun add(element: T#0): kotlin/Boolean
+
+      public open /* delegation */ fun add(index: kotlin/Int, element: T#0): kotlin/Unit
+
+      public open /* delegation */ fun addAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open /* delegation */ fun addAll(index: kotlin/Int, elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open /* delegation */ fun clear(): kotlin/Unit
+
+      public open /* delegation */ operator fun contains(element: T#0): kotlin/Boolean
+
+      public open /* delegation */ fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(index: kotlin/Int): T#0
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* delegation */ fun indexOf(element: T#0): kotlin/Int
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ operator fun iterator(): kotlin/collections/MutableIterator<T#0>
+
+      public open /* delegation */ fun lastIndexOf(element: T#0): kotlin/Int
+
+      public open /* delegation */ fun listIterator(): kotlin/collections/MutableListIterator<T#0>
+
+      public open /* delegation */ fun listIterator(index: kotlin/Int): kotlin/collections/MutableListIterator<T#0>
+
+      public open /* delegation */ fun remove(element: T#0): kotlin/Boolean
+
+      public open /* delegation */ fun removeAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open /* delegation */ fun removeAt(index: kotlin/Int): T#0
+
+      public open /* delegation */ fun retainAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open /* delegation */ operator fun set(index: kotlin/Int, element: T#0): T#0
+
+      public open /* delegation */ fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/MutableList<T#0>
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val list: kotlin/collections/MutableList<T#0>
+        public final get
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+
+      // underlying property: list
+
+      // underlying type: kotlin/collections/MutableList<T#0>
+    }
+
+    public final value class IC2<T#0 /* T */> : kotlin/collections/MutableCollection<T#0> {
+
+      public constructor(x: kotlin/Int)
+
+      public open fun add(element: T#0): kotlin/Nothing
+
+      public open fun addAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+
+      public open fun clear(): kotlin/Nothing
+
+      public open operator fun contains(element: T#0): kotlin/Nothing
+
+      public open fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Nothing
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open fun isEmpty(): kotlin/Nothing
+
+      public open operator fun iterator(): kotlin/Nothing
+
+      public open fun remove(element: T#0): kotlin/Nothing
+
+      public open fun removeAll(elements: kotlin/collections/Collection<T#0>): kotlin/Nothing
+
+      public open fun retainAll(elements: kotlin/collections/Collection<T#0>): kotlin/Nothing
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open val size: kotlin/Int
+        public open /* non-default */ get
+
+      public final val x: kotlin/Int
+        public final get
+
+      // underlying property: x
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class IC3<T#0 /* T */> : kotlin/collections/MutableMap<T#0, T#0> {
+
+      public constructor(map: kotlin/collections/MutableMap<T#0, T#0>)
+
+      public open /* delegation */ fun clear(): kotlin/Unit
+
+      public open /* delegation */ fun containsKey(key: T#0): kotlin/Boolean
+
+      public open /* delegation */ fun containsValue(value: T#0): kotlin/Boolean
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* delegation */ operator fun get(key: T#0): T#0?
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* delegation */ fun isEmpty(): kotlin/Boolean
+
+      public open /* delegation */ fun put(key: T#0, value: T#0): T#0?
+
+      public open /* delegation */ fun putAll(from: kotlin/collections/Map<out T#0, T#0>): kotlin/Unit
+
+      public open /* delegation */ fun remove(key: T#0): T#0?
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open /* delegation */ val entries: kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<T#0, T#0>>
+        public open get
+
+      public open /* delegation */ val keys: kotlin/collections/MutableSet<T#0>
+        public open get
+
+      public final val map: kotlin/collections/MutableMap<T#0, T#0>
+        public final get
+
+      public open /* delegation */ val size: kotlin/Int
+        public open get
+
+      public open /* delegation */ val values: kotlin/collections/MutableCollection<T#0>
+        public open get
+
+      // underlying property: map
+
+      // underlying type: kotlin/collections/MutableMap<T#0, T#0>
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,305 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/inlineCollectionOfInlineClassGeneric.kt
+    CLASS CLASS name:Z signature:/Z|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z<T of <root>.Z>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Z|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Int] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>] reified:false
+      CONSTRUCTOR signature:/Z.<init>|<init>(1:0){}[0] visibility:public <> (x:T of <root>.Z) returnType:<root>.Z<T of <root>.Z> [primary]
+        VALUE_PARAMETER name:x index:0 type:T of <root>.Z
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z signature:/Z|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/Z.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Z.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:T of <root>.Z visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: T of <root>.Z declared in <root>.Z.<init>' type=T of <root>.Z origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/Z.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Z<T of <root>.Z>) returnType:T of <root>.Z
+          correspondingProperty: PROPERTY name:x signature:/Z.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): T of <root>.Z declared in <root>.Z'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Z.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:T of <root>.Z visibility:private [final]' type=T of <root>.Z origin=null
+                receiver: GET_VAR '<this>: <root>.Z<T of <root>.Z> declared in <root>.Z.<get-x>' type=<root>.Z<T of <root>.Z> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/Z.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z<T of <root>.Z>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Z("
+              CONST String type=<unbound IrClassSymbolImpl> value="x="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Z.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:T of <root>.Z visibility:private [final]' type=T of <root>.Z origin=null
+                receiver: GET_VAR '<this>: <root>.Z<T of <root>.Z> declared in <root>.Z.toString' type=<root>.Z<T of <root>.Z> origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/Z.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.Z<T of <root>.Z>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.Z'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Z.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:T of <root>.Z visibility:private [final]' type=T of <root>.Z origin=null
+                receiver: GET_VAR '<this>: <root>.Z<T of <root>.Z> declared in <root>.Z.hashCode' type=<root>.Z<T of <root>.Z> origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/Z.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.Z<T of <root>.Z>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.Z<T of <root>.Z>
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.Z<T of <root>.Z>
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Z.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Z'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Z<T of <root>.Z> [val]
+            TYPE_OP type=<root>.Z<T of <root>.Z> origin=CAST typeOperand=<root>.Z<T of <root>.Z>
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.Z.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Z.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:T of <root>.Z visibility:private [final]' type=T of <root>.Z origin=null
+                    receiver: GET_VAR '<this>: <root>.Z<T of <root>.Z> declared in <root>.Z.equals' type=<root>.Z<T of <root>.Z> origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /Z.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:T of <root>.Z visibility:private [final]' type=T of <root>.Z origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Z<T of <root>.Z> [val] declared in <root>.Z.equals' type=<root>.Z<T of <root>.Z> origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Z'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.Z'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS CLASS name:ZArray signature:/ZArray|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZArray
+      CONSTRUCTOR signature:/ZArray.<init>|<init>(kotlin.IntArray){}[0] visibility:public <> (storage:<unbound IrClassSymbolImpl>) returnType:<root>.ZArray [primary]
+        VALUE_PARAMETER name:storage index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZArray signature:/ZArray|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>]'
+      PROPERTY name:storage signature:/ZArray.storage|{}storage[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'storage: <unbound IrClassSymbolImpl> declared in <root>.ZArray.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-storage> signature:/ZArray.storage.<get-storage>|<get-storage>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ZArray) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:storage signature:/ZArray.storage|{}storage[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.<get-storage>' type=<root>.ZArray origin=null
+      PROPERTY name:size signature:/ZArray.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN name:<get-size> signature:/ZArray.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:size signature:/ZArray.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.<get-size>' type=<root>.ZArray origin=null
+      FUN name:contains signature:/ZArray.contains|contains(Z<kotlin.Int>){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray, element:<root>.Z<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        VALUE_PARAMETER name:element index:0 type:<root>.Z<<unbound IrClassSymbolImpl>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun contains (element: <root>.Z<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ZArray'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.contains' type=<root>.ZArray origin=null
+              1: CALL 'public final fun <get-x> (): T of <root>.Z declared in <root>.Z' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR 'element: <root>.Z<<unbound IrClassSymbolImpl>> declared in <root>.ZArray.contains' type=<root>.Z<<unbound IrClassSymbolImpl>> origin=null
+      FUN name:containsAll signature:/ZArray.containsAll|containsAll(kotlin.collections.Collection<Z<kotlin.Int>>){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray, elements:<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        VALUE_PARAMETER name:elements index:0 type:<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsAll (elements: <unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>): <unbound IrClassSymbolImpl> declared in <root>.ZArray'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              <1>: <root>.Z<<unbound IrClassSymbolImpl>>
+              $receiver: GET_VAR 'elements: <unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>> declared in <root>.ZArray.containsAll' type=<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>> origin=null
+              1: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.Z<<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                  VALUE_PARAMETER name:it index:0 type:<root>.Z<<unbound IrClassSymbolImpl>>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <root>.Z<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.ZArray.containsAll'
+                      CALL 'public open fun contains (element: <root>.Z<<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [operator] declared in <root>.ZArray' type=<unbound IrClassSymbolImpl> origin=null
+                        $this: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.containsAll' type=<root>.ZArray origin=null
+                        element: GET_VAR 'it: <root>.Z<<unbound IrClassSymbolImpl>> declared in <root>.ZArray.containsAll.<anonymous>' type=<root>.Z<<unbound IrClassSymbolImpl>> origin=null
+      FUN name:isEmpty signature:/ZArray.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.ZArray'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CALL 'public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.isEmpty' type=<root>.ZArray origin=null
+      CLASS CLASS name:ZArrayIterator signature:/ZArray.ZArrayIterator|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ZArray.ZArrayIterator
+        CONSTRUCTOR signature:/ZArray.ZArrayIterator.<init>|<init>(kotlin.IntArray){}[0] visibility:public <> (storage:<unbound IrClassSymbolImpl>) returnType:<root>.ZArray.ZArrayIterator [primary]
+          VALUE_PARAMETER name:storage index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ZArrayIterator signature:/ZArray.ZArrayIterator|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>>]'
+        PROPERTY name:storage signature:/ZArray.ZArrayIterator.storage|{}storage[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.ZArrayIterator.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              GET_VAR 'storage: <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-storage> signature:/ZArray.ZArrayIterator.storage.<get-storage>|<get-storage>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ZArray.ZArrayIterator) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:storage signature:/ZArray.ZArrayIterator.storage|{}storage[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:<root>.ZArray.ZArrayIterator
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.ZArrayIterator.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.<get-storage>' type=<root>.ZArray.ZArrayIterator origin=null
+        PROPERTY name:index signature:/ZArray.ZArrayIterator.index|{}index[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:index signature:[ /ZArray.ZArrayIterator.index|{}index[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CONST Int type=<unbound IrClassSymbolImpl> value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-index> signature:/ZArray.ZArrayIterator.index.<get-index>|<get-index>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ZArray.ZArrayIterator) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:index signature:/ZArray.ZArrayIterator.index|{}index[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.ZArray.ZArrayIterator
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index signature:[ /ZArray.ZArrayIterator.index|{}index[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.<get-index>' type=<root>.ZArray.ZArrayIterator origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-index> signature:/ZArray.ZArrayIterator.index.<set-index>|<set-index>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.ZArray.ZArrayIterator, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:index signature:/ZArray.ZArrayIterator.index|{}index[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.ZArray.ZArrayIterator
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index signature:[ /ZArray.ZArrayIterator.index|{}index[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.<set-index>' type=<root>.ZArray.ZArrayIterator origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator.<set-index>' type=<unbound IrClassSymbolImpl> origin=null
+        FUN name:hasNext signature:/ZArray.ZArrayIterator.hasNext|hasNext(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray.ZArrayIterator) returnType:<unbound IrClassSymbolImpl> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZArray.ZArrayIterator
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun hasNext (): <unbound IrClassSymbolImpl> [operator] declared in <root>.ZArray.ZArrayIterator'
+              CALL 'public final fun less (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=LT
+                arg0: CALL 'public final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.hasNext' type=<root>.ZArray.ZArrayIterator origin=null
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.hasNext' type=<root>.ZArray.ZArrayIterator origin=null
+        FUN name:next signature:/ZArray.ZArrayIterator.next|next(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray.ZArrayIterator) returnType:<root>.Z<<unbound IrClassSymbolImpl>> [operator]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.ZArray.ZArrayIterator
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun next (): <root>.Z<<unbound IrClassSymbolImpl>> [operator] declared in <root>.ZArray.ZArrayIterator'
+              CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Z) [primary] declared in <root>.Z' type=<root>.Z<<unbound IrClassSymbolImpl>> origin=null
+                <class: T>: <unbound IrClassSymbolImpl>
+                x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                  $this: CALL 'public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.next' type=<root>.ZArray.ZArrayIterator origin=null
+                  1: BLOCK type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                    VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+                      CALL 'public final fun <get-index> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.next' type=<root>.ZArray.ZArrayIterator origin=null
+                    CALL 'public final fun <set-index> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ZArray.ZArrayIterator' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                      $this: GET_VAR '<this>: <root>.ZArray.ZArrayIterator declared in <root>.ZArray.ZArrayIterator.next' type=<root>.ZArray.ZArrayIterator origin=null
+                      <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+                        $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.ZArray.ZArrayIterator.next' type=<unbound IrClassSymbolImpl> origin=null
+                    GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.ZArray.ZArrayIterator.next' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:iterator signature:/ZArray.iterator|iterator(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray) returnType:<unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun iterator (): <unbound IrClassSymbolImpl><<root>.Z<<unbound IrClassSymbolImpl>>> [operator] declared in <root>.ZArray'
+            CONSTRUCTOR_CALL 'public constructor <init> (storage: <unbound IrClassSymbolImpl>) [primary] declared in <root>.ZArray.ZArrayIterator' type=<root>.ZArray.ZArrayIterator origin=null
+              storage: CALL 'public final fun <get-storage> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.iterator' type=<root>.ZArray origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/ZArray.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.ZArray'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="ZArray("
+              CONST String type=<unbound IrClassSymbolImpl> value="storage="
+              CALL 'public final fun dataClassArrayMemberToString (arg0: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.toString' type=<root>.ZArray origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/ZArray.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.ZArray'
+            CALL 'public final fun dataClassArrayMemberHashCode (arg0: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.hashCode' type=<root>.ZArray origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/ZArray.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.ZArray, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.ZArray
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.ZArray
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.ZArray.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.ZArray'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.ZArray [val]
+            TYPE_OP type=<root>.ZArray origin=CAST typeOperand=<root>.ZArray
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.ZArray.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.ZArray declared in <root>.ZArray.equals' type=<root>.ZArray origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:storage signature:[ /ZArray.storage|{}storage[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Z visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.ZArray [val] declared in <root>.ZArray.equals' type=<root>.ZArray origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.ZArray'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.ZArray'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:zs type:<root>.ZArray [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (storage: <unbound IrClassSymbolImpl>) [primary] declared in <root>.ZArray' type=<root>.ZArray origin=null
+            storage: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        VAR name:testSize type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.ZArray' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val zs: <root>.ZArray [val] declared in <root>.box' type=<root>.ZArray origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val testSize: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=5
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: testSize="
+                GET_VAR 'val testSize: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:testContains type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val zs: <root>.ZArray [val] declared in <root>.box' type=<root>.ZArray origin=null
+            1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=CAST typeOperand=<unbound IrClassSymbolImpl>
+              BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+                CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                  CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+                CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'val testContains: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="Failed: testContains="
+                GET_VAR 'val testContains: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

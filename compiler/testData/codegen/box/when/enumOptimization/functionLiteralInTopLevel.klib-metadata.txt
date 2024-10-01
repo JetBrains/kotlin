@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Season
+
+    public final enum class Season : kotlin/Enum<Season> {
+
+      private constructor()
+
+      WINTER,
+
+      SPRING,
+
+      SUMMER,
+
+      AUTUMN,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foo(x: Season, block: kotlin/Function1<Season, kotlin/String>): kotlin/String
+    }
+  }
+}

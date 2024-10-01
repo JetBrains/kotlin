@@ -1,0 +1,55 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Generic
+    // class name: MainSupertype
+    // class name: PlaceHolder
+    // class name: Recursive
+    // class name: Simple
+    // class name: SpecificSimple
+    // class name: SpecificStub
+    // class name: Stub
+
+    public abstract interface Generic<T#0 /* T */> : kotlin/Any {
+    }
+
+    public abstract interface MainSupertype : kotlin/Any {
+    }
+
+    public abstract interface PlaceHolder<T#0 /* T */ : MainSupertype> : Stub<T#0> {
+    }
+
+    public final class Recursive<T#0 /* T */ : Recursive<T#0>> : Generic<PlaceHolder<T#0>>, MainSupertype {
+
+      public constructor()
+    }
+
+    public open class Simple<T#0 /* T */> : Generic<T#0>, MainSupertype {
+
+      public constructor()
+    }
+
+    public abstract class SpecificSimple : Simple<SpecificStub<*>> {
+
+      public constructor()
+    }
+
+    public abstract interface SpecificStub<T#0 /* T */ : SpecificSimple> : Stub<T#0> {
+    }
+
+    public abstract interface Stub<T#0 /* T */ : MainSupertype> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> select(x: T#0?, y: T#0): T#0
+
+      public final fun takeElement(recursive: Recursive<*>?, simpleWithSpecific: Simple<SpecificStub<*>>): kotlin/Unit
+    }
+  }
+}

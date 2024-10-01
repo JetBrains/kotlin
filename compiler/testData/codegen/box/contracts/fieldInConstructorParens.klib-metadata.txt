@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Smth
+
+    public final class Smth : kotlin/Any {
+
+      public constructor()
+
+      private final inline fun calculate(block: kotlin/Function1<kotlin/Int, kotlin/Unit>): kotlin/Unit
+        contract {
+          callsInPlace(p#1, InvocationKind.EXACTLY_ONCE)
+        }
+
+      public final val whatever: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

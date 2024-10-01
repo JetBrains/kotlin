@@ -1,0 +1,61 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+
+    public final object A : kotlin/Any {
+
+      private constructor()
+
+      public final val a1: kotlin/Int /* = ... */
+        public final get
+
+      public final val a2: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final object B : kotlin/Any {
+
+      private constructor()
+
+      public final val b1: kotlin/Int
+        public final get
+
+      public final val b2: kotlin/Int
+        public final get
+    }
+
+    public final object C : kotlin/Any {
+
+      private constructor()
+
+      public final val c1: kotlin/Int /* = ... */
+        public final get
+
+      public final val c2: kotlin/Int
+        public final get
+
+      public final val c3: kotlin/Int
+        public final get
+
+      public final val c4: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun assertAUninitialized(): kotlin/Unit
+
+      public final fun assertBUninitialized(): kotlin/Unit
+
+      public final fun assertCUninitialized(): kotlin/Unit
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

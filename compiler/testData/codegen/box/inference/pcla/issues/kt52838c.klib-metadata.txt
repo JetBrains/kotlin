@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Buildee
+    // class name: DerivedBuildee
+
+    public open class Buildee<T#0 /* TV */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun getTypeVariable(): T#0
+
+      private final var storage: T#0
+        private final get
+        private final set
+    }
+
+    public final class DerivedBuildee<T#0 /* TA */> : Buildee<T#0> {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* PTV */> build(instructions: @kotlin/ExtensionFunctionType kotlin/Function1<Buildee<T#0>, kotlin/Unit>): Buildee<T#0>
+    }
+  }
+}

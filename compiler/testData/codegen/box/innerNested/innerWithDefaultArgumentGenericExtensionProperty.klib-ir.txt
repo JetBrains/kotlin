@@ -1,0 +1,95 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/innerWithDefaultArgumentGenericExtensionProperty.kt
+    PROPERTY name:accumulator signature:/accumulator|{}accumulator[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:accumulator signature:[ /accumulator|{}accumulator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:accumulator type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-accumulator> signature:/accumulator.<get-accumulator>|<get-accumulator>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:accumulator signature:/accumulator|{}accumulator[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-accumulator> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:accumulator signature:[ /accumulator|{}accumulator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:accumulator type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-accumulator> signature:/accumulator.<set-accumulator>|<set-accumulator>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:accumulator signature:/accumulator|{}accumulator[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:accumulator signature:[ /accumulator|{}accumulator[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:accumulator type:kotlin.Int visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-accumulator>' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:PropertyOwner signature:/PropertyOwner|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropertyOwner
+    CLASS CLASS name:Something signature:/Something|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Something<T of <root>.Something>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /Something|null[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.PropertyOwner] reified:false] ] superTypes:[<root>.PropertyOwner] reified:false
+      CONSTRUCTOR signature:/Something.<init>|<init>(1:0){}[0] visibility:public <> (ref:T of <root>.Something) returnType:<root>.Something<T of <root>.Something> [primary]
+        VALUE_PARAMETER name:ref index:0 type:T of <root>.Something
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Something signature:/Something|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:ref signature:/Something.ref|{}ref[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:ref signature:[ /Something.ref|{}ref[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:accumulator type:kotlin.Int visibility:private [static]] ] type:T of <root>.Something visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'ref: T of <root>.Something declared in <root>.Something.<init>' type=T of <root>.Something origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ref> signature:/Something.ref.<get-ref>|<get-ref>(){}[0] visibility:private modality:FINAL <> ($this:<root>.Something<T of <root>.Something>) returnType:T of <root>.Something
+          correspondingProperty: PROPERTY name:ref signature:/Something.ref|{}ref[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Something<T of <root>.Something>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-ref> (): T of <root>.Something declared in <root>.Something'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ref signature:[ /Something.ref|{}ref[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:accumulator type:kotlin.Int visibility:private [static]] ] type:T of <root>.Something visibility:private [final]' type=T of <root>.Something origin=null
+                receiver: GET_VAR '<this>: <root>.Something<T of <root>.Something> declared in <root>.Something.<get-ref>' type=<root>.Something<T of <root>.Something> origin=null
+      PROPERTY name:offset signature:/Something.offset|@PropertyOwner{}offset[0] visibility:public modality:FINAL [val]
+        FUN name:<get-offset> signature:/Something.offset.<get-offset>|<get-offset>@PropertyOwner(){}[0] visibility:public modality:FINAL <> ($this:<root>.Something<T of <root>.Something>, $receiver:<root>.PropertyOwner) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:offset signature:/Something.offset|@PropertyOwner{}offset[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Something<T of <root>.Something>
+          $receiver: VALUE_PARAMETER name:<this> type:<root>.PropertyOwner
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-offset> (): <unbound IrClassSymbolImpl> declared in <root>.Something'
+              CONST Int type=<unbound IrClassSymbolImpl> value=42
+      CLASS CLASS name:Item signature:/Something.Item|null[0] modality:FINAL visibility:private [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Something.Item<T of <root>.Something>
+        CONSTRUCTOR signature:/Something.Item.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Something<T of <root>.Something>) returnType:<root>.Something.Item<T of <root>.Something> [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Something<T of <root>.Something>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Item signature:/Something.Item|null[0] modality:FINAL visibility:private [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        FUN name:update signature:/Something.Item.update|update(2:0;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Something.Item<T of <root>.Something>, owner:T of <root>.Something, offset:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Something.Item<T of <root>.Something>
+          VALUE_PARAMETER name:owner index:0 type:T of <root>.Something
+          VALUE_PARAMETER name:offset index:1 type:<unbound IrClassSymbolImpl>
+            EXPRESSION_BODY
+              CALL 'public final fun <get-offset> (): <unbound IrClassSymbolImpl> declared in <root>.Something' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Something<T of <root>.Something> declared in <root>.Something' type=<root>.Something<T of <root>.Something> origin=null
+                $receiver: GET_VAR 'owner: T of <root>.Something declared in <root>.Something.Item.update' type=T of <root>.Something origin=null
+          BLOCK_BODY
+            CALL 'public final fun <set-accumulator> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-accumulator> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                1: GET_VAR 'offset: <unbound IrClassSymbolImpl> declared in <root>.Something.Item.update' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:ping signature:/Something.ping|ping(){}[0] visibility:public modality:FINAL <> ($this:<root>.Something<T of <root>.Something>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Something<T of <root>.Something>
+        BLOCK_BODY
+          VAR name:item type:<root>.Something.Item<T of <root>.Something> [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Something.Item' type=<root>.Something.Item<T of <root>.Something> origin=null
+              $outer: GET_VAR '<this>: <root>.Something<T of <root>.Something> declared in <root>.Something.ping' type=<root>.Something<T of <root>.Something> origin=null
+          CALL 'public final fun update (owner: T of <root>.Something, offset: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Something.Item' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val item: <root>.Something.Item<T of <root>.Something> [val] declared in <root>.Something.ping' type=<root>.Something.Item<T of <root>.Something> origin=null
+            owner: CALL 'private final fun <get-ref> (): T of <root>.Something declared in <root>.Something' type=T of <root>.Something origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Something<T of <root>.Something> declared in <root>.Something.ping' type=<root>.Something<T of <root>.Something> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun ping (): <unbound IrClassSymbolImpl> declared in <root>.Something' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> (ref: T of <root>.Something) [primary] declared in <root>.Something' type=<root>.Something<<root>.box.<no name provided>> origin=null
+            <class: T>: <root>.box.<no name provided>
+            ref: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+              CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.PropertyOwner]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.PropertyOwner]'
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CALL 'public final fun <get-accumulator> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

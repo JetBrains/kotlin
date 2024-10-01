@@ -1,0 +1,59 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: AnnotationWithArray
+    // class name: AnnotationWithVararg
+    // class name: B
+
+    @AnnotationWithVararg(array = ["String", "String2", "String3"])
+    public final class A : kotlin/Any {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class AnnotationWithArray : kotlin/Annotation {
+
+      public constructor(array: kotlin/Array<kotlin/String>)
+
+      public final val array: kotlin/Array<kotlin/String>
+        public final get
+    }
+
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS])
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class AnnotationWithVararg : kotlin/Annotation {
+
+      public constructor(vararg array: kotlin/String /* kotlin/Array<out kotlin/String> */)
+
+      public final val array: kotlin/Array<out kotlin/String>
+        public final get
+    }
+
+    @AnnotationWithArray(array = ["String", "String2", "String3"])
+    public final class B : kotlin/Any {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

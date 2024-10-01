@@ -1,0 +1,49 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: LightParam
+    // class name: LightVariab
+    // class name: PsiParam
+
+    public open class LightParam : LightVariab, PsiParam {
+
+      public constructor()
+    }
+
+    public open class LightVariab : kotlin/Any {
+
+      public constructor()
+
+      public final fun name(): kotlin/String?
+
+      public final val name2: kotlin/String?
+        public final /* non-default */ get
+    }
+
+    public abstract interface PsiParam : kotlin/Any {
+
+      public abstract fun name(): kotlin/String?
+
+      public abstract val name2: kotlin/String?
+        public abstract get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,215 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ASTNode
+    // class name: FirLightSourceElement
+    // class name: FirModifier
+    // class name: FirModifier.FirLightModifier
+    // class name: FirModifier.FirPsiModifier
+    // class name: FirModifierList
+    // class name: FirModifierList.Companion
+    // class name: FirModifierList.FirLightModifierList
+    // class name: FirModifierList.FirPsiModifierList
+    // class name: FirPsiSourceElement
+    // class name: FirSourceElement
+    // class name: FlyweightCapableTreeStructure
+    // class name: KtModifierKeywordToken
+    // class name: KtModifierList
+    // class name: KtModifierListOwner
+    // class name: LighterASTNode
+    // class name: PsiElement
+    // class name: TokenType
+    // class name: TokenType.Companion
+
+    public final class ASTNode : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class FirLightSourceElement : FirSourceElement {
+
+      public constructor(lighterASTNode: LighterASTNode, treeStructure: FlyweightCapableTreeStructure)
+
+      public open val lighterASTNode: LighterASTNode
+        public open get
+
+      public open val treeStructure: FlyweightCapableTreeStructure
+        public open get
+    }
+
+    internal sealed class FirModifier<T#0 /* Node */ : kotlin/Any> : kotlin/Any {
+
+      protected constructor(node: T#0, token: KtModifierKeywordToken)
+
+      public final val node: T#0
+        public final get
+
+      public final val token: KtModifierKeywordToken
+        public final get
+
+      // nested class: FirPsiModifier
+
+      // nested class: FirLightModifier
+
+      // sealed subclass: FirModifier.FirLightModifier
+
+      // sealed subclass: FirModifier.FirPsiModifier
+    }
+
+    public final class FirModifier.FirLightModifier : FirModifier<LighterASTNode> {
+
+      public constructor(node: LighterASTNode, token: KtModifierKeywordToken, tree: FlyweightCapableTreeStructure)
+
+      public final val tree: FlyweightCapableTreeStructure
+        public final get
+    }
+
+    public final class FirModifier.FirPsiModifier : FirModifier<ASTNode> {
+
+      public constructor(node: ASTNode, token: KtModifierKeywordToken)
+    }
+
+    internal sealed class FirModifierList : kotlin/Any {
+
+      protected constructor()
+
+      public final val modifiers: kotlin/collections/List<FirModifier<*>>
+        public final get
+
+      // companion object: Companion
+
+      // nested class: FirPsiModifierList
+
+      // nested class: FirLightModifierList
+
+      // nested class: Companion
+
+      // sealed subclass: FirModifierList.FirLightModifierList
+
+      // sealed subclass: FirModifierList.FirPsiModifierList
+    }
+
+    public final companion object FirModifierList.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun boxImpl(): kotlin/String
+
+      public final fun FirSourceElement?.getModifierList(): FirModifierList?
+    }
+
+    public final class FirModifierList.FirLightModifierList : FirModifierList {
+
+      public constructor(modifierList: LighterASTNode, tree: FlyweightCapableTreeStructure)
+
+      public final val modifierList: LighterASTNode
+        public final get
+
+      public final val tree: FlyweightCapableTreeStructure
+        public final get
+    }
+
+    public final class FirModifierList.FirPsiModifierList : FirModifierList {
+
+      public constructor(modifierList: KtModifierList)
+
+      public final val modifierList: KtModifierList
+        public final get
+    }
+
+    public final class FirPsiSourceElement : FirSourceElement {
+
+      public constructor(psi: PsiElement, lighterASTNode: LighterASTNode, treeStructure: FlyweightCapableTreeStructure)
+
+      public open val lighterASTNode: LighterASTNode
+        public open get
+
+      public final val psi: PsiElement
+        public final get
+
+      public open val treeStructure: FlyweightCapableTreeStructure
+        public open get
+    }
+
+    public sealed class FirSourceElement : kotlin/Any {
+
+      protected constructor()
+
+      public abstract val lighterASTNode: LighterASTNode
+        public abstract get
+
+      public abstract val treeStructure: FlyweightCapableTreeStructure
+        public abstract get
+
+      // sealed subclass: FirLightSourceElement
+
+      // sealed subclass: FirPsiSourceElement
+    }
+
+    public final class FlyweightCapableTreeStructure : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class KtModifierKeywordToken : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class KtModifierList : PsiElement {
+
+      public constructor()
+    }
+
+    public final class KtModifierListOwner : PsiElement {
+
+      public constructor()
+
+      public final val modifierList: KtModifierList
+        public final get
+    }
+
+    public final class LighterASTNode : kotlin/Any {
+
+      public constructor(_children: kotlin/collections/List<LighterASTNode?> /* = ... */)
+
+      public final fun getChildren(treeStructure: FlyweightCapableTreeStructure): kotlin/collections/List<LighterASTNode?>
+
+      public final val _children: kotlin/collections/List<LighterASTNode?>
+        public final get
+
+      public final val tokenType: TokenType
+        public final get
+    }
+
+    public open class PsiElement : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class TokenType : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object TokenType.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val MODIFIER_LIST: TokenType
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

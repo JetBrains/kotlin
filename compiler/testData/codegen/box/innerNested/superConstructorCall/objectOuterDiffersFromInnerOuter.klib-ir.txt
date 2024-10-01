@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/objectOuterDiffersFromInnerOuter.kt
+    FUN name:eval signature:/eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (fn:<unbound IrClassSymbolImpl><T of <root>.eval>) returnType:T of <root>.eval
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /eval|eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:fn index:0 type:<unbound IrClassSymbolImpl><T of <root>.eval>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.eval origin=INVOKE
+            $this: GET_VAR 'fn: <unbound IrClassSymbolImpl><T of <root>.eval> declared in <root>.eval' type=<unbound IrClassSymbolImpl><T of <root>.eval> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+      CONSTRUCTOR signature:/A.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:bar signature:/A.bar|bar(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>' type=<root>.A.bar.<anonymous>.<anonymous>.<no name provided> origin=null
+              <T>: <root>.A.bar.<anonymous>.<anonymous>.<no name provided>
+              fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.A.bar.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.A.bar.<anonymous>.<anonymous>.<no name provided>
+                  BLOCK_BODY
+                    RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.A.bar.<anonymous>.<anonymous>.<no name provided> declared in <root>.A.bar'
+                      CALL 'public final fun eval <T> (fn: <unbound IrClassSymbolImpl><T of <root>.eval>): T of <root>.eval declared in <root>' type=<root>.A.bar.<anonymous>.<anonymous>.<no name provided> origin=null
+                        <T>: <root>.A.bar.<anonymous>.<anonymous>.<no name provided>
+                        fn: FUN_EXPR type=<unbound IrClassSymbolImpl><<root>.A.bar.<anonymous>.<anonymous>.<no name provided>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.A.bar.<anonymous>.<anonymous>.<no name provided>
+                            BLOCK_BODY
+                              RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <root>.A.bar.<anonymous>.<anonymous>.<no name provided> declared in <root>.A.bar.<anonymous>'
+                                BLOCK type=<root>.A.bar.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                  CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A.Inner]
+                                    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.bar.<anonymous>.<anonymous>.<no name provided>
+                                    CONSTRUCTOR visibility:public <> () returnType:<root>.A.bar.<anonymous>.<anonymous>.<no name provided> [primary]
+                                      BLOCK_BODY
+                                        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.Inner'
+                                          $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar' type=<root>.A origin=null
+                                        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.A.Inner]'
+                                    FUN name:toString visibility:public modality:OPEN <> ($this:<root>.A.bar.<anonymous>.<anonymous>.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                                      overridden:
+                                        UNBOUND IrSimpleFunctionSymbolImpl
+                                      $this: VALUE_PARAMETER name:<this> type:<root>.A.bar.<anonymous>.<anonymous>.<no name provided>
+                                      BLOCK_BODY
+                                        RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.A.bar.<anonymous>.<anonymous>.<no name provided>'
+                                          CALL 'public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+                                            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar' type=<root>.A origin=null
+                                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.bar.<anonymous>.<anonymous>.<no name provided>' type=<root>.A.bar.<anonymous>.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+      CLASS CLASS name:Inner signature:/A.Inner|null[0] modality:OPEN visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Inner
+        CONSTRUCTOR signature:/A.Inner.<init>|<init>(){}[0] visibility:public <> ($this:<root>.A) returnType:<root>.A.Inner [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.A
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner signature:/A.Inner|null[0] modality:OPEN visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo signature:/A.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:<root>.A) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in <root>.A'
+            CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun bar (): <unbound IrClassSymbolImpl> declared in <root>.A' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null

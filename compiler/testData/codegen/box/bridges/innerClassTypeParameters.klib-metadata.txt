@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.Inner
+
+    public final class Outer<T#0 /* OP */> : kotlin/Any {
+
+      public constructor()
+
+      public final fun <T#1 /* T */> withInner(block: @kotlin/ExtensionFunctionType kotlin/Function1<Outer<T#0>.Inner<T#1>, kotlin/String>): kotlin/String
+
+      // nested class: Inner
+    }
+
+    public final inner class Outer.Inner<T#1 /* IP */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* TT */> withOuter(block: @kotlin/ExtensionFunctionType kotlin/Function1<Outer<T#0>, kotlin/String>): kotlin/String
+    }
+  }
+}

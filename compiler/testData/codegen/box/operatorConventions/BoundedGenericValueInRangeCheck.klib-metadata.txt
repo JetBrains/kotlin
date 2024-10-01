@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/Char> testContainsChar(arg: T#0): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : T#1, T#1 /* X */ : kotlin/Char /* = CharAlias^ */> testContainsNestedTypeArgs(arg: T#0): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : T#1, T#1 /* X */ : kotlin/Comparable<kotlin/UInt> & kotlin/UInt> testContainsUIntMultipleBounds(arg: T#0): kotlin/Boolean
+
+      public final fun <T#0 /* T */ : T#1, T#1 /* X */ : kotlin/UInt & kotlin/Comparable<kotlin/UInt>> testForUInt(arg: T#0): kotlin/Int
+
+      public typealias CharAlias = kotlin/Char /* = kotlin/Char */
+    }
+  }
+}

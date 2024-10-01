@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final inline fun assert(message: kotlin/String, condition: kotlin/Function0<kotlin/Boolean>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final infix fun <T#0 /* T */> T#0.mustBe(t: T#0): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,6 @@
+// MODULE: maven
+6c4e46175e96048b0f9f1b93afef87e2
+// MODULE: lib
+4d0df02ee57a079e4e375b34862b497c
+// MODULE: main
+0d85c8aa0c4fe81b84d27cf0297c2788

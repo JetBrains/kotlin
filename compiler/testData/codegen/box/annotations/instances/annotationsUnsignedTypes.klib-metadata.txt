@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AnnotationWithSignedArray
+    // class name: AnnotationWithUnsignedArray
+
+    public final annotation class AnnotationWithSignedArray : kotlin/Annotation {
+
+      public constructor(array: kotlin/IntArray)
+
+      public final val array: kotlin/IntArray
+        public final get
+    }
+
+    public final annotation class AnnotationWithUnsignedArray : kotlin/Annotation {
+
+      public constructor(array: kotlin/UIntArray)
+
+      public final val array: kotlin/UIntArray
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

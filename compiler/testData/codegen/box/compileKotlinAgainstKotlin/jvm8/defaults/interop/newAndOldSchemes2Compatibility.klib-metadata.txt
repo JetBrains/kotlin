@@ -1,0 +1,52 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    public abstract interface Foo<T#0 /* T */> : kotlin/Any {
+
+      public open fun test(p: T#0): kotlin/String
+
+      public open val T#0.prop: kotlin/String
+        public open /* non-default */ get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Base
+    // class name: Foo2
+    // class name: Foo3
+
+    public final class Base : Foo3 {
+
+      public constructor()
+    }
+
+    public abstract interface Foo2 : Foo<kotlin/String> {
+
+      public open fun test(p: kotlin/String): kotlin/String
+
+      public open val kotlin/String.prop: kotlin/String
+        public open /* non-default */ get
+    }
+
+    public abstract interface Foo3 : Foo<kotlin/String>, Foo2 {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

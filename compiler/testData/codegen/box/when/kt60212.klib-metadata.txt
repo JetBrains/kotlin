@@ -1,0 +1,20 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun fail(message: kotlin/String): kotlin/Nothing
+
+      public final fun test(b0: kotlin/Int): kotlin/Int
+
+      public final fun testIfs(): kotlin/Unit
+
+      public final fun testWhen(): kotlin/Unit
+    }
+  }
+}

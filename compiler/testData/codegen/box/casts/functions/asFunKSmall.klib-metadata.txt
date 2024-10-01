@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyFun
+
+    public final class MyFun : kotlin/Function<kotlin/Any> {
+
+      public constructor()
+    }
+
+    package {
+
+      public final inline fun asFailsWithCCE(operation: kotlin/String, block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final inline fun asSucceeds(operation: kotlin/String, block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun fn0(): kotlin/Unit
+
+      public final fun fn1(x: kotlin/Any): kotlin/Unit
+    }
+  }
+}

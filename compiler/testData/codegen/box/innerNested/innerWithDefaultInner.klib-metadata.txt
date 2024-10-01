@@ -1,0 +1,52 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Outer
+    // class name: Outer.InnerArg
+    // class name: Outer.InnerParam
+
+    public final class Outer : kotlin/Any {
+
+      public constructor(o: kotlin/String, oo: kotlin/String)
+
+      public final val o: kotlin/String
+        public final get
+
+      public final val oo: kotlin/String
+        public final get
+
+      // nested class: InnerArg
+
+      // nested class: InnerParam
+    }
+
+    public final inner class Outer.InnerArg : kotlin/Any {
+
+      public constructor(i: kotlin/String)
+
+      public final val i: kotlin/String
+        public final get
+
+      public final val result: kotlin/String
+        public final /* non-default */ get
+    }
+
+    public final inner class Outer.InnerParam : kotlin/Any {
+
+      public constructor(i: Outer.InnerArg /* = ... */)
+
+      public final fun foo(): kotlin/String
+
+      public final val i: Outer.InnerArg
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,387 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/innerClasses.kt
+    CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+      PROPERTY name:outerProp signature:/Outer.outerProp|{}outerProp[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:outerProp signature:[ /Outer.outerProp|{}outerProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-outerProp> signature:/Outer.outerProp.<get-outerProp>|<get-outerProp>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:outerProp signature:/Outer.outerProp|{}outerProp[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:outerProp signature:[ /Outer.outerProp|{}outerProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.<get-outerProp>' type=<root>.Outer origin=null
+      CONSTRUCTOR signature:/Outer.<init>|<init>(kotlin.String){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.Outer
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer signature:/Outer|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:outerProp signature:[ /Outer.outerProp|{}outerProp[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> superQualifierSymbol=<root>.Outer origin=null
+            receiver: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+            value: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Outer.<init>' type=<unbound IrClassSymbolImpl> origin=null
+      PROPERTY name:sideEffects signature:/Outer.sideEffects|{}sideEffects[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:sideEffects signature:[ /Outer.sideEffects|{}sideEffects[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value=""
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sideEffects> signature:/Outer.sideEffects.<get-sideEffects>|<get-sideEffects>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:sideEffects signature:/Outer.sideEffects|{}sideEffects[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sideEffects signature:[ /Outer.sideEffects|{}sideEffects[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.<get-sideEffects>' type=<root>.Outer origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-sideEffects> signature:/Outer.sideEffects.<set-sideEffects>|<set-sideEffects>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:sideEffects signature:/Outer.sideEffects|{}sideEffects[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sideEffects signature:[ /Outer.sideEffects|{}sideEffects[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.<set-sideEffects>' type=<root>.Outer origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Outer.<set-sideEffects>' type=<unbound IrClassSymbolImpl> origin=null
+      CLASS CLASS name:A1 signature:/Outer.A1|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.A1
+        CONSTRUCTOR signature:/Outer.A1.<init>|<init>(){}[0] visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.A1 [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 signature:/Outer.A1|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+        PROPERTY name:prop signature:/Outer.A1.prop|{}prop[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /Outer.A1.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value=""
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:/Outer.A1.prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.A1) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:prop signature:/Outer.A1.prop|{}prop[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Outer.A1
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /Outer.A1.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1.<get-prop>' type=<root>.Outer.A1 origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop> signature:/Outer.A1.prop.<set-prop>|<set-prop>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.A1, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:prop signature:/Outer.A1.prop|{}prop[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Outer.A1
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /Outer.A1.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1.<set-prop>' type=<root>.Outer.A1 origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Outer.A1.<set-prop>' type=<unbound IrClassSymbolImpl> origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="#"
+                    1: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="first"
+        CONSTRUCTOR signature:/Outer.A1.<init>|<init>(kotlin.String){}[0] visibility:public <> ($this:<root>.Outer, x:<unbound IrClassSymbolImpl>) returnType:<root>.Outer.A1
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.A1'
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+            CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=EQ
+              $this: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Outer.A1.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="#"
+                  CALL 'public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="#third"
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#second"
+        CONSTRUCTOR signature:/Outer.A1.<init>|<init>(kotlin.Int){}[0] visibility:public <> ($this:<root>.Outer, x:<unbound IrClassSymbolImpl>) returnType:<root>.Outer.A1
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer.A1'
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              x: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Outer.A1.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#"
+                1: CALL 'public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+            CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer.A1 declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="#int"
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="#fourth"
+      CLASS CLASS name:A2 signature:/Outer.A2|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.A2
+        PROPERTY name:prop signature:/Outer.A2.prop|{}prop[0] visibility:public modality:FINAL [var]
+          FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /Outer.A2.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassSymbolImpl> value=""
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> signature:/Outer.A2.prop.<get-prop>|<get-prop>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.A2) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:prop signature:/Outer.A2.prop|{}prop[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Outer.A2
+            BLOCK_BODY
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /Outer.A2.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2.<get-prop>' type=<root>.Outer.A2 origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop> signature:/Outer.A2.prop.<set-prop>|<set-prop>(kotlin.String){}[0] visibility:public modality:FINAL <> ($this:<root>.Outer.A2, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+            correspondingProperty: PROPERTY name:prop signature:/Outer.A2.prop|{}prop[0] visibility:public modality:FINAL [var]
+            $this: VALUE_PARAMETER name:<this> type:<root>.Outer.A2
+            VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+            BLOCK_BODY
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop signature:[ /Outer.A2.prop|{}prop[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:outerProp type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2.<set-prop>' type=<root>.Outer.A2 origin=null
+                value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.Outer.A2.<set-prop>' type=<unbound IrClassSymbolImpl> origin=null
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: CALL 'public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="#"
+                    1: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="first"
+        CONSTRUCTOR signature:/Outer.A2.<init>|<init>(kotlin.String){}[0] visibility:public <> ($this:<root>.Outer, x:<unbound IrClassSymbolImpl>) returnType:<root>.Outer.A2
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 signature:/Outer.A2|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+            CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=EQ
+              $this: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                $this: GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Outer.A2.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="#"
+                  CALL 'public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="#third"
+        ANONYMOUS_INITIALIZER isStatic=false
+          BLOCK_BODY
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="#second"
+        CONSTRUCTOR signature:/Outer.A2.<init>|<init>(kotlin.Int){}[0] visibility:public <> ($this:<root>.Outer, x:<unbound IrClassSymbolImpl>) returnType:<root>.Outer.A2
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 signature:/Outer.A2|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+            CALL 'public final fun <set-prop> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer.A2 declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.Outer.A2.<init>' type=<unbound IrClassSymbolImpl> origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value="#"
+                  CALL 'public final fun <get-outerProp> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                  CONST String type=<unbound IrClassSymbolImpl> value="#int"
+            CALL 'public final fun <set-sideEffects> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                $this: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="#fourth"
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:outer1 type:<root>.Outer [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="propValue1"
+        VAR name:a1 type:<root>.Outer.A1 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+            $outer: GET_VAR 'val outer1: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a1: <root>.Outer.A1 [val] declared in <root>.box' type=<root>.Outer.A1 origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="abc#propValue1"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail1: "
+                CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a1: <root>.Outer.A1 [val] declared in <root>.box' type=<root>.Outer.A1 origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer1: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="propValue1#first#second#third"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail1-sideEffects: "
+                CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer1: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+        VAR name:outer2 type:<root>.Outer [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="propValue2"
+        VAR name:a2 type:<root>.Outer.A1 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+            $outer: GET_VAR 'val outer2: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=123
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a2: <root>.Outer.A1 [val] declared in <root>.box' type=<root>.Outer.A1 origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="123#propValue2#propValue2#int"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2: "
+                CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a2: <root>.Outer.A1 [val] declared in <root>.box' type=<root>.Outer.A1 origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer2: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="propValue2#first#second#third#fourth"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2-sideEffects: "
+                CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer2: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+        VAR name:outer3 type:<root>.Outer [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="propValue3"
+        VAR name:a3 type:<root>.Outer.A1 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.A1' type=<root>.Outer.A1 origin=null
+            $outer: GET_VAR 'val outer3: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a3: <root>.Outer.A1 [val] declared in <root>.box' type=<root>.Outer.A1 origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value=""
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail2: "
+                CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A1' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a3: <root>.Outer.A1 [val] declared in <root>.box' type=<root>.Outer.A1 origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer3: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="propValue3#first#second"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail3-sideEffects: "
+                CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer3: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+        VAR name:outer4 type:<root>.Outer [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="propValue4"
+        VAR name:a4 type:<root>.Outer.A2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+            $outer: GET_VAR 'val outer4: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="abc"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a4: <root>.Outer.A2 [val] declared in <root>.box' type=<root>.Outer.A2 origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="abc#propValue4"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail4: "
+                CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a4: <root>.Outer.A2 [val] declared in <root>.box' type=<root>.Outer.A2 origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer4: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="propValue4#first#second#third"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail4-sideEffects: "
+                CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer4: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+        VAR name:outer5 type:<root>.Outer [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer' type=<root>.Outer origin=null
+            x: CONST String type=<unbound IrClassSymbolImpl> value="propValue5"
+        VAR name:a5 type:<root>.Outer.A2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) declared in <root>.Outer.A2' type=<root>.Outer.A2 origin=null
+            $outer: GET_VAR 'val outer5: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=123
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a5: <root>.Outer.A2 [val] declared in <root>.box' type=<root>.Outer.A2 origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="123#propValue5#int"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail5: "
+                CALL 'public final fun <get-prop> (): <unbound IrClassSymbolImpl> declared in <root>.Outer.A2' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val a5: <root>.Outer.A2 [val] declared in <root>.box' type=<root>.Outer.A2 origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer5: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="propValue5#first#second#fourth"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail5-sideEffects: "
+                CALL 'public final fun <get-sideEffects> (): <unbound IrClassSymbolImpl> declared in <root>.Outer' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val outer5: <root>.Outer [val] declared in <root>.box' type=<root>.Outer origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

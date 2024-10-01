@@ -1,0 +1,38 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyInterface
+    // class name: MyValueClazz
+
+    public abstract fun interface MyInterface : kotlin/Any {
+
+      public abstract fun myMethod(x: MyValueClazz): kotlin/Unit
+    }
+
+    public final value class MyValueClazz : kotlin/Any {
+
+      public constructor(base: kotlin/Long)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val base: kotlin/Long
+        public final get
+
+      // underlying property: base
+
+      // underlying type: kotlin/Long
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

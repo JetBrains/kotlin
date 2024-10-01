@@ -1,0 +1,74 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+    // class name: Foo
+    // class name: Foo.Companion
+    // class name: FooTrait
+    // class name: FooTrait.Companion
+
+    public final class Delegate<T#0 /* T */> : kotlin/Any {
+
+      public constructor(inner: T#0)
+
+      public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): T#0
+
+      public final operator fun setValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>, i: T#0): kotlin/Unit
+
+      public final var inner: T#0
+        public final get
+        public final set
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor(f: kotlin/Int)
+
+      public final val f: kotlin/Int
+        public final get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object Foo.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val A: Foo
+        public final /* non-default */ get
+
+      public final /* delegated */ var B: Foo
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: Foo)
+    }
+
+    public abstract interface FooTrait : kotlin/Any {
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object FooTrait.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final /* delegated */ val A: Foo
+        public final /* non-default */ get
+
+      public final /* delegated */ var B: Foo
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: Foo)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

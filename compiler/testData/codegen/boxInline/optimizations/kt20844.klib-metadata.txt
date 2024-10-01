@@ -1,0 +1,51 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Address
+
+    public final data class test/Address : kotlin/Any {
+
+      public constructor(createdTimeMs: kotlin/Long /* = ... */, firstName: kotlin/String /* = ... */, lastName: kotlin/String /* = ... */)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Long
+
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      public final /* synthesized */ operator fun component3(): kotlin/String
+
+      public final /* synthesized */ fun copy(createdTimeMs: kotlin/Long /* = ... */, firstName: kotlin/String /* = ... */, lastName: kotlin/String /* = ... */): test/Address
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val createdTimeMs: kotlin/Long
+        public final get
+
+      public final val firstName: kotlin/String
+        public final get
+
+      public final val lastName: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final inline fun kotlin/String.switchIfEmpty(provider: kotlin/Function0<kotlin/String>): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,44 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:lib fileName:/JsPrimitives.kt
+    CLASS INTERFACE name:JsObject signature:lib/JsObject|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.JsObject
+      PROPERTY name:isString signature:lib/JsObject.isString|{}isString[0] visibility:public modality:OPEN [val]
+        FUN name:<get-isString> signature:lib/JsObject.isString.<get-isString>|<get-isString>(){}[0] visibility:public modality:OPEN <> ($this:lib.JsObject) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:isString signature:lib/JsObject.isString|{}isString[0] visibility:public modality:OPEN [val]
+          $this: VALUE_PARAMETER name:<this> type:lib.JsObject
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-isString> (): <unbound IrClassSymbolImpl> declared in lib.JsObject'
+              CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    CLASS INTERFACE name:JsRunnable signature:lib/JsRunnable|null[0] modality:ABSTRACT visibility:public [fun] superTypes:[lib.JsObject]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib.JsRunnable
+      FUN name:run signature:lib/JsRunnable.run|run(){}[0] visibility:public modality:ABSTRACT <> ($this:lib.JsRunnable) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:lib.JsRunnable
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    CLASS CLASS name:ReactComponent signature:/ReactComponent|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReactComponent
+      CONSTRUCTOR signature:/ReactComponent.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.ReactComponent [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ReactComponent signature:/ReactComponent|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:forceUpdate signature:/ReactComponent.forceUpdate|forceUpdate(lib.JsRunnable){}[0] visibility:public modality:FINAL <> ($this:<root>.ReactComponent, callback:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.ReactComponent
+        VALUE_PARAMETER name:callback index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'callback: <unbound IrClassSymbolImpl> declared in <root>.ReactComponent.forceUpdate' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:forceUpdate signature:/forceUpdate|forceUpdate(ReactComponent;kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (myNativeComponent:<root>.ReactComponent, callback:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:myNativeComponent index:0 type:<root>.ReactComponent
+      VALUE_PARAMETER name:callback index:1 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'public final fun forceUpdate (callback: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.ReactComponent' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'myNativeComponent: <root>.ReactComponent declared in <root>.forceUpdate' type=<root>.ReactComponent origin=null
+          callback: TYPE_OP type=<unbound IrClassSymbolImpl> origin=SAM_CONVERSION typeOperand=<unbound IrClassSymbolImpl>
+            GET_VAR 'callback: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.forceUpdate' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

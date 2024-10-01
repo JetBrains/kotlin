@@ -1,0 +1,35 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: mult_constructors_3_bug
+
+    // class name: mult_constructors_3_bug/Identifier
+    // class name: mult_constructors_3_bug/Identifier.Companion
+
+    public open class mult_constructors_3_bug/Identifier : kotlin/Any {
+
+      public constructor()
+
+      private final var myNullable: kotlin/Boolean
+        private final get
+        private final set
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object mult_constructors_3_bug/Identifier.Companion : kotlin/Any {
+
+      private constructor()
+
+      public open fun init(isNullable: kotlin/Boolean): mult_constructors_3_bug/Identifier
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,252 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt31585.kt
+    CLASS CLASS name:FieldValue signature:/FieldValue|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FieldValue
+      CONSTRUCTOR signature:/FieldValue.<init>|<init>(kotlin.String){}[0] visibility:public <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.FieldValue [primary]
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FieldValue signature:/FieldValue|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:value signature:/FieldValue.value|{}value[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value signature:[ /FieldValue.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: <unbound IrClassSymbolImpl> declared in <root>.FieldValue.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> signature:/FieldValue.value.<get-value>|<get-value>(){}[0] visibility:public modality:FINAL <> ($this:<root>.FieldValue) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:value signature:/FieldValue.value|{}value[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FieldValue
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.FieldValue'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /FieldValue.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.FieldValue declared in <root>.FieldValue.<get-value>' type=<root>.FieldValue origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/FieldValue.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.FieldValue) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.FieldValue
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.FieldValue'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="FieldValue("
+              CONST String type=<unbound IrClassSymbolImpl> value="value="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /FieldValue.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.FieldValue declared in <root>.FieldValue.toString' type=<root>.FieldValue origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/FieldValue.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.FieldValue) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.FieldValue
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.FieldValue'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /FieldValue.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.FieldValue declared in <root>.FieldValue.hashCode' type=<root>.FieldValue origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/FieldValue.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.FieldValue, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.FieldValue
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.FieldValue
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.FieldValue.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.FieldValue'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.FieldValue [val]
+            TYPE_OP type=<root>.FieldValue origin=CAST typeOperand=<root>.FieldValue
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.FieldValue.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /FieldValue.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.FieldValue declared in <root>.FieldValue.equals' type=<root>.FieldValue origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value signature:[ /FieldValue.value|{}value[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.FieldValue [val] declared in <root>.FieldValue.equals' type=<root>.FieldValue origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.FieldValue'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.FieldValue'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    CLASS ENUM_CLASS name:RequestFields signature:/RequestFields|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.RequestFields>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RequestFields
+      CONSTRUCTOR signature:/RequestFields.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.RequestFields [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.RequestFields
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:RequestFields signature:/RequestFields|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.RequestFields>]'
+      ENUM_ENTRY name:ENUM_ONE signature:/RequestFields.ENUM_ONE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.RequestFields'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/RequestFields.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.RequestFields>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/RequestFields.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.RequestFields
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/RequestFields.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/RequestFields.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.RequestFields>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/RequestFields.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS CLASS name:RequestInputParameters signature:/RequestInputParameters|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.RequestInputParameters
+      CONSTRUCTOR signature:/RequestInputParameters.<init>|<init>(kotlin.collections.Map<RequestFields,FieldValue>){}[0] visibility:public <> (backingMap:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>) returnType:<root>.RequestInputParameters [primary]
+        VALUE_PARAMETER name:backingMap index:0 type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:RequestInputParameters signature:/RequestInputParameters|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>]'
+      PROPERTY name:backingMap signature:/RequestInputParameters.backingMap|{}backingMap[0] visibility:private modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'backingMap: <unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> declared in <root>.RequestInputParameters.<init>' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-backingMap> signature:/RequestInputParameters.backingMap.<get-backingMap>|<get-backingMap>(){}[0] visibility:private modality:FINAL <> ($this:<root>.RequestInputParameters) returnType:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>
+          correspondingProperty: PROPERTY name:backingMap signature:/RequestInputParameters.backingMap|{}backingMap[0] visibility:private modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='private final fun <get-backingMap> (): <unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> declared in <root>.RequestInputParameters'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.<get-backingMap>' type=<root>.RequestInputParameters origin=null
+      FUN DELEGATED_MEMBER name:isEmpty signature:/RequestInputParameters.isEmpty|isEmpty(){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun isEmpty (): <unbound IrClassSymbolImpl> declared in <root>.RequestInputParameters'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.isEmpty' type=<root>.RequestInputParameters origin=null
+      FUN DELEGATED_MEMBER name:containsKey signature:/RequestInputParameters.containsKey|containsKey(RequestFields){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters, key:<root>.RequestFields) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+        VALUE_PARAMETER name:key index:0 type:<root>.RequestFields
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsKey (key: <root>.RequestFields): <unbound IrClassSymbolImpl> declared in <root>.RequestInputParameters'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.containsKey' type=<root>.RequestInputParameters origin=null
+              1: GET_VAR 'key: <root>.RequestFields declared in <root>.RequestInputParameters.containsKey' type=<root>.RequestFields origin=null
+      FUN DELEGATED_MEMBER name:containsValue signature:/RequestInputParameters.containsValue|containsValue(FieldValue){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters, value:<root>.FieldValue) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+        VALUE_PARAMETER name:value index:0 type:<root>.FieldValue
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun containsValue (value: <root>.FieldValue): <unbound IrClassSymbolImpl> declared in <root>.RequestInputParameters'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.containsValue' type=<root>.RequestInputParameters origin=null
+              1: GET_VAR 'value: <root>.FieldValue declared in <root>.RequestInputParameters.containsValue' type=<root>.FieldValue origin=null
+      FUN DELEGATED_MEMBER name:get signature:/RequestInputParameters.get|get(RequestFields){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters, key:<root>.RequestFields) returnType:<root>.FieldValue? [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+        VALUE_PARAMETER name:key index:0 type:<root>.RequestFields
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun get (key: <root>.RequestFields): <root>.FieldValue? [operator] declared in <root>.RequestInputParameters'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.FieldValue? origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.get' type=<root>.RequestInputParameters origin=null
+              1: GET_VAR 'key: <root>.RequestFields declared in <root>.RequestInputParameters.get' type=<root>.RequestFields origin=null
+      PROPERTY DELEGATED_MEMBER name:size signature:/RequestInputParameters.size|{}size[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-size> signature:/RequestInputParameters.size.<get-size>|<get-size>(){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:size signature:/RequestInputParameters.size|{}size[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-size> (): <unbound IrClassSymbolImpl> declared in <root>.RequestInputParameters'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                  receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.<get-size>' type=<root>.RequestInputParameters origin=null
+      PROPERTY DELEGATED_MEMBER name:keys signature:/RequestInputParameters.keys|{}keys[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-keys> signature:/RequestInputParameters.keys.<get-keys>|<get-keys>(){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters) returnType:<unbound IrClassSymbolImpl><<root>.RequestFields>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:keys signature:/RequestInputParameters.keys|{}keys[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-keys> (): <unbound IrClassSymbolImpl><<root>.RequestFields> declared in <root>.RequestInputParameters'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.RequestFields> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                  receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.<get-keys>' type=<root>.RequestInputParameters origin=null
+      PROPERTY DELEGATED_MEMBER name:values signature:/RequestInputParameters.values|{}values[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-values> signature:/RequestInputParameters.values.<get-values>|<get-values>(){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters) returnType:<unbound IrClassSymbolImpl><<root>.FieldValue>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:values signature:/RequestInputParameters.values|{}values[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-values> (): <unbound IrClassSymbolImpl><<root>.FieldValue> declared in <root>.RequestInputParameters'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.FieldValue> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                  receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.<get-values>' type=<root>.RequestInputParameters origin=null
+      PROPERTY DELEGATED_MEMBER name:entries signature:/RequestInputParameters.entries|{}entries[0] visibility:public modality:OPEN [val]
+        FUN DELEGATED_MEMBER name:<get-entries> signature:/RequestInputParameters.entries.<get-entries>|<get-entries>(){}[0] visibility:public modality:OPEN <> ($this:<root>.RequestInputParameters) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>>
+          correspondingProperty: PROPERTY DELEGATED_MEMBER name:entries signature:/RequestInputParameters.entries|{}entries[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.RequestInputParameters
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-entries> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>> declared in <root>.RequestInputParameters'
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>> origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:backingMap signature:[ /RequestInputParameters.backingMap|{}backingMap[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> visibility:private [final]' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                  receiver: GET_VAR '<this>: <root>.RequestInputParameters declared in <root>.RequestInputParameters.<get-entries>' type=<root>.RequestInputParameters origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:testMap1 type:<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+            <1>: <root>.RequestFields
+            <2>: <root>.FieldValue
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+              <1>: <root>.RequestFields
+              <2>: <root>.FieldValue
+              $receiver: GET_ENUM 'ENUM_ENTRY name:ENUM_ONE signature:/RequestFields.ENUM_ONE|null[0]' type=<root>.RequestFields
+              1: CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.FieldValue' type=<root>.FieldValue origin=null
+                value: CONST String type=<unbound IrClassSymbolImpl> value="value1"
+        VAR name:test1 type:<root>.FieldValue [val]
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.FieldValue origin=EXCLEXCL
+            <T0>: <root>.FieldValue
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.FieldValue? origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'val testMap1: <unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+              1: GET_ENUM 'ENUM_ENTRY name:ENUM_ONE signature:/RequestFields.ENUM_ONE|null[0]' type=<root>.RequestFields
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.FieldValue' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val test1: <root>.FieldValue [val] declared in <root>.box' type=<root>.FieldValue origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="value1"
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="test1: "
+                  GET_VAR 'val test1: <root>.FieldValue [val] declared in <root>.box' type=<root>.FieldValue origin=null
+        VAR name:testMap2 type:<root>.RequestInputParameters [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (backingMap: <unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue>) [primary] declared in <root>.RequestInputParameters' type=<root>.RequestInputParameters origin=null
+            backingMap: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+              <1>: <root>.RequestFields
+              <2>: <root>.FieldValue
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.RequestFields, <root>.FieldValue> origin=null
+                <1>: <root>.RequestFields
+                <2>: <root>.FieldValue
+                $receiver: GET_ENUM 'ENUM_ENTRY name:ENUM_ONE signature:/RequestFields.ENUM_ONE|null[0]' type=<root>.RequestFields
+                1: CONSTRUCTOR_CALL 'public constructor <init> (value: <unbound IrClassSymbolImpl>) [primary] declared in <root>.FieldValue' type=<root>.FieldValue origin=null
+                  value: CONST String type=<unbound IrClassSymbolImpl> value="value2"
+        VAR name:test2 type:<root>.FieldValue [val]
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.FieldValue origin=EXCLEXCL
+            <T0>: <root>.FieldValue
+            arg0: CALL 'public open fun get (key: <root>.RequestFields): <root>.FieldValue? [operator] declared in <root>.RequestInputParameters' type=<root>.FieldValue? origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'val testMap2: <root>.RequestInputParameters [val] declared in <root>.box' type=<root>.RequestInputParameters origin=null
+              key: GET_ENUM 'ENUM_ENTRY name:ENUM_ONE signature:/RequestFields.ENUM_ONE|null[0]' type=<root>.RequestFields
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-value> (): <unbound IrClassSymbolImpl> declared in <root>.FieldValue' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'val test2: <root>.FieldValue [val] declared in <root>.box' type=<root>.FieldValue origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="value2"
+            then: THROW type=<unbound IrClassSymbolImpl>
+              CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                  CONST String type=<unbound IrClassSymbolImpl> value="test2: "
+                  GET_VAR 'val test2: <root>.FieldValue [val] declared in <root>.box' type=<root>.FieldValue origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

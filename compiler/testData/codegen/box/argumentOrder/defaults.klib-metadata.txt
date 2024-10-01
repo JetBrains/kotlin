@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test(x: kotlin/Double /* = ... */, a: kotlin/String, y: kotlin/Long /* = ... */, b: kotlin/String): kotlin/String
+
+      public final var invokeOrder: kotlin/String
+        public final get
+        public final set
+    }
+  }
+}

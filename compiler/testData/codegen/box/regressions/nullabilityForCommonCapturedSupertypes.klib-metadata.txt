@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Sample
+
+    public final class Sample<out T#0 /* T */> : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */> id2(x: T#0, y: T#0): T#0
+
+      public final fun star(): Sample<*>
+
+      public final val targetArgument: Sample<kotlin/Any?>
+        public final get
+    }
+  }
+}

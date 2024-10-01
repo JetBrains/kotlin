@@ -1,0 +1,23 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+
+  library fragment {
+    // package name: test
+
+    package {
+
+      public final inline fun bar(vararg x: kotlin/Int /* kotlin/IntArray */): kotlin/Int
+
+      public final inline fun foo(x: kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>): kotlin/Int
+    }
+  }
+}

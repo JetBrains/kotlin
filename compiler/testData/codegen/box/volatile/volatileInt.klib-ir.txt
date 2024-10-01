@@ -1,0 +1,81 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/volatileInt.kt
+    PROPERTY name:global signature:/global|{}global[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:global signature:[ /global|{}global[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<root>.IntWrapper visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.IntWrapper' type=<root>.IntWrapper origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-global> signature:/global.<get-global>|<get-global>(){}[0] visibility:public modality:FINAL <> () returnType:<root>.IntWrapper
+        correspondingProperty: PROPERTY name:global signature:/global|{}global[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-global> (): <root>.IntWrapper declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:global signature:[ /global|{}global[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<root>.IntWrapper visibility:private [final,static]' type=<root>.IntWrapper origin=null
+    CLASS CLASS name:IntWrapper signature:/IntWrapper|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntWrapper
+      CONSTRUCTOR signature:/IntWrapper.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassSymbolImpl>) returnType:<root>.IntWrapper [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IntWrapper signature:/IntWrapper|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:/IntWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ /IntWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          annotations:
+            <unbound>
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:/IntWrapper.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:<root>.IntWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/IntWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /IntWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.<get-x>' type=<root>.IntWrapper origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:/IntWrapper.x.<set-x>|<set-x>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.IntWrapper, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:/IntWrapper.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.IntWrapper
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ /IntWrapper.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.IntWrapper declared in <root>.IntWrapper.<set-x>' type=<root>.IntWrapper origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.IntWrapper.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:local type:<root>.IntWrapper [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassSymbolImpl>) [primary] declared in <root>.IntWrapper' type=<root>.IntWrapper origin=null
+            x: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                  $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: CALL 'public final fun <get-global> (): <root>.IntWrapper declared in <root>' type=<root>.IntWrapper origin=GET_PROPERTY
+                  1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                    $this: GET_VAR 'val local: <root>.IntWrapper [val] declared in <root>.box' type=<root>.IntWrapper origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+        CALL 'public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: CALL 'public final fun <get-global> (): <root>.IntWrapper declared in <root>' type=<root>.IntWrapper origin=GET_PROPERTY
+          <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        CALL 'public final fun <set-x> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl> origin=EQ
+          $this: GET_VAR 'val local: <root>.IntWrapper [val] declared in <root>.box' type=<root>.IntWrapper origin=null
+          <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=6
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                    $this: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: CALL 'public final fun <get-global> (): <root>.IntWrapper declared in <root>' type=<root>.IntWrapper origin=GET_PROPERTY
+                    1: CALL 'public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.IntWrapper' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'val local: <root>.IntWrapper [val] declared in <root>.box' type=<root>.IntWrapper origin=null
+                  arg1: CONST Int type=<unbound IrClassSymbolImpl> value=11
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"

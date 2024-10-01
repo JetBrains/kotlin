@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Delegate
+
+    public final object Delegate : kotlin/Any {
+
+      private constructor()
+
+      public final operator fun getValue(instance: kotlin/Any?, data: kotlin/reflect/KProperty<*>): kotlin/String
+
+      public final operator fun setValue(instance: kotlin/Any?, data: kotlin/reflect/KProperty<*>, newValue: kotlin/String): kotlin/Unit
+
+      public final var value: kotlin/String
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final /* delegated */ var result: kotlin/String
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/String)
+    }
+  }
+}

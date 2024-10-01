@@ -1,0 +1,150 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ClassTemplate
+
+    public final enum class ClassTemplate : kotlin/Enum<ClassTemplate> {
+
+      private constructor(code: kotlin/Int, nameTemplate: kotlin/Int /* = ... */, parent: kotlin/Int /* = ... */, previous: kotlin/Int /* = ... */, progressionEquivalent: kotlin/Int /* = ... */, idDiscipline: kotlin/Int /* = ... */, strictRunningOrder: kotlin/Int /* = ... */, pointsMethod: kotlin/Int /* = ... */, noTimeFaults: kotlin/Int /* = ... */, combineHeights: kotlin/Int /* = ... */, column: kotlin/Int /* = ... */, runningOrderSort: kotlin/Int /* = ... */, programme: kotlin/Int /* = ... */, eliminationTime: kotlin/Int /* = ... */, courseTimeCode: kotlin/Int /* = ... */, teamSize: kotlin/Int /* = ... */, sponsor: kotlin/Int /* = ... */, lateEntryCredits: kotlin/Int /* = ... */, lateEntryFee: kotlin/Int /* = ... */, courseLengthNeeded: kotlin/Int /* = ... */, discretionaryCourseTime: kotlin/Int /* = ... */, isRelay: kotlin/Int /* = ... */, isQualifier: kotlin/Int /* = ... */, generateChildren: kotlin/Int /* = ... */, feedFromParent: kotlin/Int /* = ... */, isNfcAllowed: kotlin/Int /* = ... */, isAddOnAllowed: kotlin/Int /* = ... */, isSpecialEntry: kotlin/Int /* = ... */, isUkaProgression: kotlin/Int /* = ... */, canEnterDirectly: kotlin/Int /* = ... */, isPointRanked: kotlin/Int /* = ... */, isPointRankedDesc: kotlin/Int /* = ... */)
+
+      public final var canEnterDirectly: kotlin/Int
+        public final get
+        public final set
+
+      public final var code: kotlin/Int
+        public final get
+        public final set
+
+      public final var column: kotlin/Int
+        public final get
+        public final set
+
+      public final var combineHeights: kotlin/Int
+        public final get
+        public final set
+
+      public final var courseLengthNeeded: kotlin/Int
+        public final get
+        public final set
+
+      public final var courseTimeCode: kotlin/Int
+        public final get
+        public final set
+
+      public final var discretionaryCourseTime: kotlin/Int
+        public final get
+        public final set
+
+      public final var eliminationTime: kotlin/Int
+        public final get
+        public final set
+
+      public final var feedFromParent: kotlin/Int
+        public final get
+        public final set
+
+      public final var generateChildren: kotlin/Int
+        public final get
+        public final set
+
+      public final var idDiscipline: kotlin/Int
+        public final get
+        public final set
+
+      public final var isAddOnAllowed: kotlin/Int
+        public final get
+        public final set
+
+      public final var isNfcAllowed: kotlin/Int
+        public final get
+        public final set
+
+      public final var isPointRanked: kotlin/Int
+        public final get
+        public final set
+
+      public final var isPointRankedDesc: kotlin/Int
+        public final get
+        public final set
+
+      public final var isQualifier: kotlin/Int
+        public final get
+        public final set
+
+      public final var isRelay: kotlin/Int
+        public final get
+        public final set
+
+      public final var isSpecialEntry: kotlin/Int
+        public final get
+        public final set
+
+      public final var isUkaProgression: kotlin/Int
+        public final get
+        public final set
+
+      public final var lateEntryCredits: kotlin/Int
+        public final get
+        public final set
+
+      public final var lateEntryFee: kotlin/Int
+        public final get
+        public final set
+
+      public final var nameTemplate: kotlin/Int
+        public final get
+        public final set
+
+      public final var noTimeFaults: kotlin/Int
+        public final get
+        public final set
+
+      public final val parent: kotlin/Int
+        public final get
+
+      public final var pointsMethod: kotlin/Int
+        public final get
+        public final set
+
+      public final val previous: kotlin/Int
+        public final get
+
+      public final var programme: kotlin/Int
+        public final get
+        public final set
+
+      public final val progressionEquivalent: kotlin/Int
+        public final get
+
+      public final var runningOrderSort: kotlin/Int
+        public final get
+        public final set
+
+      public final var sponsor: kotlin/Int
+        public final get
+        public final set
+
+      public final var strictRunningOrder: kotlin/Int
+        public final get
+        public final set
+
+      public final var teamSize: kotlin/Int
+        public final get
+        public final set
+
+      UNDEFINED,
+
+      BLAH,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

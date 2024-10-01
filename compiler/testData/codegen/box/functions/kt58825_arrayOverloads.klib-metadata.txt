@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ArrayDimensions
+    // class name: C
+    // class name: DynamicShapeRegister
+
+    public abstract interface ArrayDimensions : kotlin/Any {
+
+      public open fun getD(x: kotlin/Array<kotlin/Array<kotlin/Array<kotlin/Array<kotlin/Int>>>>): kotlin/String
+
+      public open fun getD(x: kotlin/Array<kotlin/Array<kotlin/Array<kotlin/Int>>>): kotlin/String
+
+      public open fun getD(x: kotlin/Array<kotlin/Array<kotlin/Int>>): kotlin/String
+
+      public open fun getD(x: kotlin/Array<kotlin/Int>): kotlin/String
+    }
+
+    public final class C : DynamicShapeRegister<kotlin/Int> {
+
+      public constructor()
+    }
+
+    public abstract interface DynamicShapeRegister<T#0 /* T */> : kotlin/Any {
+
+      public open fun register(vararg items: kotlin/reflect/KCallable<*> /* kotlin/Array<out kotlin/reflect/KCallable<*>> */): kotlin/Unit
+
+      public open fun register(vararg items: kotlin/reflect/KProperty<*> /* kotlin/Array<out kotlin/reflect/KProperty<*>> */): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val p: kotlin/Int /* = ... */
+        public final get
+    }
+  }
+}

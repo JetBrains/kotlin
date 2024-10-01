@@ -1,0 +1,30 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Expr
+    // class name: Num
+
+    public abstract interface Expr : kotlin/Any {
+
+      public open fun ttFun(): kotlin/Int
+    }
+
+    public final class Num : Expr {
+
+      public constructor(value: kotlin/Int)
+
+      public final val value: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun Expr.sometest(): kotlin/Int
+    }
+  }
+}

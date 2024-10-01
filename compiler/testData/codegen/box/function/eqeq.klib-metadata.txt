@@ -1,0 +1,56 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun eqeqB(a: kotlin/Byte, b: kotlin/Byte): kotlin/Boolean
+
+      public final fun eqeqD(a: kotlin/Double, b: kotlin/Double): kotlin/Boolean
+
+      public final fun eqeqF(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun eqeqI(a: kotlin/Int, b: kotlin/Int): kotlin/Boolean
+
+      public final fun eqeqL(a: kotlin/Long, b: kotlin/Long): kotlin/Boolean
+
+      public final fun eqeqN(a: kotlin/Nothing, b: kotlin/Nothing): kotlin/Boolean
+
+      public final fun eqeqNN(a: kotlin/Nothing?, b: kotlin/Nothing?): kotlin/Boolean
+
+      public final fun eqeqS(a: kotlin/Short, b: kotlin/Short): kotlin/Boolean
+
+      public final fun eqeqStr(a: kotlin/String, b: kotlin/String): kotlin/Boolean
+
+      public final fun eqeqeq(a: kotlin/Any?, b: kotlin/Any?): kotlin/Boolean
+
+      public final fun geF(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun geI(a: kotlin/Int, b: kotlin/Int): kotlin/Boolean
+
+      public final fun goodbyeString(): kotlin/String
+
+      public final fun gtF(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun gtI(a: kotlin/Int, b: kotlin/Int): kotlin/Boolean
+
+      public final fun helloString(): kotlin/String
+
+      public final fun leF(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun leI(a: kotlin/Int, b: kotlin/Int): kotlin/Boolean
+
+      public final fun ltF(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun ltI(a: kotlin/Int, b: kotlin/Int): kotlin/Boolean
+
+      public final fun neF(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+
+      public final fun neI(a: kotlin/Int, b: kotlin/Int): kotlin/Boolean
+    }
+  }
+}

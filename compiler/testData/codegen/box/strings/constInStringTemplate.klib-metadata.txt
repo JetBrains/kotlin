@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final const val const42: kotlin/Int /* = 42 */
+        public final get
+
+      public final const val constPi: kotlin/Double /* = 3.1415926358 */
+        public final get
+
+      public final const val constPiF: kotlin/Float /* = 3.14f */
+        public final get
+
+      public final const val constString: kotlin/String /* = "string" */
+        public final get
+
+      public final const val constTrue: kotlin/Boolean /* = true */
+        public final get
+    }
+  }
+}

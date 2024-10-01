@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: SimpleTextField
+    // class name: TextField
+    // class name: TextFieldWrapper
+
+    public final class SimpleTextField : TextField {
+
+      public constructor()
+
+      public open fun getText(): kotlin/String
+
+      public open fun setText(text: kotlin/String): kotlin/Unit
+
+      private final var text2: kotlin/String
+        private final get
+        private final set
+    }
+
+    public abstract interface TextField : kotlin/Any {
+
+      public abstract fun getText(): kotlin/String
+
+      public abstract fun setText(text: kotlin/String): kotlin/Unit
+    }
+
+    public final class TextFieldWrapper : TextField {
+
+      public constructor(textField: TextField)
+
+      public open /* delegation */ fun getText(): kotlin/String
+
+      public open /* delegation */ fun setText(text: kotlin/String): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,34 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/1.kt
+    CLASS CLASS name:X signature:test/X|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.X
+      CONSTRUCTOR signature:test/X.<init>|<init>(){}[0] visibility:public <> () returnType:test.X [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X signature:test/X|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:result signature:test/X.result|{}result[0] visibility:public modality:FINAL [val]
+        FUN name:<get-result> signature:test/X.result.<get-result>|<get-result>(){}[0] visibility:public modality:FINAL <> ($this:test.X) returnType:<unbound IrClassSymbolImpl> [inline]
+          correspondingProperty: PROPERTY name:result signature:test/X.result|{}result[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.X
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-result> (): <unbound IrClassSymbolImpl> [inline] declared in test.X'
+              CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:x signature:test/X.x|x(){}[0] visibility:public modality:FINAL <> ($this:test.X) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:test.X
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun x (): <unbound IrClassSymbolImpl> declared in test.X'
+            CALL 'public final fun go (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test' type=<unbound IrClassSymbolImpl> origin=null
+              f: PROPERTY_REFERENCE 'public final result: <unbound IrClassSymbolImpl> [val] declared in test.X' field=null getter='public final fun <get-result> (): <unbound IrClassSymbolImpl> [inline] declared in test.X' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                $this: GET_VAR '<this>: test.X declared in test.X.x' type=test.X origin=null
+    FUN name:go signature:test/go|go(kotlin.Function0<kotlin.String>){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun go (f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> [inline] declared in test'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+            $this: GET_VAR 'f: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in test.go' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+  FILE fqName:<root> fileName:/2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun x (): <unbound IrClassSymbolImpl> declared in test.X' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.X' type=test.X origin=null

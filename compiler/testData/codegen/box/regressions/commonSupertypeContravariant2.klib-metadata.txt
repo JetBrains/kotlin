@@ -1,0 +1,33 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: In
+
+    public final class A : In<A> {
+
+      public constructor()
+    }
+
+    public final class B : In<B> {
+
+      public constructor()
+    }
+
+    public abstract interface In<in T#0 /* E */> : kotlin/Any {
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun foobar(a: A, b: B): In<kotlin/Nothing>
+
+      public final fun <T#0 /* T */> select(x: T#0, y: T#0): T#0
+    }
+  }
+}

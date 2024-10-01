@@ -1,0 +1,60 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/nestedMaps.kt
+    CLASS OBJECT name:Map1 signature:/Map1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Map1
+      CONSTRUCTOR signature:/Map1.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Map1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Map1 signature:/Map1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:get signature:/Map1.get|get(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Map1, i:<unbound IrClassSymbolImpl>, j:<unbound IrClassSymbolImpl>) returnType:<root>.Map2 [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Map1
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:j index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun get (i: <unbound IrClassSymbolImpl>, j: <unbound IrClassSymbolImpl>): <root>.Map2 [operator] declared in <root>.Map1'
+            GET_OBJECT 'CLASS OBJECT name:Map2 signature:/Map2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Map2
+    CLASS OBJECT name:Map2 signature:/Map2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Map2
+      CONSTRUCTOR signature:/Map2.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Map2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Map2 signature:/Map2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:get signature:/Map2.get|get(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Map2, i:<unbound IrClassSymbolImpl>, j:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Map2
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:j index:1 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun get (i: <unbound IrClassSymbolImpl>, j: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.Map2'
+            CONST Int type=<unbound IrClassSymbolImpl> value=0
+      FUN name:set signature:/Map2.set|set(kotlin.Int;kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:<root>.Map2, i:<unbound IrClassSymbolImpl>, j:<unbound IrClassSymbolImpl>, newValue:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Map2
+        VALUE_PARAMETER name:i index:0 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:j index:1 type:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER name:newValue index:2 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:<array> type:<root>.Map2 [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>, j: <unbound IrClassSymbolImpl>): <root>.Map2 [operator] declared in <root>.Map1' type=<root>.Map2 origin=GET_ARRAY_ELEMENT
+            $this: GET_OBJECT 'CLASS OBJECT name:Map1 signature:/Map1|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Map1
+            i: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            j: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<index_0> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<index_1> type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR IR_TEMPORARY_VARIABLE name:<unary> type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun get (i: <unbound IrClassSymbolImpl>, j: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.Map2' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <array>: <root>.Map2 [val] declared in <root>.box' type=<root>.Map2 origin=null
+            i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            j: GET_VAR 'val <index_1>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun set (i: <unbound IrClassSymbolImpl>, j: <unbound IrClassSymbolImpl>, newValue: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [operator] declared in <root>.Map2' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+          $this: GET_VAR 'val <array>: <root>.Map2 [val] declared in <root>.box' type=<root>.Map2 origin=null
+          i: GET_VAR 'val <index_0>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          j: GET_VAR 'val <index_1>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          newValue: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=POSTFIX_INCR
+            $this: GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          GET_VAR 'val <unary>: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
