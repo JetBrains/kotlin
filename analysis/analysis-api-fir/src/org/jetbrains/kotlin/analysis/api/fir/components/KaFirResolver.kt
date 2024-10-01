@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
-import org.jetbrains.kotlin.analysis.utils.collections.ConcurrentMapBasedCache
+import org.jetbrains.kotlin.analysis.api.platform.utils.NullableConcurrentCache
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -89,7 +89,6 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.util.concurrent.ConcurrentHashMap
 
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -174,9 +173,9 @@ internal class KaFirResolver(
      * without the containing session being invalidated is
      * [in-block modification][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService].
      */
-    private val cache: CachedValue<ConcurrentMapBasedCache<KtElement, KaCallInfo?>> by lazy {
+    private val cache: CachedValue<NullableConcurrentCache<KtElement, KaCallInfo?>> by lazy {
         softCachedValue(project, LLFirInBlockModificationTracker.getInstance(project)) {
-            ConcurrentMapBasedCache<KtElement, KaCallInfo?>(ConcurrentHashMap())
+            NullableConcurrentCache<KtElement, KaCallInfo?>()
         }
     }
 
