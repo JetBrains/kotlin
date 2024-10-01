@@ -4166,6 +4166,16 @@ internal class CanBeValImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.CanBeVal
 
+internal class CanBeValLateinitImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.CanBeValLateinit
+
+internal class CanBeValDelayedInitializationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.CanBeValDelayedInitialization
+
 internal class CanBeReplacedWithOperatorAssignmentImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

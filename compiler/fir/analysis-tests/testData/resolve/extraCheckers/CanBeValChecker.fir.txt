@@ -125,6 +125,21 @@ FILE: CanBeValChecker.kt
 
         R|kotlin/io/print|(R|<local>/v3|)
     }
+    public final fun lateinitVar(p: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lateinit lvar x: R|kotlin/String|
+        when () {
+            R|<local>/p| ->  {
+                R|<local>/x| = String()
+            }
+        }
+
+        when () {
+            R|<local>/p| ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+        }
+
+    }
     public final fun test(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int| = Int(0)
         while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {

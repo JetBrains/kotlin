@@ -4960,6 +4960,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CAN_BE_VAL_LATEINIT) { firDiagnostic ->
+        CanBeValLateinitImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CAN_BE_VAL_DELAYED_INITIALIZATION) { firDiagnostic ->
+        CanBeValDelayedInitializationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT) { firDiagnostic ->
         CanBeReplacedWithOperatorAssignmentImpl(
             firDiagnostic as KtPsiDiagnostic,

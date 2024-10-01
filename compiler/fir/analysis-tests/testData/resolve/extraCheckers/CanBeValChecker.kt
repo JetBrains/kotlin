@@ -53,7 +53,7 @@ fun destructuringDeclaration() {
 }
 
 fun stackOverflowBug() {
-    <!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
+    <!CAN_BE_VAL_DELAYED_INITIALIZATION!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
     <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 1
     for (i in 1..10)
         print(i)
@@ -94,6 +94,12 @@ fun withInitializer() {
     print(v3)
 }
 
+fun lateinitVar(p: Boolean) {
+    lateinit <!CAN_BE_VAL_LATEINIT!>var<!> x: String
+    if (p) x = ""
+    if (p) x.length
+}
+
 fun test() {
     var a = 0
     while (a>0) {
@@ -102,7 +108,7 @@ fun test() {
 }
 
 fun foo() {
-    <!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
+    <!CAN_BE_VAL_DELAYED_INITIALIZATION!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
     val bool = true
     if (bool) <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 4 else <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 42
     val <!VARIABLE_NEVER_READ!>b<!>: String
@@ -130,7 +136,7 @@ fun assignedTwice(p: Int) {
 }
 
 fun main(args: Array<String?>) {
-    <!CAN_BE_VAL!>var<!> a: String?
+    <!CAN_BE_VAL_DELAYED_INITIALIZATION!>var<!> a: String?
     val <!UNUSED_VARIABLE!>unused<!> = 0
 
     if (args.size == 1) {
@@ -177,7 +183,7 @@ inline fun inlineRun(f: () -> Unit) {
 }
 
 fun inlineLambdaInitialization() {
-    <!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
+    <!CAN_BE_VAL_DELAYED_INITIALIZATION!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
 
     inlineRun {
         <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 20
@@ -185,7 +191,7 @@ fun inlineLambdaInitialization() {
 }
 
 fun notAssignedWhenNotUsed(p: Int) {
-    <!CAN_BE_VAL!>var<!> v: Int
+    <!CAN_BE_VAL_DELAYED_INITIALIZATION!>var<!> v: Int
     if (p > 0) {
         v = 1
         print(v)

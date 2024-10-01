@@ -866,6 +866,8 @@ object FirErrors {
     val REDUNDANT_EXPLICIT_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_EXPLICIT_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val CAN_BE_VAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAN_BE_VAL", WARNING, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtDeclaration::class)
+    val CAN_BE_VAL_LATEINIT: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAN_BE_VAL_LATEINIT", WARNING, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtDeclaration::class)
+    val CAN_BE_VAL_DELAYED_INITIALIZATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAN_BE_VAL_DELAYED_INITIALIZATION", WARNING, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtDeclaration::class)
     val CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT", WARNING, SourceElementPositioningStrategies.OPERATOR, KtExpression::class)
     val REDUNDANT_CALL_OF_CONVERSION_METHOD: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_CALL_OF_CONVERSION_METHOD", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class)
     val ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS: KtDiagnosticFactory0 = KtDiagnosticFactory0("ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS", WARNING, SourceElementPositioningStrategies.OPERATOR, KtExpression::class)

@@ -3462,6 +3462,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CanBeVal::class
     }
 
+    interface CanBeValLateinit : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = CanBeValLateinit::class
+    }
+
+    interface CanBeValDelayedInitialization : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = CanBeValDelayedInitialization::class
+    }
+
     interface CanBeReplacedWithOperatorAssignment : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CanBeReplacedWithOperatorAssignment::class
     }
