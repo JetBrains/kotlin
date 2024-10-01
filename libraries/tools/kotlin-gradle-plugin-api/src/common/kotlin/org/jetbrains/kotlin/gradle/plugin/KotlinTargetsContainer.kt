@@ -33,8 +33,12 @@ interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents a Kotlin DSL entity containing a collection of multiple [KotlinSourceSets][KotlinSourceSet].
  */
 interface KotlinSourceSetContainer {
+
+    /**
+     * A [NamedDomainObjectContainer] containing all registered [KotlinSourceSets][KotlinSourceSet] in this project.
+     */
     val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }
