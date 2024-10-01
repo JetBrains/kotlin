@@ -5,7 +5,7 @@
       "teamcity": {
         "configuration": "ijplatform_staging_KotlinPluginAnalyzerUpdate",
         "url": "https://buildserver.labs.intellij.net",
-        "token": "${space-safe-merge-kt}",
+        "token": "${safe.merge.robot.teamcity.token}",
         "ssl-keystore": "BuildServer client"
       }
     }
