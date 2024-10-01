@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isTopLevelInPackage
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 @PhaseDescription(
     name = "ApiVersionIsAtLeastEvaluationLowering",
     description = "Evaluate inlined invocations of `apiVersionIsAtLeast`",
     prerequisite = [JvmIrInliner::class]
 )
-internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformer<Data> {
+internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass, IrTransformer<Data>() {
     private val apiVersion = context.config.languageVersionSettings.apiVersion.version
 
     data class Data(val currentFunction: IrFunction?, val isInsideInlinedBlock: Boolean)

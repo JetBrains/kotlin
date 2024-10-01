@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
 @PhaseDescription(
     name = "PolymorphicSignature",
     description = "Replace polymorphic methods with fake ones according to types at the call site"
 )
-internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>,
+internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrTransformer<PolymorphicSignatureLowering.Data>(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))

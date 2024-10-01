@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.NameUtils
 
 @PhaseDescription(
@@ -48,7 +48,7 @@ private data class Data(
 // This lambda will not exist after inline, so we copy declaration into new temporary inline call `singleArgumentInlineFunction`.
 // 3. MUST NOT BE created at all because will be created at callee site.
 // This lowering drops declarations that correspond to second and third type.
-private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBackendContext) : IrElementTransformer<Data> {
+private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBackendContext) : IrTransformer<Data>() {
     private val visited = mutableSetOf<IrElement>()
     private val capturedConstructors = context.mapping.capturedConstructors
 

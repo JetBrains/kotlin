@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 @PhaseDescription(
     name = "ArgumentNullabilityAssertions",
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
     prerequisite = [JvmStringConcatenationLowering::class]
 )
 internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformer<AssertionScope> {
+    IrTransformer<AssertionScope>() {
 
     enum class AssertionScope {
         Enabled, Disabled
