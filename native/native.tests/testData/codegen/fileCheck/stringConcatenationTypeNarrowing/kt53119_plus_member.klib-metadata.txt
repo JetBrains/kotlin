@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.stringConcatenationTypeNarrowing.kt53119_plus_member
+
+    // class name: codegen/stringConcatenationTypeNarrowing/kt53119_plus_member/Foo
+
+    public final data class codegen/stringConcatenationTypeNarrowing/kt53119_plus_member/Foo : kotlin/Any {
+
+      public constructor(bar: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(bar: kotlin/Int /* = ... */): codegen/stringConcatenationTypeNarrowing/kt53119_plus_member/Foo
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val bar: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun generatedPlusMemberAny(str: kotlin/String, maybeAny: kotlin/Any?): kotlin/String
+
+      public final fun generatedPlusMemberString(str1: kotlin/String, str2: kotlin/String): kotlin/String
+
+      public final fun manualPlusMemberAny(str: kotlin/String, maybeAny: kotlin/Any?): kotlin/String
+
+      public final fun manualPlusMemberFoo(str1: kotlin/String, foo: codegen/stringConcatenationTypeNarrowing/kt53119_plus_member/Foo): kotlin/String
+
+      public final fun manualPlusMemberMaybeFoo(str1: kotlin/String, foo: codegen/stringConcatenationTypeNarrowing/kt53119_plus_member/Foo?): kotlin/String
+
+      public final fun manualPlusMemberString(str1: kotlin/String, str2: kotlin/String): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,78 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+
+    public final value class A : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val i: kotlin/Int
+        public final get
+
+      // underlying property: i
+
+      // underlying type: kotlin/Int
+    }
+
+    public final value class B : kotlin/Any {
+
+      public constructor(a: A)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val a: A
+        public final get
+
+      // underlying property: a
+
+      // underlying type: A
+    }
+
+    public final value class C : kotlin/Any {
+
+      public constructor(s: kotlin/String)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val s: kotlin/String
+        public final get
+
+      // underlying property: s
+
+      // underlying type: kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun defaultA(a: A /* = ... */, aa: A /* = ... */): kotlin/Int
+
+      public final fun defaultB(b: B /* = ... */, bb: B /* = ... */): kotlin/Int
+
+      public final fun defaultC(c: C /* = ... */, cc: C /* = ... */): kotlin/String
+
+      public final fun defaultInt(a: kotlin/Int /* = ... */, aa: kotlin/Int /* = ... */): kotlin/Int
+    }
+  }
+}

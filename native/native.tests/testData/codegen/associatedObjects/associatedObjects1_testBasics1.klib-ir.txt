@@ -1,0 +1,119 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/associatedObjects1_testBasics1.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_OBJECT 'CLASS OBJECT name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Bar
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <root>.Associated1
+            $receiver: CLASS_REFERENCE 'CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.Foo>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_OBJECT 'CLASS OBJECT name:Baz signature:/Baz|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.Baz
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <root>.Associated2
+            $receiver: CLASS_REFERENCE 'CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.Foo>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <root>.Associated3
+            $receiver: CLASS_REFERENCE 'CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.Foo>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <root>.Associated1
+            $receiver: CLASS_REFERENCE 'CLASS OBJECT name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.Bar>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS ANNOTATION_CLASS name:Associated1 signature:/Associated1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+        <unbound>
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Associated1
+      CONSTRUCTOR signature:/Associated1.<init>|<init>(kotlin.reflect.KClass<*>){}[0] visibility:public <> (kClass:<unbound IrClassSymbolImpl><*>) returnType:<root>.Associated1 [primary]
+        VALUE_PARAMETER name:kClass index:0 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Associated1 signature:/Associated1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:kClass signature:/Associated1.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated1.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClass: <unbound IrClassSymbolImpl><*> declared in <root>.Associated1.<init>' type=<unbound IrClassSymbolImpl><*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClass> signature:/Associated1.kClass.<get-kClass>|<get-kClass>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Associated1) returnType:<unbound IrClassSymbolImpl><*>
+          correspondingProperty: PROPERTY name:kClass signature:/Associated1.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Associated1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClass> (): <unbound IrClassSymbolImpl><*> declared in <root>.Associated1'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated1.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]' type=<unbound IrClassSymbolImpl><*> origin=null
+                receiver: GET_VAR '<this>: <root>.Associated1 declared in <root>.Associated1.<get-kClass>' type=<root>.Associated1 origin=null
+    CLASS ANNOTATION_CLASS name:Associated2 signature:/Associated2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+        <unbound>
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Associated2
+      CONSTRUCTOR signature:/Associated2.<init>|<init>(kotlin.reflect.KClass<*>){}[0] visibility:public <> (kClass:<unbound IrClassSymbolImpl><*>) returnType:<root>.Associated2 [primary]
+        VALUE_PARAMETER name:kClass index:0 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Associated2 signature:/Associated2|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:kClass signature:/Associated2.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated2.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClass: <unbound IrClassSymbolImpl><*> declared in <root>.Associated2.<init>' type=<unbound IrClassSymbolImpl><*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClass> signature:/Associated2.kClass.<get-kClass>|<get-kClass>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Associated2) returnType:<unbound IrClassSymbolImpl><*>
+          correspondingProperty: PROPERTY name:kClass signature:/Associated2.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Associated2
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClass> (): <unbound IrClassSymbolImpl><*> declared in <root>.Associated2'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated2.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]' type=<unbound IrClassSymbolImpl><*> origin=null
+                receiver: GET_VAR '<this>: <root>.Associated2 declared in <root>.Associated2.<get-kClass>' type=<root>.Associated2 origin=null
+    CLASS ANNOTATION_CLASS name:Associated3 signature:/Associated3|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+        <unbound>
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Associated3
+      CONSTRUCTOR signature:/Associated3.<init>|<init>(kotlin.reflect.KClass<*>){}[0] visibility:public <> (kClass:<unbound IrClassSymbolImpl><*>) returnType:<root>.Associated3 [primary]
+        VALUE_PARAMETER name:kClass index:0 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Associated3 signature:/Associated3|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:kClass signature:/Associated3.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated3.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClass: <unbound IrClassSymbolImpl><*> declared in <root>.Associated3.<init>' type=<unbound IrClassSymbolImpl><*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClass> signature:/Associated3.kClass.<get-kClass>|<get-kClass>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Associated3) returnType:<unbound IrClassSymbolImpl><*>
+          correspondingProperty: PROPERTY name:kClass signature:/Associated3.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Associated3
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClass> (): <unbound IrClassSymbolImpl><*> declared in <root>.Associated3'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated3.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]' type=<unbound IrClassSymbolImpl><*> origin=null
+                receiver: GET_VAR '<this>: <root>.Associated3 declared in <root>.Associated3.<get-kClass>' type=<root>.Associated3 origin=null
+    CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        Associated1(kClass = CLASS_REFERENCE 'CLASS OBJECT name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.Bar>)
+        Associated2(kClass = CLASS_REFERENCE 'CLASS OBJECT name:Baz signature:/Baz|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.Baz>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS OBJECT name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar
+      CONSTRUCTOR signature:/Bar.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Bar [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Bar signature:/Bar|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS OBJECT name:Baz signature:/Baz|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Baz
+      CONSTRUCTOR signature:/Baz.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.Baz [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Baz signature:/Baz|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'

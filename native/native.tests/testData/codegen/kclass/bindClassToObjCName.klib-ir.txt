@@ -1,0 +1,165 @@
+// MODULE: base
+MODULE_FRAGMENT name:<base>
+  FILE fqName:bindClassToObjCName.base fileName:/base.kt
+    CLASS CLASS name:Base1 signature:bindClassToObjCName.base/Base1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.Base1
+      CONSTRUCTOR signature:bindClassToObjCName.base/Base1.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.base.Base1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base1 signature:bindClassToObjCName.base/Base1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Base2 signature:bindClassToObjCName.base/Base2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.Base2
+      CONSTRUCTOR signature:bindClassToObjCName.base/Base2.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.base.Base2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base2 signature:bindClassToObjCName.base/Base2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Base3 signature:bindClassToObjCName.base/Base3|null[0] modality:OPEN visibility:public superTypes:[bindClassToObjCName.base.Base1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.Base3
+      CONSTRUCTOR signature:bindClassToObjCName.base/Base3.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.base.Base3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bindClassToObjCName.base.Base1'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base3 signature:bindClassToObjCName.base/Base3|null[0] modality:OPEN visibility:public superTypes:[bindClassToObjCName.base.Base1]'
+    CLASS CLASS name:Base4 signature:bindClassToObjCName.base/Base4|null[0] modality:FINAL visibility:public superTypes:[bindClassToObjCName.base.Base3]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.Base4
+      CONSTRUCTOR signature:bindClassToObjCName.base/Base4.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.base.Base4 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bindClassToObjCName.base.Base3'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base4 signature:bindClassToObjCName.base/Base4|null[0] modality:FINAL visibility:public superTypes:[bindClassToObjCName.base.Base3]'
+    CLASS OBJECT name:BaseObject signature:bindClassToObjCName.base/BaseObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.BaseObject
+      CONSTRUCTOR signature:bindClassToObjCName.base/BaseObject.<init>|<init>(){}[0] visibility:private <> () returnType:bindClassToObjCName.base.BaseObject [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:BaseObject signature:bindClassToObjCName.base/BaseObject|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:BaseHolder signature:bindClassToObjCName.base/BaseHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.BaseHolder
+      CONSTRUCTOR signature:bindClassToObjCName.base/BaseHolder.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.base.BaseHolder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseHolder signature:bindClassToObjCName.base/BaseHolder|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Nested signature:bindClassToObjCName.base/BaseHolder.Nested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.BaseHolder.Nested
+        CONSTRUCTOR signature:bindClassToObjCName.base/BaseHolder.Nested.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.base.BaseHolder.Nested [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Nested signature:bindClassToObjCName.base/BaseHolder.Nested|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS CLASS name:Inner signature:bindClassToObjCName.base/BaseHolder.Inner|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.BaseHolder.Inner
+        CONSTRUCTOR signature:bindClassToObjCName.base/BaseHolder.Inner.<init>|<init>(){}[0] visibility:public <> ($this:bindClassToObjCName.base.BaseHolder) returnType:bindClassToObjCName.base.BaseHolder.Inner [primary]
+          $outer: VALUE_PARAMETER name:<this> type:bindClassToObjCName.base.BaseHolder
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner signature:bindClassToObjCName.base/BaseHolder.Inner|null[0] modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]'
+      CLASS OBJECT name:Companion signature:bindClassToObjCName.base/BaseHolder.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.base.BaseHolder.Companion
+        CONSTRUCTOR signature:bindClassToObjCName.base/BaseHolder.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:bindClassToObjCName.base.BaseHolder.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:bindClassToObjCName.base/BaseHolder.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+
+// MODULE: gen
+MODULE_FRAGMENT name:<gen>
+  FILE fqName:bindClassToObjCName.gen fileName:/gen.kt
+    annotations:
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "Base1ObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "Base3ObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'CLASS CLASS name:Gen1 signature:bindClassToObjCName.gen/Gen1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><bindClassToObjCName.gen.Gen1>, 2 = "Gen1ObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'CLASS CLASS name:Gen3 signature:bindClassToObjCName.gen/Gen3|null[0] modality:OPEN visibility:public superTypes:[bindClassToObjCName.gen.Gen1]' type=<unbound IrClassSymbolImpl><bindClassToObjCName.gen.Gen3>, 2 = "Gen3ObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "BaseObjectObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "BaseNestedObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "BaseInnerObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "BaseCompanionObjectObjCName")
+    CLASS CLASS name:Gen1 signature:bindClassToObjCName.gen/Gen1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.gen.Gen1
+      CONSTRUCTOR signature:bindClassToObjCName.gen/Gen1.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.gen.Gen1 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Gen1 signature:bindClassToObjCName.gen/Gen1|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Gen2 signature:bindClassToObjCName.gen/Gen2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.gen.Gen2
+      CONSTRUCTOR signature:bindClassToObjCName.gen/Gen2.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.gen.Gen2 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Gen2 signature:bindClassToObjCName.gen/Gen2|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Gen3 signature:bindClassToObjCName.gen/Gen3|null[0] modality:OPEN visibility:public superTypes:[bindClassToObjCName.gen.Gen1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.gen.Gen3
+      CONSTRUCTOR signature:bindClassToObjCName.gen/Gen3.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.gen.Gen3 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bindClassToObjCName.gen.Gen1'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Gen3 signature:bindClassToObjCName.gen/Gen3|null[0] modality:OPEN visibility:public superTypes:[bindClassToObjCName.gen.Gen1]'
+    CLASS CLASS name:Gen4 signature:bindClassToObjCName.gen/Gen4|null[0] modality:FINAL visibility:public superTypes:[bindClassToObjCName.gen.Gen3]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bindClassToObjCName.gen.Gen4
+      CONSTRUCTOR signature:bindClassToObjCName.gen/Gen4.<init>|<init>(){}[0] visibility:public <> () returnType:bindClassToObjCName.gen.Gen4 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bindClassToObjCName.gen.Gen3'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Gen4 signature:bindClassToObjCName.gen/Gen4|null[0] modality:FINAL visibility:public superTypes:[bindClassToObjCName.gen.Gen3]'
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    annotations:
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "Base4ObjCName")
+      <unbound>(1 = CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, 2 = "Gen4ObjCName")
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Base1ObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Base3ObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Base4ObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Gen1ObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Gen3ObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Gen4ObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="BaseObjectObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="BaseNestedObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="BaseInnerObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="BaseCompanionObjectObjCName"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $receiver: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

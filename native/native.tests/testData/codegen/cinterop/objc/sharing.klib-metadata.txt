@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: NSObjectImpl
+
+    private final class NSObjectImpl : platform/darwin/NSObject {
+
+      public constructor()
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun kotlin/native/concurrent/Worker.runInWorker(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

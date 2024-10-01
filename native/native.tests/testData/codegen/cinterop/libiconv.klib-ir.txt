@@ -1,0 +1,114 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/libiconv.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        VAR name:sourceByteArray type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CONST String type=<unbound IrClassSymbolImpl> value="Hello!"
+        VAR name:golden type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=72
+              CONST Int type=<unbound IrClassSymbolImpl> value=101
+              CONST Int type=<unbound IrClassSymbolImpl> value=108
+              CONST Int type=<unbound IrClassSymbolImpl> value=108
+              CONST Int type=<unbound IrClassSymbolImpl> value=111
+              CONST Int type=<unbound IrClassSymbolImpl> value=33
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$memScoped type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  VAR name:sourceLength type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  VAR name:destLength type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  VAR name:sourceBytes type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                      $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'val sourceByteArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  VAR name:destBytes type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                      <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                      $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR 'val golden: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  VAR name:sourcePtr type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                      <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>
+                      $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                    <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                    $receiver: GET_VAR 'val sourcePtr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                    1: GET_VAR 'val sourceBytes: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                  VAR name:destPtr type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                      <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>
+                      $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                    <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>
+                    $receiver: GET_VAR 'val destPtr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                    1: GET_VAR 'val destBytes: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'val sourceLength: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR 'val sourceByteArray: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EQ
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'val destLength: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                        $this: GET_VAR 'val golden: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  VAR name:conversion type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="UTF-8"
+                      2: CONST String type=<unbound IrClassSymbolImpl> value="LATIN1"
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'val conversion: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                      2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>> origin=GET_PROPERTY
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>
+                        $receiver: GET_VAR 'val sourcePtr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                      3: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                        $receiver: GET_VAR 'val sourceLength: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      4: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>> origin=GET_PROPERTY
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>>
+                        $receiver: GET_VAR 'val destPtr: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>>> origin=null
+                      5: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+                        <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                        $receiver: GET_VAR 'val destLength: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'val golden: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (index:<unbound IrClassSymbolImpl>, it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                        VALUE_PARAMETER name:index index:0 type:<unbound IrClassSymbolImpl>
+                        VALUE_PARAMETER name:it index:1 type:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            <1>: <unbound IrClassSymbolImpl>
+                            1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                                <1>: <unbound IrClassSymbolImpl>
+                                $receiver: GET_VAR 'val destBytes: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=null
+                                1: GET_VAR 'index: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.box'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: GET_VAR 'val conversion: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

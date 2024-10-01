@@ -1,0 +1,113 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:codegen.kclass.kclass0 fileName:/anonymousObjectInInlineFunction.kt
+    CLASS INTERFACE name:HasFoo signature:codegen.kclass.kclass0/HasFoo|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:codegen.kclass.kclass0.HasFoo
+      FUN name:foo signature:codegen.kclass.kclass0/HasFoo.foo|foo(){}[0] visibility:public modality:ABSTRACT <> ($this:codegen.kclass.kclass0.HasFoo) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:codegen.kclass.kclass0.HasFoo
+    FUN name:getHasFooPrivate signature:[ File '/anonymousObjectInInlineFunction.kt' <- codegen.kclass.kclass0/getHasFooPrivate|getHasFooPrivate(kotlin.String){}[0] ] visibility:private modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:codegen.kclass.kclass0.HasFoo [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun getHasFooPrivate (s: <unbound IrClassSymbolImpl>): codegen.kclass.kclass0.HasFoo [inline] declared in codegen.kclass.kclass0'
+          BLOCK type=codegen.kclass.kclass0.getHasFooPrivate.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[codegen.kclass.kclass0.HasFoo]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:codegen.kclass.kclass0.getHasFooPrivate.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:codegen.kclass.kclass0.getHasFooPrivate.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[codegen.kclass.kclass0.HasFoo]'
+              FUN name:foo visibility:public modality:OPEN <> ($this:codegen.kclass.kclass0.getHasFooPrivate.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun foo (): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.HasFoo
+                $this: VALUE_PARAMETER name:<this> type:codegen.kclass.kclass0.getHasFooPrivate.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.getHasFooPrivate.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 's: <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.getHasFooPrivate' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="_private"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in codegen.kclass.kclass0.getHasFooPrivate.<no name provided>' type=codegen.kclass.kclass0.getHasFooPrivate.<no name provided> origin=OBJECT_LITERAL
+    FUN name:getHasFooPublic signature:codegen.kclass.kclass0/getHasFooPublic|getHasFooPublic(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:codegen.kclass.kclass0.HasFoo [inline]
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getHasFooPublic (s: <unbound IrClassSymbolImpl>): codegen.kclass.kclass0.HasFoo [inline] declared in codegen.kclass.kclass0'
+          BLOCK type=codegen.kclass.kclass0.getHasFooPublic.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[codegen.kclass.kclass0.HasFoo]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:codegen.kclass.kclass0.getHasFooPublic.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:codegen.kclass.kclass0.getHasFooPublic.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[codegen.kclass.kclass0.HasFoo]'
+              FUN name:foo visibility:public modality:OPEN <> ($this:codegen.kclass.kclass0.getHasFooPublic.<no name provided>) returnType:<unbound IrClassSymbolImpl>
+                overridden:
+                  public abstract fun foo (): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.HasFoo
+                $this: VALUE_PARAMETER name:<this> type:codegen.kclass.kclass0.getHasFooPublic.<no name provided>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.getHasFooPublic.<no name provided>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+                      $this: GET_VAR 's: <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.getHasFooPublic' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="_public"
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in codegen.kclass.kclass0.getHasFooPublic.<no name provided>' type=codegen.kclass.kclass0.getHasFooPublic.<no name provided> origin=OBJECT_LITERAL
+    FUN name:box signature:codegen.kclass.kclass0/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:hasFooPrivate type:codegen.kclass.kclass0.HasFoo [val]
+          CALL 'private final fun getHasFooPrivate (s: <unbound IrClassSymbolImpl>): codegen.kclass.kclass0.HasFoo [inline] declared in codegen.kclass.kclass0' type=codegen.kclass.kclass0.HasFoo origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="a"
+        CALL 'private final fun checkClass (clazz: <unbound IrClassSymbolImpl><*>, expectedQualifiedName: <unbound IrClassSymbolImpl>?, expectedSimpleName: <unbound IrClassSymbolImpl>?, expectedToStringName: <unbound IrClassSymbolImpl>, expectedInstance: <unbound IrClassSymbolImpl>, expectedNotInstance: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0' type=<unbound IrClassSymbolImpl> origin=null
+          clazz: GET_CLASS type=<unbound IrClassSymbolImpl><out codegen.kclass.kclass0.HasFoo>
+            GET_VAR 'val hasFooPrivate: codegen.kclass.kclass0.HasFoo [val] declared in codegen.kclass.kclass0.box' type=codegen.kclass.kclass0.HasFoo origin=null
+          expectedQualifiedName: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          expectedSimpleName: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          expectedToStringName: CONST String type=<unbound IrClassSymbolImpl> value="class codegen.kclass.kclass0.box$$inlined$getHasFooPrivate$1"
+          expectedInstance: GET_VAR 'val hasFooPrivate: codegen.kclass.kclass0.HasFoo [val] declared in codegen.kclass.kclass0.box' type=codegen.kclass.kclass0.HasFoo origin=null
+          expectedNotInstance: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:hasFooPublic type:codegen.kclass.kclass0.HasFoo [val]
+          CALL 'public final fun getHasFooPublic (s: <unbound IrClassSymbolImpl>): codegen.kclass.kclass0.HasFoo [inline] declared in codegen.kclass.kclass0' type=codegen.kclass.kclass0.HasFoo origin=null
+            s: CONST String type=<unbound IrClassSymbolImpl> value="b"
+        CALL 'private final fun checkClass (clazz: <unbound IrClassSymbolImpl><*>, expectedQualifiedName: <unbound IrClassSymbolImpl>?, expectedSimpleName: <unbound IrClassSymbolImpl>?, expectedToStringName: <unbound IrClassSymbolImpl>, expectedInstance: <unbound IrClassSymbolImpl>, expectedNotInstance: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0' type=<unbound IrClassSymbolImpl> origin=null
+          clazz: GET_CLASS type=<unbound IrClassSymbolImpl><out codegen.kclass.kclass0.HasFoo>
+            GET_VAR 'val hasFooPublic: codegen.kclass.kclass0.HasFoo [val] declared in codegen.kclass.kclass0.box' type=codegen.kclass.kclass0.HasFoo origin=null
+          expectedQualifiedName: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          expectedSimpleName: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          expectedToStringName: CONST String type=<unbound IrClassSymbolImpl> value="class codegen.kclass.kclass0.box$$inlined$getHasFooPublic$1"
+          expectedInstance: GET_VAR 'val hasFooPublic: codegen.kclass.kclass0.HasFoo [val] declared in codegen.kclass.kclass0.box' type=codegen.kclass.kclass0.HasFoo origin=null
+          expectedNotInstance: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:checkClass signature:[ File '/anonymousObjectInInlineFunction.kt' <- codegen.kclass.kclass0/checkClass|checkClass(kotlin.reflect.KClass<*>;kotlin.String?;kotlin.String?;kotlin.String;kotlin.Any;kotlin.Any?){}[0] ] visibility:private modality:FINAL <> (clazz:<unbound IrClassSymbolImpl><*>, expectedQualifiedName:<unbound IrClassSymbolImpl>?, expectedSimpleName:<unbound IrClassSymbolImpl>?, expectedToStringName:<unbound IrClassSymbolImpl>, expectedInstance:<unbound IrClassSymbolImpl>, expectedNotInstance:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:clazz index:0 type:<unbound IrClassSymbolImpl><*>
+      VALUE_PARAMETER name:expectedQualifiedName index:1 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:expectedSimpleName index:2 type:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:expectedToStringName index:3 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expectedInstance index:4 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:expectedNotInstance index:5 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_VAR 'expectedQualifiedName: <unbound IrClassSymbolImpl>? declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl>? origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'clazz: <unbound IrClassSymbolImpl><*> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl><*> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_VAR 'expectedSimpleName: <unbound IrClassSymbolImpl>? declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl>? origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'clazz: <unbound IrClassSymbolImpl><*> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl><*> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: GET_VAR 'expectedToStringName: <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'clazz: <unbound IrClassSymbolImpl><*> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl><*> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'clazz: <unbound IrClassSymbolImpl><*> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl><*> origin=null
+            1: GET_VAR 'expectedInstance: <unbound IrClassSymbolImpl> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'expectedNotInstance: <unbound IrClassSymbolImpl>? declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl>? origin=null
+                arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  $this: GET_VAR 'clazz: <unbound IrClassSymbolImpl><*> declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl><*> origin=null
+                  1: GET_VAR 'expectedNotInstance: <unbound IrClassSymbolImpl>? declared in codegen.kclass.kclass0.checkClass' type=<unbound IrClassSymbolImpl>? origin=null

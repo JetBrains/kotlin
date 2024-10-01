@@ -1,0 +1,85 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/deserialized_listof0.kt
+    FUN name:test_arrayList signature:/test_arrayList|test_arrayList(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:l type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONST Int type=<unbound IrClassSymbolImpl> value=3
+        VAR name:m type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        VAR name:n type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PLUS
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val l: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: GET_VAR 'val m: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          1: GET_VAR 'val l: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          2: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:test_arrayList2 signature:/test_arrayList2|test_arrayList2(0:0;0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of <root>.test_arrayList2, y:T of <root>.test_arrayList2, z:T of <root>.test_arrayList2) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /test_arrayList2|test_arrayList2(0:0;0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of <root>.test_arrayList2
+      VALUE_PARAMETER name:y index:1 type:T of <root>.test_arrayList2
+      VALUE_PARAMETER name:z index:2 type:T of <root>.test_arrayList2
+      BLOCK_BODY
+        VAR name:l type:<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=null
+            <1>: T of <root>.test_arrayList2
+            1: VARARG type=<unbound IrClassSymbolImpl><out T of <root>.test_arrayList2> varargElementType=T of <root>.test_arrayList2
+              GET_VAR 'x: T of <root>.test_arrayList2 declared in <root>.test_arrayList2' type=T of <root>.test_arrayList2 origin=null
+              GET_VAR 'y: T of <root>.test_arrayList2 declared in <root>.test_arrayList2' type=T of <root>.test_arrayList2 origin=null
+              GET_VAR 'z: T of <root>.test_arrayList2 declared in <root>.test_arrayList2' type=T of <root>.test_arrayList2 origin=null
+        VAR name:m type:<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=null
+            <1>: T of <root>.test_arrayList2
+        VAR name:n type:<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=PLUS
+            <1>: T of <root>.test_arrayList2
+            $receiver: GET_VAR 'val m: <unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val] declared in <root>.test_arrayList2' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=null
+            1: GET_VAR 'val l: <unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val] declared in <root>.test_arrayList2' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><T of <root>.test_arrayList2>
+          1: GET_VAR 'val l: <unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val] declared in <root>.test_arrayList2' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=null
+          2: GET_VAR 'val n: <unbound IrClassSymbolImpl><T of <root>.test_arrayList2> [val] declared in <root>.test_arrayList2' type=<unbound IrClassSymbolImpl><T of <root>.test_arrayList2> origin=null
+    FUN name:test_arrayList3 signature:/test_arrayList3|test_arrayList3(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:l type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+        VAR name:m type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="a"
+              CONST String type=<unbound IrClassSymbolImpl> value="b"
+              CONST String type=<unbound IrClassSymbolImpl> value="c"
+        VAR name:n type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=PLUS
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val l: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList3' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: GET_VAR 'val m: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList3' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          1: GET_VAR 'val m: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList3' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          2: GET_VAR 'val n: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.test_arrayList3' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun test_arrayList (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun test_arrayList2 <T> (x: T of <root>.test_arrayList2, y: T of <root>.test_arrayList2, z: T of <root>.test_arrayList2): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          x: CONST Int type=<unbound IrClassSymbolImpl> value=5
+          y: CONST Int type=<unbound IrClassSymbolImpl> value=6
+          z: CONST Int type=<unbound IrClassSymbolImpl> value=7
+        CALL 'public final fun test_arrayList2 <T> (x: T of <root>.test_arrayList2, y: T of <root>.test_arrayList2, z: T of <root>.test_arrayList2): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl>
+          x: CONST String type=<unbound IrClassSymbolImpl> value="a"
+          y: CONST String type=<unbound IrClassSymbolImpl> value="b"
+          z: CONST String type=<unbound IrClassSymbolImpl> value="c"
+        CALL 'public final fun test_arrayList3 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

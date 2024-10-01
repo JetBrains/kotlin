@@ -1,0 +1,68 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CharWrapper
+
+    public final value class CharWrapper : kotlin/Any {
+
+      public constructor(ch: kotlin/Char)
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val ch: kotlin/Char
+        public final get
+
+      // underlying property: ch
+
+      // underlying type: kotlin/Char
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun checkBoxes(): kotlin/Unit
+
+      public final fun checkInlineClasses(): kotlin/Unit
+
+      public final fun checkPrimitives(): kotlin/Unit
+
+      public final fun id(arg: CharWrapper): CharWrapper
+
+      public final fun id(arg: kotlin/Boolean): kotlin/Boolean
+
+      public final fun id(arg: kotlin/Byte): kotlin/Byte
+
+      public final fun id(arg: kotlin/Char): kotlin/Char
+
+      public final fun id(arg: kotlin/Double): kotlin/Double
+
+      public final fun id(arg: kotlin/Float): kotlin/Float
+
+      public final fun id(arg: kotlin/Int): kotlin/Int
+
+      public final fun id(arg: kotlin/Long): kotlin/Long
+
+      public final fun id(arg: kotlin/Short): kotlin/Short
+
+      public final fun id(arg: kotlin/UByte): kotlin/UByte
+
+      public final fun id(arg: kotlin/UInt): kotlin/UInt
+
+      public final fun id(arg: kotlin/ULong): kotlin/ULong
+
+      public final fun id(arg: kotlin/UShort): kotlin/UShort
+
+      public final fun nullableId(arg: CharWrapper?): CharWrapper?
+
+      public final fun nullableId(arg: kotlin/Byte?): kotlin/Byte?
+    }
+  }
+}

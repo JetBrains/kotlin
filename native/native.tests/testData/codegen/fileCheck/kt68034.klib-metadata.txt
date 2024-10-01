@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun ifaceHandler(seq: kotlin/CharSequence): kotlin/Int
+
+      public final fun wrapString(impl: kotlin/String): kotlin/Int
+
+      public final fun wrapStringBuilder(impl: kotlin/CharSequence): kotlin/Int
+    }
+  }
+}

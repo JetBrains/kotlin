@@ -1,0 +1,105 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/check_stacktrace_format_libbacktrace.kt
+    PROPERTY name:EXTENSION signature:/EXTENSION|{}EXTENSION[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:EXTENSION signature:[ /EXTENSION|{}EXTENSION[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:EXTENSION type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=<unbound IrClassSymbolImpl> value=".kt:"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-EXTENSION> signature:/EXTENSION.<get-EXTENSION>|<get-EXTENSION>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:EXTENSION signature:/EXTENSION|{}EXTENSION[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-EXTENSION> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:EXTENSION signature:[ /EXTENSION|{}EXTENSION[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:EXTENSION type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:LOCATION_PATTERN signature:/LOCATION_PATTERN|{}LOCATION_PATTERN[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:LOCATION_PATTERN signature:[ /LOCATION_PATTERN|{}LOCATION_PATTERN[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:EXTENSION type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="\\d+:\\d+"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LOCATION_PATTERN> signature:/LOCATION_PATTERN.<get-LOCATION_PATTERN>|<get-LOCATION_PATTERN>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:LOCATION_PATTERN signature:/LOCATION_PATTERN|{}LOCATION_PATTERN[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-LOCATION_PATTERN> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LOCATION_PATTERN signature:[ /LOCATION_PATTERN|{}LOCATION_PATTERN[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:EXTENSION type:kotlin.String visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:checkStringFormat signature:/checkStringFormat|checkStringFormat(kotlin.String){}[0] visibility:public modality:FINAL <> (s:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:s index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:trimmed type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 's: <unbound IrClassSymbolImpl> declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val trimmed: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Char type=<unbound IrClassSymbolImpl> value=')'
+          2: CONST String type=<unbound IrClassSymbolImpl> value="Line is not ended with ')'"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val trimmed: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Char type=<unbound IrClassSymbolImpl> value='('
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="No '(' before filename"
+        VAR name:fileName type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val trimmed: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: GET_VAR 'val trimmed: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Char type=<unbound IrClassSymbolImpl> value='('
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $receiver: GET_VAR 'val trimmed: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val fileName: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'public final fun <get-EXTENSION> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-1
+          3: CONST String type=<unbound IrClassSymbolImpl> value="Filename 'kt' extension is absent"
+        VAR name:location type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val fileName: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: GET_VAR 'val fileName: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+                1: CALL 'public final fun <get-EXTENSION> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-EXTENSION> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-LOCATION_PATTERN> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: GET_VAR 'val location: <unbound IrClassSymbolImpl> [val] declared in <root>.checkStringFormat' type=<unbound IrClassSymbolImpl> origin=null
+          2: CONST String type=<unbound IrClassSymbolImpl> value="Expected location of form 12:8"
+    FUN name:functionA signature:/functionA|functionA(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        THROW type=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="an error"
+    FUN name:functionB signature:/functionB|functionB(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun functionA (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        VAR name:e type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            2: FUNCTION_REFERENCE 'public final fun functionB (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        VAR name:stacktrace type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            $this: GET_VAR 'val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:depth type:<unbound IrClassSymbolImpl> [val]
+          CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun greaterOrEqual (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GTEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: GET_VAR 'val stacktrace: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            arg1: GET_VAR 'val depth: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: GET_VAR 'val stacktrace: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: GET_VAR 'val depth: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUNCTION_REFERENCE 'public final fun checkStringFormat (s: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

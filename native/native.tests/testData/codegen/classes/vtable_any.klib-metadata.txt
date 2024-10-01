@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      private final fun anyMethods(iterable: kotlin/collections/Iterable<*>): kotlin/String
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

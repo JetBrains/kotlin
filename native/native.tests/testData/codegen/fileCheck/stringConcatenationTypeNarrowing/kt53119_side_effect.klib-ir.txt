@@ -1,0 +1,153 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt53119_side_effect.kt
+    PROPERTY name:sideEffectsHolder signature:/sideEffectsHolder|{}sideEffectsHolder[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:sideEffectsHolder signature:[ /sideEffectsHolder|{}sideEffectsHolder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sideEffectsHolder type:kotlin.collections.MutableList<kotlin.Int> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sideEffectsHolder> signature:/sideEffectsHolder.<get-sideEffectsHolder>|<get-sideEffectsHolder>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:sideEffectsHolder signature:/sideEffectsHolder|{}sideEffectsHolder[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sideEffectsHolder signature:[ /sideEffectsHolder|{}sideEffectsHolder[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sideEffectsHolder type:kotlin.collections.MutableList<kotlin.Int> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:withSideEffect signature:/withSideEffect|withSideEffect(kotlin.Int){}[0] visibility:public modality:FINAL <> (param:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:param index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+            1: GET_VAR 'param: <unbound IrClassSymbolImpl> declared in <root>.withSideEffect' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Result "
+            GET_VAR 'param: <unbound IrClassSymbolImpl> declared in <root>.withSideEffect' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CONST String type=<unbound IrClassSymbolImpl> value="Result1 is: "
+            1: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              param: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Result1 is: Result 1"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1: "
+                GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 1 sideffects: "
+                CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        VAR name:result2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CONST String type=<unbound IrClassSymbolImpl> value="Result2 is: "
+              1: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                param: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            1: CONST String type=<unbound IrClassSymbolImpl> value="!"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Result2 is: Result 2!"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 2: "
+                GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 2 sideffects: "
+                CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        VAR name:result3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $receiver: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              param: CONST Int type=<unbound IrClassSymbolImpl> value=31
+            1: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              param: CONST Int type=<unbound IrClassSymbolImpl> value=32
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Result 31Result 32"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 3: "
+                GET_VAR 'val result3: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                    CONST Int type=<unbound IrClassSymbolImpl> value=31
+                    CONST Int type=<unbound IrClassSymbolImpl> value=32
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 3 sideffects: "
+                CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          $this: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        VAR name:result4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $receiver: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                param: CONST Int type=<unbound IrClassSymbolImpl> value=41
+              1: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+                param: CONST Int type=<unbound IrClassSymbolImpl> value=42
+            1: CALL 'public final fun withSideEffect (param: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+              param: CONST Int type=<unbound IrClassSymbolImpl> value=43
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Result 41Result 42Result 43"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 4: "
+                GET_VAR 'val result4: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                arg1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                    CONST Int type=<unbound IrClassSymbolImpl> value=41
+                    CONST Int type=<unbound IrClassSymbolImpl> value=42
+                    CONST Int type=<unbound IrClassSymbolImpl> value=43
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL 4 sideffects: "
+                CALL 'public final fun <get-sideEffectsHolder> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

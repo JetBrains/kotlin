@@ -1,0 +1,25 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.kclass.kclass0
+
+    // class name: codegen/kclass/kclass0/HasFoo
+
+    public abstract interface codegen/kclass/kclass0/HasFoo : kotlin/Any {
+
+      public abstract fun foo(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun checkClass(clazz: kotlin/reflect/KClass<*>, expectedQualifiedName: kotlin/String?, expectedSimpleName: kotlin/String?, expectedToStringName: kotlin/String, expectedInstance: kotlin/Any, expectedNotInstance: kotlin/Any?): kotlin/Unit
+
+      private final inline fun getHasFooPrivate(s: kotlin/String): codegen/kclass/kclass0/HasFoo
+
+      public final inline fun getHasFooPublic(s: kotlin/String): codegen/kclass/kclass0/HasFoo
+    }
+  }
+}

@@ -1,0 +1,13 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:foo fileName:/lib.kt
+    FUN name:foo signature:foo/foo|foo(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final inline fun foo(x: kotlin/Function0<kotlin/Unit>): kotlin/String
+
+      public final fun kotlin/String.id(s: kotlin/String /* = ... */, vararg xs: kotlin/Int /* kotlin/IntArray */): kotlin/String
+    }
+  }
+}

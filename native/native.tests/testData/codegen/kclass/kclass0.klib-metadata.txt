@@ -1,0 +1,59 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.kclass.kclass0
+
+    // class name: codegen/kclass/kclass0/Interface
+    // class name: codegen/kclass/kclass0/TopLevel
+    // class name: codegen/kclass/kclass0/TopLevel.Nested
+
+    public abstract interface codegen/kclass/kclass0/Interface : kotlin/Any {
+    }
+
+    public final class codegen/kclass/kclass0/TopLevel : kotlin/Any {
+
+      public constructor()
+
+      // nested class: Nested
+    }
+
+    public final class codegen/kclass/kclass0/TopLevel.Nested : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun checkAnonymousObjects(args: kotlin/Array<kotlin/String>): kotlin/Unit
+
+      private final fun checkAnonymousObjectsAssignedToProperty(args: kotlin/Array<kotlin/String>): kotlin/Unit
+
+      private final fun checkBasics(): kotlin/Unit
+
+      private final fun checkClass(clazz: kotlin/reflect/KClass<*>, expectedQualifiedName: kotlin/String?, expectedSimpleName: kotlin/String?, expectedToStringName: kotlin/String, expectedInstance: kotlin/Any, expectedNotInstance: kotlin/Any?): kotlin/Unit
+
+      private final fun checkEtc(): kotlin/Unit
+
+      private final fun checkFunctionReferences(): kotlin/Unit
+
+      private final fun checkInstanceClass(instance: kotlin/Any, clazz: kotlin/reflect/KClass<*>): kotlin/Unit
+
+      private final fun checkInterfaces(): kotlin/Unit
+
+      private final fun checkLocalClasses(args: kotlin/Array<kotlin/String>): kotlin/Unit
+
+      private final inline fun <reified T#0 /* T */> checkReifiedClass(expectedClass: kotlin/reflect/KClass<*>): kotlin/Unit
+
+      private final inline fun <reified T#0 /* T */> checkReifiedClass2(expectedClass: kotlin/reflect/KClass<*>): kotlin/Unit
+
+      public final fun main(args: kotlin/Array<kotlin/String>): kotlin/Unit
+
+      private final fun <T#0 /* T */> suspend kotlin/Function1<kotlin/coroutines/Continuation<T#0>, kotlin/Any?>.runCoroutine(): kotlin/Unit
+
+      private final fun runNonInlining(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

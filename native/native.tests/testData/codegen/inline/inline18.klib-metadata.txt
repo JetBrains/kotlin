@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun bar(): kotlin/Boolean
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <T#0 /* T */> foo1(i1: T#0, j1: T#0, p1: kotlin/Function2<T#0, T#0, kotlin/Boolean>): kotlin/Boolean
+
+      public final inline fun <T#0 /* T */> foo2(i2: T#0, j2: T#0, p2: kotlin/Function2<T#0, T#0, kotlin/Boolean>): kotlin/Boolean
+    }
+  }
+}

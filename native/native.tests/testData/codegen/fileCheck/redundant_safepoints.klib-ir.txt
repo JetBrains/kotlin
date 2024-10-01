@@ -1,0 +1,54 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/redundant_safepoints.kt
+    annotations:
+      <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+    CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:/C.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:/C|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    FUN name:f signature:/f|f(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun f (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+    FUN name:g signature:/g|g(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun g (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun f (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:h signature:/h|h(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (cond:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>
+      VALUE_PARAMETER name:cond index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'cond: <unbound IrClassSymbolImpl> declared in <root>.h' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun h (cond: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.C> origin=null
+                  <1>: <root>.C
+                  1: VARARG type=<unbound IrClassSymbolImpl><out <root>.C> varargElementType=<root>.C
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun h (cond: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.C> origin=null
+                  <1>: <root>.C
+                  1: VARARG type=<unbound IrClassSymbolImpl><out <root>.C> varargElementType=<root>.C
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun g (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun h (cond: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            cond: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

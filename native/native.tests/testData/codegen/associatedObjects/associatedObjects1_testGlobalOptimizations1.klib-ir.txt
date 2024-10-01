@@ -1,0 +1,123 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/associatedObjects1_testGlobalOptimizations1.kt
+    CLASS ANNOTATION_CLASS name:Associated1 signature:/Associated1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+        <unbound>
+        <unbound>(1 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Associated1
+      CONSTRUCTOR signature:/Associated1.<init>|<init>(kotlin.reflect.KClass<*>){}[0] visibility:public <> (kClass:<unbound IrClassSymbolImpl><*>) returnType:<root>.Associated1 [primary]
+        VALUE_PARAMETER name:kClass index:0 type:<unbound IrClassSymbolImpl><*>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Associated1 signature:/Associated1|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:kClass signature:/Associated1.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated1.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'kClass: <unbound IrClassSymbolImpl><*> declared in <root>.Associated1.<init>' type=<unbound IrClassSymbolImpl><*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kClass> signature:/Associated1.kClass.<get-kClass>|<get-kClass>(){}[0] visibility:public modality:FINAL <> ($this:<root>.Associated1) returnType:<unbound IrClassSymbolImpl><*>
+          correspondingProperty: PROPERTY name:kClass signature:/Associated1.kClass|{}kClass[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Associated1
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kClass> (): <unbound IrClassSymbolImpl><*> declared in <root>.Associated1'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kClass signature:[ /Associated1.kClass|{}kClass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><*> visibility:private [final]' type=<unbound IrClassSymbolImpl><*> origin=null
+                receiver: GET_VAR '<this>: <root>.Associated1 declared in <root>.Associated1.<get-kClass>' type=<root>.Associated1 origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        VAR name:i1 type:<root>.I1 [val]
+          TYPE_OP type=<root>.I1 origin=CAST typeOperand=<root>.I1
+            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl>
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                <1>: <root>.Associated1
+                $receiver: CLASS_REFERENCE 'CLASS CLASS name:I1ImplHolder signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1ImplHolder|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl><<root>.I1ImplHolder>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          2: CALL 'public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.I1' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val i1: <root>.I1 [val] declared in <root>.box' type=<root>.I1 origin=null
+        VAR name:c type:<root>.C [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?) [primary] declared in <root>.C' type=<root>.C origin=null
+            list: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'public abstract fun bar (c: <root>.C): <unbound IrClassSymbolImpl> declared in <root>.I1' type=<unbound IrClassSymbolImpl> origin=null
+          $this: GET_VAR 'val i1: <root>.I1 [val] declared in <root>.box' type=<root>.I1 origin=null
+          c: GET_VAR 'val c: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="zzz"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+            $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=EXCLEXCL
+              <T0>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+              arg0: CALL 'public final fun <get-list> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.C' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=GET_PROPERTY
+                $this: GET_VAR 'val c: <root>.C [val] declared in <root>.box' type=<root>.C origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    CLASS CLASS name:C signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+      CONSTRUCTOR signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.<init>|<init>(kotlin.collections.List<kotlin.String>?){}[0] ] visibility:public <> (list:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?) returnType:<root>.C [primary]
+        VALUE_PARAMETER name:list index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:list signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list|{}list[0] ] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:list signature:[ [ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list|{}list[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? visibility:private
+          EXPRESSION_BODY
+            GET_VAR 'list: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.C.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-list> signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list.<get-list>|<get-list>(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.C) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+          correspondingProperty: PROPERTY name:list signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list|{}list[0] ] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-list> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.C'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:list signature:[ [ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list|{}list[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? visibility:private' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-list>' type=<root>.C origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-list> signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list.<set-list>|<set-list>(kotlin.collections.List<kotlin.String>?){}[0] ] visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:list signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list|{}list[0] ] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.C
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:list signature:[ [ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /C.list|{}list[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kClass type:kotlin.reflect.KClass<*> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-list>' type=<root>.C origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? declared in <root>.C.<set-list>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>? origin=null
+    CLASS INTERFACE name:I1 signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1|null[0] ] modality:ABSTRACT visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
+      FUN name:foo signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1.foo|foo(){}[0] ] visibility:public modality:ABSTRACT <> ($this:<root>.I1) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.I1
+      FUN name:bar signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1.bar|bar(C){}[0] ] visibility:public modality:ABSTRACT <> ($this:<root>.I1, c:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:<root>.I1
+        VALUE_PARAMETER name:c index:0 type:<root>.C
+    CLASS OBJECT name:I1Impl signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1Impl|null[0] ] modality:FINAL visibility:private superTypes:[<root>.I1]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1Impl
+      CONSTRUCTOR signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1Impl.<init>|<init>(){}[0] ] visibility:private <> () returnType:<root>.I1Impl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:I1Impl signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1Impl|null[0] ] modality:FINAL visibility:private superTypes:[<root>.I1]'
+      FUN name:foo signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1Impl.foo|foo(){}[0] ] visibility:public modality:OPEN <> ($this:<root>.I1Impl) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun foo (): <unbound IrClassSymbolImpl> declared in <root>.I1
+        $this: VALUE_PARAMETER name:<this> type:<root>.I1Impl
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun foo (): <unbound IrClassSymbolImpl> declared in <root>.I1Impl'
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+      FUN name:bar signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1Impl.bar|bar(C){}[0] ] visibility:public modality:OPEN <> ($this:<root>.I1Impl, c:<root>.C) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          public abstract fun bar (c: <root>.C): <unbound IrClassSymbolImpl> declared in <root>.I1
+        $this: VALUE_PARAMETER name:<this> type:<root>.I1Impl
+        VALUE_PARAMETER name:c index:0 type:<root>.C
+        BLOCK_BODY
+          CALL 'public final fun <set-list> (<set-?>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>?): <unbound IrClassSymbolImpl> declared in <root>.C' type=<unbound IrClassSymbolImpl> origin=EQ
+            $this: GET_VAR 'c: <root>.C declared in <root>.I1Impl.bar' type=<root>.C origin=null
+            <set-?>: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="zzz"
+    CLASS CLASS name:I1ImplHolder signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1ImplHolder|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        Associated1(kClass = CLASS_REFERENCE 'CLASS OBJECT name:I1Impl signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1Impl|null[0] ] modality:FINAL visibility:private superTypes:[<root>.I1]' type=<unbound IrClassSymbolImpl><<root>.I1Impl>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1ImplHolder
+      CONSTRUCTOR signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1ImplHolder.<init>|<init>(){}[0] ] visibility:public <> () returnType:<root>.I1ImplHolder [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I1ImplHolder signature:[ File '/associatedObjects1_testGlobalOptimizations1.kt' <- /I1ImplHolder|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'

@@ -1,0 +1,22 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CustomThrowable
+
+    public final class CustomThrowable : kotlin/Throwable {
+
+      public constructor(extraInfo: kotlin/String)
+
+      public final val extraInfo: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

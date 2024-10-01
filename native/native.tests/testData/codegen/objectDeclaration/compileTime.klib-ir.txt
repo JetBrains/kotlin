@@ -1,0 +1,135 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/compileTime.kt
+    CLASS OBJECT name:CompileTime signature:/CompileTime|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+        <unbound>
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CompileTime
+      CONSTRUCTOR signature:/CompileTime.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.CompileTime [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:CompileTime signature:/CompileTime|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:int signature:/CompileTime.int|{}int[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:int signature:[ /CompileTime.int|{}int[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=-2147483648
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-int> signature:/CompileTime.int.<get-int>|<get-int>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:int signature:/CompileTime.int|{}int[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-int> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:int signature:[ /CompileTime.int|{}int[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-int>' type=<root>.CompileTime origin=null
+      PROPERTY name:byte signature:/CompileTime.byte|{}byte[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:byte signature:[ /CompileTime.byte|{}byte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Byte type=<unbound IrClassSymbolImpl> value=-128
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-byte> signature:/CompileTime.byte.<get-byte>|<get-byte>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:byte signature:/CompileTime.byte|{}byte[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-byte> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byte signature:[ /CompileTime.byte|{}byte[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-byte>' type=<root>.CompileTime origin=null
+      PROPERTY name:short signature:/CompileTime.short|{}short[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:short signature:[ /CompileTime.short|{}short[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Short type=<unbound IrClassSymbolImpl> value=-32768
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-short> signature:/CompileTime.short.<get-short>|<get-short>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:short signature:/CompileTime.short|{}short[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-short> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:short signature:[ /CompileTime.short|{}short[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-short>' type=<root>.CompileTime origin=null
+      PROPERTY name:long signature:/CompileTime.long|{}long[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:long signature:[ /CompileTime.long|{}long[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=-9223372036854775808
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-long> signature:/CompileTime.long.<get-long>|<get-long>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:long signature:/CompileTime.long|{}long[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-long> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:long signature:[ /CompileTime.long|{}long[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-long>' type=<root>.CompileTime origin=null
+      PROPERTY name:boolean signature:/CompileTime.boolean|{}boolean[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:boolean signature:[ /CompileTime.boolean|{}boolean[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-boolean> signature:/CompileTime.boolean.<get-boolean>|<get-boolean>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:boolean signature:/CompileTime.boolean|{}boolean[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-boolean> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:boolean signature:[ /CompileTime.boolean|{}boolean[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-boolean>' type=<root>.CompileTime origin=null
+      PROPERTY name:float signature:/CompileTime.float|{}float[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:float signature:[ /CompileTime.float|{}float[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-float> signature:/CompileTime.float.<get-float>|<get-float>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:float signature:/CompileTime.float|{}float[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-float> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:float signature:[ /CompileTime.float|{}float[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-float>' type=<root>.CompileTime origin=null
+      PROPERTY name:double signature:/CompileTime.double|{}double[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:double signature:[ /CompileTime.double|{}double[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-double> signature:/CompileTime.double.<get-double>|<get-double>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:double signature:/CompileTime.double|{}double[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-double> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:double signature:[ /CompileTime.double|{}double[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-double>' type=<root>.CompileTime origin=null
+      PROPERTY name:char signature:/CompileTime.char|{}char[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:char signature:[ /CompileTime.char|{}char[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Char type=<unbound IrClassSymbolImpl> value='\u0000'
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-char> signature:/CompileTime.char.<get-char>|<get-char>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CompileTime) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:char signature:/CompileTime.char|{}char[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CompileTime
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-char> (): <unbound IrClassSymbolImpl> declared in <root>.CompileTime'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:char signature:[ /CompileTime.char|{}char[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:int type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CompileTime declared in <root>.CompileTime.<get-char>' type=<root>.CompileTime origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=-2147483648
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=-2147483648
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Byte type=<unbound IrClassSymbolImpl> value=-128
+          2: CONST Byte type=<unbound IrClassSymbolImpl> value=-128
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Short type=<unbound IrClassSymbolImpl> value=-32768
+          2: CONST Short type=<unbound IrClassSymbolImpl> value=-32768
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=-9223372036854775808
+          2: CONST Long type=<unbound IrClassSymbolImpl> value=-9223372036854775808
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          2: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+          2: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+          2: CONST Double type=<unbound IrClassSymbolImpl> value=1.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Char type=<unbound IrClassSymbolImpl> value='\u0000'
+          2: CONST Char type=<unbound IrClassSymbolImpl> value='\u0000'
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

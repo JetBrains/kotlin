@@ -1,0 +1,172 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/static_kType.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:ktype type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><in <unbound IrClassSymbolImpl>?, out <unbound IrClassSymbolImpl><*>>?
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Map"
+          2: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<unbound IrClassSymbolImpl><*>? [val]
+              TYPE_OP type=<unbound IrClassSymbolImpl><*>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val tmp0_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*, *>>
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        VAR name:arg0type type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                  $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val arg0type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="String"
+          2: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<unbound IrClassSymbolImpl><*>? [val]
+              TYPE_OP type=<unbound IrClassSymbolImpl><*>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val arg0type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val tmp1_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'val arg0type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val arg0type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val arg0type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val arg0type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:arg1type type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEXCL
+            <T0>: <unbound IrClassSymbolImpl>
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                  $this: GET_VAR 'val ktype: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="List"
+          2: BLOCK type=<unbound IrClassSymbolImpl>? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:<unbound IrClassSymbolImpl><*>? [val]
+              TYPE_OP type=<unbound IrClassSymbolImpl><*>? origin=SAFE_CAST typeOperand=<unbound IrClassSymbolImpl><*>
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            WHEN type=<unbound IrClassSymbolImpl>? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                  arg0: GET_VAR 'val tmp2_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+                  arg1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+                then: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+              BRANCH
+                if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+                  $this: GET_VAR 'val tmp2_safe_receiver: <unbound IrClassSymbolImpl><*>? [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><*>? origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>>
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+                $this: GET_VAR 'val arg1type: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

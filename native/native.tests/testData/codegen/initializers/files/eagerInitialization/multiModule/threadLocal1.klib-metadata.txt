@@ -1,0 +1,65 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      @kotlin/native/concurrent/ThreadLocal
+      public final var z1: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var z2: kotlin/Boolean
+        public final get
+        public final set
+
+      @kotlin/native/concurrent/ThreadLocal
+      public final var z3: kotlin/Boolean
+        public final get
+        public final set
+    }
+  }
+}
+
+// MODULE: lib2
+library {
+  // module name: <lib2>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      private final fun foo(): kotlin/Int
+
+      @kotlin/native/EagerInitialization
+      @kotlin/native/concurrent/ThreadLocal
+      public final val x: kotlin/Int
+        public final get
+
+      public final val y1: kotlin/Int
+        public final get
+
+      @kotlin/native/concurrent/ThreadLocal
+      public final val y2: kotlin/Int
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

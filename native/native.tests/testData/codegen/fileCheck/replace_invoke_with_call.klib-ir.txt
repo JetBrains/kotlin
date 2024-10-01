@@ -1,0 +1,29 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/replace_invoke_with_call.kt
+    FUN name:flameThrower signature:/flameThrower|flameThrower(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        THROW type=<unbound IrClassSymbolImpl>
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST String type=<unbound IrClassSymbolImpl> value="\uD83D\uDD25"
+    FUN name:f1 signature:/f1|f1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun flameThrower (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:f2 signature:/f2|f2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'public final fun flameThrower (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val t: <unbound IrClassSymbolImpl> [val] declared in <root>.f2
+            VAR CATCH_PARAMETER name:t type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'public final fun f1 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          CATCH parameter=val t: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+            VAR CATCH_PARAMETER name:t type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun f2 (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

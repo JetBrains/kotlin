@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      internal final fun checkFrame(goldFunName: kotlin/String, actualLine: kotlin/String): kotlin/Unit
+
+      public final fun exception(): kotlin/Unit
+
+      internal final val regex: kotlin/text/Regex
+        internal final get
+    }
+  }
+}

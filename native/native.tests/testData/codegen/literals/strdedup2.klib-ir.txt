@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/strdedup2.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:str1 type:<unbound IrClassSymbolImpl> [val]
+          CONST String type=<unbound IrClassSymbolImpl> value=""
+        VAR name:str2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CONST String type=<unbound IrClassSymbolImpl> value="hello"
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                arg0: GET_VAR 'val str1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: GET_VAR 'val str2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL =="
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR 'val str1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'val str2: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              CONST String type=<unbound IrClassSymbolImpl> value="FAIL ==="
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun test_arrayList(): kotlin/Unit
+
+      public final fun <T#0 /* T */> test_arrayList2(x: T#0, y: T#0, z: T#0): kotlin/Unit
+
+      public final fun test_arrayList3(): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,31 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+    // class name: Super
+
+    public final class Foo : Super {
+
+      public constructor()
+
+      public final fun bar(): kotlin/String
+    }
+
+    public abstract class Super : kotlin/Any {
+
+      public constructor()
+
+      public abstract fun bar(): kotlin/String
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun create(): Super
+    }
+  }
+}

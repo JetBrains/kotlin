@@ -1,0 +1,249 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual fileName:/kt53119_append_manual.kt
+    FUN name:appendMaybeAny signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/appendMaybeAny|appendMaybeAny(kotlin.Any?){}[0] visibility:public modality:FINAL <> (maybeAny:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:maybeAny index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:sb type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendMaybeAny' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'maybeAny: <unbound IrClassSymbolImpl>? declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendMaybeAny' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun appendMaybeAny (maybeAny: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendMaybeAny' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:appendAny signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/appendAny|appendAny(kotlin.Any){}[0] visibility:public modality:FINAL <> (any:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:any index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sb type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendAny' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'any: <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendAny' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun appendAny (any: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendAny' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:appendMaybeString signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/appendMaybeString|appendMaybeString(kotlin.String?){}[0] visibility:public modality:FINAL <> (maybeStr:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:maybeStr index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        VAR name:sb type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendMaybeString' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'maybeStr: <unbound IrClassSymbolImpl>? declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendMaybeString' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun appendMaybeString (maybeStr: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendMaybeString' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:appendString signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/appendString|appendString(kotlin.String){}[0] visibility:public modality:FINAL <> (str:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:str index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sb type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendString' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'str: <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendString' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun appendString (str: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendString' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:Foo signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+      CONSTRUCTOR signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.<init>|<init>(kotlin.Int){}[0] visibility:public <> (bar:<unbound IrClassSymbolImpl>) returnType:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [primary]
+        VALUE_PARAMETER name:bar index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo|null[0] modality:FINAL visibility:public [data] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:bar signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'bar: <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar.<get-bar>|<get-bar>(){}[0] visibility:public modality:FINAL <> ($this:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:bar signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-bar> (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.<get-bar>' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.component1|component1(){}[0] visibility:public modality:FINAL <> ($this:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo) returnType:<unbound IrClassSymbolImpl> [operator]
+        $this: VALUE_PARAMETER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun component1 (): <unbound IrClassSymbolImpl> [operator] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.component1' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.copy|copy(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo, bar:<unbound IrClassSymbolImpl>) returnType:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+        $this: VALUE_PARAMETER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+        VALUE_PARAMETER name:bar index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.copy' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun copy (bar: <unbound IrClassSymbolImpl>): codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+            CONSTRUCTOR_CALL 'public constructor <init> (bar: <unbound IrClassSymbolImpl>) [primary] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+              bar: GET_VAR 'bar: <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.copy' type=<unbound IrClassSymbolImpl> origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="Foo("
+              CONST String type=<unbound IrClassSymbolImpl> value="bar="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.toString' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.hashCode' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
+                arg0: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.equals' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+                arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [val]
+            TYPE_OP type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=CAST typeOperand=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.equals' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar signature:[ codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/Foo.bar|{}bar[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo.equals' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:appendFoo signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/appendFoo|appendFoo(codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo){}[0] visibility:public modality:FINAL <> (foo:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:foo index:0 type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo
+      BLOCK_BODY
+        VAR name:sb type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendFoo' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'foo: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendFoo' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun appendFoo (foo: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val sb: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.appendFoo' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:foo type:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (bar: <unbound IrClassSymbolImpl>) [primary] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+            bar: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        VAR name:res1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendMaybeAny (maybeAny: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            maybeAny: GET_VAR 'val foo: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res1: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Foo(bar=42)"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL1: "
+                GET_VAR 'val res1: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:res2 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendMaybeAny (maybeAny: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            maybeAny: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res2: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="null"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL2: "
+                GET_VAR 'val res2: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:res3 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendAny (any: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            any: GET_VAR 'val foo: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res3: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Foo(bar=42)"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL3: "
+                GET_VAR 'val res3: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:res4 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendMaybeString (maybeStr: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            maybeStr: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res4: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL4: "
+                GET_VAR 'val res4: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:res5 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendMaybeString (maybeStr: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            maybeStr: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res5: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="null"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL5: "
+                GET_VAR 'val res5: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:res6 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendString (str: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            str: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res6: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="foo"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL6: "
+                GET_VAR 'val res6: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:res7 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun appendFoo (foo: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual' type=<unbound IrClassSymbolImpl> origin=null
+            foo: GET_VAR 'val foo: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val res7: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST String type=<unbound IrClassSymbolImpl> value="Foo(bar=42)"
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL7: "
+                GET_VAR 'val res7: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_append_manual'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

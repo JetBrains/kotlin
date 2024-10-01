@@ -1,0 +1,208 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/signext_zeroext0.kt
+    FUN name:id signature:/id|id(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Byte){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Char){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Short){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Int){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Long){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Float){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.Double){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.UByte){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.UShort){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.UInt){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:id signature:/id|id(kotlin.ULong){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl> declared in <root>.id' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:checkPrimitives signature:/checkPrimitives|checkPrimitives(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Char type=<unbound IrClassSymbolImpl> value='a'
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Long type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Float type=<unbound IrClassSymbolImpl> value=0.5
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Double type=<unbound IrClassSymbolImpl> value=0.5
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Int type=<unbound IrClassSymbolImpl> value=15
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            arg: CONST Long type=<unbound IrClassSymbolImpl> value=15
+    CLASS CLASS name:CharWrapper signature:/CharWrapper|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CharWrapper
+      CONSTRUCTOR signature:/CharWrapper.<init>|<init>(kotlin.Char){}[0] visibility:public <> (ch:<unbound IrClassSymbolImpl>) returnType:<root>.CharWrapper [primary]
+        VALUE_PARAMETER name:ch index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CharWrapper signature:/CharWrapper|null[0] modality:FINAL visibility:public [value] superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:ch signature:/CharWrapper.ch|{}ch[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:ch signature:[ /CharWrapper.ch|{}ch[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ch type:kotlin.Char visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'ch: <unbound IrClassSymbolImpl> declared in <root>.CharWrapper.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ch> signature:/CharWrapper.ch.<get-ch>|<get-ch>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CharWrapper) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:ch signature:/CharWrapper.ch|{}ch[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CharWrapper
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-ch> (): <unbound IrClassSymbolImpl> declared in <root>.CharWrapper'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ch signature:[ /CharWrapper.ch|{}ch[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ch type:kotlin.Char visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CharWrapper declared in <root>.CharWrapper.<get-ch>' type=<root>.CharWrapper origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString signature:/CharWrapper.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.CharWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.CharWrapper'
+            STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+              CONST String type=<unbound IrClassSymbolImpl> value="CharWrapper("
+              CONST String type=<unbound IrClassSymbolImpl> value="ch="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ch signature:[ /CharWrapper.ch|{}ch[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ch type:kotlin.Char visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CharWrapper declared in <root>.CharWrapper.toString' type=<root>.CharWrapper origin=null
+              CONST String type=<unbound IrClassSymbolImpl> value=")"
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode signature:/CharWrapper.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:<root>.CharWrapper) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharWrapper
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in <root>.CharWrapper'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ch signature:[ /CharWrapper.ch|{}ch[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ch type:kotlin.Char visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CharWrapper declared in <root>.CharWrapper.hashCode' type=<root>.CharWrapper origin=null
+      FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals signature:/CharWrapper.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:<root>.CharWrapper, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.CharWrapper
+        VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=NOT_INSTANCEOF typeOperand=<root>.CharWrapper
+                GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.CharWrapper.equals' type=<unbound IrClassSymbolImpl>? origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharWrapper'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.CharWrapper [val]
+            TYPE_OP type=<root>.CharWrapper origin=CAST typeOperand=<root>.CharWrapper
+              GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in <root>.CharWrapper.equals' type=<unbound IrClassSymbolImpl>? origin=null
+          WHEN type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ch signature:[ /CharWrapper.ch|{}ch[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ch type:kotlin.Char visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR '<this>: <root>.CharWrapper declared in <root>.CharWrapper.equals' type=<root>.CharWrapper origin=null
+                  arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ch signature:[ /CharWrapper.ch|{}ch[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:ch type:kotlin.Char visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                    receiver: GET_VAR 'val tmp0_other_with_cast: <root>.CharWrapper [val] declared in <root>.CharWrapper.equals' type=<root>.CharWrapper origin=null
+              then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharWrapper'
+                CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in <root>.CharWrapper'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:id signature:/id|id(CharWrapper){}[0] visibility:public modality:FINAL <> (arg:<root>.CharWrapper) returnType:<root>.CharWrapper
+      VALUE_PARAMETER name:arg index:0 type:<root>.CharWrapper
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun id (arg: <root>.CharWrapper): <root>.CharWrapper declared in <root>'
+          GET_VAR 'arg: <root>.CharWrapper declared in <root>.id' type=<root>.CharWrapper origin=null
+    FUN name:checkInlineClasses signature:/checkInlineClasses|checkInlineClasses(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun id (arg: <root>.CharWrapper): <root>.CharWrapper declared in <root>' type=<root>.CharWrapper origin=null
+            arg: CONSTRUCTOR_CALL 'public constructor <init> (ch: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CharWrapper' type=<root>.CharWrapper origin=null
+              ch: CONST Char type=<unbound IrClassSymbolImpl> value='c'
+    FUN name:nullableId signature:/nullableId|nullableId(kotlin.Byte?){}[0] visibility:public modality:FINAL <> (arg:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl>?
+      VALUE_PARAMETER name:arg index:0 type:<unbound IrClassSymbolImpl>?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun nullableId (arg: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl>? declared in <root>'
+          GET_VAR 'arg: <unbound IrClassSymbolImpl>? declared in <root>.nullableId' type=<unbound IrClassSymbolImpl>? origin=null
+    FUN name:nullableId signature:/nullableId|nullableId(CharWrapper?){}[0] visibility:public modality:FINAL <> (arg:<root>.CharWrapper?) returnType:<root>.CharWrapper?
+      VALUE_PARAMETER name:arg index:0 type:<root>.CharWrapper?
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun nullableId (arg: <root>.CharWrapper?): <root>.CharWrapper? declared in <root>'
+          GET_VAR 'arg: <root>.CharWrapper? declared in <root>.nullableId' type=<root>.CharWrapper? origin=null
+    FUN name:checkBoxes signature:/checkBoxes|checkBoxes(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun nullableId (arg: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+            arg: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun nullableId (arg: <root>.CharWrapper?): <root>.CharWrapper? declared in <root>' type=<root>.CharWrapper? origin=null
+            arg: CONSTRUCTOR_CALL 'public constructor <init> (ch: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CharWrapper' type=<root>.CharWrapper origin=null
+              ch: CONST Char type=<unbound IrClassSymbolImpl> value='a'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun checkPrimitives (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun checkInlineClasses (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun checkBoxes (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

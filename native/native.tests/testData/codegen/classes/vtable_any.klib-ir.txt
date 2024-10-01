@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/vtable_any.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[1]"
+          2: CALL 'private final fun anyMethods (iterable: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            iterable: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="1"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[2]"
+          2: CALL 'private final fun anyMethods (iterable: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            iterable: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="2"
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[3]"
+          2: CALL 'private final fun anyMethods (iterable: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            iterable: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                <1>: <unbound IrClassSymbolImpl>
+                <2>: <unbound IrClassSymbolImpl>
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  <2>: <unbound IrClassSymbolImpl>
+                  $receiver: CONST String type=<unbound IrClassSymbolImpl> value="1"
+                  1: CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="[4]"
+          2: CALL 'private final fun anyMethods (iterable: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            iterable: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: CONST String type=<unbound IrClassSymbolImpl> value="4"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"
+    FUN name:anyMethods signature:[ File '/vtable_any.kt' <- /anyMethods|anyMethods(kotlin.collections.Iterable<*>){}[0] ] visibility:private modality:FINAL <> (iterable:<unbound IrClassSymbolImpl><*>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:iterable index:0 type:<unbound IrClassSymbolImpl><*>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'iterable: <unbound IrClassSymbolImpl><*> declared in <root>.anyMethods' type=<unbound IrClassSymbolImpl><*> origin=null
+            1: GET_VAR 'iterable: <unbound IrClassSymbolImpl><*> declared in <root>.anyMethods' type=<unbound IrClassSymbolImpl><*> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+                  GET_VAR 'iterable: <unbound IrClassSymbolImpl><*> declared in <root>.anyMethods' type=<unbound IrClassSymbolImpl><*> origin=null
+              arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun anyMethods (iterable: <unbound IrClassSymbolImpl><*>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'iterable: <unbound IrClassSymbolImpl><*> declared in <root>.anyMethods' type=<unbound IrClassSymbolImpl><*> origin=null

@@ -1,0 +1,94 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: EmptyContinuation
+    // class name: EmptyContinuation.Companion
+
+    public open class EmptyContinuation : kotlin/coroutines/Continuation<kotlin/Any?> {
+
+      public constructor(context: kotlin/coroutines/CoroutineContext /* = ... */)
+
+      public open fun resumeWith(result: kotlin/Result<kotlin/Any?>): kotlin/Unit
+
+      public open val context: kotlin/coroutines/CoroutineContext
+        public open get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object EmptyContinuation.Companion : EmptyContinuation {
+
+      private constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun builderInt(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?>): kotlin/Unit
+
+      public final fun builderUnit(c: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>): kotlin/Unit
+
+      public final fun s1(): kotlin/Unit
+
+      public final fun s10(): kotlin/Unit
+
+      public final fun s11(): kotlin/Unit
+
+      public final fun s12(): kotlin/Unit
+
+      public final fun s13(): kotlin/Unit
+
+      public final fun s14(): kotlin/Unit
+
+      public final fun s15(): kotlin/Unit
+
+      public final fun s16(): kotlin/Unit
+
+      public final fun s17(): kotlin/Unit
+
+      public final fun s18(f: kotlin/Boolean): kotlin/Unit
+
+      public final fun s19(f: kotlin/Boolean): kotlin/Unit
+
+      public final fun s2(): kotlin/Unit
+
+      public final fun s20(f: kotlin/Boolean): kotlin/Unit
+
+      public final fun s21(): kotlin/Unit
+
+      public final fun s22(): kotlin/Unit
+
+      public final fun s23(f: kotlin/Boolean): kotlin/Unit
+
+      public final fun s24(): kotlin/Unit
+
+      public final fun s3(): kotlin/Unit
+
+      public final fun s4(): kotlin/Unit
+
+      public final fun s5(): kotlin/Unit
+
+      public final fun s6(): kotlin/Unit
+
+      public final fun s7(): kotlin/Unit
+
+      public final fun s8(): kotlin/Unit
+
+      public final fun s9(): kotlin/Unit
+
+      public final suspend fun sInt(): kotlin/Int
+
+      public final suspend fun sInt2(): kotlin/Int
+
+      public final suspend fun sUnit(): kotlin/Unit
+
+      public final suspend fun sUnit2(): kotlin/Unit
+    }
+  }
+}

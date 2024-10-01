@@ -1,0 +1,83 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt68034.kt
+    FUN name:wrapString signature:/wrapString|wrapString(kotlin.String){}[0] visibility:public modality:FINAL <> (impl:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:impl index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun wrapString (impl: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun ifaceHandler (seq: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            seq: GET_VAR 'impl: <unbound IrClassSymbolImpl> declared in <root>.wrapString' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:wrapStringBuilder signature:/wrapStringBuilder|wrapStringBuilder(kotlin.CharSequence){}[0] visibility:public modality:FINAL <> (impl:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:impl index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun wrapStringBuilder (impl: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun ifaceHandler (seq: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            seq: GET_VAR 'impl: <unbound IrClassSymbolImpl> declared in <root>.wrapStringBuilder' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:ifaceHandler signature:/ifaceHandler|ifaceHandler(kotlin.CharSequence){}[0] visibility:public modality:FINAL <> (seq:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [inline]
+      VALUE_PARAMETER name:seq index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:sum type:<unbound IrClassSymbolImpl> [var]
+          CONST Int type=<unbound IrClassSymbolImpl> value=0
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=RANGE_UNTIL
+                $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_VAR 'seq: <unbound IrClassSymbolImpl> declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:idx type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                SET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_ARRAY_ELEMENT
+                        $this: GET_VAR 'seq: <unbound IrClassSymbolImpl> declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=null
+                        1: GET_VAR 'val idx: <unbound IrClassSymbolImpl> [val] declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ifaceHandler (seq: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          GET_VAR 'var sum: <unbound IrClassSymbolImpl> [var] declared in <root>.ifaceHandler' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result1 type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun wrapString (impl: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            impl: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=154
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="fail 1: "
+                GET_VAR 'val result1: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$buildString type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $this: GET_VAR '$this$buildString: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                      1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+                  VAR name:result2 type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'public final fun wrapStringBuilder (impl: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                      impl: GET_VAR '$this$buildString: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                          arg0: GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                          arg1: CONST Int type=<unbound IrClassSymbolImpl> value=154
+                      then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                        STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                          CONST String type=<unbound IrClassSymbolImpl> value="fail 2: "
+                          GET_VAR 'val result2: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

@@ -1,0 +1,203 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt55653.kt
+    PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sb> signature:/sb.<get-sb>|<get-sb>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:sb signature:/sb|{}sb[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:sb signature:[ /sb|{}sb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:sb type:kotlin.text.StringBuilder visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS CLASS name:MyNSOpenGLView signature:/MyNSOpenGLView|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyNSOpenGLView
+      CONSTRUCTOR signature:/MyNSOpenGLView.<init>|<init>(frame:kotlinx.cinterop.CValue<platform.CoreGraphics.CGRect>;pixelFormat:platform.AppKit.NSOpenGLPixelFormat?){}[0] visibility:public <> (frame:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, pixelFormat:<unbound IrClassSymbolImpl>?) returnType:<root>.MyNSOpenGLView [primary]
+        VALUE_PARAMETER name:frame index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        VALUE_PARAMETER name:pixelFormat index:1 type:<unbound IrClassSymbolImpl>?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            1: GET_VAR 'frame: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.MyNSOpenGLView.<init>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            2: GET_VAR 'pixelFormat: <unbound IrClassSymbolImpl>? declared in <root>.MyNSOpenGLView.<init>' type=<unbound IrClassSymbolImpl>? origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyNSOpenGLView signature:/MyNSOpenGLView|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          CALL 'public open fun resetCursorRects (): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR '<this>: <root>.MyNSOpenGLView declared in <root>.MyNSOpenGLView' type=<root>.MyNSOpenGLView origin=null
+      FUN name:acceptsFirstResponder signature:/MyNSOpenGLView.acceptsFirstResponder|objc:acceptsFirstResponder[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun acceptsFirstResponder (): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:becomeFirstResponder signature:/MyNSOpenGLView.becomeFirstResponder|objc:becomeFirstResponder[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun becomeFirstResponder (): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN name:resetCursorRects signature:/MyNSOpenGLView.resetCursorRects|objc:resetCursorRects[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+              1: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+      FUN name:flagsChanged signature:/MyNSOpenGLView.flagsChanged|objc:flagsChanged:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:magnifyWithEvent signature:/MyNSOpenGLView.magnifyWithEvent|objc:magnifyWithEvent:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:rotateWithEvent signature:/MyNSOpenGLView.rotateWithEvent|objc:rotateWithEvent:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:swipeWithEvent signature:/MyNSOpenGLView.swipeWithEvent|objc:swipeWithEvent:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:smartMagnifyWithEvent signature:/MyNSOpenGLView.smartMagnifyWithEvent|objc:smartMagnifyWithEvent:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:scrollWheel signature:/MyNSOpenGLView.scrollWheel|objc:scrollWheel:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:mouseUp signature:/MyNSOpenGLView.mouseUp|objc:mouseUp:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun mouseUp (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:rightMouseUp signature:/MyNSOpenGLView.rightMouseUp|objc:rightMouseUp:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun rightMouseUp (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:otherMouseUp signature:/MyNSOpenGLView.otherMouseUp|objc:otherMouseUp:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun otherMouseUp (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:mouseDown signature:/MyNSOpenGLView.mouseDown|objc:mouseDown:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun mouseDown (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:rightMouseDown signature:/MyNSOpenGLView.rightMouseDown|objc:rightMouseDown:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun rightMouseDown (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:otherMouseDown signature:/MyNSOpenGLView.otherMouseDown|objc:otherMouseDown:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun otherMouseDown (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:mouseDragged signature:/MyNSOpenGLView.mouseDragged|objc:mouseDragged:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun mouseDragged (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:rightMouseDragged signature:/MyNSOpenGLView.rightMouseDragged|objc:rightMouseDragged:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun rightMouseDragged (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:otherMouseDragged signature:/MyNSOpenGLView.otherMouseDragged|objc:otherMouseDragged:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun otherMouseDragged (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:mouseMoved signature:/MyNSOpenGLView.mouseMoved|objc:mouseMoved:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun mouseMoved (event: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>.MyNSOpenGLView'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+      FUN name:keyDown signature:/MyNSOpenGLView.keyDown|objc:keyDown:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+      FUN name:keyUp signature:/MyNSOpenGLView.keyUp|objc:keyUp:[0] visibility:public modality:OPEN <> ($this:<root>.MyNSOpenGLView, event:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyNSOpenGLView
+        VALUE_PARAMETER name:event index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+              $receiver: VALUE_PARAMETER name:$this$memScoped type:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                VAR name:frame type:<unbound IrClassSymbolImpl> [val]
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR '$this$memScoped: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:pixelFormat type:<unbound IrClassSymbolImpl> [val]
+                  CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                VAR name:x type:<root>.MyNSOpenGLView [val]
+                  CONSTRUCTOR_CALL 'public constructor <init> (frame: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, pixelFormat: <unbound IrClassSymbolImpl>?) [primary] declared in <root>.MyNSOpenGLView' type=<root>.MyNSOpenGLView origin=null
+                    frame: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: GET_VAR 'val frame: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    pixelFormat: GET_VAR 'val pixelFormat: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-sb> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY

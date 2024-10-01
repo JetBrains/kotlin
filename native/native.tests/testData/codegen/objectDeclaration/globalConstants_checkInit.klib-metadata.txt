@@ -1,0 +1,40 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ClassWithConstants
+
+    public final object ClassWithConstants : kotlin/Any {
+
+      private constructor()
+
+      public final const val A: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val B: kotlin/Long /* = 2L */
+        public final get
+
+      public final const val C: kotlin/Double /* = 3.0 */
+        public final get
+
+      public final const val D: kotlin/Float /* = 4.0f */
+        public final get
+
+      public final const val E: kotlin/Short /* = 5.toShort() */
+        public final get
+
+      public final const val F: kotlin/Byte /* = 6.toByte() */
+        public final get
+
+      public final const val G: kotlin/String /* = "8" */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

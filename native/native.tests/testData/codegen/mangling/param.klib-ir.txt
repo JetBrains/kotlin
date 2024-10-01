@@ -1,0 +1,77 @@
+// MODULE: lib
+MODULE_FRAGMENT name:<lib>
+  FILE fqName:<root> fileName:/lib.kt
+    FUN name:mangle signature:/mangle|mangle(0:0){0§<kotlin.collections.List<kotlin.Int>>}[0] visibility:public modality:FINAL <T> (l:T of <root>.mangle) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mangle|mangle(0:0){0§<kotlin.collections.List<kotlin.Int>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.collections.List<kotlin.Int>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:l index:0 type:T of <root>.mangle
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mangle <T> (l: T of <root>.mangle): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="Int param "
+            GET_VAR 'l: T of <root>.mangle declared in <root>.mangle' type=T of <root>.mangle origin=null
+    FUN name:mangle signature:/mangle|mangle(0:0){0§<kotlin.collections.List<out|kotlin.Number>>}[0] visibility:public modality:FINAL <T> (l:T of <root>.mangle) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mangle|mangle(0:0){0§<kotlin.collections.List<out|kotlin.Number>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.collections.List<kotlin.Int>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>] reified:false
+      VALUE_PARAMETER name:l index:0 type:T of <root>.mangle
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mangle <T> (l: T of <root>.mangle): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="out Number param "
+            GET_VAR 'l: T of <root>.mangle declared in <root>.mangle' type=T of <root>.mangle origin=null
+    FUN name:mangle signature:/mangle|mangle(0:0){0§<kotlin.collections.List<*>>}[0] visibility:public modality:FINAL <T> (l:T of <root>.mangle) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /mangle|mangle(0:0){0§<kotlin.collections.List<*>>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.collections.List<kotlin.Int>] reified:false] ] superTypes:[<unbound IrClassSymbolImpl><*>] reified:false
+      VALUE_PARAMETER name:l index:0 type:T of <root>.mangle
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun mangle <T> (l: T of <root>.mangle): <unbound IrClassSymbolImpl> declared in <root>'
+          STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+            CONST String type=<unbound IrClassSymbolImpl> value="star param "
+            GET_VAR 'l: T of <root>.mangle declared in <root>.mangle' type=T of <root>.mangle origin=null
+
+// MODULE: main
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/main.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:mutListInt type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=1
+              CONST Int type=<unbound IrClassSymbolImpl> value=2
+              CONST Int type=<unbound IrClassSymbolImpl> value=3
+              CONST Int type=<unbound IrClassSymbolImpl> value=4
+        VAR name:mutListNum type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=9
+              CONST Int type=<unbound IrClassSymbolImpl> value=10
+              CONST Int type=<unbound IrClassSymbolImpl> value=11
+              CONST Int type=<unbound IrClassSymbolImpl> value=12
+        VAR name:mutListAny type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+              CONST Int type=<unbound IrClassSymbolImpl> value=5
+              CONST Int type=<unbound IrClassSymbolImpl> value=6
+              CONST Int type=<unbound IrClassSymbolImpl> value=7
+              CONST Int type=<unbound IrClassSymbolImpl> value=8
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="Int param [1, 2, 3, 4]"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            1: GET_VAR 'val mutListInt: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="out Number param [9, 10, 11, 12]"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            1: GET_VAR 'val mutListNum: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="star param [5, 6, 7, 8]"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            1: GET_VAR 'val mutListAny: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

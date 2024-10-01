@@ -1,0 +1,158 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/generic_function_references.kt
+    FUN name:stringify signature:/stringify|stringify(0:0;kotlin.Function1<0:0,kotlin.Int>;kotlin.Function2<0:0,kotlin.Int,kotlin.Any?>){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <StringifyTP> (collection:StringifyTP of <root>.stringify, size:<unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>>, get:@[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:StringifyTP index:0 variance: signature:[ /stringify|stringify(0:0;kotlin.Function1<0:0,kotlin.Int>;kotlin.Function2<0:0,kotlin.Int,kotlin.Any?>){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:StringifyTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:collection index:0 type:StringifyTP of <root>.stringify
+      VALUE_PARAMETER name:size index:1 type:<unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>>
+      VALUE_PARAMETER name:get index:2 type:@[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>
+      BLOCK_BODY
+        VAR name:res type:<unbound IrClassSymbolImpl> [var]
+          CONST String type=<unbound IrClassSymbolImpl> value="["
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                  $this: GET_VAR 'size: <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>> declared in <root>.stringify' type=<unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+                  1: GET_VAR 'collection: StringifyTP of <root>.stringify declared in <root>.stringify' type=StringifyTP of <root>.stringify origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<unbound IrClassSymbolImpl> [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl> [val] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                  BRANCH
+                    if: CALL 'public final fun greater (arg0: <unbound IrClassSymbolImpl>, arg1: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=GT
+                      arg0: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=null
+                      arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                    then: SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                      CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                        1: CONST String type=<unbound IrClassSymbolImpl> value=", "
+                SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+                    1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=INVOKE
+                        $this: GET_VAR 'get: @[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> declared in <root>.stringify' type=@[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=VARIABLE_AS_FUNCTION
+                        1: GET_VAR 'collection: StringifyTP of <root>.stringify declared in <root>.stringify' type=StringifyTP of <root>.stringify origin=null
+                        2: GET_VAR 'val i: <unbound IrClassSymbolImpl> [val] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=null
+        SET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            $this: GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=PLUSEQ
+            1: CONST String type=<unbound IrClassSymbolImpl> value="]"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun stringify <StringifyTP> (collection: StringifyTP of <root>.stringify, size: <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>>, get: @[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var res: <unbound IrClassSymbolImpl> [var] declared in <root>.stringify' type=<unbound IrClassSymbolImpl> origin=null
+    CLASS INTERFACE name:I signature:/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+    FUN name:stringifyArray signature:/stringifyArray|stringifyArray(kotlin.Array<0:0>){0§<I>}[0] visibility:public modality:FINAL <StringifyArrayTP> (array:<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:StringifyArrayTP index:0 variance: signature:[ /stringifyArray|stringifyArray(kotlin.Array<0:0>){0§<I>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:StringifyTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<root>.I] reified:false
+      VALUE_PARAMETER name:array index:0 type:<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun stringifyArray <StringifyArrayTP> (array: <unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun stringify <StringifyTP> (collection: StringifyTP of <root>.stringify, size: <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>>, get: @[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <StringifyTP>: <unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>
+            collection: GET_VAR 'array: <unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray> declared in <root>.stringifyArray' type=<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray> origin=null
+            size: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>): <unbound IrClassSymbolImpl> declared in <root>.stringifyArray'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'it: <unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray> declared in <root>.stringifyArray.<anonymous>' type=<unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray> origin=null
+            get: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><*>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?> origin=null reflectionTarget=<same>
+    FUN name:stringifyIntArray signature:/stringifyIntArray|stringifyIntArray(kotlin.Array<kotlin.Int>){}[0] visibility:public modality:FINAL <> (array:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:array index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun stringifyIntArray (array: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun stringify <StringifyTP> (collection: StringifyTP of <root>.stringify, size: <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>>, get: @[<unbound>] <unbound IrClassSymbolImpl><StringifyTP of <root>.stringify, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>?>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <StringifyTP>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            collection: GET_VAR 'array: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.stringifyIntArray' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            size: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>.stringifyIntArray'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                      $this: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.stringifyIntArray.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            get: FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+    CLASS CLASS name:N signature:/N|null[0] modality:FINAL visibility:public superTypes:[<root>.I]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.N
+      CONSTRUCTOR signature:/N.<init>|<init>(kotlin.Int){}[0] visibility:public <> (v:<unbound IrClassSymbolImpl>) returnType:<root>.N [primary]
+        VALUE_PARAMETER name:v index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:N signature:/N|null[0] modality:FINAL visibility:public superTypes:[<root>.I]'
+      PROPERTY name:v signature:/N.v|{}v[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:v signature:[ /N.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'v: <unbound IrClassSymbolImpl> declared in <root>.N.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:/N.v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL <> ($this:<root>.N) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:v signature:/N.v|{}v[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.N
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in <root>.N'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ /N.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.N declared in <root>.N.<get-v>' type=<root>.N origin=null
+      FUN name:toString signature:/N.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:<root>.N) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.N
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in <root>.N'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CALL 'public final fun <get-v> (): <unbound IrClassSymbolImpl> declared in <root>.N' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.N declared in <root>.N.toString' type=<root>.N origin=null
+    FUN name:foo signature:/foo|foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] visibility:public modality:FINAL <BazTP0, BazTP1> (p1:BazTP0 of <root>.foo, p2:BazTP1 of <root>.foo) returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["UNUSED_PARAMETER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      TYPE_PARAMETER name:BazTP0 index:0 variance: signature:[ /foo|foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:StringifyTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:BazTP1 index:1 variance: signature:[ /foo|foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0] <- Local[<TP>,1|TYPE_PARAMETER name:BazTP1 index:1 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:p1 index:0 type:BazTP0 of <root>.foo
+      VALUE_PARAMETER name:p2 index:1 type:BazTP1 of <root>.foo
+      BLOCK_BODY
+    FUN name:bar signature:/bar|bar(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <QuxTP> () returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:QuxTP index:0 variance: signature:[ /bar|bar(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:StringifyTP index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      BLOCK_BODY
+        VAR name:ref type:<unbound IrClassSymbolImpl><QuxTP of <root>.bar, QuxTP of <root>.bar, <unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun foo <BazTP0, BazTP1> (p1: BazTP0 of <root>.foo, p2: BazTP1 of <root>.foo): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><QuxTP of <root>.bar, QuxTP of <root>.bar, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <BazTP0>: QuxTP of <root>.bar
+            <BazTP1>: QuxTP of <root>.bar
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'val ref: <unbound IrClassSymbolImpl><QuxTP of <root>.bar, QuxTP of <root>.bar, <unbound IrClassSymbolImpl>> [val] declared in <root>.bar' type=<unbound IrClassSymbolImpl><QuxTP of <root>.bar, QuxTP of <root>.bar, <unbound IrClassSymbolImpl>> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun stringifyArray <StringifyArrayTP> (array: <unbound IrClassSymbolImpl><StringifyArrayTP of <root>.stringifyArray>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <StringifyArrayTP>: <root>.N
+            array: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.N> origin=null
+              <1>: <root>.N
+              1: VARARG type=<unbound IrClassSymbolImpl><out <root>.N> varargElementType=<root>.N
+                CONSTRUCTOR_CALL 'public constructor <init> (v: <unbound IrClassSymbolImpl>) [primary] declared in <root>.N' type=<root>.N origin=null
+                  v: CONST Int type=<unbound IrClassSymbolImpl> value=2
+                CONSTRUCTOR_CALL 'public constructor <init> (v: <unbound IrClassSymbolImpl>) [primary] declared in <root>.N' type=<root>.N origin=null
+                  v: CONST Int type=<unbound IrClassSymbolImpl> value=14
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'public final fun stringifyIntArray (array: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            array: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              <1>: <unbound IrClassSymbolImpl>
+              1: VARARG type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>
+                CONST Int type=<unbound IrClassSymbolImpl> value=1
+                CONST Int type=<unbound IrClassSymbolImpl> value=2
+                CONST Int type=<unbound IrClassSymbolImpl> value=3
+        CALL 'public final fun bar <QuxTP> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <QuxTP>: <unbound IrClassSymbolImpl>
+        CALL 'public final fun bar <QuxTP> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <QuxTP>: <unbound IrClassSymbolImpl>
+        VAR name:ref type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val]
+          FUNCTION_REFERENCE 'public final fun foo <BazTP0, BazTP1> (p1: BazTP0 of <root>.foo, p2: BazTP1 of <root>.foo): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <BazTP0>: <unbound IrClassSymbolImpl>
+            <BazTP1>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'val ref: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

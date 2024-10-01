@@ -1,0 +1,45 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Associated1
+    // class name: I2
+    // class name: I2Impl
+    // class name: I2ImplHolder
+
+    @kotlin/reflect/AssociatedObjectKey
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class Associated1 : kotlin/Annotation {
+
+      public constructor(kClass: kotlin/reflect/KClass<*>)
+
+      public final val kClass: kotlin/reflect/KClass<*>
+        public final get
+    }
+
+    private abstract interface I2 : kotlin/Any {
+
+      public abstract fun foo(): kotlin/Int
+    }
+
+    private final object I2Impl : I2 {
+
+      private constructor()
+
+      public open fun foo(): kotlin/Int
+    }
+
+    @Associated1(kClass = I2Impl::class)
+    private final class I2ImplHolder : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

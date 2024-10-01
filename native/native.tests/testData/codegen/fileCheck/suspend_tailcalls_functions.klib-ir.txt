@@ -1,0 +1,433 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/suspend_tailcalls_functions.kt
+    CLASS CLASS name:EmptyContinuation signature:/EmptyContinuation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyContinuation
+      CONSTRUCTOR signature:/EmptyContinuation.<init>|<init>(kotlin.coroutines.CoroutineContext){}[0] visibility:public <> (context:<unbound IrClassSymbolImpl>) returnType:<root>.EmptyContinuation [primary]
+        VALUE_PARAMETER name:context index:0 type:<unbound IrClassSymbolImpl>
+          EXPRESSION_BODY
+            GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:EmptyContinuation signature:/EmptyContinuation|null[0] modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>]'
+      PROPERTY name:context signature:/EmptyContinuation.context|{}context[0] visibility:public modality:OPEN [val]
+        FIELD PROPERTY_BACKING_FIELD name:context signature:[ /EmptyContinuation.context|{}context[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:kotlin.coroutines.CoroutineContext visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'context: <unbound IrClassSymbolImpl> declared in <root>.EmptyContinuation.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-context> signature:/EmptyContinuation.context.<get-context>|<get-context>(){}[0] visibility:public modality:OPEN <> ($this:<root>.EmptyContinuation) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:context signature:/EmptyContinuation.context|{}context[0] visibility:public modality:OPEN [val]
+          overridden:
+            UNBOUND IrSimpleFunctionSymbolImpl
+          $this: VALUE_PARAMETER name:<this> type:<root>.EmptyContinuation
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-context> (): <unbound IrClassSymbolImpl> declared in <root>.EmptyContinuation'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:context signature:[ /EmptyContinuation.context|{}context[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:context type:kotlin.coroutines.CoroutineContext visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.EmptyContinuation declared in <root>.EmptyContinuation.<get-context>' type=<root>.EmptyContinuation origin=null
+      CLASS OBJECT name:Companion signature:/EmptyContinuation.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.EmptyContinuation]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyContinuation.Companion
+        CONSTRUCTOR signature:/EmptyContinuation.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.EmptyContinuation.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (context: <unbound IrClassSymbolImpl>) [primary] declared in <root>.EmptyContinuation'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:/EmptyContinuation.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.EmptyContinuation]'
+      FUN name:resumeWith signature:/EmptyContinuation.resumeWith|resumeWith(kotlin.Result<kotlin.Any?>){}[0] visibility:public modality:OPEN <> ($this:<root>.EmptyContinuation, result:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>) returnType:<unbound IrClassSymbolImpl>
+        overridden:
+          UNBOUND IrSimpleFunctionSymbolImpl
+        $this: VALUE_PARAMETER name:<this> type:<root>.EmptyContinuation
+        VALUE_PARAMETER name:result index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        BLOCK_BODY
+          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+              <1>: <unbound IrClassSymbolImpl>?
+              $receiver: GET_VAR 'result: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>.EmptyContinuation.resumeWith' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+    FUN name:sUnit signature:/sUnit|sUnit(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>?
+                VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="sUnit"
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.sUnit.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl>? declared in <root>.sUnit'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:sInt signature:/sInt|sInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>?
+                VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="sInt"
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    $receiver: GET_VAR 'x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.sInt.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+                    1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (x: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl>? declared in <root>.sInt'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:s1 signature:/s1|s1(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="s1"
+    FUN name:s2 signature:/s2|s2(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="s2"
+        CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s3 signature:/s3|s3(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="s3"
+        CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s3 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:s4 signature:/s4|s4(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="s4"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s4 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s5 signature:/s5|s5(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="s5"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s6 signature:/s6|s6(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s6"
+                CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s7 signature:/s7|s7(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s7 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="s7"
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.s7'
+                    CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s8 signature:/s8|s8(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s8"
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun s8 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                  CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s9 signature:/s9|s9(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s9-1"
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  <1>: <unbound IrClassSymbolImpl>
+                  1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                      BLOCK_BODY
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          1: CONST String type=<unbound IrClassSymbolImpl> value="s9-2"
+                        CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s10 signature:/s10|s10(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s10-1"
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun s10 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            1: CONST String type=<unbound IrClassSymbolImpl> value="s10-2"
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.s10.<anonymous>'
+                            CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s11 signature:/s11|s11(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CONST String type=<unbound IrClassSymbolImpl> value="s11"
+        CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s11 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:s12 signature:/s12|s12(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s12"
+                CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun s12 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:s13 signature:/s13|s13(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s13"
+                CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s13 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:s14 signature:/s14|s14(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s14"
+                CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.s14'
+                  GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+    FUN name:s15 signature:/s15|s15(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      annotations:
+        <unbound>(1 = ["UNREACHABLE_CODE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s15-1"
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun s15 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            1: CONST String type=<unbound IrClassSymbolImpl> value="s15-2"
+                          RETURN type=<unbound IrClassSymbolImpl> from='public final fun s15 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                            CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s16 signature:/s16|s16(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+              BLOCK_BODY
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s16-1"
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun s16 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    <1>: <unbound IrClassSymbolImpl>
+                    1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                            1: CONST String type=<unbound IrClassSymbolImpl> value="s16-2"
+                          RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.s16.<anonymous>'
+                            CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s17 signature:/s17|s17(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      annotations:
+        <unbound>(1 = ["UNREACHABLE_CODE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s17 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    1: CONST String type=<unbound IrClassSymbolImpl> value="s17-1"
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun s17 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              1: CONST String type=<unbound IrClassSymbolImpl> value="s17-2"
+                            RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.s17'
+                              CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s18 signature:/s18|s18(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'f: <unbound IrClassSymbolImpl> declared in <root>.s18' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="s18-1"
+              CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="s18-2"
+              CALL 'public final fun s2 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s19 signature:/s19|s19(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'f: <unbound IrClassSymbolImpl> declared in <root>.s19' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="s19-1"
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun s19 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                1: CONST String type=<unbound IrClassSymbolImpl> value="s19-2"
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun s19 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                CALL 'public final fun s4 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s20 signature:/s20|s20(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s20 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: GET_VAR 'f: <unbound IrClassSymbolImpl> declared in <root>.s20' type=<unbound IrClassSymbolImpl> origin=null
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s20-1"
+                CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: CONST String type=<unbound IrClassSymbolImpl> value="s20-2"
+                CALL 'public final fun s4 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s21 signature:/s21|s21(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="s21"
+          CATCH parameter=val t: <unbound IrClassSymbolImpl> [val] declared in <root>.s21
+            VAR CATCH_PARAMETER name:t type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s22 signature:/s22|s22(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        TRY type=<unbound IrClassSymbolImpl>
+          try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST String type=<unbound IrClassSymbolImpl> value="s22"
+          CATCH parameter=val t: <unbound IrClassSymbolImpl> [val] declared in <root>.s22
+            VAR CATCH_PARAMETER name:t type:<unbound IrClassSymbolImpl> [val]
+            BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun s22 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s22 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+          CALL 'public final fun s4 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s23 signature:/s23|s23(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (f:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [suspend]
+      VALUE_PARAMETER name:f index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  WHEN type=<unbound IrClassSymbolImpl> origin=IF
+                    BRANCH
+                      if: GET_VAR 'f: <unbound IrClassSymbolImpl> declared in <root>.s23' type=<unbound IrClassSymbolImpl> origin=null
+                      then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                          1: CONST String type=<unbound IrClassSymbolImpl> value="s23"
+                        CALL 'public final fun sUnit (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                        RETURN type=<unbound IrClassSymbolImpl> from='public final fun s23 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>'
+                          GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl> declared in <root>.s23'
+                    CONST Int type=<unbound IrClassSymbolImpl> value=42
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.s23' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:s24 signature:/s24|s24(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun sInt (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:builder signature:/builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> (c:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:c index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          $receiver: GET_VAR 'c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.builder' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+          1: GET_OBJECT 'CLASS OBJECT name:Companion signature:/EmptyContinuation.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<root>.EmptyContinuation]' type=<root>.EmptyContinuation.Companion
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun builder (c: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          c: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [suspend]
+              BLOCK_BODY
+                CALL 'public final fun s1 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s2 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s3 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s4 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s5 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s6 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s7 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s8 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s9 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s10 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s11 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s12 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s13 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s14 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s15 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s16 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s17 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s18 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  f: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s19 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    f: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s20 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    f: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                CALL 'public final fun s21 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                  CALL 'public final fun s22 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'public final fun s23 (f: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                  f: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                CALL 'public final fun s24 (): <unbound IrClassSymbolImpl> [suspend] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

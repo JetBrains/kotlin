@@ -1,0 +1,42 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.stringConcatenationTypeNarrowing.kt53119_append_manual
+
+    // class name: codegen/stringConcatenationTypeNarrowing/kt53119_append_manual/Foo
+
+    public final data class codegen/stringConcatenationTypeNarrowing/kt53119_append_manual/Foo : kotlin/Any {
+
+      public constructor(bar: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(bar: kotlin/Int /* = ... */): codegen/stringConcatenationTypeNarrowing/kt53119_append_manual/Foo
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val bar: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun appendAny(any: kotlin/Any): kotlin/String
+
+      public final fun appendFoo(foo: codegen/stringConcatenationTypeNarrowing/kt53119_append_manual/Foo): kotlin/String
+
+      public final fun appendMaybeAny(maybeAny: kotlin/Any?): kotlin/String
+
+      public final fun appendMaybeString(maybeStr: kotlin/String?): kotlin/String
+
+      public final fun appendString(str: kotlin/String): kotlin/String
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

@@ -1,0 +1,81 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/sharing.kt
+    FUN name:runInWorker signature:/runInWorker|runInWorker@kotlin.native.concurrent.Worker(kotlin.Function0<kotlin.Unit>){}[0] visibility:public modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>, block:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+      $receiver: VALUE_PARAMETER name:<this> type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:block index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+          $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+            <2>: <unbound IrClassSymbolImpl>
+            $this: GET_VAR '<this>: <unbound IrClassSymbolImpl> declared in <root>.runInWorker' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>
+            2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.runInWorker'
+                    GET_VAR 'block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.runInWorker' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            3: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>) returnType:<unbound IrClassSymbolImpl>
+                VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+                BLOCK_BODY
+                  CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=INVOKE
+                    $this: GET_VAR 'it: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in <root>.runInWorker.<anonymous>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=VARIABLE_AS_FUNCTION
+    CLASS CLASS name:NSObjectImpl signature:[ File '/sharing.kt' <- /NSObjectImpl|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NSObjectImpl
+      CONSTRUCTOR signature:[ File '/sharing.kt' <- /NSObjectImpl.<init>|<init>(){}[0] ] visibility:public <> () returnType:<root>.NSObjectImpl [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NSObjectImpl signature:[ File '/sharing.kt' <- /NSObjectImpl|null[0] ] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:x signature:[ File '/sharing.kt' <- /NSObjectImpl.x|{}x[0] ] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ [ File '/sharing.kt' <- /NSObjectImpl.x|{}x[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=111
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:[ File '/sharing.kt' <- /NSObjectImpl.x.<get-x>|<get-x>(){}[0] ] visibility:public modality:FINAL <> ($this:<root>.NSObjectImpl) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:[ File '/sharing.kt' <- /NSObjectImpl.x|{}x[0] ] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.NSObjectImpl
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-x> (): <unbound IrClassSymbolImpl> declared in <root>.NSObjectImpl'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ [ File '/sharing.kt' <- /NSObjectImpl.x|{}x[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.NSObjectImpl declared in <root>.NSObjectImpl.<get-x>' type=<root>.NSObjectImpl origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:[ File '/sharing.kt' <- /NSObjectImpl.x.<set-x>|<set-x>(<set-?>:kotlin.Int){}[0] ] visibility:public modality:FINAL <> ($this:<root>.NSObjectImpl, <set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:[ File '/sharing.kt' <- /NSObjectImpl.x|{}x[0] ] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:<root>.NSObjectImpl
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ [ File '/sharing.kt' <- /NSObjectImpl.x|{}x[0] ] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassSymbolImpl> visibility:private' type=<unbound IrClassSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: <root>.NSObjectImpl declared in <root>.NSObjectImpl.<set-x>' type=<root>.NSObjectImpl origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.NSObjectImpl.<set-x>' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            3: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                $receiver: VALUE_PARAMETER name:$this$withWorker type:<unbound IrClassSymbolImpl>
+                BLOCK_BODY
+                  VAR name:obj type:<root>.NSObjectImpl [val]
+                    CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.NSObjectImpl' type=<root>.NSObjectImpl origin=null
+                  VAR name:array type:<unbound IrClassSymbolImpl> [val]
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      <1>: <unbound IrClassSymbolImpl>
+                      $receiver: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                      1: FUN_EXPR type=@[<unbound>] <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+                          $receiver: VALUE_PARAMETER name:$this$apply type:<unbound IrClassSymbolImpl>
+                          BLOCK_BODY
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                              $this: GET_VAR '$this$apply: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                              1: GET_VAR 'val obj: <root>.NSObjectImpl [val] declared in <root>.box.<anonymous>' type=<root>.NSObjectImpl origin=null
+                  CALL 'public final fun runInWorker (block: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                    $receiver: GET_VAR '$this$withWorker: <unbound IrClassSymbolImpl> declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                    block: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+                        BLOCK_BODY
+                          TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+                            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+                              $this: GET_VAR 'val array: <unbound IrClassSymbolImpl> [val] declared in <root>.box.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                              1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+                  RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                    CONST String type=<unbound IrClassSymbolImpl> value="OK"

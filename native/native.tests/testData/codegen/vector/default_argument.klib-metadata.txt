@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      private final fun funDefaultValue(v: kotlinx/cinterop/Vector128 /* = ... */): kotlinx/cinterop/Vector128
+    }
+  }
+}

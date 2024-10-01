@@ -1,0 +1,6 @@
+// MODULE: lib
+18702cb2cc4bc01bc6f420127adfd7c8
+// MODULE: lib2
+f48822990fe7d735ce7ba6dc3cc3fcf0
+// MODULE: main
+4c3ae0908091151f5b5454a89dbafad2

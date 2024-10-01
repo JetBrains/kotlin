@@ -1,0 +1,162 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/globalConstants_checkInit.kt
+    CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ClassWithConstants
+      CONSTRUCTOR signature:/ClassWithConstants.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.ClassWithConstants [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:A signature:/ClassWithConstants.A|{}A[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:A signature:[ /ClassWithConstants.A|{}A[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassSymbolImpl> value=1
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-A> signature:/ClassWithConstants.A.<get-A>|<get-A>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:A signature:/ClassWithConstants.A|{}A[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-A> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:A signature:[ /ClassWithConstants.A|{}A[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-A>' type=<root>.ClassWithConstants origin=null
+      PROPERTY name:B signature:/ClassWithConstants.B|{}B[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:B signature:[ /ClassWithConstants.B|{}B[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Long type=<unbound IrClassSymbolImpl> value=2
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-B> signature:/ClassWithConstants.B.<get-B>|<get-B>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:B signature:/ClassWithConstants.B|{}B[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-B> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:B signature:[ /ClassWithConstants.B|{}B[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-B>' type=<root>.ClassWithConstants origin=null
+      PROPERTY name:C signature:/ClassWithConstants.C|{}C[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:C signature:[ /ClassWithConstants.C|{}C[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Double type=<unbound IrClassSymbolImpl> value=3.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-C> signature:/ClassWithConstants.C.<get-C>|<get-C>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:C signature:/ClassWithConstants.C|{}C[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-C> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:C signature:[ /ClassWithConstants.C|{}C[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-C>' type=<root>.ClassWithConstants origin=null
+      PROPERTY name:D signature:/ClassWithConstants.D|{}D[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:D signature:[ /ClassWithConstants.D|{}D[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Float type=<unbound IrClassSymbolImpl> value=4.0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-D> signature:/ClassWithConstants.D.<get-D>|<get-D>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:D signature:/ClassWithConstants.D|{}D[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-D> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:D signature:[ /ClassWithConstants.D|{}D[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-D>' type=<root>.ClassWithConstants origin=null
+      PROPERTY name:E signature:/ClassWithConstants.E|{}E[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:E signature:[ /ClassWithConstants.E|{}E[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Short type=<unbound IrClassSymbolImpl> value=5
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-E> signature:/ClassWithConstants.E.<get-E>|<get-E>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:E signature:/ClassWithConstants.E|{}E[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-E> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:E signature:[ /ClassWithConstants.E|{}E[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-E>' type=<root>.ClassWithConstants origin=null
+      PROPERTY name:F signature:/ClassWithConstants.F|{}F[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:F signature:[ /ClassWithConstants.F|{}F[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST Byte type=<unbound IrClassSymbolImpl> value=6
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-F> signature:/ClassWithConstants.F.<get-F>|<get-F>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:F signature:/ClassWithConstants.F|{}F[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-F> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:F signature:[ /ClassWithConstants.F|{}F[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-F>' type=<root>.ClassWithConstants origin=null
+      PROPERTY name:G signature:/ClassWithConstants.G|{}G[0] visibility:public modality:FINAL [const,val]
+        FIELD PROPERTY_BACKING_FIELD name:G signature:[ /ClassWithConstants.G|{}G[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]
+          EXPRESSION_BODY
+            CONST String type=<unbound IrClassSymbolImpl> value="8"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-G> signature:/ClassWithConstants.G.<get-G>|<get-G>(){}[0] visibility:public modality:FINAL <> ($this:<root>.ClassWithConstants) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:G signature:/ClassWithConstants.G|{}G[0] visibility:public modality:FINAL [const,val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.ClassWithConstants
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-G> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:G signature:[ /ClassWithConstants.G|{}G[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:A type:kotlin.Int visibility:public [final]] ] type:<unbound IrClassSymbolImpl> visibility:public [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.ClassWithConstants declared in <root>.ClassWithConstants.<get-G>' type=<root>.ClassWithConstants origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=2
+          2: CONST Long type=<unbound IrClassSymbolImpl> value=2
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Double type=<unbound IrClassSymbolImpl> value=3.0
+          2: CONST Double type=<unbound IrClassSymbolImpl> value=3.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Float type=<unbound IrClassSymbolImpl> value=4.0
+          2: CONST Float type=<unbound IrClassSymbolImpl> value=4.0
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Short type=<unbound IrClassSymbolImpl> value=5
+          2: CONST Short type=<unbound IrClassSymbolImpl> value=5
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Byte type=<unbound IrClassSymbolImpl> value=6
+          2: CONST Byte type=<unbound IrClassSymbolImpl> value=6
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="8"
+          2: CONST String type=<unbound IrClassSymbolImpl> value="8"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Int type=<unbound IrClassSymbolImpl> value=1
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final A: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-A> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Long type=<unbound IrClassSymbolImpl> value=2
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final B: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-B> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Double type=<unbound IrClassSymbolImpl> value=3.0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final C: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-C> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Float type=<unbound IrClassSymbolImpl> value=4.0
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final D: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-D> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Short type=<unbound IrClassSymbolImpl> value=5
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final E: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-E> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST Byte type=<unbound IrClassSymbolImpl> value=6
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final F: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-F> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="8"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: PROPERTY_REFERENCE 'public final G: <unbound IrClassSymbolImpl> [const,val] declared in <root>.ClassWithConstants' field=null getter='public final fun <get-G> (): <unbound IrClassSymbolImpl> declared in <root>.ClassWithConstants' setter=null type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+              $this: GET_OBJECT 'CLASS OBJECT name:ClassWithConstants signature:/ClassWithConstants|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<root>.ClassWithConstants
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

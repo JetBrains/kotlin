@@ -1,0 +1,49 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/intrinsics.kt
+    FUN name:and signature:/and|and(kotlin.Int;kotlin.Int){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun and (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.and' type=<unbound IrClassSymbolImpl> origin=null
+            1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.and' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:ieee754 signature:/ieee754|ieee754(kotlin.Float;kotlin.Float){}[0] visibility:public modality:FINAL <> (a:<unbound IrClassSymbolImpl>, b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:a index:0 type:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:1 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun ieee754 (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun ieee754equals (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+            arg0: GET_VAR 'a: <unbound IrClassSymbolImpl> declared in <root>.ieee754' type=<unbound IrClassSymbolImpl> origin=null
+            arg1: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.ieee754' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:x type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun and (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            b: CONST Int type=<unbound IrClassSymbolImpl> value=2
+        VAR name:y type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun ieee754 (a: <unbound IrClassSymbolImpl>, b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            a: CONST Float type=<unbound IrClassSymbolImpl> value=0.0
+            b: CONST Float type=<unbound IrClassSymbolImpl> value=1.0
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          WHEN type=<unbound IrClassSymbolImpl> origin=IF
+            BRANCH
+              if: WHEN type=<unbound IrClassSymbolImpl> origin=ANDAND
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                    arg0: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                    arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+                  then: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                    $this: GET_VAR 'val y: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                BRANCH
+                  if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                  then: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+              then: CONST String type=<unbound IrClassSymbolImpl> value="OK"
+            BRANCH
+              if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+              then: STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL x="
+                GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=" y="
+                GET_VAR 'val y: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null

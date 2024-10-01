@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun and(a: kotlin/Int, b: kotlin/Int): kotlin/Int
+
+      public final fun box(): kotlin/String
+
+      public final fun ieee754(a: kotlin/Float, b: kotlin/Float): kotlin/Boolean
+    }
+  }
+}

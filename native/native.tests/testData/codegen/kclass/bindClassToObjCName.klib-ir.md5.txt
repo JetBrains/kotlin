@@ -1,0 +1,6 @@
+// MODULE: base
+07dcc890b377b0b7436e3131bda0591c
+// MODULE: gen
+ba5e84f3ffe496763081e4a49bd1876d
+// MODULE: main
+bd8cb628bd631489b72a3d64eb8551d3

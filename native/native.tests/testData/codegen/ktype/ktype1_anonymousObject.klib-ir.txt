@@ -1,0 +1,53 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/ktype1_anonymousObject.kt
+    FUN name:kType signature:/kType|kType(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> () returnType:<unbound IrClassSymbolImpl> [inline]
+      annotations:
+        <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /kType|kType(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun kType <R> (): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: R of <root>.kType
+    FUN name:kType signature:/kType|kType(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <R> (obj:R of <root>.kType) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:R index:0 variance: signature:[ /kType|kType(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:true
+      VALUE_PARAMETER name:obj index:0 type:R of <root>.kType
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun kType <R> (obj: R of <root>.kType): <unbound IrClassSymbolImpl> [inline] declared in <root>'
+          CALL 'public final fun kType <R> (): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <R>: R of <root>.kType
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:obj type:<root>.box.<no name provided> [val]
+          BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<unbound IrClassSymbolImpl>]'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+        VAR name:objType type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun kType <R> (obj: R of <root>.kType): <unbound IrClassSymbolImpl> [inline] declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            <R>: <root>.box.<no name provided>
+            obj: GET_VAR 'val obj: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="(non-denotable type)"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              GET_VAR 'val objType: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: GET_CLASS type=<unbound IrClassSymbolImpl><out <root>.box.<no name provided>>
+            GET_VAR 'val obj: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'val objType: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+              $this: GET_VAR 'val objType: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val objType: <unbound IrClassSymbolImpl> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

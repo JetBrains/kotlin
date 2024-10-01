@@ -1,0 +1,41 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: runtime.basic.initializers6
+
+    // class name: runtime/basic/initializers6/A
+
+    public final object runtime/basic/initializers6/A : kotlin/Any {
+
+      private constructor()
+
+      public final val a: kotlin/String
+        public final get
+
+      public final val b: kotlin/String
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun produceA(): kotlin/String
+
+      public final fun produceB(): kotlin/String
+
+      public final val aWorkerId: kotlin/concurrent/AtomicInt
+        public final get
+
+      public final val aWorkerUnlocker: kotlin/concurrent/AtomicInt
+        public final get
+
+      public final val bWorkerUnlocker: kotlin/concurrent/AtomicInt
+        public final get
+
+      public final val bWorkersCount: kotlin/Int /* = ... */
+        public final get
+    }
+  }
+}

@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final inline fun <T#0 /* T */> bar(x: T#0?, f: kotlin/Boolean): kotlin/Any
+
+      public final fun box(): kotlin/String
+
+      public final fun callBar(f: kotlin/Boolean): kotlin/ULong
+
+      public final fun foo(): kotlin/Long
+    }
+  }
+}

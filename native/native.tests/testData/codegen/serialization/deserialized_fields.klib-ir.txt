@@ -1,0 +1,44 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/deserialized_fields.kt
+    CLASS CLASS name:CustomThrowable signature:/CustomThrowable|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CustomThrowable
+      CONSTRUCTOR signature:/CustomThrowable.<init>|<init>(kotlin.String){}[0] visibility:public <> (extraInfo:<unbound IrClassSymbolImpl>) returnType:<root>.CustomThrowable [primary]
+        VALUE_PARAMETER name:extraInfo index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            1: CONST String type=<unbound IrClassSymbolImpl> value="Some message"
+            2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CustomThrowable signature:/CustomThrowable|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      PROPERTY name:extraInfo signature:/CustomThrowable.extraInfo|{}extraInfo[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:extraInfo signature:[ /CustomThrowable.extraInfo|{}extraInfo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:extraInfo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'extraInfo: <unbound IrClassSymbolImpl> declared in <root>.CustomThrowable.<init>' type=<unbound IrClassSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-extraInfo> signature:/CustomThrowable.extraInfo.<get-extraInfo>|<get-extraInfo>(){}[0] visibility:public modality:FINAL <> ($this:<root>.CustomThrowable) returnType:<unbound IrClassSymbolImpl>
+          correspondingProperty: PROPERTY name:extraInfo signature:/CustomThrowable.extraInfo|{}extraInfo[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.CustomThrowable
+          BLOCK_BODY
+            RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-extraInfo> (): <unbound IrClassSymbolImpl> declared in <root>.CustomThrowable'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:extraInfo signature:[ /CustomThrowable.extraInfo|{}extraInfo[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:extraInfo type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: <root>.CustomThrowable declared in <root>.CustomThrowable.<get-extraInfo>' type=<root>.CustomThrowable origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:custom type:<root>.CustomThrowable [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (extraInfo: <unbound IrClassSymbolImpl>) [primary] declared in <root>.CustomThrowable' type=<root>.CustomThrowable origin=null
+            extraInfo: CONST String type=<unbound IrClassSymbolImpl> value="Extra info"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'public final fun <get-extraInfo> (): <unbound IrClassSymbolImpl> declared in <root>.CustomThrowable' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            $this: GET_VAR 'val custom: <root>.CustomThrowable [val] declared in <root>.box' type=<root>.CustomThrowable origin=null
+          2: CONST String type=<unbound IrClassSymbolImpl> value="Extra info"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'val custom: <root>.CustomThrowable [val] declared in <root>.box' type=<root>.CustomThrowable origin=null
+          2: CONST String type=<unbound IrClassSymbolImpl> value="Some message"
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: GET_VAR 'val custom: <root>.CustomThrowable [val] declared in <root>.box' type=<root>.CustomThrowable origin=null
+          2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

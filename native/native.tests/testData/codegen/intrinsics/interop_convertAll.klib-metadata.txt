@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun testConvertAll(value: kotlin/Byte): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/Int): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/Long): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/Short): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/UByte): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/UInt): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/ULong): kotlin/Unit
+
+      public final fun testConvertAll(value: kotlin/UShort): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/throw_cleanup.kt
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'private final fun foo (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+            b: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          TRY type=<unbound IrClassSymbolImpl>
+            try: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              CALL 'private final fun foo (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+                b: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            CATCH parameter=val e: <unbound IrClassSymbolImpl> [val] declared in <root>.box
+              VAR CATCH_PARAMETER name:e type:<unbound IrClassSymbolImpl> [val]
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                  CONST String type=<unbound IrClassSymbolImpl> value="OK"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="FAIL"
+    FUN name:foo signature:[ File '/throw_cleanup.kt' <- /foo|foo(kotlin.Boolean){}[0] ] visibility:private modality:FINAL <> (b:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER name:b index:0 type:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:result type:<unbound IrClassSymbolImpl> [var]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: GET_VAR 'b: <unbound IrClassSymbolImpl> declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              THROW type=<unbound IrClassSymbolImpl>
+                CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='private final fun foo (b: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>'
+          GET_VAR 'var result: <unbound IrClassSymbolImpl> [var] declared in <root>.foo' type=<unbound IrClassSymbolImpl> origin=null

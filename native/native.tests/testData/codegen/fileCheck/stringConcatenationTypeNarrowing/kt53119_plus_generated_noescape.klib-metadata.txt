@@ -1,0 +1,14 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun getNextInt(): kotlin/Int
+    }
+  }
+}

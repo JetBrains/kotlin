@@ -1,0 +1,27 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape fileName:/kt53119_plus_generated_noescape.kt
+    FUN name:getNextInt signature:codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape/getNextInt|getNextInt(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getNextInt (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              1: CONST Int type=<unbound IrClassSymbolImpl> value=42153
+              2: CONST Int type=<unbound IrClassSymbolImpl> value=42153
+    FUN name:box signature:codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:nextInt type:<unbound IrClassSymbolImpl> [val]
+          CALL 'public final fun getNextInt (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape' type=<unbound IrClassSymbolImpl> origin=null
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EXCLEQ
+                arg0: GET_VAR 'val nextInt: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape.box' type=<unbound IrClassSymbolImpl> origin=null
+                arg1: CONST Int type=<unbound IrClassSymbolImpl> value=42153
+            then: RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape'
+              STRING_CONCATENATION type=<unbound IrClassSymbolImpl>
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL: "
+                GET_VAR 'val nextInt: <unbound IrClassSymbolImpl> [val] declared in codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape.box' type=<unbound IrClassSymbolImpl> origin=null
+                CONST String type=<unbound IrClassSymbolImpl> value=" != 42153"
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in codegen.stringConcatenationTypeNarrowing.kt53119_plus_generated_noescape'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

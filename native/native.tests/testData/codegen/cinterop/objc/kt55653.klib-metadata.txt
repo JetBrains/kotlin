@@ -1,0 +1,64 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: MyNSOpenGLView
+
+    public final class MyNSOpenGLView : platform/AppKit/NSOpenGLView {
+
+      public constructor(frame: kotlinx/cinterop/CValue<platform/CoreGraphics/CGRect /* = platform/Foundation/NSRect^ */>, pixelFormat: platform/AppKit/NSOpenGLPixelFormat?)
+
+      public open fun acceptsFirstResponder(): kotlin/Boolean
+
+      public open fun becomeFirstResponder(): kotlin/Boolean
+
+      public open fun flagsChanged(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun keyDown(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun keyUp(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun magnifyWithEvent(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun mouseDown(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun mouseDragged(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun mouseMoved(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun mouseUp(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun otherMouseDown(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun otherMouseDragged(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun otherMouseUp(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun resetCursorRects(): kotlin/Unit
+
+      public open fun rightMouseDown(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun rightMouseDragged(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun rightMouseUp(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun rotateWithEvent(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun scrollWheel(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun smartMagnifyWithEvent(event: platform/AppKit/NSEvent): kotlin/Unit
+
+      public open fun swipeWithEvent(event: platform/AppKit/NSEvent): kotlin/Unit
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

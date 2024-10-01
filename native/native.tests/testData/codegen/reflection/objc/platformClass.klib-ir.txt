@@ -1,0 +1,89 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:mypackage fileName:/platformClass.kt
+    annotations:
+      <unbound>(1 = [CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>> varargElementType=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>)
+    PROPERTY name:kclass signature:mypackage/kclass|{}kclass[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:kclass signature:[ mypackage/kclass|{}kclass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kclass type:kotlin.reflect.KClass<platform.Foundation.NSUUID> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]
+        EXPRESSION_BODY
+          CLASS_REFERENCE 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kclass> signature:mypackage/kclass.<get-kclass>|<get-kclass>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>>
+        correspondingProperty: PROPERTY name:kclass signature:mypackage/kclass|{}kclass[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kclass signature:[ mypackage/kclass|{}kclass[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:kclass type:kotlin.reflect.KClass<platform.Foundation.NSUUID> visibility:private [final,static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+    FUN name:getKClass signature:mypackage/getKClass|getKClass(){0§<kotlin.Any>}[0] visibility:public modality:FINAL <T> () returnType:<unbound IrClassSymbolImpl><*> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ mypackage/getKClass|getKClass(){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>] reified:true
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun getKClass <T> (): <unbound IrClassSymbolImpl><*> [inline] declared in mypackage'
+          CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: signature:[ mypackage/getKClass|getKClass(){0§<kotlin.Any>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>] reified:true' type=<unbound IrClassSymbolImpl><T of mypackage.getKClass>
+    FUN name:assertEquals2Way signature:mypackage/assertEquals2Way|assertEquals2Way(0:0;0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (lhs:T of mypackage.assertEquals2Way, rhs:T of mypackage.assertEquals2Way) returnType:<unbound IrClassSymbolImpl> [inline]
+      TYPE_PARAMETER name:T index:0 variance: signature:[ mypackage/assertEquals2Way|assertEquals2Way(0:0;0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:true] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:lhs index:0 type:T of mypackage.assertEquals2Way
+      VALUE_PARAMETER name:rhs index:1 type:T of mypackage.assertEquals2Way
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: T of mypackage.assertEquals2Way
+          1: GET_VAR 'lhs: T of mypackage.assertEquals2Way declared in mypackage.assertEquals2Way' type=T of mypackage.assertEquals2Way origin=null
+          2: GET_VAR 'rhs: T of mypackage.assertEquals2Way declared in mypackage.assertEquals2Way' type=T of mypackage.assertEquals2Way origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: T of mypackage.assertEquals2Way
+          1: GET_VAR 'rhs: T of mypackage.assertEquals2Way declared in mypackage.assertEquals2Way' type=T of mypackage.assertEquals2Way origin=null
+          2: GET_VAR 'lhs: T of mypackage.assertEquals2Way declared in mypackage.assertEquals2Way' type=T of mypackage.assertEquals2Way origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'lhs: T of mypackage.assertEquals2Way declared in mypackage.assertEquals2Way' type=T of mypackage.assertEquals2Way origin=null
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: GET_VAR 'rhs: T of mypackage.assertEquals2Way declared in mypackage.assertEquals2Way' type=T of mypackage.assertEquals2Way origin=null
+    FUN name:box signature:mypackage/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        VAR name:instance type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:instanceKClass type:<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val]
+          GET_CLASS type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+            GET_VAR 'val instance: <unbound IrClassSymbolImpl> [val] declared in mypackage.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun assertEquals2Way <T> (lhs: T of mypackage.assertEquals2Way, rhs: T of mypackage.assertEquals2Way): <unbound IrClassSymbolImpl> [inline] declared in mypackage' type=<unbound IrClassSymbolImpl> origin=null
+          <T>: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>>
+          lhs: CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+          rhs: CALL 'public final fun getKClass <T> (): <unbound IrClassSymbolImpl><*> [inline] declared in mypackage' type=<unbound IrClassSymbolImpl><*> origin=null
+            <T>: <unbound IrClassSymbolImpl>
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+            1: GET_VAR 'val instance: <unbound IrClassSymbolImpl> [val] declared in mypackage.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+            1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val instanceKClass: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val] declared in mypackage.box' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            1: GET_VAR 'val instance: <unbound IrClassSymbolImpl> [val] declared in mypackage.box' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val instanceKClass: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val] declared in mypackage.box' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            1: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: GET_VAR 'val instanceKClass: <unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> [val] declared in mypackage.box' type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> origin=null
+            1: CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>?
+          1: CONST String type=<unbound IrClassSymbolImpl> value="NSUUID"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          <1>: <unbound IrClassSymbolImpl>
+          1: CONST String type=<unbound IrClassSymbolImpl> value="class NSUUID"
+          2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $this: TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_CAST typeOperand=<unbound IrClassSymbolImpl>
+              CALL 'public final fun <get-kclass> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> declared in mypackage' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in mypackage'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

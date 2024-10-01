@@ -1,0 +1,63 @@
+// MODULE: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: C
+    // class name: D
+
+    private open class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun foo1(): kotlin/text/StringBuilder
+
+      internal final fun foo2(): kotlin/text/StringBuilder
+
+      protected final fun foo3(): kotlin/text/StringBuilder
+    }
+
+    private final class B : A {
+
+      public constructor()
+
+      public final fun foo4(): kotlin/text/StringBuilder
+    }
+
+    private abstract interface C : kotlin/Any {
+
+      public open fun foo(): kotlin/text/StringBuilder
+    }
+
+    private final class D : C {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun runner(): kotlin/Unit
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

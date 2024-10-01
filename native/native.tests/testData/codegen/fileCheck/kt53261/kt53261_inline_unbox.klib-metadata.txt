@@ -1,0 +1,16 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final fun box(): kotlin/String
+
+      public final val arr: kotlin/Array<kotlin/String>
+        public final get
+    }
+  }
+}

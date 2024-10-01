@@ -1,0 +1,66 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/enum_when.kt
+    CLASS ENUM_CLASS name:COLOR signature:/COLOR|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.COLOR>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.COLOR
+      CONSTRUCTOR signature:/COLOR.<init>|<init>(){}[0] visibility:private <> () returnType:<root>.COLOR [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+            <1>: <root>.COLOR
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:COLOR signature:/COLOR|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><<root>.COLOR>]'
+      ENUM_ENTRY name:RED signature:/COLOR.RED|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.COLOR'
+      ENUM_ENTRY name:GREEN signature:/COLOR.GREEN|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.COLOR'
+      ENUM_ENTRY name:BLUE signature:/COLOR.BLUE|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.COLOR'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:/COLOR.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.COLOR>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:/COLOR.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:<root>.COLOR
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/COLOR.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:/COLOR.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<root>.COLOR>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:/COLOR.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:<iterator> type:<unbound IrClassSymbolImpl><<root>.COLOR> [val]
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<root>.COLOR> origin=FOR_LOOP_ITERATOR
+              $this: CALL 'public final fun values (): <unbound IrClassSymbolImpl><<root>.COLOR> declared in <root>.COLOR' type=<unbound IrClassSymbolImpl><<root>.COLOR> origin=null
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<root>.COLOR> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.COLOR> origin=null
+            body: BLOCK type=<unbound IrClassSymbolImpl> origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:i type:<root>.COLOR [val]
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<root>.COLOR origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val <iterator>: <unbound IrClassSymbolImpl><<root>.COLOR> [val] declared in <root>.box' type=<unbound IrClassSymbolImpl><<root>.COLOR> origin=null
+              BLOCK type=<unbound IrClassSymbolImpl> origin=null
+                CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+                  1: BLOCK type=<unbound IrClassSymbolImpl> origin=WHEN
+                    VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:<root>.COLOR [val]
+                      GET_VAR 'val i: <root>.COLOR [val] declared in <root>.box' type=<root>.COLOR origin=null
+                    WHEN type=<unbound IrClassSymbolImpl> origin=WHEN
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_subject: <root>.COLOR [val] declared in <root>.box' type=<root>.COLOR origin=null
+                          arg1: GET_ENUM 'ENUM_ENTRY name:RED signature:/COLOR.RED|null[0]' type=<root>.COLOR
+                        then: CONST Int type=<unbound IrClassSymbolImpl> value=16711680
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_subject: <root>.COLOR [val] declared in <root>.box' type=<root>.COLOR origin=null
+                          arg1: GET_ENUM 'ENUM_ENTRY name:GREEN signature:/COLOR.GREEN|null[0]' type=<root>.COLOR
+                        then: CONST Int type=<unbound IrClassSymbolImpl> value=65280
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
+                          arg0: GET_VAR 'val tmp0_subject: <root>.COLOR [val] declared in <root>.box' type=<root>.COLOR origin=null
+                          arg1: GET_ENUM 'ENUM_ENTRY name:BLUE signature:/COLOR.BLUE|null[0]' type=<root>.COLOR
+                        then: CONST Int type=<unbound IrClassSymbolImpl> value=255
+                      BRANCH
+                        if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+                        then: CALL 'public final fun noWhenBranchMatchedException (): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

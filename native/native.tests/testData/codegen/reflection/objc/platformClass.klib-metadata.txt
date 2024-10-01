@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: mypackage
+
+    package {
+
+      public final inline fun <T#0 /* T */> assertEquals2Way(lhs: T#0, rhs: T#0): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final inline fun <reified T#0 /* T */ : kotlin/Any> getKClass(): kotlin/reflect/KClass<*>
+
+      public final val kclass: kotlin/reflect/KClass<platform/Foundation/NSUUID>
+        public final get
+    }
+  }
+}

@@ -1,0 +1,18 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun inline_assert(): kotlin/Unit
+
+      public final fun inline_maxof(): kotlin/Unit
+
+      public final fun inline_todo(): kotlin/Unit
+    }
+  }
+}

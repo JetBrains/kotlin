@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: COLOR
+
+    public final enum class COLOR : kotlin/Enum<COLOR> {
+
+      private constructor()
+
+      RED,
+
+      GREEN,
+
+      BLUE,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

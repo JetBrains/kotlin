@@ -1,0 +1,43 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: CompileTime
+
+    public final object CompileTime : kotlin/Any {
+
+      private constructor()
+
+      public final const val boolean: kotlin/Boolean /* = true */
+        public final get
+
+      public final const val byte: kotlin/Byte /* = -128.toByte() */
+        public final get
+
+      public final const val char: kotlin/Char /* = '\u0000' */
+        public final get
+
+      public final const val double: kotlin/Double /* = 1.0 */
+        public final get
+
+      public final const val float: kotlin/Float /* = 1.0f */
+        public final get
+
+      public final const val int: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val long: kotlin/Long /* = -9223372036854775808L */
+        public final get
+
+      public final const val short: kotlin/Short /* = -32768.toShort() */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

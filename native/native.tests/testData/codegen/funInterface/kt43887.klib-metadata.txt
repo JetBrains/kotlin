@@ -1,0 +1,28 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final inline fun Heap(size: kotlin/Long): kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?
+
+      public final inline fun <reified T#0 /* T */ : kotlinx/cinterop/CVariable> kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?.alloc(): kotlinx/cinterop/CPointer<T#0>?
+
+      public final fun box(): kotlin/String
+
+      public final inline fun kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?.free(ptr: kotlinx/cinterop/CPointer<*>?): kotlin/Boolean
+
+      public final fun heap_alloc(heap: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?, size: kotlin/ULong): kotlinx/cinterop/CPointer<*>?
+
+      public final fun heap_create(size: kotlin/Long): kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?
+
+      public final fun heap_free(heap: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?, ptr: kotlinx/cinterop/CPointer<*>?): kotlinx/cinterop/CPointer<kotlinx/cinterop/BooleanVarOf<kotlin/Boolean> /* = kotlinx/cinterop/BooleanVar^ */>?
+
+      public final inline fun <reified T#0 /* T */ : kotlinx/cinterop/CVariable> kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = heap_t^ */>?.use(f: kotlin/Function1<kotlinx/cinterop/CPointer<T#0>, kotlin/Unit>): kotlin/Unit
+
+      public typealias heap_t = kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */ /* = kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */ */
+    }
+  }
+}

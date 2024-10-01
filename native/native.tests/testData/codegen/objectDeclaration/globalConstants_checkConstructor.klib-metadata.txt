@@ -1,0 +1,26 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: ClassWithConstructor
+
+    public final object ClassWithConstructor : kotlin/Any {
+
+      private constructor()
+
+      public final const val A: kotlin/Int /* = 1 */
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final var ClassWithConstructorInitialized: kotlin/Int
+        public final get
+        public final set
+    }
+  }
+}

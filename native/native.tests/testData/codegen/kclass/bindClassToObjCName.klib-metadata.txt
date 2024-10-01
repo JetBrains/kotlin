@@ -1,0 +1,119 @@
+// MODULE: base
+library {
+  // module name: <base>
+
+  library fragment {
+    // package name: bindClassToObjCName.base
+
+    // class name: bindClassToObjCName/base/Base1
+    // class name: bindClassToObjCName/base/Base2
+    // class name: bindClassToObjCName/base/Base3
+    // class name: bindClassToObjCName/base/Base4
+    // class name: bindClassToObjCName/base/BaseHolder
+    // class name: bindClassToObjCName/base/BaseHolder.Companion
+    // class name: bindClassToObjCName/base/BaseHolder.Inner
+    // class name: bindClassToObjCName/base/BaseHolder.Nested
+    // class name: bindClassToObjCName/base/BaseObject
+
+    public abstract class bindClassToObjCName/base/Base1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class bindClassToObjCName/base/Base2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public open class bindClassToObjCName/base/Base3 : bindClassToObjCName/base/Base1 {
+
+      public constructor()
+    }
+
+    public final class bindClassToObjCName/base/Base4 : bindClassToObjCName/base/Base3 {
+
+      public constructor()
+    }
+
+    public final class bindClassToObjCName/base/BaseHolder : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Nested
+
+      // nested class: Inner
+
+      // nested class: Companion
+    }
+
+    public final companion object bindClassToObjCName/base/BaseHolder.Companion : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final inner class bindClassToObjCName/base/BaseHolder.Inner : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class bindClassToObjCName/base/BaseHolder.Nested : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final object bindClassToObjCName/base/BaseObject : kotlin/Any {
+
+      private constructor()
+    }
+  }
+}
+
+// MODULE: gen
+library {
+  // module name: <gen>
+
+  library fragment {
+    // package name: bindClassToObjCName.gen
+
+    // class name: bindClassToObjCName/gen/Gen1
+    // class name: bindClassToObjCName/gen/Gen2
+    // class name: bindClassToObjCName/gen/Gen3
+    // class name: bindClassToObjCName/gen/Gen4
+
+    public abstract class bindClassToObjCName/gen/Gen1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final class bindClassToObjCName/gen/Gen2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public open class bindClassToObjCName/gen/Gen3 : bindClassToObjCName/gen/Gen1 {
+
+      public constructor()
+    }
+
+    public final class bindClassToObjCName/gen/Gen4 : bindClassToObjCName/gen/Gen3 {
+
+      public constructor()
+    }
+  }
+}
+
+// MODULE: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

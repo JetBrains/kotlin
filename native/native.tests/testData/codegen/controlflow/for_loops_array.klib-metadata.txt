@@ -1,0 +1,19 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun <T#0 /* T */ : kotlin/ByteArray> genericArray(data: T#0): kotlin/Int
+
+      public final fun kotlin/IntArray.sum(): kotlin/Int
+
+      public final val sb: kotlin/text/StringBuilder
+        public final get
+    }
+  }
+}

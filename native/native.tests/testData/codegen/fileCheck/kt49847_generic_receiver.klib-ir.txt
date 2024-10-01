@@ -1,0 +1,30 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/kt49847_generic_receiver.kt
+    FUN name:foo signature:/foo|foo@0:0(){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> ($receiver:T of <root>.foo) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ /foo|foo@0:0(){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.foo
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: GET_VAR '<this>: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+    FUN name:bar signature:/bar|bar(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <BarTP> (x:BarTP of <root>.bar) returnType:<unbound IrClassSymbolImpl>
+      TYPE_PARAMETER name:BarTP index:0 variance: signature:[ /bar|bar(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:BarTP of <root>.bar
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUNCTION_REFERENCE 'public final fun foo <T> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: BarTP of <root>.bar
+            $receiver: GET_VAR 'x: BarTP of <root>.bar declared in <root>.bar' type=BarTP of <root>.bar origin=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          1: FUNCTION_REFERENCE 'public final fun foo <T> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null reflectionTarget=<same>
+            <T>: <unbound IrClassSymbolImpl>
+            $receiver: CONST Int type=<unbound IrClassSymbolImpl> value=5
+        CALL 'public final fun bar <BarTP> (x: BarTP of <root>.bar): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <BarTP>: <unbound IrClassSymbolImpl>
+          x: CONST String type=<unbound IrClassSymbolImpl> value="hello"
+        CALL 'public final fun bar <BarTP> (x: BarTP of <root>.bar): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+          <BarTP>: <unbound IrClassSymbolImpl>
+          x: CONST Int type=<unbound IrClassSymbolImpl> value=42
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

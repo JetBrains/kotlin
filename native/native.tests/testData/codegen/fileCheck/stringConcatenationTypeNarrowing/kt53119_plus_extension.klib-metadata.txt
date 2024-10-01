@@ -1,0 +1,44 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension
+
+    // class name: codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension/Foo
+
+    public final data class codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension/Foo : kotlin/Any {
+
+      public constructor(bar: kotlin/Int)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ fun copy(bar: kotlin/Int /* = ... */): codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension/Foo
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val bar: kotlin/Int
+        public final get
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun generatedPlusExtensionAny(maybeStr: kotlin/String?, maybeAny: kotlin/Any?): kotlin/String
+
+      public final fun generatedPlusExtensionFoo(maybeStr: kotlin/String?, foo: codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension/Foo): kotlin/String
+
+      public final fun generatedPlusExtensionMaybeFoo(maybeStr: kotlin/String?, foo: codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension/Foo?): kotlin/String
+
+      public final fun generatedPlusExtensionString(maybeStr: kotlin/String?, str: kotlin/String): kotlin/String
+
+      public final fun manualPlusExtensionAny(maybeStr: kotlin/String?, maybeAny: kotlin/Any?): kotlin/String
+
+      public final fun manualPlusExtensionString(maybeStr: kotlin/String?, str: kotlin/String): kotlin/String
+    }
+  }
+}

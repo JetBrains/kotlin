@@ -1,0 +1,27 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: C
+
+    public final class C : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      @kotlin/native/Retain
+      public final fun box(): kotlin/String
+
+      public final fun f(): kotlin/Any
+
+      public final fun g(): kotlin/Any
+
+      @kotlin/native/Retain
+      public final fun h(cond: kotlin/Boolean): kotlin/Any
+    }
+  }
+}

@@ -1,0 +1,37 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Associated
+    // class name: Bar
+    // class name: Foo
+
+    @kotlin/reflect/AssociatedObjectKey
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    public final annotation class Associated : kotlin/Annotation {
+
+      public constructor(kClass: kotlin/reflect/KClass<*>)
+
+      public final val kClass: kotlin/reflect/KClass<*>
+        public final get
+    }
+
+    public final object Bar : kotlin/Any {
+
+      private constructor()
+    }
+
+    @Associated(kClass = Bar::class)
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+    }
+  }
+}

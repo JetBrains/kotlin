@@ -1,0 +1,21 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Wrapper
+
+    public final class Wrapper : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+    }
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      public final fun f(x: kotlin/Int, s: kotlin/String): kotlin/String
+    }
+  }
+}

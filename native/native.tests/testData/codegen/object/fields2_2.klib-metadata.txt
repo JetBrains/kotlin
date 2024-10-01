@@ -1,0 +1,24 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun box(): kotlin/String
+
+      @kotlin/native/concurrent/ThreadLocal
+      public final val xAny: kotlin/Any
+        public final get
+
+      @kotlin/native/concurrent/ThreadLocal
+      public final val xInt: kotlin/Int /* = ... */
+        public final get
+
+      @kotlin/native/concurrent/ThreadLocal
+      public final val xString: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}

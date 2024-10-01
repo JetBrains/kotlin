@@ -1,0 +1,28 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/abstract_super.kt
+    CLASS CLASS name:Super signature:/Super|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Super
+      CONSTRUCTOR signature:/Super.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Super [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Super signature:/Super|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+    CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<root>.Super]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+      CONSTRUCTOR signature:/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:<root>.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Super'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:/Foo|null[0] modality:FINAL visibility:public superTypes:[<root>.Super]'
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        WHEN type=<unbound IrClassSymbolImpl> origin=IF
+          BRANCH
+            if: TYPE_OP type=<unbound IrClassSymbolImpl> origin=INSTANCEOF typeOperand=<root>.Super
+              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Foo' type=<root>.Foo origin=null
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="OK"
+          BRANCH
+            if: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+            then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
+              RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+                CONST String type=<unbound IrClassSymbolImpl> value="FAIL"

@@ -1,0 +1,596 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/atomics.kt
+    PROPERTY name:byteGlobal signature:/byteGlobal|{}byteGlobal[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:byteGlobal signature:[ /byteGlobal|{}byteGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        annotations:
+          <unbound>
+        EXPRESSION_BODY
+          CONST Byte type=<unbound IrClassSymbolImpl> value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-byteGlobal> signature:/byteGlobal.<get-byteGlobal>|<get-byteGlobal>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:byteGlobal signature:/byteGlobal|{}byteGlobal[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-byteGlobal> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteGlobal signature:[ /byteGlobal|{}byteGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-byteGlobal> signature:/byteGlobal.<set-byteGlobal>|<set-byteGlobal>(kotlin.Byte){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:byteGlobal signature:/byteGlobal|{}byteGlobal[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteGlobal signature:[ /byteGlobal|{}byteGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-byteGlobal>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:shortGlobal signature:/shortGlobal|{}shortGlobal[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:shortGlobal signature:[ /shortGlobal|{}shortGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        annotations:
+          <unbound>
+        EXPRESSION_BODY
+          CONST Short type=<unbound IrClassSymbolImpl> value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-shortGlobal> signature:/shortGlobal.<get-shortGlobal>|<get-shortGlobal>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:shortGlobal signature:/shortGlobal|{}shortGlobal[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-shortGlobal> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortGlobal signature:[ /shortGlobal|{}shortGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-shortGlobal> signature:/shortGlobal.<set-shortGlobal>|<set-shortGlobal>(kotlin.Short){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:shortGlobal signature:/shortGlobal|{}shortGlobal[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortGlobal signature:[ /shortGlobal|{}shortGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-shortGlobal>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:intGlobal signature:/intGlobal|{}intGlobal[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:intGlobal signature:[ /intGlobal|{}intGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        annotations:
+          <unbound>
+        EXPRESSION_BODY
+          CONST Int type=<unbound IrClassSymbolImpl> value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intGlobal> signature:/intGlobal.<get-intGlobal>|<get-intGlobal>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:intGlobal signature:/intGlobal|{}intGlobal[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intGlobal> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intGlobal signature:[ /intGlobal|{}intGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-intGlobal> signature:/intGlobal.<set-intGlobal>|<set-intGlobal>(kotlin.Int){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:intGlobal signature:/intGlobal|{}intGlobal[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intGlobal signature:[ /intGlobal|{}intGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-intGlobal>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:longGlobal signature:/longGlobal|{}longGlobal[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:longGlobal signature:[ /longGlobal|{}longGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        annotations:
+          <unbound>
+        EXPRESSION_BODY
+          CONST Long type=<unbound IrClassSymbolImpl> value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-longGlobal> signature:/longGlobal.<get-longGlobal>|<get-longGlobal>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:longGlobal signature:/longGlobal|{}longGlobal[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-longGlobal> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longGlobal signature:[ /longGlobal|{}longGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-longGlobal> signature:/longGlobal.<set-longGlobal>|<set-longGlobal>(kotlin.Long){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:longGlobal signature:/longGlobal|{}longGlobal[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longGlobal signature:[ /longGlobal|{}longGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-longGlobal>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:booleanGlobal signature:/booleanGlobal|{}booleanGlobal[0] visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:booleanGlobal signature:[ /booleanGlobal|{}booleanGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]
+        annotations:
+          <unbound>
+        EXPRESSION_BODY
+          CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-booleanGlobal> signature:/booleanGlobal.<get-booleanGlobal>|<get-booleanGlobal>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:booleanGlobal signature:/booleanGlobal|{}booleanGlobal[0] visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-booleanGlobal> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanGlobal signature:[ /booleanGlobal|{}booleanGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-booleanGlobal> signature:/booleanGlobal.<set-booleanGlobal>|<set-booleanGlobal>(kotlin.Boolean){}[0] visibility:public modality:FINAL <> (<set-?>:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:booleanGlobal signature:/booleanGlobal|{}booleanGlobal[0] visibility:public modality:FINAL [var]
+        VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassSymbolImpl>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanGlobal signature:[ /booleanGlobal|{}booleanGlobal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [static]' type=<unbound IrClassSymbolImpl> origin=null
+            value: GET_VAR '<set-?>: <unbound IrClassSymbolImpl> declared in <root>.<set-booleanGlobal>' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:intArr signature:/intArr|{}intArr[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:intArr signature:[ /intArr|{}intArr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intArr> signature:/intArr.<get-intArr>|<get-intArr>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:intArr signature:/intArr|{}intArr[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArr signature:[ /intArr|{}intArr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:longArr signature:/longArr|{}longArr[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:longArr signature:[ /longArr|{}longArr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-longArr> signature:/longArr.<get-longArr>|<get-longArr>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+        correspondingProperty: PROPERTY name:longArr signature:/longArr|{}longArr[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArr signature:[ /longArr|{}longArr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl> visibility:private [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+    PROPERTY name:refArr signature:/refArr|{}refArr[0] visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:refArr signature:[ /refArr|{}refArr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-refArr> signature:/refArr.<get-refArr>|<get-refArr>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?>
+        correspondingProperty: PROPERTY name:refArr signature:/refArr|{}refArr[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:refArr signature:[ /refArr|{}refArr[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:byteGlobal type:kotlin.Byte visibility:private [static]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> visibility:private [final,static]' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=null
+    FUN name:byteGlobal_getField signature:/byteGlobal_getField|byteGlobal_getField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun byteGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-byteGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:byteGlobal_setField signature:/byteGlobal_setField|byteGlobal_setField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun <set-byteGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Byte type=<unbound IrClassSymbolImpl> value=0
+    FUN name:byteGlobal_getAndSetField signature:/byteGlobal_getAndSetField|byteGlobal_getAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun byteGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final byteGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-byteGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-byteGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:byteGlobal_getAndAddField signature:/byteGlobal_getAndAddField|byteGlobal_getAndAddField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun byteGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: PROPERTY_REFERENCE 'public final byteGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-byteGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-byteGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:byteGlobal_compareAndSetField signature:/byteGlobal_compareAndSetField|byteGlobal_compareAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun byteGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final byteGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-byteGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-byteGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:byteGlobal_compareAndExchangeField signature:/byteGlobal_compareAndExchangeField|byteGlobal_compareAndExchangeField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun byteGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final byteGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-byteGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-byteGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:shortGlobal_getField signature:/shortGlobal_getField|shortGlobal_getField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shortGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-shortGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:shortGlobal_setField signature:/shortGlobal_setField|shortGlobal_setField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun <set-shortGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Short type=<unbound IrClassSymbolImpl> value=0
+    FUN name:shortGlobal_getAndSetField signature:/shortGlobal_getAndSetField|shortGlobal_getAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shortGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final shortGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-shortGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-shortGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:shortGlobal_getAndAddField signature:/shortGlobal_getAndAddField|shortGlobal_getAndAddField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shortGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: PROPERTY_REFERENCE 'public final shortGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-shortGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-shortGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:shortGlobal_compareAndSetField signature:/shortGlobal_compareAndSetField|shortGlobal_compareAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shortGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final shortGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-shortGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-shortGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:shortGlobal_compareAndExchangeField signature:/shortGlobal_compareAndExchangeField|shortGlobal_compareAndExchangeField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun shortGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final shortGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-shortGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-shortGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+              $this: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:intGlobal_getField signature:/intGlobal_getField|intGlobal_getField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-intGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:intGlobal_setField signature:/intGlobal_setField|intGlobal_setField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun <set-intGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:intGlobal_getAndSetField signature:/intGlobal_getAndSetField|intGlobal_getAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final intGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-intGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-intGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:intGlobal_getAndAddField signature:/intGlobal_getAndAddField|intGlobal_getAndAddField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: PROPERTY_REFERENCE 'public final intGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-intGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-intGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:intGlobal_compareAndSetField signature:/intGlobal_compareAndSetField|intGlobal_compareAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final intGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-intGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-intGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:intGlobal_compareAndExchangeField signature:/intGlobal_compareAndExchangeField|intGlobal_compareAndExchangeField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final intGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-intGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-intGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:longGlobal_getField signature:/longGlobal_getField|longGlobal_getField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-longGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:longGlobal_setField signature:/longGlobal_setField|longGlobal_setField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun <set-longGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Long type=<unbound IrClassSymbolImpl> value=0
+    FUN name:longGlobal_getAndSetField signature:/longGlobal_getAndSetField|longGlobal_getAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final longGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-longGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-longGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+    FUN name:longGlobal_getAndAddField signature:/longGlobal_getAndAddField|longGlobal_getAndAddField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: PROPERTY_REFERENCE 'public final longGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-longGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-longGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+    FUN name:longGlobal_compareAndSetField signature:/longGlobal_compareAndSetField|longGlobal_compareAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final longGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-longGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-longGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+    FUN name:longGlobal_compareAndExchangeField signature:/longGlobal_compareAndExchangeField|longGlobal_compareAndExchangeField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final longGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-longGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-longGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Long type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+    FUN name:booleanGlobal_getField signature:/booleanGlobal_getField|booleanGlobal_getField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun booleanGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'public final fun <get-booleanGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+    FUN name:booleanGlobal_setField signature:/booleanGlobal_setField|booleanGlobal_setField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        CALL 'public final fun <set-booleanGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=EQ
+          <set-?>: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:booleanGlobal_getAndSetField signature:/booleanGlobal_getAndSetField|booleanGlobal_getAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun booleanGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final booleanGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-booleanGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-booleanGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+    FUN name:booleanGlobal_compareAndSetField signature:/booleanGlobal_compareAndSetField|booleanGlobal_compareAndSetField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun booleanGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final booleanGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-booleanGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-booleanGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:booleanGlobal_compareAndExchangeField signature:/booleanGlobal_compareAndExchangeField|booleanGlobal_compareAndExchangeField(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun booleanGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>
+            $receiver: PROPERTY_REFERENCE 'public final booleanGlobal: <unbound IrClassSymbolImpl> [var] declared in <root>' field=null getter='public final fun <get-booleanGlobal> (): <unbound IrClassSymbolImpl> declared in <root>' setter='public final fun <set-booleanGlobal> (<set-?>: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=null
+            1: CONST Boolean type=<unbound IrClassSymbolImpl> value=false
+            2: CONST Boolean type=<unbound IrClassSymbolImpl> value=true
+    FUN name:intArr_atomicGet signature:/intArr_atomicGet|intArr_atomicGet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intArr_atomicGet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:intArr_atomicSet signature:/intArr_atomicSet|intArr_atomicSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intArr_atomicSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:intArr_getAndSet signature:/intArr_getAndSet|intArr_getAndSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intArr_getAndSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:intArr_getAndAdd signature:/intArr_getAndAdd|intArr_getAndAdd(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intArr_getAndAdd (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+    FUN name:intArr_compareAndExchange signature:/intArr_compareAndExchange|intArr_compareAndExchange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intArr_compareAndExchange (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=2
+    FUN name:intArr_compareAndSet signature:/intArr_compareAndSet|intArr_compareAndSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun intArr_compareAndSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-intArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Int type=<unbound IrClassSymbolImpl> value=1
+            3: CONST Int type=<unbound IrClassSymbolImpl> value=2
+    FUN name:longArr_atomicGet signature:/longArr_atomicGet|longArr_atomicGet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longArr_atomicGet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:longArr_atomicSet signature:/longArr_atomicSet|longArr_atomicSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longArr_atomicSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+    FUN name:longArr_getAndSet signature:/longArr_getAndSet|longArr_getAndSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longArr_getAndSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+    FUN name:longArr_getAndAdd signature:/longArr_getAndAdd|longArr_getAndAdd(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longArr_getAndAdd (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+    FUN name:longArr_compareAndExchange signature:/longArr_compareAndExchange|longArr_compareAndExchange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longArr_compareAndExchange (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=2
+    FUN name:longArr_compareAndSet signature:/longArr_compareAndSet|longArr_compareAndSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun longArr_compareAndSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            $receiver: CALL 'public final fun <get-longArr> (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Long type=<unbound IrClassSymbolImpl> value=1
+            3: CONST Long type=<unbound IrClassSymbolImpl> value=2
+    FUN name:refArr_atomicGet signature:/refArr_atomicGet|refArr_atomicGet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun refArr_atomicGet (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+    FUN name:refArr_atomicSet signature:/refArr_atomicSet|refArr_atomicSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun refArr_atomicSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:refArr_getAndSet signature:/refArr_getAndSet|refArr_getAndSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun refArr_getAndSet (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:refArr_compareAndExchange signature:/refArr_compareAndExchange|refArr_compareAndExchange(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>?
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun refArr_compareAndExchange (): <unbound IrClassSymbolImpl>? declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl>? origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            3: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:refArr_compareAndSet signature:/refArr_compareAndSet|refArr_compareAndSet(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      annotations:
+        <unbound>(1 = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
+      BLOCK_BODY
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun refArr_compareAndSet (): <unbound IrClassSymbolImpl> declared in <root>'
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            <1>: <unbound IrClassSymbolImpl>?
+            $receiver: CALL 'public final fun <get-refArr> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> declared in <root>' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>?> origin=GET_PROPERTY
+            1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+            2: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+            3: CONST Null type=<unbound IrClassSymbolImpl>? value=null
+    FUN name:box signature:/box|box(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      BLOCK_BODY
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun byteGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun byteGlobal_setField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun byteGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun byteGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun byteGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun byteGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun shortGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun shortGlobal_setField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun shortGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun shortGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun shortGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun shortGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun intGlobal_setField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun longGlobal_setField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longGlobal_getAndAddField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun booleanGlobal_getField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun booleanGlobal_setField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun booleanGlobal_getAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun booleanGlobal_compareAndSetField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun booleanGlobal_compareAndExchangeField (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intArr_atomicGet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun intArr_atomicSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intArr_getAndSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intArr_getAndAdd (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intArr_compareAndSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun intArr_compareAndExchange (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longArr_atomicGet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        CALL 'public final fun longArr_atomicSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longArr_getAndSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longArr_getAndAdd (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longArr_compareAndSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun longArr_compareAndExchange (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun refArr_atomicGet (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        CALL 'public final fun refArr_atomicSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun refArr_getAndSet (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun refArr_compareAndSet (): <unbound IrClassSymbolImpl> declared in <root>' type=<unbound IrClassSymbolImpl> origin=null
+        TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
+          CALL 'public final fun refArr_compareAndExchange (): <unbound IrClassSymbolImpl>? declared in <root>' type=<unbound IrClassSymbolImpl>? origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun box (): <unbound IrClassSymbolImpl> declared in <root>'
+          CONST String type=<unbound IrClassSymbolImpl> value="OK"

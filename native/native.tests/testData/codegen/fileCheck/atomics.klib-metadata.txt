@@ -1,0 +1,133 @@
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final fun booleanGlobal_compareAndExchangeField(): kotlin/Boolean
+
+      public final fun booleanGlobal_compareAndSetField(): kotlin/Boolean
+
+      public final fun booleanGlobal_getAndSetField(): kotlin/Boolean
+
+      public final fun booleanGlobal_getField(): kotlin/Boolean
+
+      public final fun booleanGlobal_setField(): kotlin/Unit
+
+      public final fun box(): kotlin/String
+
+      public final fun byteGlobal_compareAndExchangeField(): kotlin/Byte
+
+      public final fun byteGlobal_compareAndSetField(): kotlin/Boolean
+
+      public final fun byteGlobal_getAndAddField(): kotlin/Byte
+
+      public final fun byteGlobal_getAndSetField(): kotlin/Byte
+
+      public final fun byteGlobal_getField(): kotlin/Byte
+
+      public final fun byteGlobal_setField(): kotlin/Unit
+
+      public final fun intArr_atomicGet(): kotlin/Int
+
+      public final fun intArr_atomicSet(): kotlin/Unit
+
+      public final fun intArr_compareAndExchange(): kotlin/Int
+
+      public final fun intArr_compareAndSet(): kotlin/Boolean
+
+      public final fun intArr_getAndAdd(): kotlin/Int
+
+      public final fun intArr_getAndSet(): kotlin/Int
+
+      public final fun intGlobal_compareAndExchangeField(): kotlin/Int
+
+      public final fun intGlobal_compareAndSetField(): kotlin/Boolean
+
+      public final fun intGlobal_getAndAddField(): kotlin/Int
+
+      public final fun intGlobal_getAndSetField(): kotlin/Int
+
+      public final fun intGlobal_getField(): kotlin/Int
+
+      public final fun intGlobal_setField(): kotlin/Unit
+
+      public final fun longArr_atomicGet(): kotlin/Long
+
+      public final fun longArr_atomicSet(): kotlin/Unit
+
+      public final fun longArr_compareAndExchange(): kotlin/Long
+
+      public final fun longArr_compareAndSet(): kotlin/Boolean
+
+      public final fun longArr_getAndAdd(): kotlin/Long
+
+      public final fun longArr_getAndSet(): kotlin/Long
+
+      public final fun longGlobal_compareAndExchangeField(): kotlin/Long
+
+      public final fun longGlobal_compareAndSetField(): kotlin/Boolean
+
+      public final fun longGlobal_getAndAddField(): kotlin/Long
+
+      public final fun longGlobal_getAndSetField(): kotlin/Long
+
+      public final fun longGlobal_getField(): kotlin/Long
+
+      public final fun longGlobal_setField(): kotlin/Unit
+
+      public final fun refArr_atomicGet(): kotlin/String?
+
+      public final fun refArr_atomicSet(): kotlin/Unit
+
+      public final fun refArr_compareAndExchange(): kotlin/String?
+
+      public final fun refArr_compareAndSet(): kotlin/Boolean
+
+      public final fun refArr_getAndSet(): kotlin/String?
+
+      public final fun shortGlobal_compareAndExchangeField(): kotlin/Short
+
+      public final fun shortGlobal_compareAndSetField(): kotlin/Boolean
+
+      public final fun shortGlobal_getAndAddField(): kotlin/Short
+
+      public final fun shortGlobal_getAndSetField(): kotlin/Short
+
+      public final fun shortGlobal_getField(): kotlin/Short
+
+      public final fun shortGlobal_setField(): kotlin/Unit
+
+      public final var booleanGlobal: kotlin/Boolean
+        public final get
+        public final set
+
+      public final var byteGlobal: kotlin/Byte
+        public final get
+        public final set
+
+      public final val intArr: kotlin/IntArray
+        public final get
+
+      public final var intGlobal: kotlin/Int
+        public final get
+        public final set
+
+      public final val longArr: kotlin/LongArray
+        public final get
+
+      public final var longGlobal: kotlin/Long
+        public final get
+        public final set
+
+      public final val refArr: kotlin/Array<kotlin/String?>
+        public final get
+
+      public final var shortGlobal: kotlin/Short
+        public final get
+        public final set
+    }
+  }
+}
