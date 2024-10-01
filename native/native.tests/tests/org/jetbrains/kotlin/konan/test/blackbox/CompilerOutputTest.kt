@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -36,9 +35,6 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
         val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
-
-        // Debug output for KT-64822 investigation
-        println("${MessageRenderer.PROPERTY_KEY}=${System.getProperty(MessageRenderer.PROPERTY_KEY)}")
 
         doTestPreReleaseKotlinLibrary(rootDir, emptyList())
     }
