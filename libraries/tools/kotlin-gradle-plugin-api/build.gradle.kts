@@ -15,11 +15,6 @@ pluginApiReference {
 
     additionalDokkaConfiguration {
         reportUndocumented.set(true)
-
-        perPackageOption {
-            matchingRegex.set("org\\.jetbrains\\.kotlin\\.gradle\\.plugin\\.mpp.*")
-            suppress.set(true)
-        }
     }
 }
 
