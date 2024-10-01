@@ -260,6 +260,7 @@ private fun bridgeType(type: SirType): Bridge {
         }
 
         SirSwiftModule.array -> Bridge.AsNSArray(type)
+        SirSwiftModule.set -> Bridge.AsNSSet(type)
 
         is SirTypealias -> bridgeType(subtype.type)
 
@@ -316,6 +317,7 @@ private enum class CType(val repr: String) {
     NSNumber("NSNumber *"),
 
     NSArray("NSArray *"),
+    NSSet("NSSet *"),
 }
 
 private enum class KotlinType(val repr: kotlin.String) {
@@ -474,11 +476,12 @@ private sealed class Bridge(
         }
     }
 
-    class AsNSArray(
+    abstract class AsNSCollection(
         swiftType: SirNominalType,
-    ) : AsObjCBridged(swiftType, CType.NSArray) {
+        cType: CType
+    ) : AsObjCBridged(swiftType, cType) {
         override val inSwiftSources = object : NilableIdentityValueConversion {
-            override fun renderNil(): String = super@AsNSArray.inSwiftSources.renderNil()
+            override fun renderNil(): String = super@AsNSCollection.inSwiftSources.renderNil()
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
                 valueExpression
@@ -487,6 +490,9 @@ private sealed class Bridge(
                 "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
         }
     }
+
+    class AsNSArray(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSArray)
+    class AsNSSet(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSSet)
 
     data object AsOptionalNothing : Bridge(
         SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),

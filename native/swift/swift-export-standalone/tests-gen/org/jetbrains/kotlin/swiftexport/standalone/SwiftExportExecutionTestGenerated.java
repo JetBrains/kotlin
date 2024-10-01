@@ -90,6 +90,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("set")
+  public void testSet() {
+    runTest("native/swift/swift-export-standalone/testData/execution/set/");
+  }
+
+  @Test
   @TestMetadata("smokes")
   public void testSmokes() {
     runTest("native/swift/swift-export-standalone/testData/execution/smokes/");

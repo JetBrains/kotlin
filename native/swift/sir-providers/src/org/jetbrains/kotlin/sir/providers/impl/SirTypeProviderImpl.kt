@@ -28,6 +28,7 @@ public class SirTypeProviderImpl(
 
     private object StandardClassIds {
         val LIST: ClassId = ClassId.topLevel(StandardNames.FqNames.list)
+        val SET: ClassId = ClassId.topLevel(StandardNames.FqNames.set)
     }
 
     override fun KaType.translateType(
@@ -76,8 +77,14 @@ public class SirTypeProviderImpl(
                         kaType.isAnyType -> SirNominalType(KotlinRuntimeModule.kotlinBase)
 
                         kaType.isClassType(StandardClassIds.LIST) -> {
-                            val elementType = kaType.typeArguments.first().type!!
-                            SirArrayType(buildSirNominalType(elementType, ktAnalysisSession))
+                            val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
+                            SirArrayType(elementType)
+                        }
+
+                        kaType.isClassType(StandardClassIds.SET) -> {
+                            val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
+                            SirNominalType(SirSwiftModule.set, typeArguments = listOf(elementType))
+                        }
                         }
 
                         else -> {

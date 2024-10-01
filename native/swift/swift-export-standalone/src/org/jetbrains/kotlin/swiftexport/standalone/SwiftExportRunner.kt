@@ -338,6 +338,7 @@ private object StandaloneSirTypeNamer : SirTypeNamer {
             SirSwiftModule.never -> "Nothing"
 
             SirSwiftModule.array -> "kotlin.collections.List<${kotlinFqName(type.typeArguments.first())}>"
+            SirSwiftModule.set -> "kotlin.collections.Set<${kotlinFqName(type.typeArguments.first())}>"
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
