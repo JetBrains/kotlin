@@ -16,11 +16,13 @@ open class SirNominalType(
 ) : SirType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && (this::class != other::class || other is SirOptionalType)) return false
+        if (other == null || other !is SirNominalType) return false
 
-        other as SirNominalType
+        // Please consider special handling here if a SirNominalType's subtype with incompatible `equals` would appear.
+        // This may be required to preserve equals commutativity.
 
         if (typeDeclaration != other.typeDeclaration) return false
+        if (typeArguments != other.typeArguments) return false
         if (parent != other.parent) return false
 
         return true
@@ -37,9 +39,14 @@ class SirOptionalType(type: SirType): SirNominalType(
     typeDeclaration = SirSwiftModule.optional,
     typeArguments = listOf(type)
 ) {
-    val wrappedType: SirType = super.typeArguments.single()
+    val wrappedType: SirType get() = super.typeArguments.single()
+}
 
-    override fun equals(other: Any?): Boolean = super.equals(other)
+class SirArrayType(type: SirType): SirNominalType(
+    typeDeclaration = SirSwiftModule.array,
+    typeArguments = listOf(type)
+) {
+    val elementType: SirType get() = super.typeArguments.single()
 }
 
 class SirExistentialType(

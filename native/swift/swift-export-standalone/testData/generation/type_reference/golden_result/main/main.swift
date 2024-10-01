@@ -217,10 +217,10 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
 }
 public var nullablePrim: Swift.Int32? {
     get {
-        return __root___nullablePrim_get()?.int32Value
+        return __root___nullablePrim_get().map { it in it.int32Value }
     }
     set {
-        return __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue.flatMap { it in NSNumber(value: it) })
+        return __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue.map { it in NSNumber(value: it) } ?? .none)
     }
 }
 public var nullableRef: main.Class_without_package? {
@@ -228,7 +228,7 @@ public var nullableRef: main.Class_without_package? {
         return switch __root___nullableRef_get() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }
     }
     set {
-        return __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(newValue?.__externalRCRef() ?? 0)
+        return __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(newValue.map { it in it.__externalRCRef() } ?? 0)
     }
 }
 public var val_class: main.Class_without_package {
@@ -294,15 +294,15 @@ public func combine(
 public func nullable_input_prim(
     i: Swift.Int32?
 ) -> Swift.Void {
-    return __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i.flatMap { it in NSNumber(value: it) })
+    return __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i.map { it in NSNumber(value: it) } ?? .none)
 }
 public func nullable_input_ref(
     i: main.Class_without_package?
 ) -> Swift.Void {
-    return __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i?.__externalRCRef() ?? 0)
+    return __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i.map { it in it.__externalRCRef() } ?? 0)
 }
 public func nullable_output_prim() -> Swift.Int32? {
-    return __root___nullable_output_prim()?.int32Value
+    return __root___nullable_output_prim().map { it in it.int32Value }
 }
 public func nullable_output_ref() -> main.Class_without_package? {
     return switch __root___nullable_output_ref() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }

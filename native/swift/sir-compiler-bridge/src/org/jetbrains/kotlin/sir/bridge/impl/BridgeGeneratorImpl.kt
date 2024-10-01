@@ -231,14 +231,15 @@ private fun bridgeType(type: SirType): Bridge {
         SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
         SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
 
-        SirSwiftModule.string -> Bridge.AsObjCBridged(type, KotlinType.String, CType.NSString)
+        SirSwiftModule.string -> Bridge.AsObjCBridged(type, CType.NSString)
 
         SirSwiftModule.utf16CodeUnit -> Bridge.AsIs(type, KotlinType.Char, CType.UInt16)
 
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first())) {
             is Bridge.AsObject,
-            is Bridge.AsObjCBridged
-                -> Bridge.AsOptionalWrapper(bridge)
+            is Bridge.AsObjCBridged,
+            -> Bridge.AsOptionalWrapper(bridge)
+
             is Bridge.AsOpaqueObject -> {
                 if (bridge.swiftType.isNever) {
                     Bridge.AsOptionalNothing
@@ -246,12 +247,14 @@ private fun bridgeType(type: SirType): Bridge {
                     error("Found Optional wrapping for OpaqueObject. That is impossible")
                 }
             }
-            is Bridge.AsIs
-                -> Bridge.AsOptionalWrapper(
-                Bridge.AsObjCBridged(bridge.swiftType, bridge.kotlinType, CType.NSNumber)
-            )
+
+            is Bridge.AsIs,
+            -> Bridge.AsOptionalWrapper(Bridge.AsNSNumber(bridge.swiftType))
+
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
+
+        SirSwiftModule.array -> Bridge.AsNSArray(type)
 
         is SirTypealias -> bridgeType(subtype.type)
 
@@ -306,6 +309,8 @@ private enum class CType(val repr: String) {
     NSString("NSString *"),
 
     NSNumber("NSNumber *"),
+
+    NSArray("NSArray *"),
 }
 
 private enum class KotlinType(val repr: kotlin.String) {
@@ -402,21 +407,68 @@ private sealed class Bridge(
         }
     }
 
-    class AsObjCBridged(
+    open class AsObjCBridged(
         swiftType: SirType,
-        localKotlinType: KotlinType,
         cType: CType
     ) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "interpretObjCPointer<${localKotlinType.repr}>($valueExpression)"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "interpretObjCPointer<${typeNamer.kotlinFqName(swiftType)}>($valueExpression)"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "$valueExpression.objcPtr()"
         }
 
         override val inSwiftSources = object : NilableIdentityValueConversion {
-            override fun renderNil(): String = ".none"
+            override fun renderNil(): String = ".none" // FIXME try NSNull?
+        }
+    }
+
+    class AsNSNumber(
+        swiftType: SirType,
+    ) : AsObjCBridged(swiftType, CType.NSNumber) {
+        override val inSwiftSources = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = super@AsNSNumber.inSwiftSources.renderNil()
+
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "NSNumber(value: $valueExpression)"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                require(swiftType is SirNominalType)
+                val fromNSNumberValue = when (swiftType.typeDeclaration) {
+                    SirSwiftModule.bool -> "boolValue"
+                    SirSwiftModule.int8 -> "int8Value"
+                    SirSwiftModule.int16 -> "int16Value"
+                    SirSwiftModule.int32 -> "int32Value"
+                    SirSwiftModule.int64 -> "int64Value"
+                    SirSwiftModule.uint8 -> "uint8Value"
+                    SirSwiftModule.uint16 -> "uint16Value"
+                    SirSwiftModule.uint32 -> "uint32Value"
+                    SirSwiftModule.uint64 -> "uint64Value"
+                    SirSwiftModule.double -> "doubleValue"
+                    SirSwiftModule.float -> "floatValue"
+
+                    SirSwiftModule.utf16CodeUnit -> TODO("Optional Char is unsupported. KT-71453")
+
+                    else -> error("Attempt to get ${swiftType.typeDeclaration} from NSNumber")
+                }
+
+                return "$valueExpression.$fromNSNumberValue"
+            }
+        }
+    }
+
+    class AsNSArray(
+        swiftType: SirNominalType,
+    ) : AsObjCBridged(swiftType, CType.NSArray) {
+        override val inSwiftSources = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = super@AsNSArray.inSwiftSources.renderNil()
+
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                valueExpression
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
         }
     }
 
@@ -455,52 +507,34 @@ private sealed class Bridge(
                         wrappedObject.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
                     }"
                 }
-
             }
+
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return when (wrappedObject) {
-                    is AsObjCBridged -> {
-                        when (wrappedObject.cType) {
-                            CType.NSString -> wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
-                            CType.NSNumber -> wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression) +
-                                    ".flatMap { it in NSNumber(value: it) }"
-                            else -> error("AsObjCBridged should have known NS* types cType, but got ${wrappedObject.cType}")
-                        }
-                    }
-                    is AsObject -> wrappedObject.inSwiftSources.swiftToKotlin(
-                        typeNamer = typeNamer,
-                        valueExpression = "$valueExpression?"
-                    ) + " ?? ${wrappedObject.inSwiftSources.renderNil()}"
-                    is AsIs,
-                    is AsOpaqueObject
-                        -> TODO("yet unsupported")
-                    is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
-                }
+                require(wrappedObject is AsObjCBridged || wrappedObject is AsObject)
+                val adapter = wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, "it").takeIf { it != "it" }
+                return "$valueExpression${adapter?.let { ".map { it in $it }" } ?: ""} ?? ${wrappedObject.inSwiftSources.renderNil()}"
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return when (wrappedObject) {
                     is AsObjCBridged -> {
-                        when (wrappedObject.cType) {
-                            CType.NSString -> wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
-                            CType.NSNumber -> wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression) +
-                                    "?.${wrappedObject.swiftType.fromNSNumberValue}"
-                            else -> error("AsObjCBridged should have known NS* typeas cType, but got ${wrappedObject.cType}")
-                        }
+                        val adapter = wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "it").takeIf { it != "it" }
+                        valueExpression + (adapter?.let { ".map { it in $it }" } ?: "")
                     }
                     is AsObject -> "switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                         wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                     }; }"
+
                     is AsIs,
-                    is AsOpaqueObject
-                        -> TODO("yet unsupported")
+                    is AsOpaqueObject,
+                    -> TODO("yet unsupported")
+
                     is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
                 }
             }
 
             override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
-
         }
     }
 
@@ -517,24 +551,3 @@ private sealed class Bridge(
     interface InSwiftSourcesConversion : ValueConversion, NilRepresentable
 }
 
-private val SirType.fromNSNumberValue: String
-    get() {
-        require(this is SirNominalType)
-        return when (typeDeclaration) {
-            SirSwiftModule.bool -> "boolValue"
-            SirSwiftModule.int8 -> "int8Value"
-            SirSwiftModule.int16 -> "int16Value"
-            SirSwiftModule.int32 -> "int32Value"
-            SirSwiftModule.int64 -> "int64Value"
-            SirSwiftModule.uint8 -> "uint8Value"
-            SirSwiftModule.uint16 -> "uint16Value"
-            SirSwiftModule.uint32 -> "uint32Value"
-            SirSwiftModule.uint64 -> "uint64Value"
-            SirSwiftModule.double -> "doubleValue"
-            SirSwiftModule.float -> "floatValue"
-
-            SirSwiftModule.utf16CodeUnit -> TODO("Optional Char is unsupported. KT-71453")
-
-            else -> error("Attempt to get $typeDeclaration from NSNumber")
-        }
-    }

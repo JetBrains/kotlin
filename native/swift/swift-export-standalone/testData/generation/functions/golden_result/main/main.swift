@@ -79,6 +79,6 @@ public extension ExportedKotlinPackages.overload {
     public static func foo(
         arg1: ExportedKotlinPackages.overload.Foo?
     ) -> Swift.Void {
-        return overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(arg1?.__externalRCRef() ?? 0)
+        return overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(arg1.map { it in it.__externalRCRef() } ?? 0)
     }
 }

@@ -72,6 +72,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("list")
+  public void testList() {
+    runTest("native/swift/swift-export-standalone/testData/generation/list/");
+  }
+
+  @Test
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/generation/no_package/");

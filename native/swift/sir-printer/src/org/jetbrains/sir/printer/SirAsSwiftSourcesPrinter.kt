@@ -424,10 +424,10 @@ private val SirParameter.swiftRender
             type.swiftRender
 
 private val SirType.swiftRender: String
-    get() = if (this is SirOptionalType) {
-        wrappedType.swiftRender + "?"
-    } else {
-        swiftName
+    get() = when (this) {
+        is SirOptionalType -> wrappedType.swiftRender + "?"
+        is SirArrayType -> "[${elementType.swiftRender}]"
+        else -> swiftName
     }
 
 private val SirClassMemberDeclaration.callableKind: SirCallableKind

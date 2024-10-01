@@ -41,6 +41,8 @@ object SirSwiftModule : SirModule() {
     val never = struct("Never")
     val string = struct("String")
 
+    val array = struct("Array")
+
     private val unicode = enum("Unicode")
     private val utf16 = unicode.enum("UTF16")
 

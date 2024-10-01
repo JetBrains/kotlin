@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -23,6 +25,10 @@ public class SirTypeProviderImpl(
     override val errorTypeStrategy: ErrorTypeStrategy,
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
+
+    private object StandardClassIds {
+        val LIST: ClassId = ClassId.topLevel(StandardNames.FqNames.list)
+    }
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
@@ -65,19 +71,25 @@ public class SirTypeProviderImpl(
             when (kaType) {
                 is KaUsualClassType -> with(sirSession) {
                     when {
-                        kaType.isNothingType -> SirSwiftModule.never
-                        kaType.isStringType -> SirSwiftModule.string
-                        kaType.isAnyType -> KotlinRuntimeModule.kotlinBase
+                        kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
+                        kaType.isStringType -> SirNominalType(SirSwiftModule.string)
+                        kaType.isAnyType -> SirNominalType(KotlinRuntimeModule.kotlinBase)
+
+                        kaType.isClassType(StandardClassIds.LIST) -> {
+                            val elementType = kaType.typeArguments.first().type!!
+                            SirArrayType(buildSirNominalType(elementType, ktAnalysisSession))
+                        }
+
                         else -> {
                             val classSymbol = kaType.symbol
                             if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                                classSymbol.sirDeclaration() as SirNamedDeclaration
+                                SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
                             } else {
                                 null
                             }
                         }
                     }
-                        ?.let { SirNominalType(it).optionalIfNeeded(kaType) }
+                        ?.optionalIfNeeded(kaType)
                         ?: SirUnsupportedType
                 }
                 is KaFunctionType,
@@ -127,6 +139,9 @@ public class SirTypeProviderImpl(
                     processTypeImports(listOf(SirImport(KotlinRuntimeModule.name)))
                 }
                 else -> {}
+            }
+            for (typeArg in typeArguments) {
+                typeArg.handleImports(ktAnalysisSession, processTypeImports)
             }
         }
         return this

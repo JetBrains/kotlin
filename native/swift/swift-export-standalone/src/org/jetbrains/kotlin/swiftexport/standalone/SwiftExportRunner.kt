@@ -314,7 +314,33 @@ private object StandaloneSirTypeNamer : SirTypeNamer {
         return when(val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
+
+            SirSwiftModule.bool -> "Boolean"
+
+            SirSwiftModule.int8 -> "Byte"
+            SirSwiftModule.int16 -> "Short"
+            SirSwiftModule.int32 -> "Int"
+            SirSwiftModule.int64 -> "Long"
+
+            SirSwiftModule.uint8 -> "UByte"
+            SirSwiftModule.uint16 -> "UShort"
+            SirSwiftModule.uint32 -> "UInt"
+            SirSwiftModule.uint64 -> "ULong"
+
+            SirSwiftModule.double -> "Double"
+            SirSwiftModule.float -> "Float"
+
+            SirSwiftModule.utf16CodeUnit -> "Char"
+
+            SirSwiftModule.uint -> "UInt"
+
+            SirSwiftModule.void -> "Void"
+            SirSwiftModule.never -> "Nothing"
+
+            SirSwiftModule.array -> "kotlin.collections.List<${kotlinFqName(type.typeArguments.first())}>"
+
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
+
             else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
         }
     }

@@ -54,6 +54,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("list")
+  public void testList() {
+    runTest("native/swift/swift-export-standalone/testData/execution/list/");
+  }
+
+  @Test
   @TestMetadata("never_type")
   public void testNever_type() {
     runTest("native/swift/swift-export-standalone/testData/execution/never_type/");

@@ -33,7 +33,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
             return switch Foo_variable_get(self.__externalRCRef()) { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
         }
         set {
-            return Foo_variable_set__TypesOfArguments__main_Bar_opt___(self.__externalRCRef(), newValue?.__externalRCRef() ?? 0)
+            return Foo_variable_set__TypesOfArguments__main_Bar_opt___(self.__externalRCRef(), newValue.map { it in it.__externalRCRef() } ?? 0)
         }
     }
     public override init(
@@ -46,12 +46,12 @@ public final class Foo : KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Foo_init_initialize__TypesOfArguments__Swift_UInt_main_Bar_opt___(__kt, b?.__externalRCRef() ?? 0)
+        __root___Foo_init_initialize__TypesOfArguments__Swift_UInt_main_Bar_opt___(__kt, b.map { it in it.__externalRCRef() } ?? 0)
     }
     public func accept(
         b: main.Bar?
     ) -> Swift.Void {
-        return Foo_accept__TypesOfArguments__main_Bar_opt___(self.__externalRCRef(), b?.__externalRCRef() ?? 0)
+        return Foo_accept__TypesOfArguments__main_Bar_opt___(self.__externalRCRef(), b.map { it in it.__externalRCRef() } ?? 0)
     }
     public func produce() -> main.Bar? {
         return switch Foo_produce(self.__externalRCRef()) { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
@@ -59,10 +59,10 @@ public final class Foo : KotlinRuntime.KotlinBase {
 }
 public var primitive: Swift.Double? {
     get {
-        return __root___primitive_get()?.doubleValue
+        return __root___primitive_get().map { it in it.doubleValue }
     }
     set {
-        return __root___primitive_set__TypesOfArguments__Swift_Double_opt___(newValue.flatMap { it in NSNumber(value: it) })
+        return __root___primitive_set__TypesOfArguments__Swift_Double_opt___(newValue.map { it in NSNumber(value: it) } ?? .none)
     }
 }
 public var str: Swift.String? {
@@ -70,7 +70,7 @@ public var str: Swift.String? {
         return __root___str_get()
     }
     set {
-        return __root___str_set__TypesOfArguments__Swift_String_opt___(newValue)
+        return __root___str_set__TypesOfArguments__Swift_String_opt___(newValue ?? .none)
     }
 }
 public func foo(
@@ -81,7 +81,7 @@ public func foo(
 public func foo(
     a: main.Bar?
 ) -> Swift.Void {
-    return __root___foo__TypesOfArguments__main_Bar_opt___(a?.__externalRCRef() ?? 0)
+    return __root___foo__TypesOfArguments__main_Bar_opt___(a.map { it in it.__externalRCRef() } ?? 0)
 }
 public func foo_any(
     a: KotlinRuntime.KotlinBase
@@ -91,12 +91,12 @@ public func foo_any(
 public func foo_any(
     a: KotlinRuntime.KotlinBase?
 ) -> Swift.Void {
-    return __root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase_opt___(a?.__externalRCRef() ?? 0)
+    return __root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase_opt___(a.map { it in it.__externalRCRef() } ?? 0)
 }
 public func opt_to_non_opt_usage(
     i: main.OptToNonOptTypealias
 ) -> Swift.Void {
-    return __root___opt_to_non_opt_usage__TypesOfArguments__main_Bar_opt___(i?.__externalRCRef() ?? 0)
+    return __root___opt_to_non_opt_usage__TypesOfArguments__main_Bar_opt___(i.map { it in it.__externalRCRef() } ?? 0)
 }
 public func p() -> main.Bar? {
     return switch __root___p() { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
@@ -107,7 +107,7 @@ public func p_any() -> KotlinRuntime.KotlinBase? {
 public func p_opt_opt_in(
     input: main.OptOptRef
 ) -> Swift.Void {
-    return __root___p_opt_opt_in__TypesOfArguments__main_Bar_opt___(input?.__externalRCRef() ?? 0)
+    return __root___p_opt_opt_in__TypesOfArguments__main_Bar_opt___(input.map { it in it.__externalRCRef() } ?? 0)
 }
 public func p_opt_opt_out() -> main.OptOptRef {
     return switch __root___p_opt_opt_out() { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
@@ -126,15 +126,15 @@ public func primitive_in(
     arg11: Swift.Double?,
     arg12: Swift.Unicode.UTF16.CodeUnit?
 ) -> Swift.Void {
-    return __root___primitive_in__TypesOfArguments__Swift_Bool_opt__Swift_Int8_opt__Swift_Int16_opt__Swift_Int32_opt__Swift_Int64_opt__Swift_UInt8_opt__Swift_UInt16_opt__Swift_UInt32_opt__Swift_UInt64_opt__Swift_Float_opt__Swift_Double_opt__Swift_Unicode_UTF16_CodeUnit_opt___(arg1.flatMap { it in NSNumber(value: it) }, arg2.flatMap { it in NSNumber(value: it) }, arg3.flatMap { it in NSNumber(value: it) }, arg4.flatMap { it in NSNumber(value: it) }, arg5.flatMap { it in NSNumber(value: it) }, arg6.flatMap { it in NSNumber(value: it) }, arg7.flatMap { it in NSNumber(value: it) }, arg8.flatMap { it in NSNumber(value: it) }, arg9.flatMap { it in NSNumber(value: it) }, arg10.flatMap { it in NSNumber(value: it) }, arg11.flatMap { it in NSNumber(value: it) }, arg12.flatMap { it in NSNumber(value: it) })
+    return __root___primitive_in__TypesOfArguments__Swift_Bool_opt__Swift_Int8_opt__Swift_Int16_opt__Swift_Int32_opt__Swift_Int64_opt__Swift_UInt8_opt__Swift_UInt16_opt__Swift_UInt32_opt__Swift_UInt64_opt__Swift_Float_opt__Swift_Double_opt__Swift_Unicode_UTF16_CodeUnit_opt___(arg1.map { it in NSNumber(value: it) } ?? .none, arg2.map { it in NSNumber(value: it) } ?? .none, arg3.map { it in NSNumber(value: it) } ?? .none, arg4.map { it in NSNumber(value: it) } ?? .none, arg5.map { it in NSNumber(value: it) } ?? .none, arg6.map { it in NSNumber(value: it) } ?? .none, arg7.map { it in NSNumber(value: it) } ?? .none, arg8.map { it in NSNumber(value: it) } ?? .none, arg9.map { it in NSNumber(value: it) } ?? .none, arg10.map { it in NSNumber(value: it) } ?? .none, arg11.map { it in NSNumber(value: it) } ?? .none, arg12.map { it in NSNumber(value: it) } ?? .none)
 }
 public func primitive_out() -> Swift.Bool? {
-    return __root___primitive_out()?.boolValue
+    return __root___primitive_out().map { it in it.boolValue }
 }
 public func string_in(
     a: Swift.String?
 ) -> Swift.Void {
-    return __root___string_in__TypesOfArguments__Swift_String_opt___(a)
+    return __root___string_in__TypesOfArguments__Swift_String_opt___(a ?? .none)
 }
 public func string_out() -> Swift.String? {
     return __root___string_out()

@@ -168,13 +168,13 @@ public fun __root___str_get(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___str_set__TypesOfArguments__Swift_String_opt___")
 public fun __root___str_set__TypesOfArguments__Swift_String_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
-    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<String>(newValue)
+    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(newValue)
     str = __newValue
 }
 
 @ExportedBridge("__root___string_in__TypesOfArguments__Swift_String_opt___")
 public fun __root___string_in__TypesOfArguments__Swift_String_opt___(a: kotlin.native.internal.NativePtr): Unit {
-    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<String>(a)
+    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(a)
     string_in(__a)
 }
 
