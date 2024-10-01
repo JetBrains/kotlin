@@ -5,8 +5,25 @@
 
 package kotlin.coroutines.jvm.internal
 
+import java.lang.reflect.Method
+import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.*
+
+
+private val probesBridge get() = Class.forName("ProbesBridge Name TBD")
+
+private val probeCoroutineCreatedMethod: Method? = runCatching {
+    probesBridge.getDeclaredMethod("probeCoroutineCreated", Continuation::class.java)
+}.getOrNull()
+private val probeCoroutineResumedMethod: Method? = runCatching {
+    probesBridge.getDeclaredMethod("probeCoroutineResumed", Continuation::class.java)
+}.getOrNull()
+private val probeCoroutineSuspended: Method? = runCatching {
+    probesBridge.getDeclaredMethod("probeCoroutineSuspended", Continuation::class.java)
+}.getOrNull()
+
+
 
 /**
  * This probe is invoked when coroutine is being created and it can replace completion
@@ -43,9 +60,10 @@ import kotlin.coroutines.intrinsics.*
  */
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
-    /** implementation of this function is replaced by debugger */
-    return completion
-}
+    if (probeCoroutineCreatedMethod != null) {
+        return probeCoroutineCreatedMethod.invoke(null, completion) as Continuation<T>
+    }
+    return completion}
 
 /**
  * This probe is invoked when coroutine is resumed using [Continuation.resumeWith].
@@ -62,6 +80,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
+    probeCoroutineResumedMethod?.invoke(null, frame)
     /** implementation of this function is replaced by debugger */
 }
 
@@ -78,6 +97,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
+    probeCoroutineSuspended?.invoke(null, frame)
     /** implementation of this function is replaced by debugger */
 }
 
