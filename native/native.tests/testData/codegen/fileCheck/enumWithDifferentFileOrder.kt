@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 
 // FILE: main.kt
