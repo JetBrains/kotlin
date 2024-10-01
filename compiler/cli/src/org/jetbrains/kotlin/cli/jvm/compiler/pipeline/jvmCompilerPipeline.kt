@@ -335,9 +335,9 @@ fun createProjectEnvironment(
         CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
     )
 
-    val finderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
-    project.registerService(MetadataFinderFactory::class.java, finderFactory)
-    project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+    val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
+    project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
+    project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
     project.setupHighestLanguageLevel()
 

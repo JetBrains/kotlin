@@ -281,10 +281,9 @@ object StandaloneProjectFactory {
             true
         )
 
-        val finderFactory = CliVirtualFileFinderFactory(rootsIndex, false)
-
-        project.registerService(MetadataFinderFactory::class.java, finderFactory)
-        project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false)
+        project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
+        project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
     }
 
     fun getDefaultJdkModulePaths(
