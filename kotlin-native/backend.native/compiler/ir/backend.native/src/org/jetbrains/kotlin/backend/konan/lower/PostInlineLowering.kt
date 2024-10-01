@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -40,7 +40,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 symbols.kTypeParameterImpl,
                 symbols.kTypeImplForTypeParametersWithRecursiveBounds
         )
-        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
+        irBody.transformChildren(object : IrTransformer<IrBuilderWithScope>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
                             data = (declaration as? IrSymbolOwner)?.let { context.createIrBuilder(it.symbol, it.startOffset, it.endOffset) }

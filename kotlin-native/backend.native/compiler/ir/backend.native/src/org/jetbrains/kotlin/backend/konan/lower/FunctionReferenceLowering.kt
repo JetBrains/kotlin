@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -104,7 +104,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
     }
 
     override fun lower(irFile: IrFile) {
-        irFile.transform(object : IrElementTransformer<IrDeclarationParent> {
+        irFile.transform(object : IrTransformer<IrDeclarationParent>() {
             private val stack = mutableListOf<IrElement>()
 
             override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {

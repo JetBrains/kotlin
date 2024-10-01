@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCConstructor
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
@@ -69,7 +69,7 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
 
 internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
 
-internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrElementTransformer<IrDeclaration?> {
+internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
     private val createUninitializedInstance = context.ir.symbols.createUninitializedInstance
     private val createUninitializedArray = context.ir.symbols.createUninitializedArray
     private val initInstance = context.ir.symbols.initInstance

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
@@ -523,7 +523,7 @@ internal object StaticInitializersOptimization {
         var numberOfCallSitesWithExtractedGlobalInitializerCall = 0
         var numberOfCallSitesWithExtractedThreadLocalInitializerCall = 0
 
-        irModule.transformChildren(object : IrElementTransformer<IrBuilderWithScope?> {
+        irModule.transformChildren(object : IrTransformer<IrBuilderWithScope?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope?): IrStatement {
                 return super.visitDeclaration(declaration, context.createIrBuilder(declaration.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET))
             }

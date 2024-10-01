@@ -97,7 +97,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
 
     private data class PossiblyFoldedExpression(val expression: IrExpression, val folded: Boolean)
 
-    private val transformer = object : IrElementTransformer<TransformerState?> {
+    private val transformer = object : IrTransformer<TransformerState?>() {
         override fun visitElement(element: IrElement, data: TransformerState?) = super.visitElement(element, null)
         override fun visitDeclaration(declaration: IrDeclarationBase, data: TransformerState?) = super.visitDeclaration(declaration, null)
         override fun visitExpression(expression: IrExpression, data: TransformerState?) = super.visitExpression(expression, null)

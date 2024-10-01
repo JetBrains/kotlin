@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
@@ -1471,7 +1471,7 @@ internal object DevirtualizationAnalysis {
         var callSitesCount = 0
         var devirtualizedCallSitesCount = 0
         var actuallyDevirtualizedCallSitesCount = 0
-        irModule.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
+        irModule.transformChildren(object : IrTransformer<IrDeclarationParent?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
                     super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 

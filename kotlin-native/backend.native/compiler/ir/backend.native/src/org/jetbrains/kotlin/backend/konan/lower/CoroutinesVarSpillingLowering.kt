@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl("COROUTINE_VAR_SPILLING")
@@ -64,7 +64,7 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
 
         // Save/restore state at suspension points.
         val irBuilder = context.createIrBuilder(container.symbol, container.startOffset, container.endOffset)
-        irBody.transformChildren(object : IrElementTransformer<List<IrVariable>> {
+        irBody.transformChildren(object : IrTransformer<List<IrVariable>>() {
             override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: List<IrVariable>): IrExpression {
                 val liveVariables = generationState.liveVariablesAtSuspensionPoints[expression]
                         ?: generationState.visibleVariablesAtSuspensionPoints[expression]

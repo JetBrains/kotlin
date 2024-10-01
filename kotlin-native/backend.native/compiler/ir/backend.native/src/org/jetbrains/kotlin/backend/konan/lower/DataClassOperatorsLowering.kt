@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrElementTransformer<IrFunction?> {
+internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrTransformer<IrFunction?>() {
     private val irBuiltins = context.irBuiltIns
 
     override fun lower(irFile: IrFile) {
