@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
  */
 internal fun areReceiversEquivalent(existingCall: FirQualifiedAccessExpression, candidateCall: Candidate): Boolean {
     val existingExtensionSymbol = existingCall.extensionReceiver?.boundSymbolForReceiverExpression()
-    val candidateExtensionSymbol = candidateCall.singleExtensionReceiver?.boundSymbolForReceiverExpression()
+    val candidateExtensionSymbol = candidateCall.chosenExtensionReceiverExpression()?.boundSymbolForReceiverExpression()
 
     if (existingExtensionSymbol != candidateExtensionSymbol) return false
 
@@ -38,15 +38,6 @@ internal fun areReceiversEquivalent(existingCall: FirQualifiedAccessExpression, 
 
     return existingDispatchReceiver == candidateDispatchReceiver
 }
-
-/**
- * N.B. This function explicitly ignores the cases when [Candidate.givenExtensionReceiverOptions]
- * contains context receivers.
- *
- * This is postponed until the context receivers/parameters design is finalized.
- */
-private val Candidate.singleExtensionReceiver: FirExpression?
-    get() = givenExtensionReceiverOptions.singleOrNull()?.expression
 
 /**
  * Assuming that [FirExpression] represents a receiver/qualifier expression,
