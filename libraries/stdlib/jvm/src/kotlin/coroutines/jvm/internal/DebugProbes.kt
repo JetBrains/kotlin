@@ -11,14 +11,16 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.*
 
 
-private val probesBridge get() = Class.forName("ProbesBridge Name TBD")
+private val probesBridge get() = Class.forName("kotlin.coroutines.external.DebugProbes")
 
 private val probeCoroutineCreatedMethod: Method? = runCatching {
     probesBridge.getDeclaredMethod("probeCoroutineCreated", Continuation::class.java)
 }.getOrNull()
+
 private val probeCoroutineResumedMethod: Method? = runCatching {
     probesBridge.getDeclaredMethod("probeCoroutineResumed", Continuation::class.java)
 }.getOrNull()
+
 private val probeCoroutineSuspended: Method? = runCatching {
     probesBridge.getDeclaredMethod("probeCoroutineSuspended", Continuation::class.java)
 }.getOrNull()
@@ -61,6 +63,7 @@ private val probeCoroutineSuspended: Method? = runCatching {
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
     if (probeCoroutineCreatedMethod != null) {
+        @Suppress("UNCHECKED_CAST")
         return probeCoroutineCreatedMethod.invoke(null, completion) as Continuation<T>
     }
     return completion}
@@ -78,7 +81,6 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
 @SinceKotlin("1.3")
-@Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
     probeCoroutineResumedMethod?.invoke(null, frame)
     /** implementation of this function is replaced by debugger */
@@ -95,9 +97,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
 @SinceKotlin("1.3")
-@Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
     probeCoroutineSuspended?.invoke(null, frame)
-    /** implementation of this function is replaced by debugger */
 }
 
