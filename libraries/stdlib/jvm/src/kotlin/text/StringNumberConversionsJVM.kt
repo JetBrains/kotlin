@@ -318,8 +318,7 @@ private fun isValidFloat(s: String): Boolean {
             var checkpoint = start
             while (start <= end) {
                 val d = s[start]
-                val l = d.code or 0x20
-                if (d.isAsciiDigit() || (l >= 'a'.code && l <= 'f'.code)) {
+                if (d.isAsciiDigit() || d.isHexLetter()) {
                     start++
                 } else {
                     break
@@ -339,9 +338,8 @@ private fun isValidFloat(s: String): Boolean {
                 // Look for hex digits for the fractional part
                 checkpoint = start
                 while (start <= end) {
-                    val d = s[start] // used to test digits
-                    val l = d.code or 0x20 // used to test letters A-F
-                    if (d.isAsciiDigit() || (l >= 'a'.code && l <= 'f'.code)) {
+                    val d = s[start]
+                    if (d.isAsciiDigit() || d.isHexLetter()) {
                         start++
                     } else {
                         break
@@ -468,3 +466,6 @@ private fun isValidFloat(s: String): Boolean {
 
 @kotlin.internal.InlineOnly
 private inline fun Char.isAsciiDigit() = (this - '0').toChar().code < 10
+
+@kotlin.internal.InlineOnly
+private inline fun Char.isHexLetter() = ((this.code or 0x20) - 'a'.code).toChar().code < 6
