@@ -20,6 +20,13 @@ public fun Child_finalOverrideFunc(self: kotlin.native.internal.NativePtr): Unit
     __self.finalOverrideFunc()
 }
 
+@ExportedBridge("Child_genericReturnTypeFunc")
+public fun Child_genericReturnTypeFunc(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = __self.genericReturnTypeFunc()
+    return _result.objcPtr()
+}
+
 @ExportedBridge("Child_nonoverride")
 public fun Child_nonoverride(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
@@ -158,6 +165,13 @@ public fun Parent_finalOverrideFunc(self: kotlin.native.internal.NativePtr): Uni
 public fun Parent_finalOverrideHopFunc(self: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     __self.finalOverrideHopFunc()
+}
+
+@ExportedBridge("Parent_genericReturnTypeFunc")
+public fun Parent_genericReturnTypeFunc(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = __self.genericReturnTypeFunc()
+    return _result.objcPtr()
 }
 
 @ExportedBridge("Parent_hopFunc")
