@@ -369,13 +369,7 @@ private fun isValidFloat(s: String): Boolean {
     if (!isHex) {
         // Look for digits before the decimal separator, if any
         var checkpoint = start
-        while (start <= end) {
-            if (s[start].isAsciiDigit()) {
-                start++
-            } else {
-                break
-            }
-        }
+        while (start <= end && s[start].isAsciiDigit()) start++
 
         // If there's no integer part, the float might be of the form .1234
         hasIntegerPart = checkpoint != start
@@ -388,13 +382,7 @@ private fun isValidFloat(s: String): Boolean {
 
             // Look for the fractional part
             checkpoint = start
-            while (start <= end) {
-                if (s[start].isAsciiDigit()) {
-                    start++
-                } else {
-                    break
-                }
-            }
+            while (start <= end && s[start].isAsciiDigit()) start++
 
             // Did we find a fractional part?
             hasFractionalPart = checkpoint != start
@@ -443,13 +431,7 @@ private fun isValidFloat(s: String): Boolean {
     }
 
     // Look for digits after the exponent and its optional sign
-    while (start <= end) {
-        if (s[start].isAsciiDigit()) {
-            start++
-        } else {
-            break
-        }
-    }
+    while (start <= end && s[start].isAsciiDigit()) start++
 
     // The last suffix is optional, the string is valid here
     if (start > end) return true
