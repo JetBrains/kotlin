@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
-import org.jetbrains.kotlin.fir.backend.utils.conversionData
 import org.jetbrains.kotlin.fir.backend.utils.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded
 import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.*
@@ -253,7 +252,7 @@ class Fir2IrConverter(
     }
 
     private fun processCodeFragmentMembers(codeFragment: FirCodeFragment, irClass: IrClass): IrClass {
-        val conversionData = codeFragment.conversionData
+        val conversionData = extensions.codeFragmentConversionData(codeFragment)
 
         declarationStorage.enterScope(irClass.symbol)
 

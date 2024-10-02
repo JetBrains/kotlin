@@ -1,15 +1,15 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
-import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -308,7 +308,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     // ------------------------------------ code fragments ------------------------------------
 
     fun createCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile, symbol: IrClassSymbol): IrClass {
-        val conversionData = codeFragment.conversionData
+        val conversionData = extensions.codeFragmentConversionData(codeFragment)
 
         val irClass = codeFragment.convertWithOffsets { startOffset, endOffset ->
             IrFactoryImpl.createClass(

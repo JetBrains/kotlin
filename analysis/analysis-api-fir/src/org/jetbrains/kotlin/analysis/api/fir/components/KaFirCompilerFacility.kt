@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.*
@@ -43,19 +44,23 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.CodeFragmentConversionData
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
-import org.jetbrains.kotlin.fir.backend.utils.conversionData
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -430,7 +435,7 @@ internal class KaFirCompilerFacility(
             InjectedValue(it.symbol, it.contextReceiverNumber, it.typeRef, it.value.isMutated)
         }
 
-        codeFragment.conversionData = CodeFragmentConversionData(
+        val conversionData = CodeFragmentConversionData(
             classId = ClassId(FqName.ROOT, Name.identifier(configuration[CODE_FRAGMENT_CLASS_NAME] ?: "CodeFragment")),
             methodName = Name.identifier(configuration[CODE_FRAGMENT_METHOD_NAME] ?: "run"),
             injectedSymbols
@@ -439,12 +444,13 @@ internal class KaFirCompilerFacility(
         val injectedSymbolMapping = injectedSymbols.associateBy {
             CodeFragmentCapturedId(it.symbol, it.contextReceiverNumber)
         }
-        val injectedValueProvider = InjectedSymbolProvider(mainKtFile, injectedSymbolMapping)
+        val injectedValueProvider = InjectedSymbolProvider(conversionData, mainKtFile, injectedSymbolMapping)
 
         return CodeFragmentMappings(capturedValues, capturedData.files, injectedValueProvider)
     }
 
     private class InjectedSymbolProvider(
+        val conversionData: CodeFragmentConversionData,
         private val mainKtFile: KtFile,
         private val injectedSymbolMapping: Map<CodeFragmentCapturedId, InjectedValue>
     ) : (FirReference, Fir2IrConversionScope) -> InjectedValue? {
@@ -492,10 +498,14 @@ internal class KaFirCompilerFacility(
 
     private class CompilerFacilityFir2IrExtensions(
         delegate: Fir2IrExtensions,
-        private val injectedValueProvider: InjectedSymbolProvider?
+        private val injectedValueProvider: InjectedSymbolProvider?,
     ) : Fir2IrExtensions by delegate {
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
             return injectedValueProvider?.invoke(calleeReference, conversionScope)
+        }
+
+        override fun codeFragmentConversionData(fragment: FirCodeFragment): CodeFragmentConversionData {
+            return injectedValueProvider?.conversionData ?: errorWithFirSpecificEntries("Conversion data is not provided", fir = fragment)
         }
     }
 
