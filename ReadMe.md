@@ -127,6 +127,8 @@ sed -i -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
 
 *`resolveDependencies` task resolves dependencies for all platforms including dependencies downloaded by plugins.*
 
+You can also use `./scripts/update-verification-metadata.sh` script which includes both of these steps
+
 Keep in mind:
 
 - If you’re adding a dependency with OS mentioned in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add them to 
