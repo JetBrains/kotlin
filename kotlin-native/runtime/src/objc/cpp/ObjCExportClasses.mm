@@ -316,22 +316,26 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   const char* type = self.objCType;
 
-  // TODO: the code below makes some assumption on char, short, int and long sizes.
+  {
+    // Extracting known primitive numbers and boxing them should be fast enough.
+    kotlin::CallsCheckerIgnoreGuard guard;
 
-  switch (type[0]) {
-    case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
-    case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
-    case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
-    case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
-    case 'C': RETURN_RESULT_OF(Kotlin_boxUByte, self.unsignedCharValue);
-    case 'S': RETURN_RESULT_OF(Kotlin_boxUShort, self.unsignedShortValue);
-    case 'I': RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
-    case 'Q': RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
-    case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
-    case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
-
-    default:  RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
+    // TODO: the code below makes some assumption on char, short, int and long sizes.
+    switch (type[0]) {
+      case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
+      case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
+      case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
+      case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
+      case 'C': RETURN_RESULT_OF(Kotlin_boxUByte, self.unsignedCharValue);
+      case 'S': RETURN_RESULT_OF(Kotlin_boxUShort, self.unsignedShortValue);
+      case 'I': RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
+      case 'Q': RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
+      case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
+      case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
+    }
   }
+
+  RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 @end
 
