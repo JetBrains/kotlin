@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@PhaseDescription(
-    name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into a loop"
-)
+/**
+ * Transforms `Array(size) { index -> value }` into a loop.
+ */
+@PhaseDescription(name = "ArrayConstructor")
 class ArrayConstructorLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(ArrayConstructorTransformer(context, container as IrSymbolOwner))

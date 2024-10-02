@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 private const val VALUES_HELPER_FUNCTION_NAME = "\$values"
 private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 
-@PhaseDescription(
-    name = "EnumClass",
-    description = "Handle enum classes"
-)
+@PhaseDescription(name = "EnumClass")
 internal class EnumClassLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     /*
      * Example of codegen for

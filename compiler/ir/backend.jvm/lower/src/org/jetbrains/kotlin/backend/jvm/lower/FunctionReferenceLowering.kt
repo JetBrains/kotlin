@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 
-@PhaseDescription(
-    name = "FunctionReference",
-    description = "Construct instances of anonymous KFunction subclasses for function references"
-)
+/**
+ * Constructs instances of anonymous KFunction subclasses for function references.
+ */
+@PhaseDescription(name = "FunctionReference")
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
 

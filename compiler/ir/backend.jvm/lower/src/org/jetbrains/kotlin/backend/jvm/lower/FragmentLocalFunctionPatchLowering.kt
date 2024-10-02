@@ -26,15 +26,13 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-// This lowering rewrites local function calls in code fragments to the
-// corresponding lifted declaration. In the process, the lowering determines
-// whether the captures of the local function are a subset of the captures of
-// the fragment, and if not, introduces additional captures to the fragment
-// wrapper. The captures are then supplied to the fragment wrapper as
-// parameters supplied at evaluation time.
+/**
+ * Rewrites local function calls in code fragments to the corresponding lifted declaration. In the process, the lowering determines whether
+ * the captures of the local function are a subset of the captures of the fragment, and if not, introduces additional captures to the
+ * fragment wrapper. The captures are then supplied to the fragment wrapper as parameters supplied at evaluation time.
+ */
 @PhaseDescription(
     name = "FragmentLocalFunctionPatching",
-    description = "Rewrite calls to local functions to the appropriate, lifted function created by local declarations lowering.",
     prerequisite = [JvmLocalDeclarationsLowering::class]
 )
 internal class FragmentLocalFunctionPatchLowering(

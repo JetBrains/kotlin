@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-// There are concrete function classes for functions with up to 22 arguments. Above that, we
-// inherit from the generic FunctionN class which has a vararg invoke method. This phase
-// adds a bridge method for such large arity functions, which checks the number of arguments
-// dynamically.
-@PhaseDescription(
-    name = "FunctionBridgePhase",
-    description = "Add bridges for invoke functions with a large number of arguments"
-)
+/**
+ * Adds bridges for invoke functions with a large number of arguments.
+ *
+ * There are concrete function classes for functions with fewer than [BuiltInFunctionArity.BIG_ARITY] arguments. Above that, we inherit
+ * from the generic FunctionN class which has a vararg `invoke` method. This phase adds a bridge method for such large arity functions,
+ * which checks the number of arguments dynamically.
+ */
+@PhaseDescription(name = "FunctionBridgePhase")
 internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)

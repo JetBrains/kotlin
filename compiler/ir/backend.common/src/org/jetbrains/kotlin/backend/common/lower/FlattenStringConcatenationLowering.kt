@@ -32,40 +32,43 @@ import kotlin.math.min
  *
  * Example expression:
  *
- *   val s = "1" + 2 + ("s1: '$s1'" + 3.0 + null)
+ * ```kotlin
+ * val s = "1" + 2 + ("s1: '$s1'" + 3.0 + null)
+ * ```
  *
  * IR before lowering:
  *
- *   VAR name:s type:kotlin.String flags:val
- *     CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+ * ```
+ * VAR name:s type:kotlin.String flags:val
+ *   CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+ *     $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+ *       $this: CONST String type=kotlin.String value="1"
+ *       other: CONST Int type=kotlin.Int value=2
+ *     other: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
  *       $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
- *         $this: CONST String type=kotlin.String value="1"
- *         other: CONST Int type=kotlin.Int value=2
- *       other: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
- *         $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
- *           $this: STRING_CONCATENATION type=kotlin.String
- *             CONST String type=kotlin.String value="s1: '"
- *             GET_VAR 's1: String' type=kotlin.String origin=null
- *             CONST String type=kotlin.String value="'"
- *           other: CONST Double type=kotlin.Double value=3.0
- *         other: CONST Null type=kotlin.Nothing? value=null
+ *         $this: STRING_CONCATENATION type=kotlin.String
+ *           CONST String type=kotlin.String value="s1: '"
+ *           GET_VAR 's1: String' type=kotlin.String origin=null
+ *           CONST String type=kotlin.String value="'"
+ *         other: CONST Double type=kotlin.Double value=3.0
+ *       other: CONST Null type=kotlin.Nothing? value=null
+ * ```
  *
  * IR after lowering:
  *
- *   VAR name:s type:kotlin.String flags:val
- *     STRING_CONCATENATION type=kotlin.String
- *       CONST String type=kotlin.String value="1"
- *       CONST Int type=kotlin.Int value=2
- *       CONST String type=kotlin.String value="s1: '"
- *       GET_VAR 's1: String' type=kotlin.String origin=null
- *       CONST String type=kotlin.String value="'"
- *       CONST Double type=kotlin.Double value=3.0
- *       CONST Null type=kotlin.Nothing? value=null
+ * ```
+ * VAR name:s type:kotlin.String flags:val
+ *   STRING_CONCATENATION type=kotlin.String
+ *     CONST String type=kotlin.String value="1"
+ *     CONST Int type=kotlin.Int value=2
+ *     CONST String type=kotlin.String value="s1: '"
+ *     GET_VAR 's1: String' type=kotlin.String origin=null
+ *     CONST String type=kotlin.String value="'"
+ *     CONST Double type=kotlin.Double value=3.0
+ *     CONST Null type=kotlin.Nothing? value=null
+ * ```
  */
-@PhaseDescription(
-    name = "FlattenStringConcatenationLowering",
-    description = "Flatten nested string concatenation expressions into a single IrStringConcatenation"
-)
+@PhaseDescription(name = "FlattenStringConcatenationLowering")
 class FlattenStringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     companion object {
         // There are two versions of String.plus in the library. One for nullable and one for non-nullable strings.

@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.CommonInlineCallableReferenceToLambdaPhase
 import org.jetbrains.kotlin.ir.inline.InlineCallableReferenceToLambdaPhase
 
-@PhaseDescription(
-    name = "JvmInlineCallableReferenceToLambdaWithDefaultsPhase",
-    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
-)
+@PhaseDescription(name = "JvmInlineCallableReferenceToLambdaWithDefaultsPhase")
 internal class JvmInlineCallableReferenceToLambdaWithDefaultsPhase(
     context: JvmBackendContext,
 ) : CommonInlineCallableReferenceToLambdaPhase(
@@ -38,10 +35,10 @@ internal class JvmInlineCallableReferenceToLambdaWithDefaultsPhase(
     }
 }
 
-@PhaseDescription(
-    name = "JvmInlineCallableReferenceToLambdaPhase",
-    description = "Transform callable reference to inline lambdas, mark inline lambdas for later passes"
-)
+/**
+ * Transforms callable references to inline lambdas, marks inline lambdas for later passes.
+ */
+@PhaseDescription(name = "JvmInlineCallableReferenceToLambdaPhase")
 internal class JvmInlineCallableReferenceToLambdaPhase(
     context: JvmBackendContext,
 ) : InlineCallableReferenceToLambdaPhase(

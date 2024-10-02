@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
+/**
+ * Replaces varargs with array arguments, and lowers [arrayOf] and [emptyArray] calls.
+ */
 @PhaseDescription(
     name = "VarargLowering",
-    description = "Replace varargs with array arguments and lower arrayOf and emptyArray calls",
     prerequisite = [PolymorphicSignatureLowering::class],
 )
 internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {

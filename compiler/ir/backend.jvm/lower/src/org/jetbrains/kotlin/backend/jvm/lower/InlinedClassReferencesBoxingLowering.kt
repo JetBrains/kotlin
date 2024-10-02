@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
+/**
+ * Replaces inlined primitive types in class references with boxed versions.
+ */
 @PhaseDescription(
     name = "InlinedClassReferencesBoxingLowering",
-    description = "Replace inlined primitive types in class references with boxed versions",
     prerequisite = [JvmIrInliner::class, MarkNecessaryInlinedClassesAsRegeneratedLowering::class]
 )
 internal class InlinedClassReferencesBoxingLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {

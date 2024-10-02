@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 @PhaseDescription(
     name = "SingletonReferences",
-    description = "Handle singleton references",
     // JvmReturnableBlockLowering may produce references to the `Unit` object.
     prerequisite = [JvmReturnableBlockLowering::class]
 )

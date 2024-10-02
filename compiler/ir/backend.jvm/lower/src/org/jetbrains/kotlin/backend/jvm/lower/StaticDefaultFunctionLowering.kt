@@ -34,9 +34,11 @@ import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
+/**
+ * Makes function adapters for default arguments static.
+ */
 @PhaseDescription(
     name = "StaticDefaultFunction",
-    description = "Make function adapters for default arguments static",
     prerequisite = [/* JvmStaticInObjectLowering::class */]
 )
 internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {

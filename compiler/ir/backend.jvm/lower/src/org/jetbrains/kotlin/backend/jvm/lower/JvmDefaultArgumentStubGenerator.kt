@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 
 @PhaseDescription(
     name = "DefaultArgumentsStubGenerator",
-    description = "Generate synthetic stubs for functions with default parameter values",
     prerequisite = [JvmLocalDeclarationsLowering::class]
 )
 internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : DefaultArgumentStubGenerator<JvmBackendContext>(

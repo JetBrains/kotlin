@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+/**
+ * Scans all inlined functions and marks anonymous objects that must be later regenerated at backend.
+ */
 @PhaseDescription(
     name = "MarkNecessaryInlinedClassesAsRegeneratedLowering",
-    description = "Will scan all inlined functions and mark anonymous objects that must be later regenerated at backend",
     prerequisite = [JvmIrInliner::class, CreateSeparateCallForInlinedLambdasLowering::class]
 )
 internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {

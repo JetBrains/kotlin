@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 val ANNOTATION_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
+/**
+ * Creates synthetic annotations implementations and uses them in annotations constructor calls.
+ */
 open class AnnotationImplementationLowering(
     val transformer: (IrFile) -> AnnotationImplementationTransformer
 ) : FileLoweringPass {

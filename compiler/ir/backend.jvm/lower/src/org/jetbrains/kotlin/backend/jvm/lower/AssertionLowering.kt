@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
+/**
+ * Lowers [assert] calls depending on the assertions mode.
+ */
 @PhaseDescription(
     name = "Assertion",
-    description = "Lower assert calls depending on the assertions mode",
     // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
     // class that contains it.
     prerequisite = [FunctionReferenceLowering::class]

@@ -21,36 +21,27 @@ import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-// This lowering is a preprocessor for IR in order to support the compilation
-// scheme used by the "Evaluate Expression..." mechanism of the IntelliJ plug-in
-// for Kotlin debugging.
-//
-// Fragments are compiled as the body of an enclosing function that close the free
-// variables of the fragment as parameters. The values of these are then extracted
-// from the stack at the current breakpoint, and the fragment code is invoked with
-// these values to evaluate the expression.
-//
-// If the parameter is a shared variable, e.g. `IntRef` (the same mechanism used to
-// implement captures of lambdas) the value extracted from the stack is
-// automatically boxed in a `Ref` before being passed to the fragment.
-//
-// Upon return, all `Ref`s are written back into the stack, thus allowing fragments
-// to modify the state of the program being debugged.
-//
-// This lowering promotes these parameters to `Ref`s, as deemed appropriate by
-// psi2ir's Fragment generation.
-//
-// The reason for this "phasing" is that the JVM specific infrastructure (e.g.
-// symbols for `Ref`s) have not been loaded when psi2ir runs, as psi2ir is designed
-// to be backend agnostic. So, we "tag" the appropriate parameters with a new
-// JvmIrDeclarationOrigin that we can then detect in this lowering.
-//
-// See `FragmentDeclarationGenerator.kt:declareParameter` for the front half
-// of this logic.
-@PhaseDescription(
-    name = "FragmentSharedVariablesLowering",
-    description = "Promotes captured variables that are modified by the fragment to shared variables"
-)
+/**
+ * Promotes captured variables that are modified by the fragment to shared variables.
+ *
+ * Fragments are compiled as the body of an enclosing function that close the free variables of the fragment as parameters.
+ * The values of these are then extracted from the stack at the current breakpoint, and the fragment code is invoked with these values
+ * to evaluate the expression.
+ *
+ * If the parameter is a shared variable, e.g. `IntRef` (the same mechanism used to implement captures of lambdas) the value extracted from
+ * the stack is automatically boxed in a `Ref` before being passed to the fragment.
+ *
+ * Upon return, all `Ref`s are written back into the stack, thus allowing fragments to modify the state of the program being debugged.
+ *
+ * This lowering promotes these parameters to `Ref`s, as deemed appropriate by psi2ir's Fragment generation.
+ *
+ * The reason for this "phasing" is that the JVM specific infrastructure (e.g. symbols for `Ref`s) have not been loaded when psi2ir runs,
+ * as psi2ir is designed to be backend-agnostic. So, we "tag" the appropriate parameters with a new [IrDeclarationOrigin] that we can
+ * then detect in this lowering.
+ *
+ * See `FragmentDeclarationGenerator.declareParameter` for the psi2ir half of this logic.
+ */
+@PhaseDescription(name = "FragmentSharedVariablesLowering")
 internal class FragmentSharedVariablesLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {

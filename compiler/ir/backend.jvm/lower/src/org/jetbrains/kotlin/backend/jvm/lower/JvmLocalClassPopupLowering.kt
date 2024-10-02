@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.isEnclosedInConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 
-@PhaseDescription(
-    name = "JvmLocalClassExtraction",
-    description = "Move local classes from field initializers and anonymous init blocks into the containing class"
-)
+/**
+ * Moves local classes from field initializers and anonymous init blocks into the containing class.
+ */
+@PhaseDescription(name = "JvmLocalClassExtraction")
 internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 

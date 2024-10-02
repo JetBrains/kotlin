@@ -37,11 +37,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-@PhaseDescription(
-    name = "FakeLocalVariablesForIrInlinerLowering",
-    description = "Add fake locals to identify the range of inlined functions and lambdas. " +
-            "This lowering adds fake locals into already inlined blocks."
-)
+/**
+ * Adds fake locals to identify the range of inlined functions and lambdas, into already inlined blocks.
+ */
+@PhaseDescription(name = "FakeLocalVariablesForIrInlinerLowering")
 internal class FakeLocalVariablesForIrInlinerLowering(
     override val context: JvmBackendContext
 ) : IrElementVisitorVoid, FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {

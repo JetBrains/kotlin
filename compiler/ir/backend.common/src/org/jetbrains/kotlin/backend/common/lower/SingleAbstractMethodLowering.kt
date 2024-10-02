@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+/**
+ * Replaces SAM conversions with instances of interface-implementing classes.
+ */
 abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
     // In the latter case, the names of SAM wrappers depend on the order of classes in the file. For example:

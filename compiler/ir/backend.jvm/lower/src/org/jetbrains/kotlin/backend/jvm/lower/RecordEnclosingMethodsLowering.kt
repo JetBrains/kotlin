@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-@PhaseDescription(
-    name = "RecordEnclosingMethods",
-    description = "Find enclosing methods for objects inside inline and dynamic lambdas"
-)
+/**
+ * Finds enclosing methods for objects inside inline and dynamic lambdas.
+ */
+@PhaseDescription(name = "RecordEnclosingMethods")
 internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
         irFile.accept(object : IrElementVisitor<Unit, IrFunction?> {

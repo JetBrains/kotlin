@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
-@PhaseDescription(
-    name = "ProcessOptionalAnnotations",
-    description = "Record metadata of @OptionalExpectation-annotated classes to backend-specific storage, later written to .kotlin_module"
-)
+/**
+ * Records metadata of `@OptionalExpectation`-annotated classes to backend-specific storage, later written to `.kotlin_module`.
+ */
+@PhaseDescription(name = "ProcessOptionalAnnotations")
 class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         for (declaration in irFile.declarations) {

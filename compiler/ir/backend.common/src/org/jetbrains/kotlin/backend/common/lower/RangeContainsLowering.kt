@@ -35,14 +35,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
- * This lowering pass optimizes calls to contains() (`in` operator) for ClosedRanges.
+ * Optimizes calls to `contains` (`in` operator) for [ClosedRange]s.
  *
  * For example, the expression `X in A..B` is transformed into `A <= X && X <= B`.
  */
-@PhaseDescription(
-    name = "RangeContainsLowering",
-    description = "Optimizes calls to contains() for ClosedRanges"
-)
+@PhaseDescription(name = "RangeContainsLowering")
 class RangeContainsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val transformer = Transformer(context, container as IrSymbolOwner)

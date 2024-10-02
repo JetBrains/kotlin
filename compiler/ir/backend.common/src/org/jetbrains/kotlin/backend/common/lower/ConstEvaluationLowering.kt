@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.ir.interpreter.transformer.runConstOptimizations
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 
-@PhaseDescription(
-    name = "ConstEvaluationLowering",
-    description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`"
-)
+/**
+ * Evaluates functions that are annotated with [kotlin.internal.IntrinsicConstEvaluation].
+ */
+@PhaseDescription(name = "ConstEvaluationLowering")
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
     private val suppressErrors: Boolean = context.configuration.getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS),

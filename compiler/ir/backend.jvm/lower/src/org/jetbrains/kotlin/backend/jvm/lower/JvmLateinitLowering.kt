@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-@PhaseDescription(
-    name = "JvmLateinitLowering",
-    description = "Lower lateinit properties and variables"
-)
+@PhaseDescription(name = "JvmLateinitLowering")
 internal class JvmLateinitLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = Transformer(context)

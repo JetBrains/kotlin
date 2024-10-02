@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -41,10 +40,10 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 
-@PhaseDescription(
-    name = "GenerateMultifileFacades",
-    description = "Generate JvmMultifileClass facades, based on the information provided by FileClassLowering",
-)
+/**
+ * Generates [JvmMultifileClass] facades, based on the information provided by [FileClassLowering].
+ */
+@PhaseDescription(name = "GenerateMultifileFacades")
 internal class GenerateMultifileFacades(private val context: JvmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val functionDelegates = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()

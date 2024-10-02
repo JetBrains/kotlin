@@ -42,9 +42,11 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Constructs `KProperty` instances returned by expressions such as `A::x` and `A()::x`.
+ */
 @PhaseDescription(
     name = "PropertyReference",
-    description = "Construct KProperty instances returned by expressions such as A::x and A()::x",
     // This must be done after contents of functions are extracted into separate classes, or else the `$$delegatedProperties`
     // field will end up in the wrong class (not the one that declares the delegated property).
     prerequisite = [FunctionReferenceLowering::class, SuspendLambdaLowering::class, PropertyReferenceDelegationLowering::class],

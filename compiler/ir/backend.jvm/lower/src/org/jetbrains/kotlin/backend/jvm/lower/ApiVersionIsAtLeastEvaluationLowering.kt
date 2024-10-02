@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
@@ -27,9 +26,11 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isTopLevelInPackage
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
+/**
+ * Evaluates inlined invocations of [kotlin.internal.apiVersionIsAtLeast].
+ */
 @PhaseDescription(
     name = "ApiVersionIsAtLeastEvaluationLowering",
-    description = "Evaluate inlined invocations of `apiVersionIsAtLeast`",
     prerequisite = [JvmIrInliner::class]
 )
 internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass, IrTransformer<Data>() {

@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
-@PhaseDescription(
-    name = "CollectionStubMethod",
-    description = "Generate Collection stub methods"
-)
+@PhaseDescription(name = "CollectionStubMethod")
 internal class CollectionStubMethodLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val collectionStubComputer = context.collectionStubComputer
 

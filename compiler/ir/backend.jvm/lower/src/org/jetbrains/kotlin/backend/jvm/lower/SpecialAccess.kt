@@ -27,33 +27,28 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 
-// This lowering replaces member accesses that are illegal according to JVM
-// accessibility rules with corresponding calls to the java.lang.reflect
-// API. The primary use-case is to facilitate the design of the "Evaluate
-// expression..." mechanism in the JVM Debugger. Here, a code fragment is
-// compiled _as if_ in the context of a breakpoint. Hence, it is compiled
-// against an existing class hierarchy and any access to private or otherwise
-// inaccessible members that are "perceived" to be in scope must be
-// transformed. The ordinary IR pipeline would introduce an accessor next to the
-// access_ee_, but that is assumed to not be possible here: the accessee is
-// deserialized from class files that cannot be modified at this point.
-//
-// The lowering looks for the following member accesses and determines their
-// legality through the need for an accessor, had this been an ordinary
-// compilation:
-//
-// - {extension, static, super*} methods, {extension} property accessors,
-//     functions on companion objects
-// - field accesses
-// - constructor invocations
-// - companion object access
-//
-// *super calls, private or not, are not allowed from outside the class
-// hierarchy of the involved classes, so is emulated in fragment compilation by
-// the use of `invokespecial` - see `invokeSpecialForCall` below.
+/**
+ * This lowering replaces member accesses that are illegal according to JVM accessibility rules with corresponding calls to the
+ * `java.lang.reflect` API. The primary use-case is to facilitate the design of the "Evaluate expression..." mechanism in the JVM debugger.
+ * Here, a code fragment is compiled _as if_ in the context of a breakpoint. Hence, it is compiled against an existing class hierarchy and
+ * any access to private or otherwise inaccessible members that are "perceived" to be in scope must be transformed. The ordinary IR pipeline
+ * would introduce an accessor next to the access_ee_, but that is assumed to not be possible here: the accessee is deserialized from class
+ * files that cannot be modified at this point.
+ *
+ * The lowering looks for the following member accesses and determines their legality through the need for an accessor, had this been
+ * an ordinary compilation:
+ *
+ * - {extension, static, super*} methods, {extension} property accessors,
+ *     functions on companion objects
+ * - field accesses
+ * - constructor invocations
+ * - companion object access
+ *
+ * Super calls, private or not, are not allowed from outside the class hierarchy of the involved classes, so it's emulated in fragment
+ * compilation by the use of `invokespecial` - see [generateInvokeSpecialForCall] below.
+ */
 @PhaseDescription(
     name = "SpecialAccess",
-    description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection or invokespecial calls",
     prerequisite = [JvmDefaultParameterCleaner::class]
 )
 internal class SpecialAccessLowering(

@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
+/**
+ * Invents names for local classes and anonymous objects.
+ */
 abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName: Boolean = true) : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String

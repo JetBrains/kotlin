@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-@PhaseDescription(
-    name = "JvmValidateIrBeforeLowering",
-    description = "Validate IR before lowering"
-)
+@PhaseDescription(name = "JvmValidateIrBeforeLowering")
 internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
@@ -36,10 +33,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
         )
 }
 
-@PhaseDescription(
-    name = "JvmValidateIrAfterLowering",
-    description = "Validate IR after lowering"
-)
+@PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {

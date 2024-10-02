@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 
+/**
+ * Saves serialized IR into a class annotation, if the compiler option `-Xserialize-ir` is enabled.
+ */
 @PhaseDescription(
     name = "SerializeIr",
-    description = "If specified by compiler options, save serialized IR in class annotations",
     prerequisite = [JvmExpectDeclarationRemover::class],
 )
 internal class SerializeIrPhase(val context: JvmBackendContext) : FileLoweringPass {

@@ -110,7 +110,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method
  */
 @PhaseDescription(
     name = "Bridge",
-    description = "Generate bridges",
     prerequisite = [JvmInlineClassLowering::class, InheritedDefaultMethodsOnClassesLowering::class]
 )
 internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {

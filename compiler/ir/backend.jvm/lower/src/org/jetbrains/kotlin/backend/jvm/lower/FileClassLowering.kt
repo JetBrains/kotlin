@@ -51,10 +51,10 @@ import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
-@PhaseDescription(
-    name = "FileClass",
-    description = "Put file level function and property declaration into a class",
-)
+/**
+ * Puts file-level function and property declaration into a class.
+ */
+@PhaseDescription(name = "FileClass")
 internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val classes = ArrayList<IrClass>()

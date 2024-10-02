@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
-@PhaseDescription(
-    name = "StaticInitializers",
-    description = "Move code from object init blocks and static field initializers to a new <clinit> function"
-)
+/**
+ * Moves code from object init blocks and static field initializers to a new `<clinit>` function.
+ */
+@PhaseDescription(name = "StaticInitializers")
 internal class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context), ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val staticInitializerStatements = extractInitializers(irClass) {

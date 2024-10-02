@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
-@PhaseDescription(
-    name = "UniqueLoopLabels",
-    description = "Label all loops for non-local break/continue"
-)
+/**
+ * Labels all loops for non-local `break`/`continue`.
+ */
+@PhaseDescription(name = "UniqueLoopLabels")
 internal class UniqueLoopLabelsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrElementVisitorVoid {

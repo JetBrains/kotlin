@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
-@PhaseDescription(
-    name = "RepeatedAnnotation",
-    description = "Enclose repeated annotations in a container annotation, generating a container class if needed"
-)
+/**
+ * Encloses repeated annotations in a container annotation, generating a container class if needed.
+ */
+@PhaseDescription(name = "RepeatedAnnotation")
 internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)

@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
 
-// Quoted from https://kotlinlang.org/docs/reference/classes.html
-//
-// "On the JVM, if all of the parameters of the primary constructor have default values, the compiler will generate an additional
-//  parameterless constructor which will use the default values. This makes it easier to use Kotlin with libraries such as Jackson
-//  or JPA that create class instances through parameterless constructors."
+/**
+ * Generates default parameterless constructors. See https://kotlinlang.org/docs/reference/classes.html
+ *
+ * > On the JVM, if all of the primary constructor parameters have default values, the compiler will generate an additional
+ * > parameterless constructor which will use the default values. This makes it easier to use Kotlin with libraries such as Jackson
+ * > or JPA that create class instances through parameterless constructors.
+ */
 @PhaseDescription(
     name = "JvmDefaultConstructor",
-    description = "Generate default constructors for Java",
     prerequisite = [JvmOverloadsAnnotationLowering::class]
 )
 internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {

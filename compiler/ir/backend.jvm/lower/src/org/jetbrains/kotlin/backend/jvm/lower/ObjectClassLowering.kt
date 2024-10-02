@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.util.filterOutAnnotations
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
-@PhaseDescription(
-    name = "ObjectClass",
-    description = "Handle object classes"
-)
+@PhaseDescription(name = "ObjectClass")
 internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
 

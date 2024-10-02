@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.util.remapReceiver
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-@PhaseDescription(
-    name = "SingletonOrConstantDelegation",
-    description = "Optimize `val x by ConstOrSingleton`: there is no need to store the value in a field"
-)
+/**
+ * Optimizes `val x by ConstOrSingleton`: there is no need to store the value in a field.
+ */
+@PhaseDescription(name = "SingletonOrConstantDelegation")
 internal class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(SingletonOrConstantDelegationTransformer(context), null)

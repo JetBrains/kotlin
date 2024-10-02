@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.name.Name
 
-@PhaseDescription(
-    name = "RenameFields",
-    description = "Rename private fields (including fields copied from companion object) to avoid JVM declaration clash"
-)
+/**
+ * Renames private fields (including fields copied from companion object) to avoid JVM declaration clash.
+ */
+@PhaseDescription(name = "RenameFields")
 internal class RenameFieldsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fields = irClass.fields.toMutableList()

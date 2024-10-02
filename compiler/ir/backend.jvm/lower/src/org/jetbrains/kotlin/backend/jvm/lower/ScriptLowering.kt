@@ -49,10 +49,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 
-@PhaseDescription(
-    name = "ScriptsToClasses",
-    description = "Put script declarations into classes",
-)
+@PhaseDescription(name = "ScriptsToClasses")
 internal class ScriptsToClassesLowering(val context: JvmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val scripts = mutableListOf<IrScript>()

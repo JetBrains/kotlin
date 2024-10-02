@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.isInlineArrayConstructor
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 
+/**
+ * Transforms all callable references (including defaults) to inline lambdas, marks inline lambdas for later passes.
+ */
 abstract class CommonInlineCallableReferenceToLambdaPhase(
     context: CommonBackendContext,
     inlineFunctionResolver: InlineFunctionResolver

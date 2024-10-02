@@ -22,10 +22,10 @@ class ProvisionalFunctionExpressionLoweringContext(
     val endOffset: Int? = null
 )
 
-@PhaseDescription(
-    name = "FunctionExpression",
-    description = "Transform IrFunctionExpression to a local function reference"
-)
+/**
+ * Transforms [IrFunctionExpression] to a local function reference.
+ */
+@PhaseDescription(name = "FunctionExpression")
 class ProvisionalFunctionExpressionLowering(@Suppress("UNUSED_PARAMETER", "unused") context: CommonBackendContext) :
     IrTransformer<ProvisionalFunctionExpressionLoweringContext>(),
     BodyLoweringPass {

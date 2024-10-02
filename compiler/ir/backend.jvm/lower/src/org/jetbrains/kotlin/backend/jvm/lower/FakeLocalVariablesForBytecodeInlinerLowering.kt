@@ -49,10 +49,10 @@ interface FakeInliningLocalVariables<Container : IrElement> {
     }
 }
 
-@PhaseDescription(
-    name = "FakeLocalVariablesForBytecodeInlinerLowering",
-    description = "Add fake locals to identify the range of inlined functions and lambdas"
-)
+/**
+ * Adds fake locals to identify the range of inlined functions and lambdas.
+ */
+@PhaseDescription(name = "FakeLocalVariablesForBytecodeInlinerLowering")
 internal class FakeLocalVariablesForBytecodeInlinerLowering(
     override val context: JvmBackendContext
 ) : IrInlineReferenceLocator(context), FakeInliningLocalVariables<IrFunction>, FileLoweringPass {

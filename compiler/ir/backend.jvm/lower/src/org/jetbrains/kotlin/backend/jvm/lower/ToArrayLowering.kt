@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 
-@PhaseDescription(
-    name = "ToArray",
-    description = "Handle toArray functions"
-)
+/**
+ * Handles [java.util.Collection.toArray] functions.
+ */
+@PhaseDescription(name = "ToArray")
 internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.ir.symbols
 

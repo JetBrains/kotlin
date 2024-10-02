@@ -30,41 +30,39 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
+/**
+ * This pass finds extended main methods and introduces a regular `public static void main(String[] args)` entry point, as appropriate:
+ *   - invocation via [kotlin.coroutines.jvm.internal.runSuspend] suspend main methods.
+ *   - a simple delegating wrapper for parameterless main methods.
+ *
+ * There are three cases that must be handled, in order of precedence:
+ *
+ * 1. `suspend fun main(args: Array<String>) { .. }` for which we generate
+ *    ```
+ *    fun main(args: Array<String>) {
+ *      runSuspend { main(args) }
+ *    }
+ *    ```
+ *
+ * 2. `suspend fun main() { .. }` for which we generate
+ *    ```
+ *    fun main(args: Array<String>) {
+ *      runSuspend { main() }
+ *    }
+ *    ```
+ *
+ * 3. `fun main() { .. }` for which we generate
+ *    ```
+ *    fun main(args: Array<String>) {
+ *      main()
+ *    }
+ *    ```
+ */
 @PhaseDescription(
     name = "MainMethodGeneration",
-    description = "Generate main bridges to parameterless mains, and wrappers for suspend mains.",
     prerequisite = [JvmOverloadsAnnotationLowering::class],
 )
 internal class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-    /**
-     * This pass finds extended main methods and introduces a regular
-     * `public static void main(String[] args)` entry point, as appropriate:
-     *   - invocation via [kotlin.coroutines.jvm.internal.runSuspend] suspend main methods.
-     *   - a simple delegating wrapper for parameterless main methods
-     *
-     * There are three cases that must be handled, in order of precedence:
-     *
-     * 1. `suspend fun main(args: Array<String>) { .. }` for which we generate
-     *    ```
-     *    fun main(args: Array<String>) {
-     *      runSuspend { main(args) }
-     *    }
-     *    ```
-     *
-     * 2. `suspend fun main() { .. }` for which we generate
-     *    ```
-     *    fun main(args: Array<String>) {
-     *      runSuspend { main() }
-     *    }
-     *    ```
-     *
-     * 3. `fun main() { .. }` for which we generate
-     *    ```
-     *    fun main(args: Array<String>) {
-     *      main()
-     *    }
-     *    ```
-     */
     override fun lower(irClass: IrClass) {
         if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
         if (!irClass.isFileClass) return

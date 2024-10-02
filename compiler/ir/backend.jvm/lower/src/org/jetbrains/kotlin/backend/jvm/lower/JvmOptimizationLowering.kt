@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@PhaseDescription(
-    name = "JvmOptimizationLowering",
-    description = "Optimize code for JVM code generation"
-)
+@PhaseDescription(name = "JvmOptimizationLowering")
 internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
     private companion object {
         private fun isNegation(expression: IrExpression): Boolean =

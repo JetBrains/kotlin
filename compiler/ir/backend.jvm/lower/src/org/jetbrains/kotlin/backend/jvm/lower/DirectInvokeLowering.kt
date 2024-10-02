@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@PhaseDescription(
-    name = "DirectInvokes",
-    description = "Inline directly invoked lambdas and replace invoked function references with calls"
-)
+/**
+ * Inlines directly invoked lambdas and replaces invoked function references with calls.
+ */
+@PhaseDescription(name = "DirectInvokes")
 internal class DirectInvokeLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 

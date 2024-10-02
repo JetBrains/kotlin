@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-@PhaseDescription(
-    name = "SharedVariables",
-    description = "Transform shared variables"
-)
+@PhaseDescription(name = "SharedVariables")
 class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         SharedVariablesTransformer(irBody, container).lowerSharedVariables()

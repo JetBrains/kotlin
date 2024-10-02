@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.inline.InlineMode
 
 @PhaseDescription(
     name = "FunctionInliningPhase",
-    description = "Perform function inlining",
     prerequisite = [JvmExpectDeclarationRemover::class, JvmInlineCallableReferenceToLambdaWithDefaultsPhase::class]
 )
 class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(

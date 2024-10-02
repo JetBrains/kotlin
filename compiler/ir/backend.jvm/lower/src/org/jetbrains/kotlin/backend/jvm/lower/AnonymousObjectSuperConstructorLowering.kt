@@ -26,35 +26,34 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformInPlace
 
-// Transform code like this:
-//
-//      object : SuperType(complexExpression) {}
-//
-// which looks like this in the IR:
-//
-//      run {
-//          class _anonymous : SuperType(complexExpression) {}
-//          _anonymous()
-//      }
-//
-// into this:
-//
-//      run {
-//          class _anonymous(arg: T) : SuperType(arg) {}
-//          _anonymous(complexExpression)
-//      }
-//
-// The reason for doing such a transformation is the inliner: if the object is declared
-// in an inline function, `complexExpression` may be a call to a lambda, which will be
-// inlined into regenerated copies of the object. Unfortunately, if that lambda captures
-// some values, the inliner does not notice that `this` is not yet initialized, and
-// attempts to read them from fields, causing a bytecode validation error.
-//
-// (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
-@PhaseDescription(
-    name = "AnonymousObjectSuperConstructor",
-    description = "Move evaluation of anonymous object super constructor arguments to call site"
-)
+/**
+ * Moves evaluation of anonymous object super constructor arguments to call site. Specifically, transforms code like this:
+ *
+ *      object : SuperType(complexExpression) {}
+ *
+ * which looks like this in the IR:
+ *
+ *      run {
+ *          class _anonymous : SuperType(complexExpression) {}
+ *          _anonymous()
+ *      }
+ *
+ * into this:
+ *
+ *      run {
+ *          class _anonymous(arg: T) : SuperType(arg) {}
+ *          _anonymous(complexExpression)
+ *      }
+ *
+ * The reason for doing such a transformation is the inliner: if the object is declared
+ * in an inline function, `complexExpression` may be a call to a lambda, which will be
+ * inlined into regenerated copies of the object. Unfortunately, if that lambda captures
+ * some values, the inliner does not notice that `this` is not yet initialized, and
+ * attempts to read them from fields, causing a bytecode validation error.
+ *
+ * (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
+ */
+@PhaseDescription(name = "AnonymousObjectSuperConstructor")
 internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {

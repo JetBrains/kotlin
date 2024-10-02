@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 @PhaseDescription(
     name = "SingleAbstractMethod",
-    description = "Replace SAM conversions with instances of interface-implementing classes",
     // FunctionReferenceLowering produces optimized SAM wrappers.
     prerequisite = [FunctionReferenceLowering::class]
 )

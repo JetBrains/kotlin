@@ -102,10 +102,10 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         context.ir.symbols.continuationClass.typeWith(returnType).makeNullable()
 }
 
-@PhaseDescription(
-    name = "SuspendLambda",
-    description = "Transform suspend lambdas into continuation classes"
-)
+/**
+ * Transforms suspend lambdas into continuation classes.
+ */
+@PhaseDescription(name = "SuspendLambda")
 internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {

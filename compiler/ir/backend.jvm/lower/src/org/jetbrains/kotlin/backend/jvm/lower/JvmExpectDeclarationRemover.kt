@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.isExpect
 
-@PhaseDescription(
-    name = "ExpectDeclarationsRemoving",
-    description = "Remove expect declaration from module fragment"
-)
+/**
+ * Removes `expect` declarations from the module fragment.
+ */
+@PhaseDescription(name = "ExpectDeclarationsRemoving")
 internal class JvmExpectDeclarationRemover(private val context: JvmBackendContext) : ExpectDeclarationRemover(context) {
     override fun lower(irFile: IrFile) {
         if (context.config.useFir) {

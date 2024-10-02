@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
-@PhaseDescription(
-    name = "JvmSafeCallChainFoldingLowering",
-    description = "Fold safe call chains to more compact forms"
-)
+/**
+ * Folds safe call chains to more compact forms.
+ */
+@PhaseDescription(name = "JvmSafeCallChainFoldingLowering")
 internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLoweringPass {
     // Overall idea here is to represent (possibly chained) safe calls as an if-expression in the form:
     //      when {

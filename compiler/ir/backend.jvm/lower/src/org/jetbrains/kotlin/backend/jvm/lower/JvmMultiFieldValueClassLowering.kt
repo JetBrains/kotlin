@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-@PhaseDescription(
-    name = "MultiFieldValueClasses",
-    description = "Lower multi-field value classes",
-)
+@PhaseDescription(name = "MultiFieldValueClasses")
 internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override fun lower(irFile: IrFile) {
         if (context.config.supportMultiFieldValueClasses) {

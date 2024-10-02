@@ -42,9 +42,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.org.objectweb.asm.Type
 
+/**
+ * Adds continuation classes and parameters to suspend functions.
+ */
 @PhaseDescription(
     name = "AddContinuation",
-    description = "Add continuation classes and parameters to suspend functions",
     prerequisite = [SuspendLambdaLowering::class, JvmLocalDeclarationsLowering::class, TailCallOptimizationLowering::class]
 )
 internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {

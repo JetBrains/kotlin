@@ -35,7 +35,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 
 @PhaseDescription(
     name = "SyntheticAccessor",
-    description = "Introduce synthetic accessors",
     prerequisite = [ObjectClassLowering::class, StaticDefaultFunctionLowering::class, InterfaceLowering::class]
 )
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPass {

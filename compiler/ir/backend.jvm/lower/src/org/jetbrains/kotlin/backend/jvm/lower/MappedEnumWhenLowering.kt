@@ -31,35 +31,33 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-// A version of EnumWhenLowering that is more friendly to incremental compilation. For example,
-// suppose the code initially looks like this:
-//
-//     // 1.kt
-//     enum E { X }
-//
-//     // 2.kt
-//     fun f(e: E) = when (e) { E.X -> 1 }
-//
-// EnumWhenLowering would transform 2.kt into this:
-//
-//     fun f(e: E) = when (e.ordinal()) { 0 -> 1 }
-//
-// While this lowering would generate (approximately) this instead:
-//
-//     fun f(e: E) = when (WhenMappings.$EnumSwitchMapping$0[e.ordinal()]) { 1 -> 1 }
-//
-//     object WhenMappings {
-//         // Note the runtime call to ordinal(): 0 is not hardcoded.
-//         val $EnumSwitchMapping$0 = IntArray(E.values().size).also { it[E.X.ordinal()] = 1 }
-//     }
-//
-// The latter would not need to be recompiled if new entries were added before `X`
-// at the negligible cost of an additional initializer per run + one array read per call.
-//
-@PhaseDescription(
-    name = "EnumWhenLowering",
-    description = "Replace `when` subjects of enum types with their ordinals"
-)
+/**
+ * Replaces `when` subjects of enum types with their ordinals, which is needed for incremental compilation.
+ * For example, suppose the code initially looks like this:
+ *
+ *     // 1.kt
+ *     enum E { X }
+ *
+ *     // 2.kt
+ *     fun f(e: E) = when (e) { E.X -> 1 }
+ *
+ * [EnumWhenLowering] would transform 2.kt into this:
+ *
+ *     fun f(e: E) = when (e.ordinal()) { 0 -> 1 }
+ *
+ * While this lowering would generate (approximately) this instead:
+ *
+ *     fun f(e: E) = when (WhenMappings.$EnumSwitchMapping$0[e.ordinal()]) { 1 -> 1 }
+ *
+ *     object WhenMappings {
+ *         // Note the runtime call to ordinal(): 0 is not hardcoded.
+ *         val $EnumSwitchMapping$0 = IntArray(E.values().size).also { it[E.X.ordinal()] = 1 }
+ *     }
+ *
+ * The latter would not need to be recompiled if new entries were added before `X`
+ * at the negligible cost of an additional initializer per run + one array read per call.
+ */
+@PhaseDescription(name = "EnumWhenLowering")
 internal class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
     private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }

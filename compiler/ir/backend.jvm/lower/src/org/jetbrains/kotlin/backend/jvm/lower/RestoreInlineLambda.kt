@@ -17,18 +17,17 @@ import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 /**
+ * Traverses `INLINE_LAMBDA` blocks and restores original expression before converting it into inline lambda. This is required because
+ * the JVM backend will not convert these lambdas into classes otherwise.
+ *
  * This lowering is a hack for JVM IR inliner. Two reasons why we need it:
- * 1. We need to traverse defaults of inline function and also transform them into INLINE_LAMBDA.
- * But if these transformations remain, JVM backend will complain that it can't handle function reference.
- * References marked as INLINE_LAMBDA are not converted into classes.
- * 2. Kind of the same problem but with SUSPEND_CONVERSION.
- * Must roll back changes so these references could be transformed into classes.
+ * 1. We need to traverse defaults of inline function and also transform them into `INLINE_LAMBDA`.
+ *    But if these transformations remain, JVM backend will complain that it can't handle function reference.
+ *    References marked as `INLINE_LAMBDA` are not converted into classes.
+ * 2. Kind of the same problem but with `SUSPEND_CONVERSION`.
+ *    Must roll back changes so these references could be transformed into classes.
  */
-@PhaseDescription(
-    name = "RestoreInlineLambda",
-    description = "Traverse INLINE_LAMBDA blocks and restore original expression before converting it into inline lambda." +
-            "This is required because JVM will not convert these lambdas into classes otherwise.",
-)
+@PhaseDescription(name = "RestoreInlineLambda")
 class RestoreInlineLambda(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {

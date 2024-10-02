@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
 
-// TODO: `IrValueParameter.defaultValue` property does not track default values in super-parameters. See KT-28637.
-@PhaseDescription(
-    name = "JvmOverloadsAnnotation",
-    description = "Handle JvmOverloads annotations"
-)
+/**
+ * Handles JvmOverloads annotations.
+ *
+ * Note that [IrValueParameter.defaultValue] property does not track default values in super-parameters.
+ * See [KT-28637](youtrack.jetbrains.com/issue/KT-28637).
+ */
+@PhaseDescription(name = "JvmOverloadsAnnotation")
 internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {

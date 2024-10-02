@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
+/**
+ * Creates a separate call to `singleArgumentInlineFunction` with previously inlined lambda as argument.
+ */
 @PhaseDescription(
     name = "CreateSeparateCallForInlinedLambdasLowering",
-    description = "This lowering will create separate call `singleArgumentInlineFunction` with previously inlined lambda as argument",
     prerequisite = [JvmIrInliner::class]
 )
 class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {

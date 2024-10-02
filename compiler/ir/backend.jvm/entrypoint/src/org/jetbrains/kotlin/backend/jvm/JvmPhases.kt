@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.render
 
-@PhaseDescription(
-    name = "CodegenRegular",
-    description = "Code generation of regular classes"
-)
+/**
+ * Code generation of regular classes.
+ */
+@PhaseDescription(name = "CodegenRegular")
 private class CodegenRegular(context: JvmBackendContext) : FileCodegen(context, generateMultifileFacade = false)
 
-@PhaseDescription(
-    name = "CodegenMultifileFacades",
-    description = "Code generation of multifile facades"
-)
+/**
+ * Code generation of multifile facades.
+ */
+@PhaseDescription(name = "CodegenMultifileFacades")
 private class CodegenMultifileFacades(context: JvmBackendContext) : FileCodegen(context, generateMultifileFacade = true)
 
 private abstract class FileCodegen(
@@ -42,10 +42,10 @@ private abstract class FileCodegen(
     }
 }
 
-@PhaseDescription(
-    name = "GenerateAdditionalClasses",
-    description = "Generate additional classes that were requested during codegen",
-)
+/**
+ * Generates additional classes that were requested during codegen.
+ */
+@PhaseDescription(name = "GenerateAdditionalClasses")
 private class GenerateAdditionalClassesPhase(private val context: JvmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()

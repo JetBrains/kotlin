@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrBody
 
+/**
+ * Replaces returnable blocks with do-while(false) loops.
+ *
+ * @see ReturnableBlockTransformer
+ */
 @PhaseDescription(
     name = "ReturnableBlock",
-    description = "Replace returnable blocks with do-while(false) loops",
     prerequisite = [ArrayConstructorLowering::class, AssertionLowering::class, DirectInvokeLowering::class]
 )
 internal class JvmReturnableBlockLowering(val context: JvmBackendContext) : BodyLoweringPass {

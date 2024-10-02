@@ -121,7 +121,6 @@ private const val MAX_STRING_CONCAT_DEPTH = 23
  */
 @PhaseDescription(
     name = "StringConcatenation",
-    description = "Replace IrStringConcatenation with string builders",
     // FlattenStringConcatenationLowering consolidates string concatenation expressions.
     // ForLoopsLowering may produce IrStringConcatenations.
     prerequisite = [FlattenStringConcatenationLowering::class, ForLoopsLowering::class]

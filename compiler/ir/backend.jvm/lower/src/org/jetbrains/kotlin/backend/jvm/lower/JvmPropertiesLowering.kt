@@ -39,12 +39,11 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-@PhaseDescription(
-    name = "Properties",
-    description = "Move fields and accessors for properties to their classes, " +
-            "replace calls to default property accessors with field accesses, " +
-            "remove unused accessors and create synthetic methods for property annotations"
-)
+/**
+ * Moves fields and accessors for properties to their classes, replaces calls to default property accessors with field accesses,
+ * removes unused accessors and creates synthetic methods for property annotations.
+ */
+@PhaseDescription(name = "Properties")
 internal class JvmPropertiesLowering(
     private val backendContext: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {

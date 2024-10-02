@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.types.IrType
 
-@PhaseDescription(
-    name = "Tailrec",
-    description = "Handle tailrec calls"
-)
+@PhaseDescription(name = "Tailrec")
 internal class JvmTailrecLowering(context: JvmBackendContext) : TailrecLowering(context) {
     override val useProperComputationOrderOfTailrecDefaultParameters: Boolean =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperComputationOrderOfTailrecDefaultParameters)

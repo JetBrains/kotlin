@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 /**
  * This lowering pass optimizes for-loops.
  *
- * Replace iteration over progressions (e.g., X.indices, a..b) and arrays with
+ * Replace iteration over progressions (e.g., `X.indices`, `a..b`) and arrays with
  * a simple while loop over primitive induction variable.
  *
  * For example, this loop:
  * ```
- *   for (loopVar in A..B) { // Loop body }
+ *   for (loopVar in A..B) { /* Loop body */ }
  * ```
  * is represented in IR in such a manner:
  * ```
@@ -98,10 +98,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  *   }
  * ```
  */
-@PhaseDescription(
-    name = "ForLoopsLowering",
-    description = "For loops lowering"
-)
+@PhaseDescription(name = "ForLoopsLowering")
 open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     open val loopBodyTransformer: ForLoopBodyTransformer?
         get() = null

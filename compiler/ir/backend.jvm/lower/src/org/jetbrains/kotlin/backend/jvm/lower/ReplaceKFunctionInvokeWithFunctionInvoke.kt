@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * with `SuspendFunction{n}.invoke`. This is needed because normally the type e.g. `kotlin.reflect.KFunction2` is mapped to
  * `kotlin.reflect.KFunction` (a real class, without arity), which doesn't have the corresponding `invoke`.
  */
-@PhaseDescription(
-    name = "ReplaceKFunctionInvokeWithFunctionInvoke",
-    description = "Replace KFunction{n}.invoke with Function{n}.invoke"
-)
+@PhaseDescription(name = "ReplaceKFunctionInvokeWithFunctionInvoke")
 internal class ReplaceKFunctionInvokeWithFunctionInvoke(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) :
     FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {

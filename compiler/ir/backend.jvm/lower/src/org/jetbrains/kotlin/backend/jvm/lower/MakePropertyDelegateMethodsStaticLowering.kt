@@ -20,18 +20,19 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-// This phase is needed to support correct generation of synthetic `$delegate` methods for optimized delegated properties, in the case
-// when receiver of the optimized property reference is a field from an outer class.
-//
-// Since PropertyReferenceDelegationLowering runs before LocalDeclarationsLowering, fields for captured this (aka `this$0`) are not
-// generated yet. And there's no other way to obtain the instance of the outer class on an arbitrary value of an inner class.
-// However, we need `$delegate` methods to be static to be non-overridable (and public to be visible in reflection and external tools).
-//
-// So PropertyReferenceDelegationLowering generates `$delegate` methods for optimized property references as instance methods,
-// and this phase, which runs _after_ LocalDeclarationsLowering, transforms them to static methods.
+/**
+ * This phase makes `$delegate` methods for optimized delegated properties static, which is needed in the case when receiver of
+ * the optimized property reference is a field from an outer class.
+ *
+ * Since [PropertyReferenceDelegationLowering] runs before [JvmLocalDeclarationsLowering], fields for captured this (aka `this$0`) are not
+ * generated yet. And there's no other way to obtain the instance of the outer class on an arbitrary value of an inner class.
+ * However, we need `$delegate` methods to be static to be non-overridable (and public to be visible in reflection and external tools).
+ *
+ * So [PropertyReferenceDelegationLowering] generates `$delegate` methods for optimized property references as instance methods,
+ * and this phase, which runs _after_ [JvmLocalDeclarationsLowering], transforms them to static methods.
+ */
 @PhaseDescription(
     name = "MakePropertyDelegateMethodsStatic",
-    description = "Make `\$delegate` methods for optimized delegated properties static",
     prerequisite = [PropertyReferenceDelegationLowering::class, JvmLocalDeclarationsLowering::class]
 )
 internal class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {

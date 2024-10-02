@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
 
-@PhaseDescription(
-    name = "JvmBuiltInsLowering",
-    description = "JVM-specific implementations of some built-ins"
-)
+@PhaseDescription(name = "JvmBuiltInsLowering")
 internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = object : IrElementTransformerVoidWithContext() {

@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
-@PhaseDescription(
-    name = "PolymorphicSignature",
-    description = "Replace polymorphic methods with fake ones according to types at the call site"
-)
+/**
+ * Replaces polymorphic methods with fake ones according to types at the call site.
+ */
+@PhaseDescription(name = "PolymorphicSignature")
 internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrTransformer<PolymorphicSignatureLowering.Data>(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {

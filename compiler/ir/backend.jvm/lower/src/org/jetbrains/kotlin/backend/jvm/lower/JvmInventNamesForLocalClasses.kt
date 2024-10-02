@@ -20,7 +20,6 @@ import org.jetbrains.org.objectweb.asm.Type
 
 @PhaseDescription(
     name = "InventNamesForLocalClasses",
-    description = "Invent names for local classes and anonymous objects",
     // MainMethodGeneration introduces lambdas, needing names for their local classes.
     prerequisite = [MainMethodGenerationLowering::class],
 )
