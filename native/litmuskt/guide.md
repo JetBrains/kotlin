@@ -4,11 +4,12 @@ This guide is not intended to be complete. Instead, the key points for running a
 
 ## Basics
 
-* Only `:litmuskt:core` and `:litmuskt:testsuite` parts are currently relevant. Things like JCStress interop and a CLI are currently omitted from this integration.
-* The integration is encapsulated into `:litmuskt:repo-tests` subproject.
+* Only `litmuskt-core` and `litmuskt-testsuite` parts are currently relevant. Things like JCStress interop and a CLI are currently omitted from this integration.
+* The integration is encapsulated into `:litmuskt:repo-tests` subproject. Some necessary _native_ utils are located in `:litmuskt-repo-utils` subproject.
 * To run a test, do the following:
-    * Write the test in `:testsuite` as per normal LitmusKt guide
-    * Add a wrapper for it into `:repo-tests/testData/standalone` using existing wrappers as reference
+    * Write the test in `:repo-utils` as per normal LitmusKt guide. See [here](repo-utils/src/nativeMain/kotlin/org/jetbrains/litmuskt/extratests/RepoTest.kt) for a sample test
+    * Add a wrapper for it into [:repo-tests](repo-tests/testData/standalone) using existing wrappers as reference
+      * Note that nothing is stopping you from writing a new test directly into `testData`. However, it is more practical to write it inside a normal Gradle subproject, rather than quasi-Kotlin files
     * Run `./gradlew :native:native.tests:generateTests`
     * Then run `./gradlew :litmuskt:repo-tests:nativeTest`
   
@@ -18,21 +19,5 @@ This guide is not intended to be complete. Instead, the key points for running a
 
 ## Updating LitmusKt version
 
-In theory, there should have been a git submodule here. In practice, it was decided that no one uses them and it would be simpler to do everything manually.
-
-In `./native/litmuskt`:
-
-1. `git clone https://github.com/JetBrains-Research/litmuskt new-version -b development`
-1. Fix the new version files:
-    * Only keep `:core` and `:testsuite` subprojects. Remove all other subprojects and build files
-    * In `:testsuite` build file, add the `:litmuskt` prefix to `:core`, remove all KSP 
-    * In both build files, remove `java-library` plugin
-1. Remove `testsuite/src/.../generated/LitmusTestRegistry.kt` and `.../LitmusTestExtensions.kt`
-1. Remove `testsuite/.../WordTearingNative.kt` test (or find a way to make it compile, with `Bitset` being obsolete and `@ObsoleveNativeApi` being internal)
-1. Make sure the wrappers are still correct, in case there were API-breaking changes
-1. Keep the `core/nativeMain/src/.../RepoUtils.kt` file in the new version
-1. Swap the old `:core` and `:testsuite` subprojects with the new ones
-
-And that should be it. If something fails, read the generated HTML, it is the only place with detailed error message and stacktrace.
-
-**UPD**: all the changes above can be done by applying the `repo-integration.patch` to a freshly cloned version of LitmusKt. Moreover, you can use the `update.sh` script from this folder to clone LitmusKt, apply the patch, and overwrite the current `:core` and `:testsuite`. **Be careful** as it will overwrite any tests you might have manually added to `:testsuite`!
+1. Update library versions in [repo-utils](repo-utils/build.gradle.kts) and [repo-tests](repo-tests/build.gradle.kts)
+2. Update the [checksum file](../../gradle/verification-metadata.xml). To do that, from project root run `./gradlew -M sha256,md5 help`. Perhaps you will need to clear the old version checksums first. See the relevant [Kotlin README section](https://github.com/JetBrains/kotlin?tab=readme-ov-file#dependency-verification)

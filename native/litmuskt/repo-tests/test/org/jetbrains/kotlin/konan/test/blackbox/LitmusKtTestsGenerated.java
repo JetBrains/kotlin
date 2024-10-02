@@ -71,6 +71,12 @@ public class LitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("Sample.kt")
+  public void testSample() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/Sample.kt");
+  }
+
+  @Test
   @TestMetadata("StoreBuffering.kt")
   public void testStoreBuffering() {
     runTest("native/litmuskt/repo-tests/testData/standalone/StoreBuffering.kt");

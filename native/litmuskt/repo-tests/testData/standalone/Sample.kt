@@ -1,0 +1,21 @@
+// KIND: STANDALONE
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+
+import kotlin.test.*
+import org.jetbrains.litmuskt.*
+import org.jetbrains.litmuskt.autooutcomes.*
+import org.jetbrains.litmuskt.barriers.*
+import org.jetbrains.litmuskt.tests.*
+
+import org.jetbrains.litmuskt.extratests.sampleTest
+
+fun runTest(test: LitmusTest<*>) {
+    val result = runTestWithSampleParams(test)
+    println(result.generateTable() + "\n")
+    assertFalse(result.hasForbidden())
+}
+
+@Test
+fun plain() = runTest(sampleTest)

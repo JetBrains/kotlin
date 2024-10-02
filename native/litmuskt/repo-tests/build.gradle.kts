@@ -8,6 +8,13 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://packages.jetbrains.team/maven/p/plan/litmuskt")
+    }
+}
+
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
 val nativeTargetName = HostManager.host.name
 
@@ -31,13 +38,23 @@ val litmusktTestsuiteNativeKlib by configurations.creating {
     }
 }
 
-repositories {
-    mavenCentral()
+val litmusktRepoUtilsNativeKlib by configurations.creating {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    }
 }
 
 dependencies {
+    litmusktCoreNativeKlib("org.jetbrains.litmuskt:litmuskt-core:0.1")
+    litmusktTestsuiteNativeKlib("org.jetbrains.litmuskt:litmuskt-testsuite:0.1")
+    litmusktRepoUtilsNativeKlib(project(":litmuskt:repo-utils"))
+
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli-common"))
@@ -79,38 +96,7 @@ dependencies {
 
     testRuntimeOnly(kotlinStdlib())
     testRuntimeOnly(project(":compiler:backend-common"))
-
-    // use local subprojects as dependencies 
-    litmusktCoreNativeKlib(project(":litmuskt:core")) {
-        // isTransitive = false
-    }
-    litmusktTestsuiteNativeKlib(project(":litmuskt:testsuite")) { isTransitive = false }
-
-// Implicit dependencies on native artifacts to run native tests on CI
-//    implicitDependencies("org.jetbrains.kotlinx:atomicfu-linuxx64:0.21.0") {
-//        attributes {
-//            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-//        }
-//    }
-//    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosarm64:0.21.0"){
-//        attributes {
-//            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-//        }
-//    }
-//    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosx64:0.21.0"){
-//        attributes {
-//            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-//        }
-//    }
-//    implicitDependencies("org.jetbrains.kotlinx:atomicfu-mingwx64:0.21.0"){
-//        attributes {
-//            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-//        }
-//    }
 }
-
-//optInToExperimentalCompilerApi()
-//optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
@@ -136,7 +122,7 @@ val nativeTest = nativeTest(
     taskName = "nativeTest",
     tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
     requirePlatformLibs = true,
-    customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib),
+    customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib, litmusktRepoUtilsNativeKlib),
     allowParallelExecution = false,
 )
 
