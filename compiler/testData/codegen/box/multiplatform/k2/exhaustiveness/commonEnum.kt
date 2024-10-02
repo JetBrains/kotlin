@@ -1,8 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM
 // ISSUE: KT-20306
 
-// MODULE: m1-common
+// MODULE: common
 // FILE: common.kt
 enum class Base {
     A, B
@@ -15,7 +14,7 @@ fun testCommon(base: Base) {
     }
 }
 
-// MODULE: m1-jvm()()(m1-common)
+// MODULE: platform()()(common)
 // FILE: main.kt
 
 fun testPlatform(base: Base) {

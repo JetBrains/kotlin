@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM
 
 // MODULE: common0
 // FILE: common0.kt

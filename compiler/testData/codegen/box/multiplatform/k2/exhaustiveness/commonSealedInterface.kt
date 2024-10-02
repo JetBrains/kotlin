@@ -1,8 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM
 // ISSUE: KT-44474
 
-// MODULE: m1-common
+// MODULE: common
 // FILE: common.kt
 sealed interface Base
 
@@ -16,7 +15,7 @@ fun testCommon(base: Base) {
     }
 }
 
-// MODULE: m1-jvm()()(m1-common)
+// MODULE: platform()()(common)
 // FILE: main.kt
 
 fun testPlatform(base: Base) {

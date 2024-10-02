@@ -1,8 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, NATIVE
+// Reason: non-jvm tests don't support overriding stdlib declarations: KT-71950
 // JVM_ABI_K1_K2_DIFF: KT-67645
 // PREFER_IN_TEST_OVER_STDLIB
-
 // MODULE: common
 // FILE: annotation.kt
 
