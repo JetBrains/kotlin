@@ -14,7 +14,7 @@ public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
 open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
-    public override init() {
+    package override init() {
         fatalError()
     }
     package override init(

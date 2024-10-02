@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 
 public class SirVisibilityCheckerImpl(
     private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
@@ -27,6 +28,11 @@ public class SirVisibilityCheckerImpl(
                 ktSymbol.isConsumableBySirBuilder(ktAnalysisSession)
             }
             is KaConstructorSymbol -> {
+                if ((ktSymbol.containingSymbol as? KaClassSymbol)?.modality?.isAbstract() != false) {
+                    // Hide abstract class constructors from users, but not from other Swift Export modules.
+                    return SirVisibility.PACKAGE
+                }
+
                 true
             }
             is KaNamedFunctionSymbol -> {

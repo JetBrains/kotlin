@@ -3,7 +3,7 @@
 import KotlinRuntime
 
 open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
-    public override init() {
+    package override init() {
         fatalError()
     }
     package override init(

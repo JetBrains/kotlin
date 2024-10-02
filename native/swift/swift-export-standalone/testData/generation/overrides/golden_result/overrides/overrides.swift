@@ -7,7 +7,7 @@ open class AbstractBase : KotlinRuntime.KotlinBase {
             return AbstractBase_abstractVal_get(self.__externalRCRef())
         }
     }
-    public override init() {
+    package override init() {
         fatalError()
     }
     package override init(
@@ -15,7 +15,7 @@ open class AbstractBase : KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
-    public init(
+    package init(
         x: Swift.Int32
     ) {
         fatalError()
@@ -28,7 +28,7 @@ open class AbstractBase : KotlinRuntime.KotlinBase {
     }
 }
 open class AbstractDerived2 : overrides.OpenDerived1 {
-    public override init() {
+    package override init() {
         fatalError()
     }
     package override init(
@@ -36,7 +36,7 @@ open class AbstractDerived2 : overrides.OpenDerived1 {
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
-    public override init(
+    package override init(
         x: Swift.Int32
     ) {
         fatalError()

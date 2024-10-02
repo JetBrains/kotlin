@@ -23,7 +23,10 @@ internal class SirInitFromKtSymbol(
     override val sirSession: SirSession,
 ) : SirInit(), SirFromKtSymbol<KaConstructorSymbol> {
 
-    override val visibility: SirVisibility = SirVisibility.PUBLIC
+    override val visibility: SirVisibility by lazyWithSessions {
+        ktSymbol.sirVisibility(this) ?: error("$ktSymbol shouldn't be exposed to SIR")
+    }
+
     override val isFailable: Boolean = false
 
     override val origin: SirOrigin by lazy {
