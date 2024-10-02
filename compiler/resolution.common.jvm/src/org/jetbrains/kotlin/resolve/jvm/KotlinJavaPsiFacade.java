@@ -659,7 +659,18 @@ public class KotlinJavaPsiFacade implements Disposable {
             CommonProcessors.FindProcessor<VirtualFile> findProcessor = new CommonProcessors.FindProcessor<VirtualFile>() {
                 @Override
                 protected boolean accept(VirtualFile file) {
-                    return scope.accept(file);
+                    if (!scope.accept(file)) return false;
+
+                    // TODO (marco): This doesn't work. A valid package might only include valid packages itself, so this would have to be
+                    //               recursive, which is likely way too slow.
+                    //// We also need to iterate through the files to make sure that there's at least one *Java* source in the directory.
+                    //// Otherwise, the package might be a Kotlin-only package.
+                    //VirtualFile[] children = file.getChildren();
+                    //for (VirtualFile child : children) {
+                    //    if (scope.accept(child)) return true;
+                    //}
+                    //return false;
+                    return true;
                 }
             };
 

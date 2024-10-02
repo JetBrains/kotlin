@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.createLLJavaClassFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.registerJavaComponents
-import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -121,7 +121,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            val firJavaFacade = LLFirJavaFacadeForBinaries(session, project.createJavaClassFinder(scope))
+            val firJavaFacade = LLFirJavaFacadeForBinaries(session, project.createLLJavaClassFinder(scope))
             val deserializedSymbolProviderFactory = LLLibrarySymbolProviderFactory.fromSettings(project)
             addAll(
                 deserializedSymbolProviderFactory.createJvmLibrarySymbolProvider(

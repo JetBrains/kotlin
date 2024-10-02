@@ -33,6 +33,14 @@ fun Project.createJavaClassFinder(scope: GlobalSearchScope): JavaClassFinder =
         setScope(scope)
     }
 
+// TODO (marco): This is ugly code, but we don't have access to `ClsKotlinBinaryClassCache` here, so we need to pass a (copied) scope from
+//               LL FIR.
+fun Project.createJavaClassFinderWithRawScope(scope: GlobalSearchScope): JavaClassFinder =
+    JavaClassFinderImpl().apply {
+        setProjectInstance(this@createJavaClassFinderWithRawScope)
+        setRawScope(scope)
+    }
+
 class JavaClassFinderImpl : AbstractJavaClassFinder() {
     private lateinit var javaFacade: KotlinJavaPsiFacade
 

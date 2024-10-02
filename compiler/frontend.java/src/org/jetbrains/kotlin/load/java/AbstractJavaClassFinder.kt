@@ -49,6 +49,11 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
     }
 
     @Inject
+    fun setRawScope(scope: GlobalSearchScope) {
+        javaSearchScope = scope
+    }
+
+    @Inject
     open fun setProjectInstance(project: Project) {
         this.project = project
     }

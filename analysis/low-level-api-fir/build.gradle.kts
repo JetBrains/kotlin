@@ -25,6 +25,7 @@ dependencies {
     api(project(":js:js.config"))
     api(project(":compiler:cli-common"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
+    implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(project(":analysis:analysis-api-fir"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
