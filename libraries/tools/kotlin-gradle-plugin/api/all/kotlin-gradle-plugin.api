@@ -47,6 +47,10 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinary
 	public final fun findTest (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
 	public abstract fun findTest (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
 	public final fun findTest (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
+	public final fun findTestBundle (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
+	public final fun findTestBundle (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
+	public abstract fun findTestBundle (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
+	public final fun findTestBundle (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
 	public final fun framework ()V
 	public final fun framework (Ljava/lang/String;)V
 	public final fun framework (Ljava/lang/String;Ljava/util/Collection;)V
@@ -89,6 +93,10 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinary
 	public final fun getTest (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
 	public abstract fun getTest (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
 	public final fun getTest (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
+	public final fun getTestBundle (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
+	public final fun getTestBundle (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
+	public abstract fun getTestBundle (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
+	public final fun getTestBundle (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
 	public final fun remove (Ljava/lang/Object;)Z
 	public abstract fun remove (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;)Z
 	public final fun sharedLib ()V
@@ -134,6 +142,20 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinary
 	public static synthetic fun test$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/lang/String;Ljava/util/Collection;Lorg/gradle/api/Action;ILjava/lang/Object;)V
 	public static synthetic fun test$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public static synthetic fun test$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/util/Collection;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public final fun testBundle ()V
+	public final fun testBundle (Ljava/lang/String;)V
+	public final fun testBundle (Ljava/lang/String;Ljava/util/Collection;)V
+	public final fun testBundle (Ljava/lang/String;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)V
+	public final fun testBundle (Ljava/lang/String;Ljava/util/Collection;Lorg/gradle/api/Action;)V
+	public final fun testBundle (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public final fun testBundle (Ljava/util/Collection;)V
+	public final fun testBundle (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)V
+	public final fun testBundle (Ljava/util/Collection;Lorg/gradle/api/Action;)V
+	public final fun testBundle (Lorg/gradle/api/Action;)V
+	public static synthetic fun testBundle$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/lang/String;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun testBundle$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/lang/String;Ljava/util/Collection;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public static synthetic fun testBundle$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun testBundle$default (Lorg/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinaryContainer;Ljava/util/Collection;Lorg/gradle/api/Action;ILjava/lang/Object;)V
 	public fun toArray ()[Ljava/lang/Object;
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }

@@ -63,6 +63,14 @@ enum class NativeOutputKind(
     ) {
         override fun availableFor(target: KonanTarget) =
             target.family.isAppleFamily
+    },
+    TEST_BUNDLE(
+        CompilerOutputKind.TEST_BUNDLE,
+        "testBundle",
+        description = "a Kotlin/Native test bundle"
+    ) {
+        override fun availableFor(target: KonanTarget) =
+            target.family.isAppleFamily
     };
 
     open fun availableFor(target: KonanTarget) = true

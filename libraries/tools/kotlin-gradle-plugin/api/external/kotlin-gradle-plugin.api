@@ -1547,6 +1547,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/StaticLibrary : org/je
 	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/TestBundle : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
 	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;

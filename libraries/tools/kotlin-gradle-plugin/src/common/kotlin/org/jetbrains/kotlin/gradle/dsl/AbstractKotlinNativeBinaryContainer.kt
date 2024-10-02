@@ -168,6 +168,32 @@ abstract class AbstractKotlinNativeBinaryContainer : DomainObjectSet<NativeBinar
     /** Returns a test executable with the empty name prefix and the given build type. Returns null if there is no such binary. */
     fun findTest(buildType: String): TestExecutable? = findTest("", buildType)
 
+    /** Returns a test bundle with the given [namePrefix] and the given build type. Throws an exception if there is no such binary.*/
+    abstract fun getTestBundle(namePrefix: String, buildType: NativeBuildType): TestBundle
+
+    /** Returns a test bundle with the given [namePrefix] and the given build type. Throws an exception if there is no such binary.*/
+    fun getTestBundle(namePrefix: String, buildType: String): TestBundle =
+        getTestBundle(namePrefix, NativeBuildType.valueOf(buildType.toUpperCaseAsciiOnly()))
+
+    /** Returns a test bundle with the empty name prefix and the given build type. Throws an exception if there is no such binary.*/
+    fun getTestBundle(buildType: NativeBuildType): TestBundle = getTestBundle("", buildType)
+
+    /** Returns a test bundle with the empty name prefix and the given build type. Throws an exception if there is no such binary.*/
+    fun getTestBundle(buildType: String): TestBundle = getTestBundle("", buildType)
+
+    /** Returns a test bundle with the given [namePrefix] and the given build type. Returns null if there is no such binary. */
+    abstract fun findTestBundle(namePrefix: String, buildType: NativeBuildType): TestBundle?
+
+    /** Returns a test bundle with the given [namePrefix] and the given build type. Returns null if there is no such binary. */
+    fun findTestBundle(namePrefix: String, buildType: String): TestBundle? =
+        findTestBundle(namePrefix, NativeBuildType.valueOf(buildType.toUpperCaseAsciiOnly()))
+
+    /** Returns a test bundle with the empty name prefix and the given build type. Returns null if there is no such binary. */
+    fun findTestBundle(buildType: NativeBuildType): TestBundle? = findTestBundle("", buildType)
+
+    /** Returns a test bundle with the empty name prefix and the given build type. Returns null if there is no such binary. */
+    fun findTestBundle(buildType: String): TestBundle? = findTestBundle("", buildType)
+
     /** Creates an executable with the given [namePrefix] for each build type and configures it. */
     @JvmOverloads
     fun executable(
@@ -318,4 +344,34 @@ abstract class AbstractKotlinNativeBinaryContainer : DomainObjectSet<NativeBinar
         configure: Action<TestExecutable>
     ) = test(buildTypes) { configure.execute(this) }
 
+
+    /** Creates a test bundle with the given [namePrefix] for each build type and configures it. */
+    @JvmOverloads
+    fun testBundle(
+        namePrefix: String,
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configure: TestBundle.() -> Unit = {},
+    ) = createBinaries(namePrefix, namePrefix, NativeOutputKind.TEST_BUNDLE, buildTypes, ::TestBundle, configure)
+
+    /** Creates a test bundle with the empty name prefix for each build type and configures it. */
+    @JvmOverloads
+    fun testBundle(
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configure: TestBundle.() -> Unit = {},
+    ) = createBinaries("", "testBundle", NativeOutputKind.TEST_BUNDLE, buildTypes, ::TestBundle, configure)
+
+    /** Creates a test bundle with the given [namePrefix] for each build type and configures it. */
+    @JvmOverloads
+    fun testBundle(
+        namePrefix: String,
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configure: Action<TestBundle>,
+    ) = testBundle(namePrefix, buildTypes) { configure.execute(this) }
+
+    /** Creates a test bundle with the default name prefix for each build type and configures it. */
+    @JvmOverloads
+    fun testBundle(
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configure: Action<TestBundle>,
+    ) = testBundle(buildTypes) { configure.execute(this) }
 }

@@ -182,7 +182,7 @@ constructor(
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
 
     @get:Input
-    val processTests: Boolean by lazyConvention { binary is TestExecutable }
+    val processTests: Boolean by lazyConvention { binary is TestExecutable || binary is TestBundle }
 
     @get:Classpath
     val exportLibraries: FileCollection get() = exportLibrariesResolvedConfiguration?.files ?: objectFactory.fileCollection()

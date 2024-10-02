@@ -91,6 +91,9 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
     override fun getTest(namePrefix: String, buildType: NativeBuildType): TestExecutable =
         getBinary(namePrefix, buildType, NativeOutputKind.TEST)
 
+    override fun getTestBundle(namePrefix: String, buildType: NativeBuildType): TestBundle =
+        getBinary(namePrefix, buildType, NativeOutputKind.TEST_BUNDLE)
+
     override fun findExecutable(namePrefix: String, buildType: NativeBuildType): Executable? {
         return findBinary(namePrefix, buildType, NativeOutputKind.EXECUTABLE)
     }
@@ -106,6 +109,9 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
 
     override fun findTest(namePrefix: String, buildType: NativeBuildType): TestExecutable? =
         findBinary(namePrefix, buildType, NativeOutputKind.TEST)
+
+    override fun findTestBundle(namePrefix: String, buildType: NativeBuildType): TestBundle? =
+        findBinary(namePrefix, buildType, NativeOutputKind.TEST_BUNDLE)
     // endregion.
 
     // region Factories
@@ -132,7 +138,10 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
                 "Cannot create ${outputKind.description}: $name. Binaries of this kind are not available for target ${target.name}"
             }
 
-            val compilation = if (outputKind == NativeOutputKind.TEST) defaultTestCompilation else defaultCompilation
+            val compilation = when (outputKind) {
+                NativeOutputKind.TEST_BUNDLE, NativeOutputKind.TEST -> defaultTestCompilation
+                else -> defaultCompilation
+            }
             val binary = create(name, baseName, buildType, compilation)
             add(binary)
             prefixGroup.binaries.add(binary)
@@ -146,7 +155,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
     }
 
     companion object {
-       internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
+        internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
             lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
 
         internal fun extractPrefixFromBinaryName(name: String, buildType: NativeBuildType, outputKindClassifier: String): String {

@@ -206,6 +206,18 @@ class TestExecutable(
 }
 
 @KotlinGradlePluginPublicDsl
+class TestBundle(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractExecutable(name, baseName, buildType, compilation) {
+
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.TEST_BUNDLE
+}
+
+@KotlinGradlePluginPublicDsl
 abstract class AbstractNativeLibrary(
     name: String,
     baseName: String,
