@@ -122,6 +122,11 @@ public final class InTextDirectivesUtils {
 
     @NotNull
     public static Map<String, List<String>> findLinesByPrefixRemoved(@NotNull String fileText, boolean trim, boolean strict, @NotNull String... prefixes) {
+        return findLinesByPrefixRemoved(fileText, true, strict, false, prefixes);
+    }
+
+    @NotNull
+    public static Map<String, List<String>> findLinesByPrefixRemoved(@NotNull String fileText, boolean trim, boolean strict, boolean separatedValues, @NotNull String... prefixes) {
         if (prefixes.length == 0) {
             throw new IllegalArgumentException("Please specify the prefixes to check");
         }
@@ -136,7 +141,15 @@ public final class InTextDirectivesUtils {
                     if (noPrefixLine.isEmpty() ||
                             Character.isWhitespace(noPrefixLine.charAt(0)) ||
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
-                        result.computeIfAbsent(prefix, s -> new ArrayList<>()).add(trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1)));
+
+                        List<String> resultList = result.computeIfAbsent(prefix, s -> new ArrayList<>());
+                        String notSplit = trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1));
+                        if (separatedValues) {
+                            List<String> split = Arrays.asList(notSplit.split(", *"));
+                            resultList.addAll(split);
+                        } else {
+                            resultList.add(notSplit);
+                        }
                         break;
                     } else if (strict) {
                         throw new AssertionError(
@@ -236,10 +249,21 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isCompatibleTarget(@NotNull TargetBackend targetBackend, @NotNull File file) {
+        return isCompatibleTarget(targetBackend, file, /*separatedDirectiveValues=*/false);
+    }
+
+    public static boolean isCompatibleTarget(@NotNull TargetBackend targetBackend, @NotNull File file, boolean separatedDirectiveValues) {
         if (targetBackend == TargetBackend.ANY) return true;
         String textWithDirectives = textWithDirectives(file);
         Map<String, List<String>> byPrefixRemoved =
-                findLinesByPrefixRemoved(textWithDirectives, DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX, TARGET_BACKEND_DIRECTIVE_PREFIX);
+                findLinesByPrefixRemoved(
+                        textWithDirectives,
+                        /*trim=*/true,
+                        /*strcit=*/true,
+                        separatedDirectiveValues,
+                        DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX,
+                        TARGET_BACKEND_DIRECTIVE_PREFIX
+                );
         return isCompatibleTarget(targetBackend, byPrefixRemoved);
     }
 

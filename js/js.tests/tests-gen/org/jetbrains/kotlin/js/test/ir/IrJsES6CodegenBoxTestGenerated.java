@@ -28768,6 +28768,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       }
 
       @Test
+      @TestMetadata("expectCtorlessFinalToActualPromiseOfUnit.kt")
+      public void testExpectCtorlessFinalToActualPromiseOfUnit() {
+        runTest("compiler/testData/codegen/box/multiplatform/complexMatchings/expectCtorlessFinalToActualPromiseOfUnit.kt");
+      }
+
+      @Test
       @TestMetadata("expectCtorlessFinalToActualUnit.kt")
       public void testExpectCtorlessFinalToActualUnit() {
         runTest("compiler/testData/codegen/box/multiplatform/complexMatchings/expectCtorlessFinalToActualUnit.kt");

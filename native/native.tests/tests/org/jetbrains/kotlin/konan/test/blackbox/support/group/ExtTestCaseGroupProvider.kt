@@ -158,7 +158,7 @@ private class ExtTestDataFile(
     }
 
     val isRelevant: Boolean =
-        isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
+        isCompatibleTarget(TargetBackend.NATIVE, testDataFile, /*separatedDirectiveValues=*/true) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
                 && !settings.isDisabledNative(structure.directives)
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS

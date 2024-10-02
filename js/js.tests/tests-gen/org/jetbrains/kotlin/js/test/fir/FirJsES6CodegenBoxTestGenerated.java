@@ -28440,6 +28440,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("expectCtorlessFinalToActualPromiseOfUnit.kt")
+      public void testExpectCtorlessFinalToActualPromiseOfUnit() {
+        runTest("compiler/testData/codegen/box/multiplatform/complexMatchings/expectCtorlessFinalToActualPromiseOfUnit.kt");
+      }
+
+      @Test
       @TestMetadata("expectCtorlessFinalToActualUnit.kt")
       public void testExpectCtorlessFinalToActualUnit() {
         runTest("compiler/testData/codegen/box/multiplatform/complexMatchings/expectCtorlessFinalToActualUnit.kt");
@@ -29041,6 +29047,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @TestMetadata("expectCtorlessFinalToActualObject.kt")
         public void testExpectCtorlessFinalToActualObject() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualObject.kt");
+        }
+
+        @Test
+        @TestMetadata("expectCtorlessFinalToActualPromiseOfUnit.kt")
+        public void testExpectCtorlessFinalToActualPromiseOfUnit() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualPromiseOfUnit.kt");
         }
 
         @Test

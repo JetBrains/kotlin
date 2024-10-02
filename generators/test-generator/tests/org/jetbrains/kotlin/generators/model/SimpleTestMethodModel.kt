@@ -25,7 +25,10 @@ open class SimpleTestMethodModel(
 
     val directives: Map<String, List<String>> by lazy(LazyThreadSafetyMode.NONE) {
         InTextDirectivesUtils.findLinesByPrefixRemoved(
-            InTextDirectivesUtils.textWithDirectives(file),
+            /* fileText = */ InTextDirectivesUtils.textWithDirectives(file),
+            /* trim = */ true,
+            /* strict = */ true,
+            /* separatedValues = */ true,
             *InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES,
             InTextDirectivesUtils.TARGET_BACKEND_DIRECTIVE_PREFIX,
             InTextDirectivesUtils.DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX,
