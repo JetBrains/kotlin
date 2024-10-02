@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDecla
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDelegatedConstructorIsResolved
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -25,12 +25,17 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructo
 import org.jetbrains.kotlin.fir.expressions.builder.buildMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.FirCodeFragmentContext
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
@@ -180,8 +185,9 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
             is FirCodeFragment -> {
-                resolveCodeFragmentContext(target)
+                val context = resolveCodeFragmentContext(target)
                 performCustomResolveUnderLock(target) {
+                    target.codeFragmentContext = context
                     resolve(target, BodyStateKeepers.CODE_FRAGMENT)
                 }
 
@@ -266,7 +272,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 
     @OptIn(DelicateScopeAPI::class)
-    private fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment) {
+    private fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment): LLFirCodeFragmentContext {
         val ktCodeFragment = firCodeFragment.psi as? KtCodeFragment
             ?: errorWithAttachment("Code fragment source not found") {
                 withFirEntry("firCodeFragment", firCodeFragment)
@@ -286,7 +292,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         val contextPsiElement = ktCodeFragment.context
         val contextKtFile = contextPsiElement?.containingFile as? KtFile
 
-        firCodeFragment.codeFragmentContext = if (contextKtFile != null) {
+        return if (contextKtFile != null) {
             val contextModule = resolveSession.getModule(contextKtFile)
             val contextSession = resolveSession.sessionProvider.getResolvableSession(contextModule)
             val contextFirFile = resolveSession.getOrBuildFirFile(contextKtFile)
@@ -319,7 +325,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     @DelicateScopeAPI
     private fun FirTowerDataElement.withProperSession(
         session: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
     ): FirTowerDataElement = FirTowerDataElement(
         scope?.withReplacedSessionOrNull(session, scopeSession) ?: scope,
         implicitReceiver?.withReplacedSessionOrNull(session, scopeSession),
@@ -343,7 +349,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
             is FirTypeAlias,
-            -> {
+                -> {
                 // No bodies here
             }
             else -> throwUnexpectedFirElementError(target)
