@@ -1,5 +1,5 @@
-import KotlinRuntime
 @_implementationOnly import KotlinBridges_ListExport
+import KotlinRuntime
 
 public func testListAny(
     l: [KotlinRuntime.KotlinBase]
