@@ -91,6 +91,14 @@ interface Xcode {
 
         fun defaultCurrent(): Xcode = CurrentXcode()
     }
+
+    val macosxSdkPlatform: String
+    val iphoneosSdkPlatform: String
+    val iphonesimulatorSdkPlatform: String
+    val appletvosSdkPlatform: String
+    val appletvsimulatorSdkPlatform: String
+    val watchosSdkPlatform: String
+    val watchsimulatorSdkPlatform: String
 }
 
 internal class CurrentXcode : Xcode {
@@ -115,6 +123,14 @@ internal class CurrentXcode : Xcode {
     override val appletvsimulatorSdk by lazy { getSdkPath("appletvsimulator") }
     override val watchosSdk: String by lazy { getSdkPath("watchos") }
     override val watchsimulatorSdk: String by lazy { getSdkPath("watchsimulator") }
+
+    override val macosxSdkPlatform by lazy { getSdkPlatformPath("macosx") }
+    override val iphoneosSdkPlatform by lazy { getSdkPlatformPath("iphoneos") }
+    override val iphonesimulatorSdkPlatform by lazy { getSdkPlatformPath("iphonesimulator") }
+    override val appletvosSdkPlatform by lazy { getSdkPlatformPath("appletvos") }
+    override val appletvsimulatorSdkPlatform by lazy { getSdkPlatformPath("appletvsimulator") }
+    override val watchosSdkPlatform: String by lazy { getSdkPlatformPath("watchos") }
+    override val watchsimulatorSdkPlatform: String by lazy { getSdkPlatformPath("watchsimulator") }
 
     internal val xcodebuildVersion: XcodeVersion
         get() = xcrun("xcodebuild", "-version")
@@ -150,6 +166,8 @@ internal class CurrentXcode : Xcode {
     private fun bash(command: String): String = Command("/bin/bash", "-c", command).getOutputLines().joinToString("\n")
 
     private fun getSdkPath(sdk: String) = xcrun("--sdk", sdk, "--show-sdk-path")
+
+    private fun getSdkPlatformPath(sdk: String) = xcrun("--sdk", sdk, "--show-sdk-platform-path")
 
     private fun String.parseXcodeVersion(): XcodeVersion {
         return XcodeVersion.parse(this) ?: throw MissingXcodeException("Couldn't parse Xcode version from '$this'")

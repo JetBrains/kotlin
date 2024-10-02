@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
-import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
@@ -321,26 +321,13 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
         "${targetPlatform()}/Developer/Library/Frameworks/"
     }
 
-    private fun targetPlatform(): String {
-        val xcodeTarget = when (val target = nativeTargets.testTarget) {
-            KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
-            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
-            KonanTarget.IOS_ARM64 -> "iphoneos"
-            else -> error("Target $target is not supported buy the executor")
-        }
+    private val xcode = Xcode.findCurrent()
 
-        val result = try {
-            runProcess(
-                "/usr/bin/xcrun",
-                "--sdk",
-                xcodeTarget,
-                "--show-sdk-platform-path"
-            )
-        } catch (t: Throwable) {
-            throw IllegalStateException("Failed to run /usr/bin/xcrun process", t)
-        }
-
-        return result.stdout.trim()
+    private fun targetPlatform(): String = when (val target = nativeTargets.testTarget) {
+        KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> xcode.macosxSdkPlatform
+        KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> xcode.iphonesimulatorSdkPlatform
+        KonanTarget.IOS_ARM64 -> xcode.iphoneosSdkPlatform
+        else -> error("Target $target is not supported by the executor")
     }
 }
 
