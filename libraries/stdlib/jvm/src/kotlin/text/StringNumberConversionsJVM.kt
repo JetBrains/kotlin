@@ -317,9 +317,9 @@ private fun isValidFloat(s: String): Boolean {
             // Look for hex digits after the 0x prefix
             var checkpoint = start
             while (start <= end) {
-                val d = s[start].code
-                val l = d or 0x20
-                if ((d >= '0'.code && d <= '9'.code) || (l >= 'a'.code && l <= 'f'.code)) {
+                val d = s[start]
+                val l = d.code or 0x20
+                if (d.isAsciiDigit() || (l >= 'a'.code && l <= 'f'.code)) {
                     start++
                 } else {
                     break
@@ -339,9 +339,9 @@ private fun isValidFloat(s: String): Boolean {
                 // Look for hex digits for the fractional part
                 checkpoint = start
                 while (start <= end) {
-                    val d = s[start].code // used to test digits
-                    val l = d or 0x20 // used to test letters A-F
-                    if ((d >= '0'.code && d <= '9'.code) || (l >= 'a'.code && l <= 'f'.code)) {
+                    val d = s[start] // used to test digits
+                    val l = d.code or 0x20 // used to test letters A-F
+                    if (d.isAsciiDigit() || (l >= 'a'.code && l <= 'f'.code)) {
                         start++
                     } else {
                         break
@@ -372,8 +372,7 @@ private fun isValidFloat(s: String): Boolean {
         // Look for digits before the decimal separator, if any
         var checkpoint = start
         while (start <= end) {
-            val d = s[start].code
-            if (d >= '0'.code && d <= '9'.code) {
+            if (s[start].isAsciiDigit()) {
                 start++
             } else {
                 break
@@ -392,8 +391,7 @@ private fun isValidFloat(s: String): Boolean {
             // Look for the fractional part
             checkpoint = start
             while (start <= end) {
-                val d = s[start].code
-                if (d >= '0'.code && d <= '9'.code) {
+                if (s[start].isAsciiDigit()) {
                     start++
                 } else {
                     break
@@ -448,8 +446,7 @@ private fun isValidFloat(s: String): Boolean {
 
     // Look for digits after the exponent and its optional sign
     while (start <= end) {
-        val d = s[start]
-        if (d in '0'..'9') {
+        if (s[start].isAsciiDigit()) {
             start++
         } else {
             break
@@ -469,4 +466,5 @@ private fun isValidFloat(s: String): Boolean {
     return false
 }
 
-
+@kotlin.internal.InlineOnly
+private inline fun Char.isAsciiDigit() = (this - '0').toChar().code < 10
