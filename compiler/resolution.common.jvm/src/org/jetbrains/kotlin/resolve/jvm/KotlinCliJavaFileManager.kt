@@ -24,5 +24,5 @@ import org.jetbrains.kotlin.name.FqName
 
 interface KotlinCliJavaFileManager : JavaFileManager {
     fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass?
-    fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
+    fun knownClassNamesInPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Set<String>
 }

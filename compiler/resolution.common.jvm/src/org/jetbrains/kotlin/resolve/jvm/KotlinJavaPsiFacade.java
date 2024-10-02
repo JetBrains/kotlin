@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.*;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.JavaPsiFacadeImpl;
 import com.intellij.psi.impl.PsiElementFinderImpl;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
@@ -28,6 +29,7 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
@@ -238,25 +240,25 @@ public class KotlinJavaPsiFacade implements Disposable {
         return javaClass;
     }
 
-    /**
-     * @return null in case the set of names is impossible to compute correctly
-     */
-    @Nullable
+    @NotNull
     public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
         if (SearchScope.isEmptyScope(scope)) return Collections.emptySet();
 
         KotlinPsiElementFinderWrapper[] finders = finders();
 
-        if (canComputeKnownClassNamesInPackage()) {
-            return ((CliFinder) finders[0]).knownClassNamesInPackage(packageFqName);
+        if (finders.length == 1) {
+            return finders[0].knownClassNamesInPackage(packageFqName, scope);
         }
 
-        return null;
+        Set<String> knownClassNames = new HashSet<>();
+        for (KotlinPsiElementFinderWrapper finder : finders) {
+            knownClassNames.addAll(finder.knownClassNamesInPackage(packageFqName, scope));
+        }
+        return knownClassNames;
     }
 
     public Boolean canComputeKnownClassNamesInPackage() {
-        KotlinPsiElementFinderWrapper[] finders = finders();
-        return finders.length == 1 && finders[0] instanceof CliFinder;
+        return true;
     }
 
     @NotNull
@@ -480,6 +482,12 @@ public class KotlinJavaPsiFacade implements Disposable {
         PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
         PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
         boolean isSameResultForAnyScope();
+
+        /**
+         * Returns the set of simple class names contained in the package.
+         */
+        @NotNull
+        Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope);
     }
 
     private static class KotlinPsiElementFinderWrapperImpl implements KotlinPsiElementFinderWrapper {
@@ -508,6 +516,17 @@ public class KotlinJavaPsiFacade implements Disposable {
         @Override
         public boolean isSameResultForAnyScope() {
             return true;
+        }
+
+        @NotNull
+        @Override
+        public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope) {
+            PsiPackage psiPackage = findPackage(packageFqName.asString(), searchScope);
+            if (psiPackage == null) {
+                return Collections.emptySet();
+            }
+
+            return finder.getClassNames(psiPackage, searchScope);
         }
 
         @Override
@@ -543,11 +562,6 @@ public class KotlinJavaPsiFacade implements Disposable {
             return javaFileManager.findClasses(qualifiedName, scope);
         }
 
-        @Nullable
-        public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
-            return javaFileManager.knownClassNamesInPackage(packageFqName);
-        }
-
         @Override
         public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
             return javaFileManager.findPackage(qualifiedName);
@@ -557,6 +571,12 @@ public class KotlinJavaPsiFacade implements Disposable {
         public boolean isSameResultForAnyScope() {
             return false;
         }
+
+        @Override
+        @NotNull
+        public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope) {
+            return javaFileManager.knownClassNamesInPackage(packageFqName, searchScope);
+        }
     }
 
     private static class NonCliFinder implements KotlinPsiElementFinderWrapper, DumbAware {
@@ -564,10 +584,20 @@ public class KotlinJavaPsiFacade implements Disposable {
         private final PsiManager psiManager;
         private final PackageIndex packageIndex;
 
+        @Nullable
+        private PsiElementFinderImpl psiElementFinder = null;
+
         public NonCliFinder(@NotNull Project project, @NotNull JavaFileManager javaFileManager) {
             this.javaFileManager = javaFileManager;
             this.packageIndex = PackageIndex.getInstance(project);
             this.psiManager = PsiManager.getInstance(project);
+
+            for (PsiElementFinder psiElementFinder : PsiElementFinder.EP.getExtensions(project)) {
+                if (psiElementFinder instanceof PsiElementFinderImpl) {
+                    this.psiElementFinder = (PsiElementFinderImpl) psiElementFinder;
+                    break;
+                }
+            }
         }
 
         @Override
@@ -589,6 +619,40 @@ public class KotlinJavaPsiFacade implements Disposable {
         @Override
         public boolean isSameResultForAnyScope() {
             return false;
+        }
+
+        @Override
+        @NotNull
+        public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope) {
+            PsiPackage psiPackage = findPackage(packageFqName.asString(), searchScope);
+            if (psiPackage == null) {
+                return Collections.emptySet();
+            }
+
+            PsiClass[] psiClasses;
+            if (psiElementFinder != null) {
+                // `getClasses` is actually faster than `getClassNames` because the latter for some reason includes Kotlin classes.
+                return psiElementFinder.getClassNames(psiPackage, searchScope);
+                // Actually, this also loads Kotlin classes...
+                //psiClasses = psiElementFinder.getClasses(psiPackage, searchScope);
+                // TODO (marco): We need a FAST way to find class names in packages. Likely: a proper index only for Java sources and class
+                //               files.
+                // At least with the PSI side "hack," `getClassNames` is now reasonably fast because `PsiDirectory.getFiles` now honors the
+                // Kotlin exclusion scope.
+            } else {
+                // Wildly inefficient fallback implementation, as it hits ALL finders, not just the Java finder.
+                psiClasses = psiPackage.getClasses(searchScope);
+            }
+
+            if (psiClasses.length == 0) {
+                return Collections.emptySet();
+            }
+
+            Set<String> knownClassNames = new HashSet<>(psiClasses.length);
+            for (PsiClass psiClass : psiClasses) {
+                ContainerUtil.addIfNotNull(knownClassNames, psiClass.getName());
+            }
+            return knownClassNames;
         }
 
         private static boolean hasDirectoriesInScope(Query<VirtualFile> dirs, GlobalSearchScope scope) {

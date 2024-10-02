@@ -276,19 +276,21 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
 
-    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
+    override fun knownClassNamesInPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Set<String> {
         val result = ObjectOpenHashSet<String>()
         index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
             for (child in dir.children) {
                 if (child.extension == "class" || child.extension == "java" || child.extension == "sig") {
-                    result.add(child.nameWithoutExtension)
+                    if (child in searchScope) {
+                        result.add(child.nameWithoutExtension)
+                    }
                 }
             }
 
             true
         })
 
-        for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName)) {
+        for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName, searchScope)) {
             assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
             result.add(classId.shortClassName.asString())
         }

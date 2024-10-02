@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsSe
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.hasMetadataAnnotation
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -56,12 +56,18 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
     }
 
-    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
-        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override val symbolNamesProvider: FirSymbolNamesProvider =
+        object : FirCompositeCachedSymbolNamesProvider(session, providers.map { it.symbolNamesProvider }) {
+            override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
 
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
-        override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
-    }
+            override fun getPackageNamesWithTopLevelCallables(): Set<String>? = emptySet()
+            override fun computePackageNamesWithTopLevelCallables(): Set<String>? = emptySet()
+
+            override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = emptySet()
+            override fun computeTopLevelCallableNames(packageFqName: FqName): Set<Name>? = emptySet()
+
+            override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
+        }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         classCache.get(classId) { computeClassLikeSymbolByClassId(it) }

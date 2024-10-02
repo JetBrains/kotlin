@@ -82,6 +82,8 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
         // Avoid filling the cache with `null`s and accessing the cache if `knownClassNamesInPackage` cannot be calculated anyway.
         if (!classFinder.canComputeKnownClassNamesInPackage()) return null
+
+        if (!hasPackage(packageFqName)) return emptySet()
         return knownClassNamesInPackage.getValue(packageFqName)
     }
 

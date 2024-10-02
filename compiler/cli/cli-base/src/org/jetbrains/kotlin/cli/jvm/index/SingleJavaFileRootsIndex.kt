@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiKeyword
 import com.intellij.psi.impl.source.tree.ElementType
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -48,7 +49,15 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     }
 
     fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> =
-        roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
+        roots.indices
+            .flatMap(this::getClassIdsForRootAt)
+            .filter { root -> root.packageFqName == packageFqName }
+
+    fun findJavaSourceClasses(packageFqName: FqName, searchScope: GlobalSearchScope): List<ClassId> =
+        roots.indices
+            .filter { roots[it].file in searchScope }
+            .flatMap(this::getClassIdsForRootAt)
+            .filter { it.packageFqName == packageFqName }
 
     private fun getClassIdsForRootAt(index: Int): List<ClassId> {
         for (i in classIdsInRoots.size..index) {
