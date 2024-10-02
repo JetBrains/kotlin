@@ -17,7 +17,7 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
     internal abstract val downloadProperty: org.gradle.api.provider.Property<Boolean>
 
     // To prevent Kotlin build from failing (due to `-Werror`), only deprecate after upgrade of bootstrap version
-//    @Deprecated("This property has been migrated to support the Provider API. Use downloadBaseUrlProperty instead. This will be removed in version 2.2.")
+    @Deprecated("This property has been migrated to support the Provider API. Use downloadBaseUrlProperty instead. This will be removed in version 2.2.")
     var downloadBaseUrl: String?
         get() = downloadBaseUrlProperty.getOrNull()
         set(value) {
@@ -36,7 +36,7 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
     internal abstract val installationDirectory: DirectoryProperty
 
     // To prevent Kotlin build from failing (due to `-Werror`), only deprecate after upgrade of bootstrap version
-//    @Deprecated("This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. This will be removed in version 2.2.")
+    @Deprecated("This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. This will be removed in version 2.2.")
     var version: String
         get() = versionProperty.get()
         set(value) {
