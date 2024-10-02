@@ -105,6 +105,11 @@ open class OPEN_CLASS
 fun recieve_OPEN_CLASS(x: OPEN_CLASS): Unit = TODO()
 fun produce_OPEN_CLASS(): OPEN_CLASS = TODO()
 
+abstract class ABSTRACT_CLASS
+
+fun receive_ABSTRACT_CLASS(x: ABSTRACT_CLASS): Unit = TODO()
+fun produce_ABSTRACT_CLASS(): ABSTRACT_CLASS = TODO()
+
 // FILE: ingored.kt
 package ignored
 
@@ -112,7 +117,6 @@ import Class_without_package
 
 data class DATA_CLASS(val a: Int)
 value class VALUE_CLASS(val a: Int)
-abstract class ABSTRACT_CLASS
 interface INTERFACE
 
 enum class ENUM {
@@ -127,9 +131,6 @@ fun produce_DATA_CLASS(): DATA_CLASS = TODO()
 
 fun receive_VALUE_CLASS(x: VALUE_CLASS): Unit = TODO()
 fun produce_VALUE_CLASS(): VALUE_CLASS = TODO()
-
-fun receive_ABSTRACT_CLASS(x: ABSTRACT_CLASS): Unit = TODO()
-fun produce_ABSTRACT_CLASS(): ABSTRACT_CLASS = TODO()
 
 fun receive_INTERFACE(x: INTERFACE): Unit = TODO()
 fun produce_INTERFACE(): INTERFACE = TODO()

@@ -143,6 +143,8 @@ class CLASS_WITH_SAME_NAME {
     fun foo(): Int = TODO()
 }
 
+abstract class ABSTRACT_CLASS
+
 // FILE: object.kt
 /**
 demo comment for packageless object
@@ -250,8 +252,6 @@ data class DATA_CLASS_WITH_REF(val o: Any)
 inline class INLINE_CLASS(val a: Int)
 
 inline class INLINE_CLASS_WITH_REF(val i: DATA_CLASS_WITH_REF)
-
-abstract class ABSTRACT_CLASS
 
 sealed class SEALED {
     object O : SEALED()

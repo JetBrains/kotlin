@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -52,6 +53,12 @@ internal fun SirInit.constructFunctionBridgeRequests(generator: BridgeGenerator)
         })
         return emptyList()
     }
+
+    val constructedClassSymbol = ((this.parent as? SirClass)?.origin as? KotlinSource)?.symbol as? KaClassSymbol
+    if (constructedClassSymbol?.modality?.isAbstract() != false) {
+        return emptyList()
+    }
+
     val fqName = ((origin as? KotlinSource)?.symbol as? KaConstructorSymbol)
         ?.containingClassId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }

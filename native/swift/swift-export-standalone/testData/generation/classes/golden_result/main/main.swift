@@ -2,6 +2,16 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
+open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
+    public override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public final class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___CLASS_WITH_SAME_NAME_init_allocate()

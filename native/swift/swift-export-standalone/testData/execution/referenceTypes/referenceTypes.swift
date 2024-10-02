@@ -277,6 +277,24 @@ func openClassesAdhereToLSP() throws {
     try assertSame(actual: polymorphicObject, expected: base)
     polymorphicObject = derived
     try assertSame(actual: polymorphicObject, expected: derived)
+
+    let privateImpl = getPrivateImpl()
+    let impl = getImpl()
+
+    try assertTrue(type(of: privateImpl) == Abstract.self)
+    try assertTrue(type(of: impl) == Impl.self)
+
+    try assertTrue(type(of: abstractPolymorphicObject) == Impl.self)
+    try assertTrue(abstractPolymorphicObject !== impl)
+    try assertTrue(abstractPolymorphicObject !== privateImpl)
+
+    abstractPolymorphicObject = impl
+    try assertSame(actual: abstractPolymorphicObject, expected: impl)
+    try assertTrue(abstractPolymorphicObject !== privateImpl)
+
+    abstractPolymorphicObject = privateImpl
+    try assertTrue(abstractPolymorphicObject !== impl)
+    try assertSame(actual: abstractPolymorphicObject, expected: privateImpl)
 }
 
 func companionObject() throws {
@@ -323,6 +341,16 @@ func overridesShouldWork() throws {
     try assertEquals(actual: parent.nullable(), expected: parent)
     try assertEquals(actual: child.nullable(), expected: child)
     try assertEquals(actual: grandchild.nullable(), expected: grandchild)
+
+    let abstractParentImpl1 = AbstractParentImpl()
+    let abstractParentImpl2: AbstractParent = AbstractParentImpl()
+    let abstractParentImpl3 = getAbstractParentImpl()
+    let abstractParentPrivateImpl = getAbstractParentPrivateImpl()
+
+    try assertEquals(actual: abstractParentImpl1.foo(), expected: "AbstractParentImpl")
+    try assertEquals(actual: abstractParentImpl2.foo(), expected: "AbstractParentImpl")
+    try assertEquals(actual: abstractParentImpl3.foo(), expected: "AbstractParentImpl")
+    try assertEquals(actual: abstractParentPrivateImpl.foo(), expected: "AbstractParentPrivateImpl")
 }
 
 func overridesShouldWorkAcrossModules() throws {

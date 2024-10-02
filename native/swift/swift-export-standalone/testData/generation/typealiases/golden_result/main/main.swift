@@ -5,6 +5,7 @@ import KotlinRuntime
 public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32
 public typealias ShouldHaveNoAnnotation = Swift.Int32
+public typealias abstractClss = main.ABSTRACT_CLASS
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias never = Swift.Never
@@ -12,6 +13,16 @@ public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
 public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
+open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
+    public override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
     public static var shared: main.DATA_OBJECT_WITH_PACKAGE {
         get {

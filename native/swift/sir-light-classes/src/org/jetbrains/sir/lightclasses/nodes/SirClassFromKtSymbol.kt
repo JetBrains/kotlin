@@ -41,7 +41,10 @@ internal class SirClassFromKtSymbol(
         when (ktSymbol.modality) {
             KaSymbolModality.OPEN -> SirModality.OPEN
             KaSymbolModality.FINAL -> SirModality.FINAL
-            KaSymbolModality.SEALED, KaSymbolModality.ABSTRACT -> SirModality.UNSPECIFIED
+            // In Swift, superclass of open class must be open.
+            // Since Kotlin abstract or sealed class can be a superclass of Kotlin open class,
+            // `open` modality should be used in Swift.
+            KaSymbolModality.SEALED, KaSymbolModality.ABSTRACT -> SirModality.OPEN
         }
     }
 

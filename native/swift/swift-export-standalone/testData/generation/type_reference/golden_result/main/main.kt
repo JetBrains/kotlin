@@ -5,6 +5,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Object_with_package::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19Object_with_packageC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Object_with_package.INNER_CLASS::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19Object_with_packageC11INNER_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Object_with_package.INNER_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19Object_with_packageC12INNER_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ABSTRACT_CLASS::class, "4main14ABSTRACT_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package::class, "4main21Class_without_packageC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package.INNER_CLASS::class, "4main21Class_without_packageC11INNER_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package.INNER_OBJECT::class, "4main21Class_without_packageC12INNER_OBJECTC")
@@ -293,6 +294,12 @@ public fun __root___nullable_output_ref(): kotlin.native.internal.NativePtr {
     return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___produce_ABSTRACT_CLASS")
+public fun __root___produce_ABSTRACT_CLASS(): kotlin.native.internal.NativePtr {
+    val _result = produce_ABSTRACT_CLASS()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___produce_DATA_OBJECT")
 public fun __root___produce_DATA_OBJECT(): kotlin.native.internal.NativePtr {
     val _result = produce_DATA_OBJECT()
@@ -327,6 +334,12 @@ public fun __root___produce_object(): kotlin.native.internal.NativePtr {
 public fun __root___produce_object_wp(): kotlin.native.internal.NativePtr {
     val _result = produce_object_wp()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__")
+public fun __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as ABSTRACT_CLASS
+    receive_ABSTRACT_CLASS(__x)
 }
 
 @ExportedBridge("__root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__")

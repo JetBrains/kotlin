@@ -63,6 +63,33 @@ class GrandChild(value: Int) : Child(value) {
     final override fun overrideChainFunc() = Unit
 }
 
+abstract class AbstractBase {
+    constructor() {}
+    constructor(x: Int) : this() {}
+
+    abstract val abstractVal: Int
+
+    abstract fun abstractFun1()
+    abstract fun abstractFun2()
+}
+
+open class OpenDerived1 : AbstractBase {
+    constructor() : super() {}
+    constructor(x: Int) : this() {}
+
+    override val abstractVal: Int = 11
+
+    override fun abstractFun1() {}
+    override fun abstractFun2() {}
+}
+
+abstract class AbstractDerived2 : OpenDerived1 {
+    constructor() : super() {}
+    constructor(x: Int) : this() {}
+
+    override abstract fun abstractFun1()
+}
+
 // MODULE: overrides_across_modules(overrides)
 // EXPORT_TO_SWIFT
 // FILE: overrides_across_modules.kt
@@ -71,4 +98,11 @@ open class Cousin(value: String) : Parent(value) {
     override fun primitiveTypeFunc(arg: Int): Int = 10
     override val primitiveTypeVar: Int get() = 20
     final override fun finalOverrideFunc() {}
+}
+
+class FinalDerived3 : AbstractDerived2 {
+    constructor() : super() {}
+    constructor(x: Int) : this() {}
+
+    override fun abstractFun1() {}
 }

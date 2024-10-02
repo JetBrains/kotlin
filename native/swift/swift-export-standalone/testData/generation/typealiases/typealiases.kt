@@ -39,6 +39,9 @@ typealias UselessDeclaration = UselessAnnotation
 open class OPEN_CLASS
 typealias openClass = OPEN_CLASS
 
+abstract class ABSTRACT_CLASS
+typealias abstractClss = ABSTRACT_CLASS
+
 class INHERITANCE_SINGLE_CLASS : OPEN_CLASS()
 typealias inheritanceSingleClass = INHERITANCE_SINGLE_CLASS
 
@@ -90,9 +93,6 @@ typealias inlineClass = INLINE_CLASS
 
 inline class INLINE_CLASS_WITH_REF(val i: DATA_CLASS_WITH_REF)
 typealias inlineClassWithRef = INLINE_CLASS_WITH_REF
-
-abstract class ABSTRACT_CLASS
-typealias abstractClss = ABSTRACT_CLASS
 
 sealed class SEALED {
     object O : SEALED()

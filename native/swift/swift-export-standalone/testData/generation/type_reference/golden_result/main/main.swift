@@ -2,6 +2,16 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
+open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
+    public override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public final class Class_without_package : KotlinRuntime.KotlinBase {
     public final class INNER_CLASS : KotlinRuntime.KotlinBase {
         public override init() {
@@ -307,6 +317,9 @@ public func nullable_output_prim() -> Swift.Int32? {
 public func nullable_output_ref() -> main.Class_without_package? {
     return switch __root___nullable_output_ref() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }
 }
+public func produce_ABSTRACT_CLASS() -> main.ABSTRACT_CLASS {
+    return main.ABSTRACT_CLASS(__externalRCRef: __root___produce_ABSTRACT_CLASS())
+}
 public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: __root___produce_DATA_OBJECT())
 }
@@ -324,6 +337,11 @@ public func produce_object() -> main.Object_without_package {
 }
 public func produce_object_wp() -> ExportedKotlinPackages.namespace.deeper.Object_with_package {
     return ExportedKotlinPackages.namespace.deeper.Object_with_package(__externalRCRef: __root___produce_object_wp())
+}
+public func receive_ABSTRACT_CLASS(
+    x: main.ABSTRACT_CLASS
+) -> Swift.Void {
+    return __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__(x.__externalRCRef())
 }
 public func recieve_DATA_OBJECT(
     x: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT
@@ -465,9 +483,6 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public static func produce_ABSTRACT_CLASS() -> Swift.Never {
-        fatalError()
-    }
     public static func produce_DATA_CLASS() -> Swift.Never {
         fatalError()
     }
@@ -478,11 +493,6 @@ public extension ExportedKotlinPackages.ignored {
         fatalError()
     }
     public static func produce_VALUE_CLASS() -> Swift.Never {
-        fatalError()
-    }
-    public static func receive_ABSTRACT_CLASS(
-        x: Swift.Never
-    ) -> Swift.Void {
         fatalError()
     }
     public static func receive_DATA_CLASS(

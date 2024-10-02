@@ -28,3 +28,25 @@ open class Cousin : overrides.Parent {
         return Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
     }
 }
+public final class FinalDerived3 : overrides.AbstractDerived2 {
+    public override init() {
+        let __kt = __root___FinalDerived3_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+    public override init(
+        x: Swift.Int32
+    ) {
+        let __kt = __root___FinalDerived3_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, x)
+    }
+    public override func abstractFun1() -> Swift.Void {
+        return FinalDerived3_abstractFun1(self.__externalRCRef())
+    }
+}

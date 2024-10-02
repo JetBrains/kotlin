@@ -12,6 +12,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.OBJECT_WITH_PACKAGE.Foo::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19OBJECT_WITH_PACKAGEC3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19OBJECT_WITH_PACKAGEC20OBJECT_INSIDE_OBJECTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(why_we_need_module_names.CLASS_WITH_SAME_NAME::class, "22ExportedKotlinPackages24why_we_need_module_namesO4mainE20CLASS_WITH_SAME_NAMEC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ABSTRACT_CLASS::class, "4main14ABSTRACT_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(CLASS_WITH_SAME_NAME::class, "4main20CLASS_WITH_SAME_NAMEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ClassWithNonPublicConstructor::class, "4main29ClassWithNonPublicConstructorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")

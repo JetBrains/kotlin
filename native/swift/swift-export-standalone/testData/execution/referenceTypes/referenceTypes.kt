@@ -119,6 +119,15 @@ fun identity(obj: Base): Base = obj
 fun getDerived(): Derived = Derived()
 fun getBase(): Base = Base()
 
+abstract class Abstract
+class Impl : Abstract()
+private class PrivateImpl : Abstract()
+
+var abstractPolymorphicObject: Abstract = Impl()
+
+fun getImpl(): Abstract = Impl()
+fun getPrivateImpl(): Abstract = PrivateImpl()
+
 // FILE: dependency_usage.kt
 import dependency.*
 
@@ -197,6 +206,22 @@ open class Cousin(value: String) : Parent(value) {
     override fun poly(): Parent = this
     override fun nullable(): Parent? = this
 }
+
+abstract class AbstractParent {
+    abstract fun foo(): String
+}
+
+class AbstractParentImpl : AbstractParent() {
+    override fun foo() = "AbstractParentImpl"
+}
+
+fun getAbstractParentImpl(): AbstractParent = AbstractParentImpl()
+
+private class AbstractParentPrivateImpl : AbstractParent() {
+    override fun foo() = "AbstractParentPrivateImpl"
+}
+
+fun getAbstractParentPrivateImpl(): AbstractParent = AbstractParentPrivateImpl()
 
 // MODULE: second_main(deps)
 // FILE: second_main.kt

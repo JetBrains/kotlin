@@ -10,11 +10,16 @@ class FinalClass {
 open class OpenClass
 private class PrivateClass : OpenClass()
 
+abstract class AbstractClass
+private class AbstractClassPrivateSubclass : AbstractClass()
+
 fun getAnyClassName(): String? = Any::class.objCNameOrNull
 fun getFinalClassName(): String? = FinalClass::class.objCNameOrNull
 fun getNestedFinalClassName(): String? = FinalClass.NestedFinalClass::class.objCNameOrNull
 fun getOpenClassName(): String? = OpenClass::class.objCNameOrNull
 fun getPrivateClassName(): String? = PrivateClass::class.objCNameOrNull
+fun getAbstractClassName(): String? = AbstractClass::class.objCNameOrNull
+fun getAbstractClassPrivateSubclassName(): String? = AbstractClassPrivateSubclass::class.objCNameOrNull
 
 // FILE: classes_in_namespace.kt
 package namespace
