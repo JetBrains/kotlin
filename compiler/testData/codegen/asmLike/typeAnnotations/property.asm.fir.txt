@@ -109,7 +109,7 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
-    public final void setCustomSetter(java.lang.String field)
+    public final void setCustomSetter(java.lang.String field_)
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final static void setJvmStatic(java.lang.String <set-?>)

@@ -5,7 +5,7 @@ interface KInterface {
 
     var bar: String
         get() = "OK"
-        set(field) {}
+        set(field_) {}
 }
 
 interface KInterface2 : KInterface {

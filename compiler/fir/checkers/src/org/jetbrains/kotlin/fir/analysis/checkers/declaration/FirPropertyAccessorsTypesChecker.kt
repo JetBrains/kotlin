@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -90,6 +91,11 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         }
 
         val valueSetterParameter = setter.valueParameters.first()
+
+        if (valueSetterParameter.name == StandardNames.BACKING_FIELD) {
+            reporter.reportOn(valueSetterParameter.source, FirErrors.ACCESSOR_PARAMETER_NAME_SHADOWING, context)
+        }
+
         if (valueSetterParameter.isVararg) {
             return
         }

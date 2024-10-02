@@ -4,6 +4,6 @@ var y: Int = 1
 // No backing field!
 var x: Int
     get() = y
-    set(field) {
+    set(<!ACCESSOR_PARAMETER_NAME_SHADOWING!>field<!>) {
         y = field
     }

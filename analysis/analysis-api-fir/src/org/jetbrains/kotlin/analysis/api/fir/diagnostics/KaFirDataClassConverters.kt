@@ -3968,6 +3968,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ACCESSOR_PARAMETER_NAME_SHADOWING) { firDiagnostic ->
+        AccessorParameterNameShadowingImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_DECLARATION_WITH_BODY) { firDiagnostic ->
         ExpectedDeclarationWithBodyImpl(
             firDiagnostic as KtPsiDiagnostic,

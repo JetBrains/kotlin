@@ -1370,6 +1370,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val LOCAL_EXTENSION_PROPERTY by error<PsiElement>()
+        val ACCESSOR_PARAMETER_NAME_SHADOWING by error<KtParameter>(PositioningStrategy.DECLARATION_NAME)
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

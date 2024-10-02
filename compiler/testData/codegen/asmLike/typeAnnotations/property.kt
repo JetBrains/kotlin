@@ -25,7 +25,7 @@ class Kotlin {
     var varProp: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String = "123"
 
     var customSetter: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String = "123"
-        set(field: String) {}
+        set(field_: String) {}
 
     @JvmField
     var jvmField: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String = "123"

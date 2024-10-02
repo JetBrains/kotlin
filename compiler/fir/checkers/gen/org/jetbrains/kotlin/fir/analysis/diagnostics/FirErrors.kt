@@ -707,6 +707,7 @@ object FirErrors {
     val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val LOCAL_EXTENSION_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("LOCAL_EXTENSION_PROPERTY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val ACCESSOR_PARAMETER_NAME_SHADOWING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ACCESSOR_PARAMETER_NAME_SHADOWING", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtParameter::class)
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_DECLARATION_WITH_BODY", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtDeclaration::class)

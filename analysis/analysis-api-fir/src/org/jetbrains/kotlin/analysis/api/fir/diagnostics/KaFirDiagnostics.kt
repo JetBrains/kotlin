@@ -2790,6 +2790,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = LocalExtensionProperty::class
     }
 
+    interface AccessorParameterNameShadowing : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = AccessorParameterNameShadowing::class
+    }
+
     interface ExpectedDeclarationWithBody : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }
