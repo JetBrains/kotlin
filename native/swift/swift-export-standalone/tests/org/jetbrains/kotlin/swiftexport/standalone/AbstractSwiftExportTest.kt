@@ -226,6 +226,7 @@ abstract class AbstractSwiftExportTest {
                 }.toTypedArray(),
                 "-emit-module", "-parse-as-library", "-emit-library", "-static", "-enable-library-evolution",
                 "-module-name", swiftModuleName,
+                "-package-name", "SwiftExportTests",
             ),
             outputFile = { it.binaryLibrary },
         ).result.assertSuccess().resultingArtifact
