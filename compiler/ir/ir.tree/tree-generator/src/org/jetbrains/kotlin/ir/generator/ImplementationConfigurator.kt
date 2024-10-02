@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.Visibility
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.isSubclassOf
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
@@ -135,9 +133,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("startOffset", undefinedOffset(), withGetter = true)
             default("endOffset", undefinedOffset(), withGetter = true)
             default("name", "descriptor.name", withGetter = true)
-        }.apply {
-            // TODO: should be generated again after KT-68314 is fixed
-            doPrint = false
         }
 
         impl(errorDeclaration) {
