@@ -117,7 +117,8 @@ internal class LLFirProvider(
         override val allowKotlinPackage get() = providerHelper.allowKotlinPackage
 
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
+//            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
+            if (!hasPackage(classId.packageFqName)) return null
             return getFirClassifierByFqName(classId)?.symbol
         }
 

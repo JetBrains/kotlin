@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
+import java.util.concurrent.atomic.AtomicLong
 
 class FirPackageMemberScope(
     val fqName: FqName,
@@ -33,12 +34,28 @@ class FirPackageMemberScope(
     private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
     private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()
 
+    // TODO (marco): IDEA: Only compute "names in package" sets for known SPECULATIVE accesses.
+    //               We probably have a LOT of simple imports where class IDs are known to exist. For those, we do not need to compute
+    //               "names in package" sets.
+    private val classifierNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val result = symbolProvider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)
+//        if (result == null) {
+//            nullClassifierNamesCounter.incrementAndGet()
+//        } else {
+//            existingClassifierNamesCounter.incrementAndGet()
+//        }
+        result
+    }
+
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         if (name.asString().isEmpty()) return
         if (name in excludedNames) return
+
+        val classifierNames = classifierNames
+        if (classifierNames != null && name !in classifierNames) return
 
         val symbol = classifierCache.getOrPut(name) {
             val unambiguousFqName = ClassId(fqName, name)
@@ -77,6 +94,11 @@ class FirPackageMemberScope(
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirPackageMemberScope {
         return FirPackageMemberScope(fqName, newSession, excludedNames = excludedNames)
+    }
+
+    companion object {
+//        private val nullClassifierNamesCounter = AtomicLong()
+//        private val existingClassifierNamesCounter = AtomicLong()
     }
 }
 

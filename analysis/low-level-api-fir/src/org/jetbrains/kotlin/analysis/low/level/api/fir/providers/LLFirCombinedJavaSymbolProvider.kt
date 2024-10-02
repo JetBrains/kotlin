@@ -68,8 +68,24 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
             override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
         }
 
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        classCache.get(classId) { computeClassLikeSymbolByClassId(it) }
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+//        if (getPackage(classId.packageFqName) == null) {
+//            rejectedByPackageCounter.incrementAndGet()
+//            return null
+//        }
+//
+//        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) {
+//            rejectedByClassNameCounter.incrementAndGet()
+//
+//            rejectedClassNameMap.merge(classId, 1) { t, u -> t + u }
+//
+//            return null
+//        }
+//
+//        acceptedCounter.incrementAndGet()
+
+        return classCache.get(classId) { computeClassLikeSymbolByClassId(it) }
+    }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         val javaClasses = javaClassFinder.findClasses(classId).filterNot(JavaClass::hasMetadataAnnotation)
@@ -104,6 +120,13 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     override fun estimateSymbolCacheSize(): Long = classCache.estimatedSize
 
     companion object {
+//        private var rejectedByPackageCounter = AtomicLong()
+//        private var rejectedByClassNameCounter = AtomicLong()
+//
+//        private val rejectedClassNameMap = ConcurrentHashMap<ClassId, Long>()
+//
+//        private var acceptedCounter = AtomicLong()
+
         fun merge(session: FirSession, project: Project, providers: List<LLFirJavaSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
                 val combinedScope = KotlinGlobalSearchScopeMerger.getInstance(project).union(providers.map { it.searchScope })

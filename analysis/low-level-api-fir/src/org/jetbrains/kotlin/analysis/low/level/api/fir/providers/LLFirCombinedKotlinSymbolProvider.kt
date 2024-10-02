@@ -59,12 +59,12 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
 
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
         it
-            .maximumSize(500)
+            .maximumSize(2500)
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
+//        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
 
         return classifierCache.get(classId) { computeClassLikeSymbolByClassId(it) }
     }
