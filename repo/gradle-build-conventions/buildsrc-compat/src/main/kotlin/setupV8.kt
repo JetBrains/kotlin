@@ -7,18 +7,26 @@
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.the
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
+@OptIn(ExperimentalWasmDsl::class)
 private object V8Utils {
-    lateinit var d8Plugin: D8RootExtension
+    lateinit var d8Plugin: D8EnvSpec
+    lateinit var d8Root: D8RootExtension
 
     fun useD8Plugin(project: Project) {
-        project.rootProject.plugins.apply(D8RootPlugin::class.java)
-        d8Plugin = project.rootProject.the<D8RootExtension>()
-        d8Plugin.version = project.v8Version
+        project.plugins.apply(D8Plugin::class.java)
+        d8Plugin = project.the<D8EnvSpec>()
+        project.rootProject.plugins.apply(D8Plugin::class.java)
+        d8Root = project.rootProject.the<D8RootExtension>()
+        d8Plugin.version.set(project.v8Version)
+        @Suppress("DEPRECATION")
+        d8Root.version = project.v8Version
     }
 }
 
@@ -26,11 +34,14 @@ fun Project.useD8Plugin() {
     V8Utils.useD8Plugin(this)
 }
 
-@Suppress("DEPRECATION")
+@OptIn(ExperimentalWasmDsl::class)
 fun Test.setupV8() {
-    dependsOn(V8Utils.d8Plugin.setupTaskProvider)
+    with(V8Utils.d8Plugin) {
+        dependsOn(project.d8SetupTaskProvider)
+    }
+    dependsOn(V8Utils.d8Root.setupTaskProvider)
     val v8ExecutablePath = project.provider {
-        V8Utils.d8Plugin.requireConfigured().executablePath.absolutePath
+        V8Utils.d8Root.requireConfigured().executablePath.absolutePath
     }
     doFirst {
         systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())

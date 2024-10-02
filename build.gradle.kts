@@ -1147,13 +1147,18 @@ if (disableVerificationTasks) {
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
-@Suppress("DEPRECATION")
+allprojects {
+    plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin::class) {
+        extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
+            if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+                downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
+            }
+        }
+    }
+}
+
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        if (kotlinBuildProperties.isCacheRedirectorEnabled) {
-            downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
-        }
-
         npmInstallTaskProvider.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
         }
@@ -1171,9 +1176,14 @@ plugins.withType(com.github.gradle.node.NodePlugin::class) {
 @Suppress("DEPRECATION")
 afterEvaluate {
     if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+        allprojects {
+            plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
+                the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().downloadBaseUrl =
+                    "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
+            }
+        }
+
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().downloadBaseUrl =
-                "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
                 YarnLockMismatchReport.WARNING
         }

@@ -74,6 +74,8 @@ sourcesJar()
 javadocJar()
 testsJar()
 
+useD8Plugin()
+
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)

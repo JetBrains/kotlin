@@ -43,5 +43,5 @@ abstract class EnvSpec<T> {
     /**
      * Produce  full serializable cache-friendly entity without Gradle Provider API
      */
-    internal abstract fun produceEnv(providerFactory: ProviderFactory): Provider<T>
+    abstract fun produceEnv(providerFactory: ProviderFactory): Provider<T>
 }

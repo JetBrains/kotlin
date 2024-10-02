@@ -1,12 +1,13 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -253,9 +254,6 @@ kotlin {
             }
         }
     }
-
-    rootProject.plugins.apply(D8RootPlugin::class.java)
-    rootProject.the<org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension>().version = v8Version
 
     fun KotlinWasmTargetDsl.commonWasmTargetConfiguration() {
         (this as KotlinTargetWithNodeJsDsl).nodejs()
@@ -596,6 +594,11 @@ kotlin {
         }
     }
 }
+
+plugins.apply(D8Plugin::class.java)
+
+@OptIn(ExperimentalWasmDsl::class)
+the<org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec>().version = v8Version
 
 dependencies {
     val jvmMainApi by configurations.getting

@@ -1,7 +1,8 @@
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.spdx.sbom.gradle.SpdxSbomExtension
 import java.net.URI
 
@@ -43,7 +44,6 @@ val resolveJsTools by tasks.registering {
     notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
 
-    @Suppress("DEPRECATION")
     doLast {
         fun Project.resolveDependencies(
             vararg dependency: String,
@@ -56,73 +56,81 @@ val resolveJsTools by tasks.registering {
             repo.run { repositories.remove(this) }
         }
 
-        rootProject.extensions.findByType<D8RootExtension>()?.run {
-            project.resolveDependencies(
-                "google.d8:v8:linux64-rel-$version@zip",
-                "google.d8:v8:win64-rel-$version@zip",
-                "google.d8:v8:mac-arm64-rel-$version@zip",
-                "google.d8:v8:mac64-rel-$version@zip"
-            ) {
-                ivy {
-                    name = "D8-ResolveDependencies"
-                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                    patternLayout {
-                        artifact("[artifact]-[revision].[ext]")
+        @OptIn(ExperimentalWasmDsl::class)
+        allprojects {
+            extensions.findByType<D8EnvSpec>()?.run {
+                val versionValue = version.get()
+                project.resolveDependencies(
+                    "google.d8:v8:linux64-rel-$versionValue@zip",
+                    "google.d8:v8:win64-rel-$versionValue@zip",
+                    "google.d8:v8:mac-arm64-rel-$versionValue@zip",
+                    "google.d8:v8:mac64-rel-$versionValue@zip"
+                ) {
+                    ivy {
+                        name = "D8-ResolveDependencies"
+                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
+                        patternLayout {
+                            artifact("[artifact]-[revision].[ext]")
+                        }
+                        metadataSources { artifact() }
+                        content { includeModule("google.d8", "v8") }
                     }
-                    metadataSources { artifact() }
-                    content { includeModule("google.d8", "v8") }
                 }
             }
-        }
 
-        rootProject.extensions.findByType<BinaryenRootExtension>()?.run {
-            project.resolveDependencies(
-                "com.github.webassembly:binaryen:$version:arm64-macos@tar.gz",
-                "com.github.webassembly:binaryen:$version:x86_64-linux@tar.gz",
-                "com.github.webassembly:binaryen:$version:x86_64-macos@tar.gz",
-                "com.github.webassembly:binaryen:$version:x86_64-windows@tar.gz"
-            ) {
-                ivy {
-                    name = "Binaryen-ResolveDependencies"
-                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                    patternLayout {
-                        artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+            extensions.findByType<BinaryenRootEnvSpec>()?.run {
+                val versionValue = version.get()
+
+                project.resolveDependencies(
+                    "com.github.webassembly:binaryen:$versionValue:arm64-macos@tar.gz",
+                    "com.github.webassembly:binaryen:$versionValue:x86_64-linux@tar.gz",
+                    "com.github.webassembly:binaryen:$versionValue:x86_64-macos@tar.gz",
+                    "com.github.webassembly:binaryen:$versionValue:x86_64-windows@tar.gz"
+                ) {
+                    ivy {
+                        name = "Binaryen-ResolveDependencies"
+                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
+                        patternLayout {
+                            artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+                        }
+                        metadataSources { artifact() }
+                        content { includeModule("com.github.webassembly", "binaryen") }
                     }
-                    metadataSources { artifact() }
-                    content { includeModule("com.github.webassembly", "binaryen") }
                 }
             }
-        }
 
-        rootProject.extensions.findByType<NodeJsRootExtension>()?.run {
-            project.resolveDependencies(
-                "org.nodejs:node:$version:linux-x64@tar.gz",
-                "org.nodejs:node:$version:win-x64@zip",
-                "org.nodejs:node:$version:darwin-x64@tar.gz",
-                "org.nodejs:node:$version:darwin-arm64@tar.gz"
-            ) {
-                ivy {
-                    name = "NodeJs-ResolveDependencies"
-                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                    patternLayout {
-                        artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+            extensions.findByType<NodeJsEnvSpec>()?.run {
+                val versionValue = version.get()
+
+                project.resolveDependencies(
+                    "org.nodejs:node:$versionValue:linux-x64@tar.gz",
+                    "org.nodejs:node:$versionValue:win-x64@zip",
+                    "org.nodejs:node:$versionValue:darwin-x64@tar.gz",
+                    "org.nodejs:node:$versionValue:darwin-arm64@tar.gz"
+                ) {
+                    ivy {
+                        name = "NodeJs-ResolveDependencies"
+                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
+                        patternLayout {
+                            artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                        }
+                        metadataSources { artifact() }
+                        content { includeModule("org.nodejs", "node") }
                     }
-                    metadataSources { artifact() }
-                    content { includeModule("org.nodejs", "node") }
                 }
             }
-        }
 
-        rootProject.extensions.findByType<YarnRootExtension>()?.run {
-            project.resolveDependencies("com.yarnpkg:yarn:$version@tar.gz") {
-                ivy {
-                    name = "Yarn-ResolveDependencies"
-                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                    patternLayout {
-                        artifact("v[revision]/[artifact](-v[revision]).[ext]")
+            extensions.findByType<YarnRootEnvSpec>()?.run {
+                project.resolveDependencies("com.yarnpkg:yarn:${version.get()}@tar.gz") {
+                    ivy {
+                        name = "Yarn-ResolveDependencies"
+                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
+                        patternLayout {
+                            artifact("v[revision]/[artifact](-v[revision]).[ext]")
+                        }
+                        metadataSources { artifact() }
+                        content { includeModule("com.yarnpkg", "yarn") }
                     }
-                    metadataSources { artifact() }
-                    content { includeModule("com.yarnpkg", "yarn") }
                 }
             }
         }

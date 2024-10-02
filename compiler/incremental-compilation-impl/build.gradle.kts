@@ -41,6 +41,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+useD8Plugin()
+
 projectTest(parallel = true) {
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
