@@ -12,15 +12,16 @@ package kotlin.test
  * Sample test layout:
  *
  * ```
- * suite('a suite', false, function() {
- *   suite('a subsuite', false, function() {
- *     test('a test', false, function() {...});
- *     test('an ignored/pending test', true, function() {...});
- *   });
- *   suite('an ignored/pending test', true, function() {...});
- * });
+ * suite("top-level-package1", ignored = false) {
+ *     suite("TestClass1", ignored = false) {
+ *         suite("a subsuite", ignored = false) {
+ *             test("a test", ignored = false) {...}
+ *             test("an ignored/pending test", ignored = true) {...}
+ *         }
+ *         suite("an ignored/pending test", ignored = true) {...}
+ *     }
+ * }
  * ```
- *
  */
 public interface FrameworkAdapter {
 

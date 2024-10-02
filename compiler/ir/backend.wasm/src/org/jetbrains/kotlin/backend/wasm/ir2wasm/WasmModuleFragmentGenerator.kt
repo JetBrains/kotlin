@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -82,14 +84,12 @@ private fun compileIrFile(
         irDeclaration.acceptVoid(generator)
     }
 
-    val testFun = backendContext.testFunsPerFile[irFile]
-    if (testFun != null) {
-        wasmFileCodegenContext.defineTestFun(testFun.symbol)
-    }
-
     val fileContext = backendContext.getFileContext(irFile)
     fileContext.mainFunctionWrapper?.apply {
         wasmFileCodegenContext.addMainFunctionWrapper(symbol)
+    }
+    fileContext.testFunctionDeclarator?.apply {
+        wasmFileCodegenContext.addTestFunDeclarator(symbol)
     }
     fileContext.closureCallExports.forEach { (exportSignature, function) ->
         wasmFileCodegenContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
@@ -119,15 +119,40 @@ private fun compileIrFile(
         wasmFileCodegenContext.addJsModuleAndQualifierReferences(reference)
     }
 
-    val tryGetAssociatedObjectFunction = backendContext.wasmSymbols.tryGetAssociatedObject
-    if (irFile == tryGetAssociatedObjectFunction.owner.fileOrNull) {
-        wasmFileCodegenContext.defineTryGetAssociatedObjectFun(tryGetAssociatedObjectFunction)
+    backendContext.defineBuiltinSignatures(irFile, wasmFileCodegenContext)
+}
+
+private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileCodegenContext: WasmFileCodegenContext) {
+    val throwableClass = irBuiltIns.throwableClass.takeIf {
+        irFile == it.owner.fileOrNull
     }
 
-    if (backendContext.isWasmJsTarget) {
-        val jsToKotlinAnyAdapter = backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
-        if (irFile == jsToKotlinAnyAdapter.owner.fileOrNull) {
-            wasmFileCodegenContext.defineJsToKotlinAnyAdapterFun(jsToKotlinAnyAdapter)
-        }
+    val tryGetAssociatedObjectFunction = wasmSymbols.tryGetAssociatedObject.takeIf {
+        irFile == it.owner.fileOrNull
     }
+
+    val jsToKotlinAnyAdapter: IrFunctionSymbol?
+    if (isWasmJsTarget) {
+        jsToKotlinAnyAdapter = wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter.takeIf {
+            irFile == it.owner.fileOrNull
+        }
+    } else {
+        jsToKotlinAnyAdapter = null
+    }
+
+    val unitGetInstance = findUnitGetInstanceFunction().takeIf {
+        irFile == it.fileOrNull
+    }
+
+    val runRootSuites = wasmSymbols.runRootSuites?.takeIf {
+        irFile == it.owner.fileOrNull
+    }
+
+    wasmFileCodegenContext.defineBuiltinIdSignatures(
+        throwable = throwableClass,
+        tryGetAssociatedObject = tryGetAssociatedObjectFunction,
+        jsToKotlinAnyAdapter = jsToKotlinAnyAdapter,
+        unitGetInstance = unitGetInstance?.symbol,
+        runRootSuites = runRootSuites,
+    )
 }

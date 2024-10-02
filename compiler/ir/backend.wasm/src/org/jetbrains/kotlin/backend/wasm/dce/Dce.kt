@@ -71,9 +71,20 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     add(context.irBuiltIns.throwableClass.owner)
     add(context.findUnitGetInstanceFunction())
 
-    addAll(context.testFunsPerFile.values)
+    var hasTestDeclarator = false
     context.fileContexts.values.forEach {
         it.mainFunctionWrapper?.let(::add)
+
+        it.testFunctionDeclarator?.let {
+            hasTestDeclarator = true
+            add(it)
+        }
+    }
+
+    if (hasTestDeclarator) {
+        context.wasmSymbols.runRootSuites?.let {
+            add(it.owner)
+        }
     }
 
     if (context.isWasmJsTarget) {

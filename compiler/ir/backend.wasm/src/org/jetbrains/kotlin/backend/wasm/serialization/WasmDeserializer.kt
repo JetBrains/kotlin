@@ -630,12 +630,11 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsExceptionTagIndex = deserializeNullableIntSymbol(),
         fieldInitializers = deserializeFieldInitializers(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
-        testFun = deserializeTestFun(),
+        testFunctionDeclarators = deserializeTestFunctionDeclarators(),
         equivalentFunctions = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
-        tryGetAssociatedObjectFun = deserializeTryGetAssociatedObject(),
-        jsToKotlinAnyAdapterFun = deserializeJsToKotlinAnyAdapter(),
+        builtinIdSignatures = deserializeBuiltinIdSignatures(),
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -662,12 +661,20 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeNullableIntSymbol() = deserializeNullable { deserializeSymbol(::deserializeInt) }
     private fun deserializeFieldInitializers(): MutableList<FieldInitializer> = deserializeList(::deserializeFieldInitializer)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeIdSignature)
-    private fun deserializeTestFun() = deserializeList(::deserializeIdSignature)
+    private fun deserializeTestFunctionDeclarators() = deserializeList(::deserializeIdSignature)
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
-    private fun deserializeTryGetAssociatedObject() = deserializeNullable(::deserializeIdSignature)
-    private fun deserializeJsToKotlinAnyAdapter() = deserializeNullable(::deserializeIdSignature)
+    private fun deserializeBuiltinIdSignatures() =
+        deserializeNullable {
+            BuiltinIdSignatures(
+                throwable = deserializeNullable(::deserializeIdSignature),
+                tryGetAssociatedObject = deserializeNullable(::deserializeIdSignature),
+                jsToKotlinAnyAdapter = deserializeNullable(::deserializeIdSignature),
+                unitGetInstance = deserializeNullable(::deserializeIdSignature),
+                runRootSuites = deserializeNullable(::deserializeIdSignature),
+            )
+        }
 
     private fun deserializeFieldInitializer(): FieldInitializer = withFlags {
         val field = deserializeIdSignature()
