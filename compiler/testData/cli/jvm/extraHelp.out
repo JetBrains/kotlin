@@ -191,6 +191,7 @@ where advanced options include:
   -Xinference-compatibility  Enable compatibility changes for the generic type inference algorithm.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+  -Xklib-ir-inliner          Enable experimental support to invoke IR Inliner before Klib serialization.
   -Xlegacy-smart-cast-after-try Allow 'var' smart casts even in the presence of assignments in 'try' blocks.
   -Xlist-phases              List backend phases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.

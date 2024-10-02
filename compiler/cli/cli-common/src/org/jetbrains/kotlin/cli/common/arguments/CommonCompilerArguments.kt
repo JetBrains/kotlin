@@ -814,6 +814,16 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xklib-ir-inliner",
+        description = "Enable experimental support to invoke IR Inliner before Klib serialization."
+    )
+    var irInlinerBeforeKlibSerialization = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
         description = "Suppress specified warning module-wide."
@@ -912,6 +922,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (whenGuards) {
                 put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
+            }
+
+            if (irInlinerBeforeKlibSerialization) {
+                put(LanguageFeature.IrInlinerBeforeKlibSerialization, LanguageFeature.State.ENABLED)
             }
 
             if (multiDollarInterpolation) {
