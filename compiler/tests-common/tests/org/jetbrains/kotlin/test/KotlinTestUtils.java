@@ -439,11 +439,11 @@ public class KotlinTestUtils {
     }
 
     public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
-        MuteWithDatabaseKt.runTest(testCase, test);
+        MuteWithDatabaseJunit4Kt.runTest(testCase, test);
     }
 
     public static void runTestWithThrowable(@NotNull TestCase testCase, @NotNull RunnableWithThrowable test) {
-        MuteWithDatabaseKt.runTest(testCase, () -> {
+        MuteWithDatabaseJunit4Kt.runTest(testCase, () -> {
             try {
                 test.run();
             }
@@ -481,7 +481,7 @@ public class KotlinTestUtils {
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) {
         if (testCase != null && !isRunTestOverridden(testCase)) {
-            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
+            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseJunit4Kt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
                     test.invoke(testDataFilePath);
                 }
