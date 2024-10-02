@@ -96,15 +96,13 @@ class PhaseConfig(
     }
 
     fun list() {
-        compoundPhase.getNamedSubphases().forEach { (depth, phase) ->
-            val disabled = if (phase !in enabled) " (Disabled)" else ""
-            val verbose = if (phase in verbose) " (Verbose)" else ""
-
-            println(
-                "%1$-50s %2$-50s %3$-10s".format(
-                    "${"    ".repeat(depth)}${phase.name}", phase.description, "$disabled$verbose"
-                )
-            )
+        for ((depth, phase) in compoundPhase.getNamedSubphases()) {
+            println(buildString {
+                append("    ".repeat(depth))
+                append(phase.name)
+                if (phase !in enabled) append(" (Disabled)")
+                if (phase in verbose) append(" (Verbose)")
+            })
         }
     }
 

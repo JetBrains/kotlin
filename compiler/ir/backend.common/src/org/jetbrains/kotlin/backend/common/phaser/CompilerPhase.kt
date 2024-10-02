@@ -139,7 +139,7 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
             }
         }
         // TODO: use a proper logger
-        println("${"\t".repeat(phaserState.depth)}$description: $msec msec")
+        println("${"\t".repeat(phaserState.depth)}$name: $msec msec")
         return result!!
     }
 

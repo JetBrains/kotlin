@@ -77,7 +77,7 @@ private fun dumpIrElement(actionState: ActionState, data: IrElement): String {
         dumpText = data.dump()
     }
 
-    val title = "// --- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
+    val title = "// --- IR for $elementName $beforeOrAfterStr ${actionState.phase.name}\n"
     return title + dumpText
 }
 
