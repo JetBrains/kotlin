@@ -56,10 +56,13 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     }
 
     private val packageCache = session.firCachesFactory.createCache { fqName: FqName ->
-        val knownClassNames: Set<String>? = knownClassNamesInPackage(fqName)
+        // TODO (marco): Get rid of this `knownClassNamesInPackage` because it's only used for a SLIGHT optimization on the PSI package, but
+        //               the cost is astronomical.
+        //val knownClassNames: Set<String>? = knownClassNamesInPackage(fqName)
+
         classFinder.findPackage(
             fqName,
-            mayHaveAnnotations = if (knownClassNames != null) PACKAGE_INFO_CLASS_NAME in knownClassNames else true
+            //mayHaveAnnotations = if (knownClassNames != null) PACKAGE_INFO_CLASS_NAME in knownClassNames else true
         )
     }
 
