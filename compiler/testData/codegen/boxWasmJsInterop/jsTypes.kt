@@ -4,6 +4,10 @@ import kotlin.test.*
 
 fun jsRepresentation(x: JsAny): String = js("(typeof x) + ':' + String(x)")
 
+@Suppress("INCOMPATIBLE_TYPES")
+fun castToKotlinString(jsAny: JsAny?): String? =
+    if (jsAny is String) jsAny as String else null
+
 fun box(): String {
     // JsNumber
     val jsNum10: JsNumber = 10.toJsNumber()
@@ -41,6 +45,8 @@ fun box(): String {
     assertTrue(jsBoolTrue == true.toJsBoolean())
     assertTrue(jsBoolTrue != false.toJsBoolean())
     assertTrue(jsRepresentation(jsBoolTrue) == "boolean:true")
+    assertNull(castToKotlinString(jsStr1))
+
 
     // JsArray
     val jsArray: JsArray<JsString> = JsArray()

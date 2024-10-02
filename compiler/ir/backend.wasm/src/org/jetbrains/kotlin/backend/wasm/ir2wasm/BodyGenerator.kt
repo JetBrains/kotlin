@@ -705,7 +705,7 @@ class BodyGenerator(
                 body.commentGroupStart { "virtual call: ${function.fqNameWhenAvailable}" }
 
                 //TODO: check why it could be needed
-                generateRefCast(receiver.type, klass.defaultType, location)
+                generateRefCast(receiver.type, klass.defaultType, isRefNullCast = false, location)
 
                 body.buildStructGet(wasmFileCodegenContext.referenceGcType(klass.symbol), WasmSymbol(0), location)
                 body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
@@ -749,34 +749,48 @@ class BodyGenerator(
         }
     }
 
-    private fun generateRefNullCast(fromType: IrType, toType: IrType, location: SourceLocation) {
-        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefCastNullStatic(
-                toType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
-                location
-            )
-        }
-    }
+    private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
+        when {
+            isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
 
-    private fun generateRefCast(fromType: IrType, toType: IrType, location: SourceLocation) {
-        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefCastStatic(
-                toType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
-                location
-            )
+            }
+            isInvalidDownCast(fromType, toType) -> {
+                body.buildUnreachable(location)
+            }
+            else -> {
+                val wasmToType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
+                if (isRefNullCast) {
+                    body.buildRefCastNullStatic(wasmToType, location)
+                } else {
+                    body.buildRefCastStatic(wasmToType, location)
+                }
+            }
         }
     }
 
     private fun generateRefTest(fromType: IrType, toType: IrType, location: SourceLocation) {
-        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefTestStatic(
-                toType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
-                location
-            )
-        } else {
-            body.buildDrop(location)
-            body.buildConstI32(1, location)
+        when {
+            isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
+                body.buildDrop(location)
+                body.buildConstI32(1, location)
+            }
+            isInvalidDownCast(fromType, toType) -> {
+                body.buildUnreachable(location)
+            }
+            else -> {
+                body.buildRefTestStatic(
+                    toType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
+                    location
+                )
+            }
         }
+    }
+
+    private fun isInvalidDownCast(fromType: IrType, toType: IrType): Boolean {
+        if (toType.isAny()) return false
+        val fromTypeIsExternal = fromType.classOrNull?.owner?.isExternal ?: return false
+        val toTypeIsExternal = toType.classOrNull?.owner?.isExternal ?: return false
+        return fromTypeIsExternal != toTypeIsExternal
     }
 
     private fun isDownCastAlwaysSuccessInRuntime(fromType: IrType, toType: IrType): Boolean {
@@ -848,10 +862,11 @@ class BodyGenerator(
             }
 
             wasmSymbols.refCastNull -> {
-                generateRefNullCast(
+                generateRefCast(
                     fromType = call.getValueArgument(0)!!.type,
                     toType = call.getTypeArgument(0)!!,
-                    location = location
+                    isRefNullCast = true,
+                    location = location,
                 )
             }
 
@@ -876,7 +891,7 @@ class BodyGenerator(
                 val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
                 val field = getInlineClassBackingField(klass)
 
-                generateRefCast(fromType, toType, location)
+                generateRefCast(fromType, toType, isRefNullCast = false, location)
                 generateInstanceFieldAccess(field, location)
             }
 
@@ -1111,10 +1126,7 @@ class BodyGenerator(
         // REF -> REF -> REF_CAST
         if (!expectedIsPrimitive) {
             if (expectedClassErased.isSubclassOf(actualClassErased)) {
-                if (expectedType.isNullable())
-                    generateRefNullCast(actualTypeErased, expectedTypeErased, location)
-                else
-                    generateRefCast(actualTypeErased, expectedTypeErased, location)
+                generateRefCast(actualTypeErased, expectedTypeErased, isRefNullCast = expectedType.isNullable(), location)
                 body.commentPreviousInstr { "to make verifier happy" }
             } else {
                 body.buildUnreachableForVerifier()
