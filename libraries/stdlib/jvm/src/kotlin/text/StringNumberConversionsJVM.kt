@@ -253,7 +253,7 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
 private const val LengthOfNaN = 2 // "NaN".length - 1
 private const val LengthOfInfinity = 7 // "Infinity".length - 1
 
-private fun isFloat(s: String): Boolean {
+private fun isValidFloat(s: String): Boolean {
     // A float can have one of two representations:
     //
     // 1. Standard:
